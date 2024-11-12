@@ -22,6 +22,7 @@ class UserAccess
         if (Auth::check() && Auth::user()->role == $role) {
             return $next($request);
         }
-        return redirect('admin');
-    }
+        return response()->json([
+            'error' => 'You do not have permission to access this page.'
+        ], Response::HTTP_FORBIDDEN);}
 }
