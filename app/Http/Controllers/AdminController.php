@@ -10,9 +10,7 @@ class AdminController extends Controller
 {
     // 
     function index(){
-        echo "Hello Welcome Back !";
-        echo "<h1>" . Auth::user()->name . "</h1>" ;
-        echo "<a href='logout' >Logout</a>";
+        return view('dashboard/admin');
     }
     function marketing(){
         echo "Hello Welcome Back Marketing!";
@@ -41,11 +39,6 @@ class AdminController extends Controller
     }
     function hrga(){
         echo "Hello Welcome Back HRGA!";
-        echo "<h1>" . Auth::user()->name . "</h1>" ;
-        echo "<a href='/logout' >Logout</a>";
-    }
-    function hrd(){
-        echo "Hello Welcome Back HRD!";
         echo "<h1>" . Auth::user()->name . "</h1>" ;
         echo "<a href='/logout' >Logout</a>";
     }
