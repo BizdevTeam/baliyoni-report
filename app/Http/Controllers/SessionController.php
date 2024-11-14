@@ -43,8 +43,6 @@ class SessionController extends Controller
                     return redirect('admin/support');
                 case 'hrga':
                     return redirect('admin/hrga');
-                case 'hrd':
-                    return redirect('admin/hrd');
                 case 'spi':
                     return redirect('admin/spi');
                 default:

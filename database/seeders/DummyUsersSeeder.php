@@ -64,13 +64,6 @@ class DummyUsersSeeder extends Seeder
                 'password'=>bcrypt('hrga')    
             ],
             [
-                'name'=>'HRD',
-                'email'=>'hrd@gmail.com',
-                'role'=>'hrd',
-                'password'=>bcrypt('hrd')
-                
-            ],
-            [
                 'name'=>'SPI',
                 'email'=>'spi@gmail.com',
                 'role'=>'spi',

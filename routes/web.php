@@ -16,7 +16,6 @@ Route::middleware(['auth'])->group(function() {
     Route::get('/admin/accounting', [AdminController::class, 'accounting'])->middleware('UserAccess:accounting');
     Route::get('/admin/procurement', [AdminController::class, 'procurement'])->middleware('UserAccess:procurement');
     Route::get('/admin/hrga', [AdminController::class, 'hrga'])->middleware('UserAccess:hrga');
-    Route::get('/admin/hrd', [AdminController::class, 'hrd'])->middleware('UserAccess:hrd');
     Route::get('/admin/spi', [AdminController::class, 'spi'])->middleware('UserAccess:spi');
     Route::get('/logout', [SessionController::class, 'logout']);
 });
