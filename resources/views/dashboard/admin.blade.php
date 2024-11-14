@@ -1,4 +1,4 @@
-<!doctype html>
+{{-- <!doctype html>
 <html lang="en">
 
 <head>
@@ -28,4 +28,13 @@
   </script>
 </body>
 
-</html>
+</html> --}}
+
+@extends('components.app')
+@vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/App.jsx'])
+
+@section('content')
+    <h1>Welcome, Admin!</h1>
+    <p>This is your dashboard.</p>
+    <!-- Tambahkan konten spesifik untuk dashboard admin di sini -->
+@endsection
