@@ -35,13 +35,6 @@ function App() {
             <div
                 className={`${open ? "w-72" : "w-20"} bg-red-600 h-screen p-5 pt-8 relative duration-300 transition-all`}
             >
-                {/* Sidebar toggle button */}
-                <div
-                    onClick={() => setOpen(!open)}
-                    className={`text-black text-3xl absolute top-9 -right-4 cursor-pointer transition-transform duration-300 ${!open ? "rotate-180" : ""}`}
-                >
-                    <AiOutlineMenu />
-                </div>
                 {/* Sidebar Logo */}
                 <div className="inline-flex">
                     <img
