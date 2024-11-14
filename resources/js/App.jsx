@@ -5,6 +5,10 @@ import { BsArrowLeft, BsPersonCircle } from "react-icons/bs";
 import { CiSearch } from "react-icons/ci";
 import { FaChevronDown } from "react-icons/fa";
 import { IoMenu } from "react-icons/io5";
+import { FaCircle } from "react-icons/fa6";
+
+
+
 import { AiFillBank, AiOutlineMenu } from "react-icons/ai";
 
 function App() {
@@ -34,64 +38,45 @@ function App() {
         <div className="flex">
             <div
                 className={`${
-                    open ? "w-72" : "w-20"
+                    open ? "w-64" : "w-20"
                 } bg-white h-screen p-5 pt-8 relative duration-300 transition-all`}
             >
                 
                 
-                <div className="inline-flex">
-                    <img    
+                <div className="inline-flex items-center">
+                    <img
                         src="http://localhost:8000/images/BYS_LOGO.png"
                         alt="Baliyoni"
-                        className={` w-10 h-auto rounded cursor-pointer block float-left mr-2 transition-transform duration-700 ${
+                        className={`w-10 h-auto rounded cursor-pointer mr-2 transform transition-transform duration-700 ${
+                            open ? "rotate-360" : ""
+                        } ${
                             open ? "rotate-[360deg]" : ""
                         }`}
                     />
-              
                     <h1
-                        className={`text-black origin-left font-medium text-2xl transition-transform duration-300 ${
+                        className={`font-bold text-xl transition-transform duration-300 ${
                             !open ? "scale-0" : ""
                         }`}
                     >
-                        Bal<span className="text-black">i</span>yoni
+                        Bal<span className="text-yellow-500">i</span>yoni
                     </h1>
                 </div>
 
-                <div
-                    className={`flex items-center rounded-xl bg-white border mt-6 ${
-                        !open ? "px-2.5" : "px-4"
-                    } py-2`}
-                >
-                    <CiSearch
-                        className={`text-black text-lg block float-left cursor-pointer ${
-                            open ? "mr-2" : ""
-                        }`}
-                    />
-                    <input
-                        type="search"
-                        placeholder="search"
-                        className={`text-base bg-transparent w-full text-black focus:outline-none ${
-                            !open ? "hidden" : ""
-                        }`}
-                    />
-                </div>
-                <ul className="pt-2">
+                        
+              
+                <ul className="pt-6">
                     {Menus.map((menu, index) => (
                         <React.Fragment key={index}>
                             <li
-                                className={`text-black text-sm flex items-center gap-x-4 cursor-pointer p-2 ${
-                                    menu.spacing && open ?  "mt-6" : "mt-2"
-                                }  hover:bg-red-600 hover:text-white rounded-md`}
+                                className={`flex items-center gap-x-4 p-2 cursor-pointer rounded-lg  hover:bg-red-600 hover:text-white ${
+                                    menu.spacing && open ? "mt-6" : "mt-2"
+                                }`}
                             >
-                                <span className={`text-2xl block float-left  transition-transform duration-[900ms] ${
-                            open ? "rotate-[360deg]" : ""
-                        }`}>
-                                    <MdDashboard />
-                                </span>
+                                <MdDashboard className="text-xl" />
                                 <span
-                                    className={`font-medium text-base flex-1  ${
+                                    className={`font-medium flex-1 transition-all duration-300 ${
                                         !open ? "hidden" : ""
-                                    } transition-transform duration-300 `}
+                                    }`}
                                 >
                                     {menu.title}
                                 </span>
@@ -108,7 +93,7 @@ function App() {
                             </li>
                             {menu.submenu && (
                                 <ul
-                                    className={`overflow-hidden transition-all duration-700 ease-in-out ${
+                                    className={`overflow-hidden transition-all duration-[900ms] ease-in-out ${
                                         submenuOpen ? "max-h-40" : "max-h-0"
                                     }`}
                                 >
@@ -128,35 +113,38 @@ function App() {
                     ))}
                 </ul>
             </div>
-            <div className="flex-1">
+             {/* Main Content */}
+             <div className="flex-1">
                 {/* Navbar */}
-                <div className="bg-white p-4 shadow-md flex items-center justify-between">
+                <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4 shadow-md flex items-center justify-between text-white">
                     {/* Sidebar Toggle Icon */}
-                    <div onClick={() => setOpen(!open)} className={`cursor-pointer transition-transform duration-500 text-2xl text-gray-600 ${
-                        !open ? "rotate-180" : ""
-                    } `}>
+                    <div
+                        onClick={() => setOpen(!open)}
+                        className="cursor-pointer text-2xl"
+                    >
                         <AiOutlineMenu />
                     </div>
+
                     {/* Search Bar */}
-                    <div className="flex items-center bg-gray-100 px-3 py-2 rounded-md w-1/3">
+                    <div className="flex items-center bg-gray-200 px-3 py-1 rounded-full ml-auto w-1/4">
                         <CiSearch className="text-gray-500" />
                         <input
                             type="search"
                             placeholder="Search"
-                            className="bg-transparent focus:outline-none text-gray-700 ml-2 w-full"
+                            className="bg-transparent focus:outline-none text-white ml-2 w-full"
                         />
                     </div>
-                    {/* Home Page Title */}
-                    <h1 className="text-lg font-semibold text-gray-700">Home Page</h1>
-                    {/* Profile and Menu Icons */}
-                    <div className="flex items-center space-x-4">
-                        <FaChevronDown className="text-gray-600 cursor-pointer" />
-                        <BsPersonCircle className="text-3xl text-gray-600 cursor-pointer" />
+
+                    {/* Profile Info */}
+                    <div className="flex items-center space-x-3 ml-4">
+                        <FaCircle className="text-red-500" />
+                        <span className="font-medium">SuperAdmin</span>
+                        <BsPersonCircle className="text-3xl" />
                     </div>
                 </div>
 
-                {/* Content */}
-                <div className="p-7">
+                {/* Page Content */}
+                <div className="p-6 bg-gray-100 min-h-screen">
                     <h1 className="text-2xl font-semibold">Home Page Content</h1>
                 </div>
             </div>
