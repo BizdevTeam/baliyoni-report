@@ -18,10 +18,16 @@ Route::middleware(['auth'])->group(function() {
     Route::get('/admin/hrga', [AdminController::class, 'hrga'])->middleware('UserAccess:hrga');
     Route::get('/admin/spi', [AdminController::class, 'spi'])->middleware('UserAccess:spi');
     Route::get('/logout', [SessionController::class, 'logout']);
+    
 });
 
+<<<<<<< HEAD
 // Route::get('/', [SessionController::class, 'index']);
 // Route::get('/login', [SessionController::class, 'index'])->name('login');
 // Route::get('/sidebar', function () {
 //     return view('sidebar');
 // });
+=======
+
+
+>>>>>>> e4f62ee8fb61e73ec461f2f69dea63117b2bc4ea
