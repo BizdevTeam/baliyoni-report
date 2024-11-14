@@ -3,6 +3,10 @@ use App\Http\Controllers\SessionController;
 use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/sidebar', function () {
+    return view('sidebar');
+});
+
 Route::middleware(['guest'])->group(function() {
     Route::get('/', [SessionController::class, 'index'])->name('login');
     Route::post('/', [SessionController::class, 'login']);
@@ -18,6 +22,10 @@ Route::middleware(['auth'])->group(function() {
     Route::get('/admin/hrga', [AdminController::class, 'hrga'])->middleware('UserAccess:hrga');
     Route::get('/admin/spi', [AdminController::class, 'spi'])->middleware('UserAccess:spi');
     Route::get('/logout', [SessionController::class, 'logout']);
-    
+
 });
+
+
+
+
 

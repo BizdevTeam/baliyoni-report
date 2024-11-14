@@ -1,17 +1,18 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import { MdDashboard } from "react-icons/md";
+import { BsArrowLeft, BsPersonCircle } from "react-icons/bs";
 import { CiSearch } from "react-icons/ci";
 import { FaChevronDown } from "react-icons/fa";
-import { AiOutlineMenu } from "react-icons/ai";
-import { BsPersonCircle } from "react-icons/bs";
+import { IoMenu } from "react-icons/io5";
+import { AiFillBank, AiOutlineMenu } from "react-icons/ai";
 
 function App() {
     const [open, setOpen] = useState(true);
     const [submenuOpen, setSubmenuOpen] = useState(false);
     const Menus = [
+        { title: "Homepage" },
         { title: "Dashboard" },
-        { title: "Pages" },
         { title: "Media", spacing: true },
         {
             title: "Projects",
@@ -31,22 +32,16 @@ function App() {
 
     return (
         <div className="flex">
-            {/* Sidebar */}
             <div
                 className={`${
                     open ? "w-72" : "w-20"
                 } bg-white h-screen p-5 pt-8 relative duration-300 transition-all`}
             >
-                <IoMenu 
-                    onClick={() => setOpen(!open)}
-                    className={`bg-white text-black text-3xl rounded-full absolute -right-3 top-9 border cursor-pointer transition-transform duration-500 ${
-                        !open ? "rotate-180" : ""
-                    }`}
-                />
-              
-              <div className="inline-flex">
+                
+                
+                <div className="inline-flex">
                     <img    
-                        src="images/BYS_LOGO.png"
+                        src="http://localhost:8000/images/BYS_LOGO.png"
                         alt="Baliyoni"
                         className={` w-10 h-auto rounded cursor-pointer block float-left mr-2 transition-transform duration-700 ${
                             open ? "rotate-[360deg]" : ""
@@ -61,6 +56,7 @@ function App() {
                         Bal<span className="text-black">i</span>yoni
                     </h1>
                 </div>
+
                 <div
                     className={`flex items-center rounded-xl bg-white border mt-6 ${
                         !open ? "px-2.5" : "px-4"
@@ -87,7 +83,7 @@ function App() {
                                     menu.spacing && open ?  "mt-6" : "mt-2"
                                 }  hover:bg-red-600 hover:text-white rounded-md`}
                             >
-                                <span className={`text-2xl block float-left  transition-transform duration-500 ${
+                                <span className={`text-2xl block float-left  transition-transform duration-[900ms] ${
                             open ? "rotate-[360deg]" : ""
                         }`}>
                                     <MdDashboard />
@@ -95,7 +91,7 @@ function App() {
                                 <span
                                     className={`font-medium text-base flex-1  ${
                                         !open ? "hidden" : ""
-                                    } transition-transform duration-300 ` }
+                                    } transition-transform duration-300 `}
                                 >
                                     {menu.title}
                                 </span>
@@ -132,13 +128,13 @@ function App() {
                     ))}
                 </ul>
             </div>
-
-            {/* Main Content with Navbar */}
             <div className="flex-1">
                 {/* Navbar */}
                 <div className="bg-white p-4 shadow-md flex items-center justify-between">
                     {/* Sidebar Toggle Icon */}
-                    <div onClick={() => setOpen(!open)} className="cursor-pointer text-2xl text-gray-600">
+                    <div onClick={() => setOpen(!open)} className={`cursor-pointer transition-transform duration-500 text-2xl text-gray-600 ${
+                        !open ? "rotate-180" : ""
+                    } `}>
                         <AiOutlineMenu />
                     </div>
                     {/* Search Bar */}
