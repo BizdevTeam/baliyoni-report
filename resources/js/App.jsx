@@ -4,14 +4,16 @@ import { MdDashboard } from "react-icons/md";
 import { BsArrowLeft } from "react-icons/bs";
 import { CiSearch } from "react-icons/ci";
 import { FaChevronDown } from "react-icons/fa";
+import { IoMenu } from "react-icons/io5";
+
 import { AiFillBank } from "react-icons/ai";
 
 function App() {
     const [open, setOpen] = useState(true);
     const [submenuOpen, setSubmenuOpen] = useState(false);
     const Menus = [
+        { title: "Homepage" },
         { title: "Dashboard" },
-        { title: "Pages" },
         { title: "Media", spacing: true },
         {
             title: "Projects",
@@ -34,11 +36,11 @@ function App() {
             <div
                 className={`${
                     open ? "w-72" : "w-20"
-                } bg-red-600 h-screen p-5 pt-8 relative duration-300 transition-all`}
+                } bg-white h-screen p-5 pt-8 relative duration-300 transition-all`}
             >
-                <BsArrowLeft
+                <IoMenu 
                     onClick={() => setOpen(!open)}
-                    className={`bg-white text-black text-3xl rounded-full absolute -right-3 top-9 border cursor-pointer transition-transform duration-300 ${
+                    className={`bg-white text-black text-3xl rounded-full absolute -right-3 top-9 border cursor-pointer transition-transform duration-500 ${
                         !open ? "rotate-180" : ""
                     }`}
                 />
@@ -46,7 +48,7 @@ function App() {
                     <img    
                         src="http://localhost:8000/images/BYS_LOGO.png"
                         alt="Baliyoni"
-                        className={` w-10 h-auto rounded cursor-pointer block float-left mr-2 transition-transform duration-500 ${
+                        className={` w-10 h-auto rounded cursor-pointer block float-left mr-2 transition-transform duration-700 ${
                             open ? "rotate-[360deg]" : ""
                         }`}
                     />
@@ -61,7 +63,7 @@ function App() {
                 </div>
 
                 <div
-                    className={`flex items-center rounded-md bg-white mt-6 ${
+                    className={`flex items-center rounded-xl bg-white border mt-6 ${
                         !open ? "px-2.5" : "px-4"
                     } py-2`}
                 >
@@ -82,17 +84,19 @@ function App() {
                     {Menus.map((menu, index) => (
                         <React.Fragment key={index}>
                             <li
-                                className={`text-white text-sm flex items-center gap-x-4 cursor-pointer p-2 ${
-                                    menu.spacing ? "mt-9" : "mt-2"
-                                } hover:bg-red-700 rounded-md`}
+                                className={`text-black text-sm flex items-center gap-x-4 cursor-pointer p-2 ${
+                                    menu.spacing && open ?  "mt-6" : "mt-2"
+                                }  hover:bg-red-600 hover:text-white rounded-md`}
                             >
-                                <span className="text-2xl block float-left">
+                                <span className={`text-2xl block float-left  transition-transform duration-500 ${
+                            open ? "rotate-[360deg]" : ""
+                        }`}>
                                     <MdDashboard />
                                 </span>
                                 <span
-                                    className={`font-medium text-base flex-1 ${
+                                    className={`font-medium text-base flex-1  ${
                                         !open ? "hidden" : ""
-                                    } duration-200`}
+                                    } transition-transform duration-300 ` }
                                 >
                                     {menu.title}
                                 </span>
@@ -107,13 +111,17 @@ function App() {
                                     />
                                 )}
                             </li>
-                            {menu.submenu && submenuOpen && open && (
-                                <ul>
+                            {menu.submenu && (
+                                <ul
+                                    className={`overflow-hidden transition-all duration-700 ease-in-out ${
+                                        submenuOpen ? "max-h-40" : "max-h-0"
+                                    }`}
+                                >
                                     {menu.submenuItems.map(
                                         (submenuItem, subIndex) => (
                                             <li
                                                 key={subIndex}
-                                                className="text-white text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-red-700 rounded-md px-7"
+                                                className="text-black hover:text-white text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-red-600 rounded-md px-7"
                                             >
                                                 {submenuItem.title}
                                             </li>
@@ -125,7 +133,7 @@ function App() {
                     ))}
                 </ul>
             </div>
-            <div className="p-7">
+            <div className="p-7 bg-slate-200 w-full">
                 <h1 className="text-2xl font-semibold">Home Page</h1>
             </div>
         </div>
