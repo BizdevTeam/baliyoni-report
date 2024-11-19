@@ -2,11 +2,12 @@
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
 
-Route::get('/', function () {
-    return view('components.app');
+
+Route::get('/sidebar', function () {
+    return view('sidebar');
 });
-
 
 Route::middleware(['guest'])->group(function() {
     Route::get('/ghhgh', [SessionController::class, 'index'])->name('login');
