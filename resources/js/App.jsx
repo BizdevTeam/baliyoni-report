@@ -1,13 +1,11 @@
-    import React, { useState } from "react";
-    import ReactDOM from "react-dom/client";
-    import { MdDashboard } from "react-icons/md";
-    import { BsPersonCircle } from "react-icons/bs";
-    import { CiSearch } from "react-icons/ci";
-    import { AiOutlineMenu } from "react-icons/ai";
-    import { FaHome, FaChartBar, FaShoppingCart, FaUsers, FaShieldAlt, FaSignOutAlt } from 'react-icons/fa';
-    import { AiOutlineDollar, AiOutlinePieChart, AiOutlineTeam } from 'react-icons/ai';
-    import { MdOutlineReport, MdOutlineInventory } from 'react-icons/md';
-    import { FaChevronDown, FaTools, FaFileInvoiceDollar } from 'react-icons/fa';
+import React, { useState } from "react";
+import ReactDOM from "react-dom";
+import { MdDashboard } from "react-icons/md";
+import { BsArrowLeft, BsPersonCircle } from "react-icons/bs";
+import { CiSearch } from "react-icons/ci";
+import { FaChevronDown } from "react-icons/fa";
+import { IoMenu } from "react-icons/io5";
+import { AiFillBank, AiOutlineMenu } from "react-icons/ai";
 
     function App() {
         const [open, setOpen] = useState(true);
@@ -110,75 +108,139 @@
             setOpenSubmenuIndex(openSubmenuIndex === index ? null : index);
         };
 
-        return (
-            <div className="flex">
-                <div className={`${open ? "w-72" : "w-20"} bg-white h-screen p-5 pt-8 relative duration-300`}>
-                    <div className="inline-flex">
-                        <img
-                            src="/images/BYS_LOGO.png"
-                            alt="Baliyoni"
-                            className={`w-10 h-auto rounded cursor-pointer block float-left mr-2 transition-transform duration-700 ${open ? "rotate-[360deg]" : ""}`}
-                        />
-                        <h1 className={`text-black origin-left font-medium text-2xl transition-transform duration-300 ${!open ? "scale-0" : ""}`}>
-                            Bal<span className="text-black">i</span>yoni
-                        </h1>
-                    </div>
-                    <ul className="pt-2">
-    {Menus.map((menu, index) => (
-        <React.Fragment key={index}>
-            <li
-                onClick={() => menu.submenu && handleSubmenuClick(index)}
-                className={`text-black text-sm flex items-center gap-x-4 cursor-pointer p-2 ${menu.spacing && open ? "mt-6" : "mt-2"} hover:bg-red-600 hover:text-white rounded-md`}
+    return (
+        <div className="flex">
+            <div
+                className={`${
+                    open ? "w-72" : "w-20"
+                } bg-white h-screen p-5 pt-8 relative duration-300 transition-all`}
             >
-                <span className="text-2xl block float-left">
-                    {menu.icon}
-                </span>
-                <span className={`font-medium text-base flex-1 ${!open ? "hidden" : ""}`}>
-                    {menu.title}
-                </span>
-                {menu.submenu && open && (
-                    <FaChevronDown
-                        className={`cursor-pointer transition-transform duration-300 ${openSubmenuIndex === index ? "rotate-180" : ""}`}
+                
+                
+                <div className="inline-flex">
+                    <img    
+                        src="http://localhost:8000/images/BYS_LOGO.png"
+                        alt="Baliyoni"
+                        className={` w-10 h-auto rounded cursor-pointer block float-left mr-2 transition-transform duration-700 ${
+                            open ? "rotate-[360deg]" : ""
+                        }`}
                     />
-                )}
-            </li>
-            {menu.submenu && openSubmenuIndex === index && (
-                <ul className="overflow-hidden transition-all duration-500 ease-in-out max-h-96">
-                    {menu.submenuItems.map((submenuItem, subIndex) => (
-                        <li
-                            key={subIndex}
-                            className="text-black hover:text-white text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-red-600 rounded-md px-7"
-                        >
-                            {submenuItem.icon}
-                            <span className="ml-4">{submenuItem.title}</span>
-                        </li>
+              
+                    <h1
+                        className={`text-black origin-left font-medium text-2xl transition-transform duration-300 ${
+                            !open ? "scale-0" : ""
+                        }`}
+                    >
+                        Bal<span className="text-black">i</span>yoni
+                    </h1>
+                </div>
+
+                <div
+                    className={`flex items-center rounded-xl bg-white border mt-6 ${
+                        !open ? "px-2.5" : "px-4"
+                    } py-2`}
+                >
+                    <CiSearch
+                        className={`text-black text-lg block float-left cursor-pointer ${
+                            open ? "mr-2" : ""
+                        }`}
+                    />
+                    <input
+                        type="search"
+                        placeholder="search"
+                        className={`text-base bg-transparent w-full text-black focus:outline-none ${
+                            !open ? "hidden" : ""
+                        }`}
+                    />
+                </div>
+                <ul className="pt-2">
+                    {Menus.map((menu, index) => (
+                        <React.Fragment key={index}>
+                            <li
+                                className={`text-black text-sm flex items-center gap-x-4 cursor-pointer p-2 ${
+                                    menu.spacing && open ?  "mt-6" : "mt-2"
+                                }  hover:bg-red-600 hover:text-white rounded-md`}
+                            >
+                                <span className={`text-2xl block float-left  transition-transform duration-[900ms] ${
+                            open ? "rotate-[360deg]" : ""
+                        }`}>
+                                    <MdDashboard />
+                                </span>
+                                <span
+                                    className={`font-medium text-base flex-1  ${
+                                        !open ? "hidden" : ""
+                                    } transition-transform duration-300 `}
+                                >
+                                    {menu.title}
+                                </span>
+                                {menu.submenu && open && (
+                                    <FaChevronDown
+                                        onClick={() =>
+                                            setSubmenuOpen(!submenuOpen)
+                                        }
+                                        className={`cursor-pointer transition-transform duration-300 ${
+                                            submenuOpen ? "rotate-180" : ""
+                                        }`}
+                                    />
+                                )}
+                            </li>
+                            {menu.submenu && (
+                                <ul
+                                    className={`overflow-hidden transition-all duration-700 ease-in-out ${
+                                        submenuOpen ? "max-h-40" : "max-h-0"
+                                    }`}
+                                >
+                                    {menu.submenuItems.map(
+                                        (submenuItem, subIndex) => (
+                                            <li
+                                                key={subIndex}
+                                                className="text-black hover:text-white text-sm flex items-center gap-x-4 cursor-pointer p-2 hover:bg-red-600 rounded-md px-7"
+                                            >
+                                                {submenuItem.title}
+                                            </li>
+                                        )
+                                    )}
+                                </ul>
+                            )}
+                        </React.Fragment>
                     ))}
                 </ul>
-            )}
-        </React.Fragment>
-    ))}
-</ul>
-                </div>
-                <div className="flex-1">
-                    {/* Navbar */}
-                    <div className="bg-white p-4 shadow-md flex items-center justify-between">
-                        <div onClick={() => setOpen(!open)} className="cursor-pointer text-2xl text-gray-600">
-                            <AiOutlineMenu />
-                        </div>
-                        <div className="flex items-center bg-gray-100 px-3 py-2 rounded-md w-1/3">
-                            <CiSearch className="text-gray-500" />
-                            <input type="search" placeholder="Search" className="bg-transparent focus:outline-none text-gray-700 ml-2 w-full" />
-                        </div>
-                        <h1 className="text-lg font-semibold text-gray-700">Home Page</h1>
+            </div>
+            <div className="flex-1">
+                {/* Navbar */}
+                <div className="bg-white p-4 shadow-md flex items-center justify-between">
+                    {/* Sidebar Toggle Icon */}
+                    <div onClick={() => setOpen(!open)} className={`cursor-pointer transition-transform duration-500 text-2xl text-gray-600 ${
+                        !open ? "rotate-180" : ""
+                    } `}>
+                        <AiOutlineMenu />
+                    </div>
+                    {/* Search Bar */}
+                    <div className="flex items-center bg-gray-100 px-3 py-2 rounded-md w-1/3">
+                        <CiSearch className="text-gray-500" />
+                        <input
+                            type="search"
+                            placeholder="Search"
+                            className="bg-transparent focus:outline-none text-gray-700 ml-2 w-full"
+                        />
+                    </div>
+                    {/* Home Page Title */}
+                    <h1 className="text-lg font-semibold text-gray-700">Home Page</h1>
+                    {/* Profile and Menu Icons */}
+                    <div className="flex items-center space-x-4">
+                        <FaChevronDown className="text-gray-600 cursor-pointer" />
                         <BsPersonCircle className="text-3xl text-gray-600 cursor-pointer" />
                     </div>
-                    <div className="p-7">
-                        <h1 className="text-2xl font-semibold">Home Page Content</h1>
-                    </div>
+                </div>
+
+                {/* Content */}
+                <div className="p-7">
+                    <h1 className="text-2xl font-semibold">Home Page Content</h1>
                 </div>
             </div>
-        );
-    }
+        </div>
+    );
+}
 
     const root = document.getElementById("sidebar");
     if (root) {
