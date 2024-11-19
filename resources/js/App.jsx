@@ -235,7 +235,7 @@ import { AiFillBank, AiOutlineMenu } from "react-icons/ai";
 
                 {/* Content */}
                 <div className="p-7">
-                    <h1 className="text-2xl font-semibold">Home Page Content</h1>
+                    <h1 className="text-2xl font-semibold">Home Page Contentt</h1>
                 </div>
             </div>
         </div>
