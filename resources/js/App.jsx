@@ -42,25 +42,24 @@ function App() {
                 } bg-white h-screen p-5 pt-8 relative duration-300 transition-all`}
             >
                 
-                
-                <div className="inline-flex items-center">
-                    <img
-                        src="http://localhost:8000/images/BYS_LOGO.png"
-                        alt="Baliyoni"
-                        className={`w-10 h-auto rounded cursor-pointer mr-2 transform transition-transform duration-700 ${
-                            open ? "rotate-360" : ""
-                        } ${
-                            open ? "rotate-[360deg]" : ""
-                        }`}
-                    />
-                    <h1
-                        className={`font-bold text-xl transition-transform duration-300 ${
-                            !open ? "scale-0" : ""
-                        }`}
-                    >
-                        Bal<span className="text-yellow-500">i</span>yoni
-                    </h1>
+                <div className={`inline-flex ${open ? "justify-center w-full" : ""}`}>
+                    {open ? (
+                        <img
+                            src="asset/baliyoni.png" 
+                            alt="Maximized Image"
+                            className="w-52 h-auto rounded cursor-pointer block float-left mr-2 transition-transform duration-700"
+                        />
+                    ) : (
+                        <>
+                            <img
+                                src="images/BYS_LOGO.png"
+                                alt="Baliyoni Logo"
+                                className="w-10 h-auto rounded cursor-pointer block float-left mr-2 transition-transform duration-700"
+                            />
+                        </>
+                    )}
                 </div>
+
 
                         
               
@@ -126,7 +125,7 @@ function App() {
                     </div>
 
                     {/* Search Bar */}
-                    <div className="flex items-center bg-gray-200 px-3 py-1 rounded-full ml-auto w-1/4">
+                    <div className="flex items-center bg-gray-200 px-3 py-1 rounded-md ml-auto w-1/3">
                         <CiSearch className="text-gray-500" />
                         <input
                             type="search"
@@ -136,11 +135,11 @@ function App() {
                     </div>
 
                     {/* Profile Info */}
-                    <div className="flex items-center space-x-3 ml-4">
-                        <FaCircle className="text-red-500" />
-                        <span className="font-medium">SuperAdmin</span>
+                    <div className="flex items-center space-x-3 ml-6">
                         <BsPersonCircle className="text-3xl" />
+                        <span className="font-medium">SuperAdmin</span>
                     </div>
+
                 </div>
 
                 {/* Page Content */}

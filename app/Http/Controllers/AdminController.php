@@ -10,7 +10,7 @@ class AdminController extends Controller
 {
     // 
     function index(){
-        return view('dashboard/admin');
+        return view('admincontent');
     }
     function marketing(){
         echo "Hello Welcome Back Marketing!";
