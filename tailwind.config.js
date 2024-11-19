@@ -1,5 +1,6 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
-const plugin = require('tailwind-scrollbar');
+const plugin = require('tailwindcss/plugin');
+const tailwindScrollbar = require('tailwind-scrollbar');
 /** @type {import('tailwindcss').Config} */
 export default {
     content: [
@@ -8,7 +9,7 @@ export default {
         './resources/**/*.blade.php',
         './resources/**/*.js',
         './resources/**/*.vue',
-        './resources/**/*.jsx',
+        // './resources/**/*.jsx',
     ],
     theme: {
         extend: {
@@ -18,7 +19,7 @@ export default {
         },
     },
     plugins: [
-        plugin({ nocompatible: true }), // Tambahkan ini
+        tailwindScrollbar,
     ],
     variants: {
         scrollbar: ['rounded', 'hover'], // Aktifkan varian yang diperlukan
