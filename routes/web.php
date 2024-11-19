@@ -12,7 +12,7 @@ Route::middleware(['guest'])->group(function() {
 
 Route::middleware(['auth'])->group(function() {
 
-    Route::get('/admin', [AdminController::class, 'index'])->name('components.app')->middleware('UserAccess:superadmin');
+    Route::get('/admin', [AdminController::class, 'index'])->name('dashboard.admin')->middleware('UserAccess:superadmin');
     Route::get('/admin/marketing', [AdminController::class, 'marketing'])->middleware('UserAccess:marketing');
     Route::get('/admin/it', [AdminController::class, 'it'])->middleware('UserAccess:it');
     Route::get('/admin/accounting', [AdminController::class, 'accounting'])->middleware('UserAccess:accounting');
