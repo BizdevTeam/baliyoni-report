@@ -11,7 +11,7 @@
 <div class="z-50 flex w-1/2 max-w-full max-h-full overflow-hidden bg-white shadow-lg rounded-lg">
     <!-- Left side with logo and decorative circles -->
     <div class="relative flex items-center justify-center w-1/2 bg-gray-200 p-8">
-        <img src="{{ asset('asset/baliyoni.png') }}" alt="Baliyoni Group Logo" class="w-2/3 max-w-xs">
+        <img src="{{ asset('images/baliyoni.png') }}" alt="Baliyoni Group Logo" class="w-2/3 max-w-xs">
         
         <!-- Decorative circles -->
         <div class="z-1 absolute w-32 h-32 bg-gradient-to-b from-black from-15% via-red-600 via-75% rounded-full -top-2 -right-2"></div>
