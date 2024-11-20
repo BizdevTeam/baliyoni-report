@@ -1,7 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 /*!
  *   AdminLTE v3.2.0
  *   Author: Colorlib
@@ -10707,7 +10703,7 @@ body,
 }
 
 @supports not (-webkit-touch-callout: none) {
-  .layout-fixed .wrapper .sidebar {
+  .layout-fixed .wrapper .sidebar { 
     height: calc(100vh - (3.5rem + 1px));
   }
   .layout-fixed.text-sm .wrapper .sidebar {
@@ -11828,7 +11824,7 @@ body:not(.layout-fixed) .main-sidebar .sidebar {
   height: calc(100vh - calc(3.5rem + 1px));
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: #a9a9a9 transparent;
+  scrollbar-color: #343a40 transparent;
 }
 
 .layout-fixed .control-sidebar .control-sidebar-content::-webkit-scrollbar {
@@ -12579,6 +12575,15 @@ body:not(.layout-fixed) .main-sidebar .sidebar {
   scrollbar-width: none;
 }
 
+.sidebar img {
+  width: 125px; /* Adjust the width of the image */
+  height: auto; /* Maintain the aspect ratio */
+ /* Make the image circular */
+  border: 2px solid #fff; /* Add a white border around the image */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+  transition: transform 0.3s ease-in-out;
+}
+
 .sidebar::-webkit-scrollbar-thumb {
   background-color: #a9a9a9;
 }
@@ -12623,7 +12628,7 @@ body:not(.layout-fixed) .main-sidebar .sidebar {
 .user-panel,
 .user-panel .info {
   overflow: hidden;
-  white-space: nowrap;  
+  white-space: nowrap;
 }
 
 .user-panel .image {
@@ -12633,7 +12638,7 @@ body:not(.layout-fixed) .main-sidebar .sidebar {
 
 .user-panel img {
   height: auto;
-  width: 3.5rem;
+  width: 1rem;
 }
 
 .user-panel .info {
