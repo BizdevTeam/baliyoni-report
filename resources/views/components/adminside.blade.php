@@ -3,10 +3,11 @@
     <!-- Sidebar -->
     <div class="sidebar">
       <!-- Sidebar user panel (optional) -->
-      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-        <div class="image">
-          <img src="images/baliyoni.png" class="" alt="User Image">
-        </div>
+      <div class=" mt-3 pb-3  d-flex">
+      <div class="logo w-44 h-auto">
+  <img src="images/baliyoni.png" class="w-full" alt="User Image">
+</div>
+
         <div class="info">
           <a href="#" class="d-block">Alexander Pierce</a>
         </div>

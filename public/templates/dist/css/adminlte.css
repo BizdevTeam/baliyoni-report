@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /*!
  *   AdminLTE v3.2.0
  *   Author: Colorlib
@@ -12619,7 +12623,7 @@ body:not(.layout-fixed) .main-sidebar .sidebar {
 .user-panel,
 .user-panel .info {
   overflow: hidden;
-  white-space: nowrap;
+  white-space: nowrap;  
 }
 
 .user-panel .image {
@@ -12629,7 +12633,7 @@ body:not(.layout-fixed) .main-sidebar .sidebar {
 
 .user-panel img {
   height: auto;
-  width: 2.1rem;
+  width: 3.5rem;
 }
 
 .user-panel .info {

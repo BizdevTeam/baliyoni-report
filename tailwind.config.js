@@ -9,6 +9,8 @@ export default {
         './resources/**/*.blade.php',
         './resources/**/*.js',
         './resources/**/*.vue',
+        './resources/**/*.js', 
+        './resources/**/*.html', 
         // './resources/**/*.jsx',
     ],
     theme: {
@@ -23,5 +25,5 @@ export default {
     ],
     variants: {
         scrollbar: ['rounded', 'hover'], // Aktifkan varian yang diperlukan
-    },
+      },
 };
