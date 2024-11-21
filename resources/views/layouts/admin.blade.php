@@ -25,8 +25,8 @@
   <link rel="stylesheet" href="{{ asset('templates/plugins/daterangepicker/daterangepicker.css') }}">
   <!-- summernote -->
   <link rel="stylesheet" href="{{ asset('templates/plugins/summernote/summernote-bs4.min.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
   @vite('resources/css/tailwind.css')
-  @vite('resources/js/app.js')
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper">

@@ -1,0 +1,20 @@
+    .custom-scrollbar {
+        scrollbar-width: thin; /* Untuk Firefox */
+        scrollbar-color: #0a49c9 #ff1302; /* Thumb dan Track */
+    }
+    
+    /* Untuk Chrome, Edge, Safari */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #d1d5db;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: #6b7280;
+        border-radius: 4px;
+    }
+    

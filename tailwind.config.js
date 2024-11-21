@@ -19,7 +19,7 @@ export default {
         },
     },
     plugins: [
-        require('tailwind-scrollbar')({ nocompatible: true }), // Use `nocompatible` to avoid compatibility issues
+        tailwindScrollbar,
     ],
     variants: {
         extend: {
