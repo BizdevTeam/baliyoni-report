@@ -19,7 +19,6 @@ export default {
         },
     },
     plugins: [
-        tailwindScrollbar,
     ],
     variants: {
         extend: {

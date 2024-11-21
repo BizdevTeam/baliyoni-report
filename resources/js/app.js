@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const logoFull = document.getElementById('logo-full');
     const logoMini = document.getElementById('logo-mini');
     const navbar = document.getElementById('navbar');
-    const content = document.getElementById('content'); // Add content area
+    const admincontent = document.getElementById('admincontent'); // Add content area
 
     // Toggle Sidebar
     toggleSidebar?.addEventListener('click', () => {
@@ -30,9 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const adjustLayout = (isMinimized) => {
-        // Adjust navbar margin
         navbar.style.marginLeft = isMinimized ? '4rem' : '16rem';
-        // Adjust content margin or width
         admincontent.style.marginLeft = isMinimized ? '4rem' : '16rem';
         admincontent.style.width = isMinimized ? 'calc(100% - 4rem)' : 'calc(100% - 16rem)';
     };
