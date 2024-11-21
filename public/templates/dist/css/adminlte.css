@@ -12567,33 +12567,36 @@ body:not(.layout-fixed) .main-sidebar .sidebar {
   height: calc(100% - (3.5rem + 1px));
   overflow-x: hidden;
   overflow-y: initial;
-  padding-bottom: 0;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-  padding-top: 0;
-  scrollbar-color: #a9a9a9 transparent;
-  scrollbar-width: none;
+  padding: 0 0.5rem;
+  scrollbar-color: #444444 #1c1c1c; /* Warna scrollbar (thumb dan track) */
+  scrollbar-width: thin; /* Ukuran scrollbar lebih kecil */
 }
 
 .sidebar img {
   width: 125px; /* Adjust the width of the image */
   height: auto; /* Maintain the aspect ratio */
- /* Make the image circular */
+  border-radius: 50%; /* Make the image circular */
   border: 2px solid #fff; /* Add a white border around the image */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
   transition: transform 0.3s ease-in-out;
 }
 
+.sidebar::-webkit-scrollbar {
+  width: 8px; /* Lebar scrollbar */
+}
+
 .sidebar::-webkit-scrollbar-thumb {
-  background-color: #a9a9a9;
+  background-color: #444444; /* Warna thumb (pegangan scrollbar) */
+  border-radius: 4px; /* Ujung scrollbar melengkung */
 }
 
 .sidebar::-webkit-scrollbar-track {
-  background-color: transparent;
+  background-color: #1c1c1c; /* Warna track (latar belakang scrollbar) */
+  border-radius: 4px; /* Ujung track melengkung */
 }
 
 .sidebar::-webkit-scrollbar-corner {
-  background-color: transparent;
+  background-color: #1c1c1c; /* Warna sudut scrollbar */
 }
 
 .sidebar::-webkit-scrollbar {
