@@ -26,46 +26,39 @@
   <!-- summernote -->
   <link rel="stylesheet" href="{{ asset('templates/plugins/summernote/summernote-bs4.min.css') }}">
   @vite('resources/css/tailwind.css')
+  @vite('resources/js/app.js')
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper">
 
-  <!-- Navbar -->
-  @include('components.adminnav')
-  <!-- /.navbar -->
+  <x-adminside />
+  <x-adminnav/>
+  <x-admincontent>
+      @yield('content')
+  </x-admincontent>
+  
 
-  <!-- Main Sidebar Container -->
-  @include('components.adminside')
-
-  <!-- Content Wrapper. Contains page content -->
-  @include('components.admincontent')
-  <!-- /.content-wrapper -->
 
 
   <footer class="main-footer">
-    <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong>
-    All rights reserved.
+    <strong><a href="https://adminlte.io">LETMECOOOK</a>.</strong>
     <div class="float-right d-none d-sm-inline-block">
-      <b>Version</b> 3.2.0
     </div>
   </footer>
 
-  <!-- Control Sidebar -->
+  {{-- <!-- Control Sidebar -->
   <aside class="control-sidebar control-sidebar-dark">
     <!-- Control sidebar content goes here -->
   </aside>
   <!-- /.control-sidebar -->
 </div>
-<!-- ./wrapper -->
+<!-- ./wrapper --> --}}
 
 <!-- jQuery -->
 <script src="{{ asset('/templates/plugins/jquery/jquery.min.js') }}"></script>
 <!-- jQuery UI 1.11.4 -->
 <script src="{{ asset('/templates/plugins/jquery-ui/jquery-ui.min.js"') }}"></script>
 <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
-<script>
-  $.widget.bridge('uibutton', $.ui.button)
-</script>
 <!-- Bootstrap 4 -->
 <script src="{{ asset('/templates/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 <!-- ChartJS -->
@@ -88,6 +81,10 @@
 <script src="{{ asset('/templates/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
 <!-- AdminLTE App -->
 <script src="{{ asset("/templates/dist/js/adminlte.js") }}"></script>
+<script src="{{ asset("js/app.js") }}"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+
 
 </body>
 </html>
