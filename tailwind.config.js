@@ -22,6 +22,7 @@ export default {
     },
     plugins: [
         tailwindScrollbar,
+        require('tailwind-scrollbar'),
     ],
     variants: {
         scrollbar: ['rounded', 'hover'], // Aktifkan varian yang diperlukan
