@@ -7,7 +7,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const logoFull = document.getElementById('logo-full');
     const logoMini = document.getElementById('logo-mini');
     const navbar = document.getElementById('navbar');
-    const admincontent = document.getElementById('admincontent'); // Add content area
+    const admincontent = document.getElementById('admincontent'); // Konten utama
+    const footer = document.getElementById("main-footer"); // Footer utama
+
+    // Fungsi untuk menyesuaikan layout berdasarkan status sidebar
+    const adjustLayout = (isMinimized) => {
+        const sidebarWidth = isMinimized ? '4rem' : '16rem'; // Lebar sidebar
+        navbar.style.marginLeft = sidebarWidth;
+        admincontent.style.marginLeft = sidebarWidth;
+        admincontent.style.width = `calc(100% - ${sidebarWidth})`;
+        footer.style.marginLeft = sidebarWidth;
+    };
 
     // Toggle Sidebar
     toggleSidebar?.addEventListener('click', () => {
@@ -18,22 +28,18 @@ document.addEventListener('DOMContentLoaded', () => {
         sidebar.classList.toggle('w-72', !isMinimized);
         sidebar.classList.toggle('w-16', isMinimized);
 
+        // Ubah visibilitas logo
         logoFull?.classList.toggle('hidden', isMinimized);
         logoMini?.classList.toggle('hidden', !isMinimized);
 
+        // Sembunyikan/Perlihatkan label menu
         document.querySelectorAll('.menu-label').forEach(label => {
             label.classList.toggle('hidden', isMinimized);
         });
 
-        // Adjust navbar and content area
+        // Sesuaikan layout
         adjustLayout(isMinimized);
     });
-
-    const adjustLayout = (isMinimized) => {
-        navbar.style.marginLeft = isMinimized ? '4rem' : '16rem';
-        admincontent.style.marginLeft = isMinimized ? '4rem' : '16rem';
-        admincontent.style.width = isMinimized ? 'calc(100% - 4rem)' : 'calc(100% - 16rem)';
-    };
 
     // Dropdown Toggle
     document.querySelectorAll('[aria-controls]').forEach(button => {
@@ -53,4 +59,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // Inisialisasi layout saat halaman dimuat
+    const isMinimized = sidebar.getAttribute('data-minimized') === 'true';
+    adjustLayout(isMinimized);
 });

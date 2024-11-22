@@ -27,6 +27,12 @@
                     <span class="menu-label flex-1 ml-3 text-left">Marketing</span>
                     <i class="fas fa-chevron-down ml-auto transition-transform"></i>
                 </button>
+<<<<<<< HEAD
+                <ul id="dropdown-ecommerce" class="hidden py-2 pl-6 space-y-2">
+                    <li><a href="/marketings/laporanpaketadministrasi" class="block px-3 py-2 text-gray-700 rounded-lg hover:bg-gray-100 transition">Products</a></li>
+                    <li><a href="#" class="block px-3 py-2 text-gray-700 rounded-lg hover:bg-gray-100 transition">Billing</a></li>
+                    <li><a href="#" class="block px-3 py-2 text-gray-700 rounded-lg hover:bg-gray-100 transition">Invoice</a></li>
+=======
                 <ul id="dropdown-marketing" class="hidden py-2 pl-6 space-y-2">
                     <li>
                         <a href="#"
@@ -63,6 +69,7 @@
                             <span class="ml-2">Laporan Per Instansi</span>
                         </a>
                     </li>
+>>>>>>> ecc7b1d91ff18dec30f13147da5b15012489449d
                 </ul>
             </li>
 
