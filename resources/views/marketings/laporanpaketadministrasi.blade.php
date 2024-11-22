@@ -31,8 +31,10 @@
                 <label for="website" class="block text-sm font-medium">Website</label>
                 <select id="website" name="website" class="w-full border-gray-300 rounded p-2" required>
                     <option value="" disabled selected>Pilih Website</option>
-                    <option value="Website 1">Website 1</option>
-                    <option value="Website 2">Website 2</option>
+                    <option value="E - Katalog">E - Katalog</option>
+                    <option value="E - Katalog Luar Bali">E - Katalog Luar Bali</option>
+                    <option value="Balimall">Balimall</option>
+                    <option value="Siplah">Siplah</option>
                 </select>
             </div>
             <div>
