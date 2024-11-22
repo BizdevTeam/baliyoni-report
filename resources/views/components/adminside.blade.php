@@ -22,7 +22,7 @@
                     <span class="menu-label flex-1 ml-3 text-left">E-commerce</span>
                 </button>
                 <ul id="dropdown-ecommerce" class="hidden py-2 pl-6 space-y-2">
-                    <li><a href="#" class="block px-3 py-2 text-gray-700 rounded-lg hover:bg-gray-100 transition">Products</a></li>
+                    <li><a href="/marketings/laporanpaketadministrasi" class="block px-3 py-2 text-gray-700 rounded-lg hover:bg-gray-100 transition">Products</a></li>
                     <li><a href="#" class="block px-3 py-2 text-gray-700 rounded-lg hover:bg-gray-100 transition">Billing</a></li>
                     <li><a href="#" class="block px-3 py-2 text-gray-700 rounded-lg hover:bg-gray-100 transition">Invoice</a></li>
                 </ul>
