@@ -1,5 +1,5 @@
 import './bootstrap.js';
-import '../css/app.css'; 
+import '../css/app.css';
 
 document.addEventListener('DOMContentLoaded', () => {
     const sidebar = document.getElementById('sidebar');
@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sidebar.setAttribute('data-minimized', !isMinimized);
 
         // Adjust sidebar classes
-        sidebar.classList.toggle('w-64', !isMinimized);
+        sidebar.classList.toggle('w-72', !isMinimized);
         sidebar.classList.toggle('w-16', isMinimized);
 
         logoFull?.classList.toggle('hidden', isMinimized);
@@ -41,8 +41,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const dropdownId = button.getAttribute('aria-controls');
             const dropdown = document.getElementById(dropdownId);
             if (dropdown) {
-                dropdown.classList.toggle('hidden');
-                button.setAttribute('aria-expanded', dropdown.classList.contains('hidden') ? 'false' : 'true');
+                const isHidden = dropdown.classList.contains('hidden');
+                dropdown.classList.toggle('hidden', !isHidden);
+                button.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+
+                // Rotate indicator (optional)
+                const icon = button.querySelector('.fa-chevron-down');
+                if (icon) {
+                    icon.classList.toggle('rotate-180', isHidden);
+                }
             }
         });
     });
