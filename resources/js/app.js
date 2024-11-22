@@ -24,8 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const isMinimized = sidebar.getAttribute('data-minimized') === 'true';
         sidebar.setAttribute('data-minimized', !isMinimized);
 
-        // Ubah kelas sidebar
-        sidebar.classList.toggle('w-64', !isMinimized);
+        // Adjust sidebar classes
+        sidebar.classList.toggle('w-72', !isMinimized);
         sidebar.classList.toggle('w-16', isMinimized);
 
         // Ubah visibilitas logo
@@ -47,8 +47,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const dropdownId = button.getAttribute('aria-controls');
             const dropdown = document.getElementById(dropdownId);
             if (dropdown) {
-                dropdown.classList.toggle('hidden');
-                button.setAttribute('aria-expanded', !dropdown.classList.contains('hidden'));
+                const isHidden = dropdown.classList.contains('hidden');
+                dropdown.classList.toggle('hidden', !isHidden);
+                button.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+
+                // Rotate indicator (optional)
+                const icon = button.querySelector('.fa-chevron-down');
+                if (icon) {
+                    icon.classList.toggle('rotate-180', isHidden);
+                }
             }
         });
     });
