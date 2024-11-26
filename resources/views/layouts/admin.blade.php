@@ -12,7 +12,6 @@
   <!-- Tempusdominus Bootstrap 4 -->
   <link rel="stylesheet" href="{{ asset('templates/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
   <!-- Theme style -->
-  <link rel="stylesheet" href="{{ asset('templates/dist/css/adminlte.min.css') }}">
   <!-- overlayScrollbars -->
   <link rel="stylesheet" href="{{ asset('templates/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
   <!-- Custom CSS -->
@@ -28,7 +27,9 @@
     <x-admincontent>
         @yield('content')
     </x-admincontent>
-    
+    <footer class="main-footer">
+        <strong>Footer Information</strong>
+    </footer>
 
 <!-- Scripts -->
 <script src="{{ asset('/templates/plugins/jquery/jquery.min.js') }}"></script>
