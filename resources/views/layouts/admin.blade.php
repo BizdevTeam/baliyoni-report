@@ -18,6 +18,7 @@
   <!-- Custom CSS -->
   <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
   @vite('resources/css/tailwind.css')
+  @vite('resources/css/custom.css')
   @vite('resources/js/app.js')
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -27,9 +28,7 @@
     <x-admincontent>
         @yield('content')
     </x-admincontent>
-    <footer class="main-footer">
-        <strong>Footer Information</strong>
-    </footer>
+    
 
 <!-- Scripts -->
 <script src="{{ asset('/templates/plugins/jquery/jquery.min.js') }}"></script>
