@@ -13,9 +13,14 @@ class LaporanPaketAdministrasiController extends Controller
      */
     public function index()
     {
+        LaporanPaketAdministrasi::all();
         return view('marketings.laporanpaketadministrasi');
     }
 
+    public function getData()
+    {
+        LaporanPaketAdministrasi::all();
+    }
     /**
      * Menyimpan data laporan paket administrasi.
      */
@@ -23,41 +28,68 @@ class LaporanPaketAdministrasiController extends Controller
     {
         // Validasi input
         $validatedData = $request->validate([
-            'bulan_tahun' => 'required|date_format:m/Y', // Format bulan/tahun
+            'bulan_tahun' => ['required', 'regex:/^(0[1-9]|1[0-2])\/\d{4}$/'], // Format bulan/tahun
             'keterangan' => 'nullable|string|max:255',
             'website' => 'required|string|max:255',
-            'paket_rp' => 'required|integer|min:0',     // Nilai paket harus >= 0
+            'paket_rp' => 'required|integer|min:0',    // Nilai paket harus >= 0
         ]);
 
         try {
+            // Cek apakah kombinasi bulan/tahun dan website sudah ada
+            $existingEntry = LaporanPaketAdministrasi::where('bulan_tahun', $validatedData['bulan_tahun'])
+                ->where('website', $validatedData['website'])
+                ->first();
+
+            if ($existingEntry) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "Website {$validatedData['website']} sudah dipilih untuk bulan {$validatedData['bulan_tahun']}.",
+                ], 400); // 400 = Bad Request
+            }
+
             // Simpan data ke database
             LaporanPaketAdministrasi::create($validatedData);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Data successfully saved!',
             ]);
         } catch (\Exception $e) {
-            Log::error('Error saving data: ' . $e->getMessage()); // Logging error
+            // Logging error dan data input
+            Log::error('Error saving data: ' . $e->getMessage());
             Log::info('Input data:', $request->all());
-            Log::info($request->all()); 
+
             return response()->json([
                 'success' => false,
-                'message' => 'Error message here',
-            ]); // 500 = Internal Server Error
+                'message' => 'An error occurred while saving data.',
+            ], 500); // 500 = Internal Server Error
         }
     }
 
     /**
      * Mengambil semua data laporan paket administrasi.
      */
-    public function data()
+    public function data(Request $request)
     {
         try {
-            $pakets = LaporanPaketAdministrasi::orderBy('created_at', 'desc')->get();
+            // Ambil parameter filter bulan/tahun jika ada
+            $bulanTahun = $request->query('bulan_tahun');
+
+            // Query data dengan atau tanpa filter bulan/tahun
+            $query = LaporanPaketAdministrasi::query();
+
+            if ($bulanTahun) {
+                $query->where('bulan_tahun', $bulanTahun);
+            }
+
+            $pakets = $query->orderBy('created_at', 'desc')->get();
 
             // Jika data kosong, kembalikan array kosong
             if ($pakets->isEmpty()) {
-                return response()->json([]);
+                return response()->json([
+                    'success' => true,
+                    'data' => [],
+                ], 200); // 200 = OK
             }
 
             return response()->json([

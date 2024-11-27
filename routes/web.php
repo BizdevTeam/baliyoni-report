@@ -6,10 +6,27 @@ use App\Http\Controllers\LaporanPaketAdministrasiController;
 
 //marketing : 
 Route::middleware(['web'])->group(function () {
-    Route::get('marketings/laporanpaketadministrasi', [LaporanPaketAdministrasiController::class, 'index'])->name('marketings.laporanpaketadministrasi');
-    Route::post('marketings/laporanpaketadministrasi/store', [LaporanPaketAdministrasiController::class, 'store'])->name('marketings.store');
-    Route::get('marketings/laporanpaketadministrasi/data', [LaporanPaketAdministrasiController::class, 'data'])->name('marketings.data');
+    // Menampilkan halaman laporan paket administrasi
+    Route::get('marketings/laporanpaketadministrasi', [LaporanPaketAdministrasiController::class, 'index'])
+        ->name('marketings.laporanpaketadministrasi');
+
+    // // Halaman input data laporan paket administrasi
+    // Route::get('marketings/laporanpaketadministrasi', [LaporanPaketAdministrasiController::class, 'create'])
+    //     ->name('marketings.laporanpaketadministrasi.create');
+
+    // Menyimpan data laporan paket administrasi
+    Route::post('marketings/laporanpaketadministrasi/store', [LaporanPaketAdministrasiController::class, 'store'])
+        ->name('marketings.laporanpaketadministrasi.store');
+
+    // Mengambil semua data laporan paket administrasi (API untuk tabel)
+    Route::get('marketings/laporanpaketadministrasi/data', [LaporanPaketAdministrasiController::class, 'data'])
+        ->name('marketings.laporanpaketadministrasi.data');
+
+    // Filter data laporan paket administrasi (API untuk filter/urutan)
+    Route::get('marketings/laporanpaketadministrasi/filter', [LaporanPaketAdministrasiController::class, 'filterData'])
+        ->name('marketings.laporanpaketadministrasi.filter');
 });
+
 
 
 
