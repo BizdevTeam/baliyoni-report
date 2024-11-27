@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sidebar.setAttribute('data-minimized', !isMinimized);
 
         // Adjust sidebar classes
-        sidebar.classList.toggle('w-72', !isMinimized);
+        sidebar.classList.toggle('w-64', !isMinimized);
         sidebar.classList.toggle('w-16', isMinimized);
 
         // Ubah visibilitas logo
