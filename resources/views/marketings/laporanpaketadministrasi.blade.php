@@ -42,7 +42,7 @@
                 <input type="text" id="paket_rp" name="paket_rp" class="w-full border-gray-300 rounded p-2"
                     placeholder="0" min="0" required>
             </div>
-            <button type="button" id="add-paket" class="bg-blue-500 text-white px-4 py-2 rounded">Tambah Paket</button>
+            <button type="button" id="add-paket" class="bg-red-600 text-white px-4 py-2 rounded">Tambah Paket</button>
         </form>
 
         <div id="feedback" class="text-sm text-red-500 mt-2 hidden"></div>

@@ -29,7 +29,7 @@
                 </button>
                 <ul id="dropdown-marketing" class="hidden py-2 pl-6 space-y-2">
                     <li>
-                        <a href="#"
+                        <a href="/marketings/rekappenjualan"
                             class="flex items-center block px-3 py-2 text-gray-700  hover:bg-red-600 hover:text-white transition">
                             <img src="icon/RekapPenjualan.svg" class="w-5 h-5">
                             <span class="ml-2">Rekap Penjualan</span>
