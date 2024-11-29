@@ -1,50 +1,48 @@
 <?php
+
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LaporanPaketAdministrasiController;
 use App\Http\Controllers\RekapPenjualanController;
 
-//marketing : 
 Route::middleware(['web'])->group(function () {
-    Route::get('marketings/laporanpaketadministrasi', [LaporanPaketAdministrasiController::class, 'index'])->name('marketings.laporanpaketadministrasi');
-    Route::post('marketings/laporanpaketadministrasi/store', [LaporanPaketAdministrasiController::class, 'store'])->name('marketings.store');
-    Route::get('marketings/laporanpaketadministrasi/data', [LaporanPaketAdministrasiController::class, 'data'])->name('marketings.data');
-   
-    
-    Route::get('marketings/rekappenjualan', [LaporanPaketAdministrasiController::class, 'index'])
-        ->name('marketings.rekappenjualan');
+    // Marketing Routes
+    // Route to display the laporan paket administrasi page (view)
+    Route::get('marketings/laporanpaketadministrasi', [LaporanPaketAdministrasiController::class, 'index'])
+        ->name('marketings.laporanpaketadministrasi');
 
     // Route to store new laporan paket administrasi data
-    Route::post('marketings/rekappenjualan/store', [LaporanPaketAdministrasiController::class, 'store'])
-        ->name('marketings.rekappenjualan.store');
+    Route::post('marketings/laporanpaketadministrasi/store', [LaporanPaketAdministrasiController::class, 'store'])
+        ->name('marketings.laporanpaketadministrasi.store');
 
     // Route to update existing laporan paket administrasi data
-    Route::put('/marketings/rekappenjualan/update/{id}', [RekapPenjualanController::class, 'update']);
+    Route::put('marketings/laporanpaketadministrasi/update/{id}', [LaporanPaketAdministrasiController::class, 'update'])
+        ->name('marketings.laporanpaketadministrasi.update');
 
     // Route to fetch laporan paket administrasi data (API for table)
-    Route::get('marketings/rekappenjualan/data', [LaporanPaketAdministrasiController::class, 'data'])
-        ->name('marketings.rekappenjualan.data');
+    Route::get('marketings/laporanpaketadministrasi/data', [LaporanPaketAdministrasiController::class, 'data'])
+        ->name('marketings.laporanpaketadministrasi.data');
 
     // Route to fetch filtered laporan paket administrasi data (optional for filtering purposes)
-    Route::get('marketings/rekappenjualan/filter', [LaporanPaketAdministrasiController::class, 'filterData'])
-        ->name('marketings.rekappenjualan.filter');
+    Route::get('marketings/laporanpaketadministrasi/filter', [LaporanPaketAdministrasiController::class, 'filterData'])
+        ->name('marketings.laporanpaketadministrasi.filter');
 
     // Route to delete laporan paket administrasi data
-    Route::delete('/marketings/rekappenjualan/destroy/{id}', [RekapPenjualanController::class, 'destroy']);
+    Route::delete('marketings/laporanpaketadministrasi/destroy/{id}', [LaporanPaketAdministrasiController::class, 'destroy'])
+        ->name('marketings.laporanpaketadministrasi.destroy');
     // Marketing Routes end
-    });
 
+});
 
-
-
-Route::middleware(['guest'])->group(function() {
+Route::middleware(['guest'])->group(function () {
+    // Guest routes for login
     Route::get('/', [SessionController::class, 'index'])->name('login');
     Route::post('/', [SessionController::class, 'login']);
 });
 
-Route::middleware(['auth'])->group(function() {
-
+Route::middleware(['auth'])->group(function () {
+    // Authenticated routes
     Route::get('/admin', [AdminController::class, 'index'])->name('layouts.admin')->middleware('UserAccess:superadmin');
     Route::get('/admin/marketing', [AdminController::class, 'marketing'])->middleware('UserAccess:marketing');
     Route::get('/admin/it', [AdminController::class, 'it'])->middleware('UserAccess:it');
@@ -54,9 +52,3 @@ Route::middleware(['auth'])->group(function() {
     Route::get('/admin/spi', [AdminController::class, 'spi'])->middleware('UserAccess:spi');
     Route::get('/logout', [SessionController::class, 'logout']);
 });
-
-
-
-
-
-
