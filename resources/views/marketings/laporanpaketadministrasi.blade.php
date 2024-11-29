@@ -9,8 +9,6 @@
     @vite('resources/css/app.css')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
-
-
 </head>
 
 <body class="bg-gray-100 p-6">
@@ -179,7 +177,8 @@
 
         // Fetch and Update Data
         async function updateData(filter = '') {
-            const url = filter ? `/marketings/laporanpaketadministrasi/data?bulan_tahun=${filter}` : '/marketings/laporanpaketadministrasi/data';
+            const url = filter ? `/marketings/laporanpaketadministrasi/data?bulan_tahun=${filter}` :
+                '/marketings/laporanpaketadministrasi/data';
             try {
                 const response = await fetch(url);
                 const data = await response.json();
@@ -196,32 +195,36 @@
 
         // Update Table
         function updateTable(items) {
-    const tableBody = document.getElementById('data-table');
-    tableBody.innerHTML = '';
-    items.forEach((item) => {
-        const row = `
-            <tr class="border-b">
-                <td class="border px-4 py-2">${item.bulan_tahun}</td>
-                <td class="border px-4 py-2">${item.website}</td>
-                <td class="border px-4 py-2">${item.paket_rp}</td>
-                <td class="border px-4 py-2">${item.keterangan || '-'}</td>
-                <td class="border px-4 py-2 flex items-center justify-center space-x-2">
-                    <!-- Edit Button with Icon -->
-                    <button onclick="editData(${item.id}, ${JSON.stringify(item)})" 
-                            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
-                        <i class="fas fa-edit mr-2"></i> Edit
-                    </button>
+            const tableBody = document.getElementById('data-table');
+            tableBody.innerHTML = ''; // Clear table before populating
 
-                    <!-- Delete Button with Icon -->
-                    <button onclick="deleteData(${item.id})" 
-                            class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
-                        <i class="fas fa-trash mr-2"></i> Delete
-                    </button>
-                </td>
-            </tr>`;
-        tableBody.insertAdjacentHTML('beforeend', row);
-    });
-}
+            items.forEach((item) => {
+                // Safely stringify the data
+                const itemData = encodeURIComponent(JSON.stringify(item));
+
+                const row = `
+        <tr class="border-b">
+            <td class="border px-4 py-2">${item.bulan_tahun}</td>
+            <td class="border px-4 py-2">${item.website}</td>
+            <td class="border px-4 py-2">${item.paket_rp}</td>
+            <td class="border px-4 py-2">${item.keterangan || '-'}</td>
+            <td class="border px-4 py-2 flex items-center justify-center space-x-2">
+                <!-- Edit Button with Icon -->
+                <button onclick="editData(${item.id}, decodeURIComponent('${itemData}'))" 
+                        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
+                    <i class="fas fa-edit mr-2"></i> Edit
+                </button>
+
+                <!-- Delete Button with Icon -->
+                <button onclick="deleteData(${item.id})" 
+                        class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
+                    <i class="fas fa-trash mr-2"></i> Delete
+                </button>
+            </td>
+        </tr>`;
+                tableBody.insertAdjacentHTML('beforeend', row);
+            });
+        }
 
         // Update Chart
         function updateChart(items) {
@@ -267,19 +270,22 @@
 
         // Edit Data
         function editData(id, data) {
-            editMode = true;
-            editId = id;
-            modalTitle.textContent = 'Edit Data';
+            const parsedData = JSON.parse(data); // Parse JSON string
 
-            document.getElementById('modal-bulan_tahun').value = data.bulan_tahun;
-            document.getElementById('modal-website').value = data.website;
-            document.getElementById('modal-paket_rp').value = data.paket_rp;
-            document.getElementById('modal-keterangan').value = data.keterangan || '';
+            editMode = true; // Enable edit mode
+            editId = id; // Save the ID being edited
+            modalTitle.textContent = 'Edit Data'; // Update modal title
 
-            modal.classList.remove('hidden');
+            // Populate modal fields with existing data
+            document.getElementById('modal-bulan_tahun').value = parsedData.bulan_tahun;
+            document.getElementById('modal-website').value = parsedData.website;
+            document.getElementById('modal-paket_rp').value = parsedData.paket_rp;
+            document.getElementById('modal-keterangan').value = parsedData.keterangan || '';
+
+            modal.classList.remove('hidden'); // Show modal
         }
 
-        // Initial Load
+        // Initial Data Load
         updateData();
     </script>
 </body>

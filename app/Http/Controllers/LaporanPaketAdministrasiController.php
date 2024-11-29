@@ -78,6 +78,20 @@ class LaporanPaketAdministrasiController extends Controller
         try {
             $paket = LaporanPaketAdministrasi::findOrFail($id);
 
+            // Cek duplikasi data
+            $existingEntry = LaporanPaketAdministrasi::where('bulan_tahun', $validatedData['bulan_tahun'])
+                ->where('website', $validatedData['website'])
+                ->where('id', '!=', $id) // Abaikan data dengan ID yang sama
+                ->first();
+
+            if ($existingEntry) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "Website {$validatedData['website']} sudah dipilih untuk bulan {$validatedData['bulan_tahun']}.",
+                ], 400);
+            }
+
+            // Perbarui data
             $paket->update($validatedData);
 
             return response()->json([
