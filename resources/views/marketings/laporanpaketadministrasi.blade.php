@@ -16,7 +16,11 @@
         <h1 class="text-2xl font-bold mb-4">Laporan Paket Administrasi</h1>
 
         <!-- Button Tambah Data -->
-        <button id="open-modal" class="bg-red-600 text-white px-4 py-2 rounded mb-4">Tambah Data</button>
+        <div class="relative inline-block">
+        <a href="/admin">
+        <button class="open-modal:absolute inset-y-0 bg-red-600 text-white px-4 py-2 rounded mb-4 ">Back</button></a>
+        <button id="open-modal" class="open-modal:absolute open-modal:right-0 bg-red-600 text-white px-4 py-2 rounded mb-4 ">Tambah Data</button>
+        </div>
 
         <!-- Modal -->
         <div id="modal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">

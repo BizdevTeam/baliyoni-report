@@ -6,7 +6,7 @@
             <img src="images/baliyoni.png" class="w-full" alt="Logo Full">
         </div>
         <div id="logo-mini" class="logo w-12 h-auto hidden">
-            <img src="images/baliyoni-mini.png" class="w-full" alt="Logo Mini">
+            <img src="images/baliyoni- mini.png" class="w-full" alt="Logo Mini">
         </div>
     </div>
     <nav class="mt-4">
