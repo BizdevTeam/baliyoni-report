@@ -33,6 +33,37 @@ Route::middleware(['web'])->group(function () {
         ->name('marketings.laporanpaketadministrasi.destroy');
     // Marketing Routes end
 
+    Route::get('marketings/rekappenjualan', [RekapPenjualanController::class, 'index'])
+        ->name('marketings.rekappenjualan');
+
+    // Route to store new laporan paket administrasi data
+    Route::post('marketings/rekappenjualan/store', [RekapPenjualanController::class, 'store'])
+        ->name('marketings.rekappenjualan.store');
+
+    // Route to update existing laporan paket administrasi data
+    Route::put('marketings/rekappenjualan/update/{id}', [RekapPenjualanController::class, 'update'])
+        ->name('marketings.rekappenjualan.update');
+
+    // Route to fetch laporan paket administrasi data (API for table)
+    Route::get('marketings/rekappenjualan/data', [RekapPenjualanController::class, 'data'])
+        ->name('marketings.rekappenjualan.data');
+
+    // Route to fetch filtered laporan paket administrasi data (optional for filtering purposes)
+    Route::get('marketings/rekappenjualan/filter', [RekapPenjualanController::class, 'filterData'])
+        ->name('marketings.rekappenjualan.filterByYear');
+
+    // Route to delete laporan paket administrasi data
+    Route::delete('marketings/rekappenjualan/destroy/{id}', [RekapPenjualanController::class, 'destroy'])
+        ->name('marketings.rekappenjualan.destroy');
+
+    // Route::get('marketings/rekappenjualan', [RekapPenjualanController::class, 'index'])
+    //     ->name('marketings.rekappenjualan');
+    //     Route::get('/marketings/rekappenjualan/data', [RekapPenjualanController::class, 'getData']);    // Store new data
+    // Route::post('/marketings/rekappenjualan/store', [RekapPenjualanController::class, 'store']);
+    // // Update existing data
+    // Route::put('/marketings/rekappenjualan/update/{id}', [RekapPenjualanController::class, 'update']);
+    // // Delete data
+    // Route::delete('/marketings/rekappenjualan/destroy/{id}', [RekapPenjualanController::class, 'destroy']);
 });
 
 Route::middleware(['guest'])->group(function () {

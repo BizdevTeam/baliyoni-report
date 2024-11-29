@@ -47,7 +47,7 @@
         </div>
 
         <div class="mb-4">
-            <label for="filter-bulan-tahun" class="block text-sm font-medium">Filter Bulan/Tahun</label>
+            <label for="filter-tahun" class="block text-sm font-medium">Filter Berdasarkan Tahun</label>
             <input type="text" id="filter-tahun" class="border-gray-300 rounded p-2" placeholder="yyyy">
             <button type="button" id="apply-filter" class="bg-red-600 text-white px-4 py-2 rounded">Terapkan
                 Filter</button>
@@ -120,7 +120,7 @@
 
                 const result = await response.json();
                 if (response.ok && result.success) {
-                    updateData(); // Refresh data after saving
+                    updateData(); // Refresh data
                     modal.classList.add('hidden'); // Hide modal
                 } else {
                     alert(result.message || 'Gagal menyimpan data.');
@@ -138,12 +138,9 @@
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Content-Type': 'application/json',
                     },
                 });
-
-                if (!response.ok) {
-                    throw new Error('Failed to delete data');
-                }
 
                 const result = await response.json();
                 if (result.success) {
@@ -157,49 +154,163 @@
             }
         }
 
+        //filter tahun
+        async function updateDataByYear(year) {
+            const url = `/marketings/rekappenjualan/filter?tahun=${year}`;
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                });
+
+                if (!response.ok) {
+                    console.error(`HTTP Error: ${response.status}`);
+                    throw new Error(`Failed to fetch data. Status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                if (result.success && Array.isArray(result.data) && result.data.length > 0) {
+                    updateTable(result.data); // Update tabel
+                    updateChart(result.data); // Update chart
+                } else {
+                    alert(result.message || 'Data tidak ditemukan untuk tahun ini.');
+                    updateTable([]); // Kosongkan tabel
+                    updateChart([]); // Kosongkan chart
+                }
+            } catch (error) {
+                console.error('Error fetching data by year:', error.message);
+                alert('Terjadi kesalahan saat memuat data. Lihat console untuk detail.');
+            }
+        }
+
         // Apply Filter
         document.getElementById('apply-filter').addEventListener('click', () => {
             const filterYear = document.getElementById('filter-tahun').value.trim();
             if (filterYear.length === 4 && !isNaN(filterYear)) {
-                updateDataByYear(filterYear); // Panggil fungsi filter berdasarkan tahun
+                updateDataByYear(filterYear); // Panggil fungsi filter
             } else {
                 alert('Masukkan tahun yang valid (format: yyyy).');
             }
         });
 
-        // Fetch and Update Data
-        async function updateData() {
+
+
+        async function updateData(filter = '') {
+            const url = filter ? `/marketings/rekappenjualan/filter?tahun=${filter}` :
+                '/marketings/rekappenjualan/data';
+
             try {
-                // Fetching data from the server (you may customize the URL or parameters if needed)
-                const response = await fetch('/marketings/rekappenjualan/data');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch data');
-                }
+                const response = await fetch(url, {
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                });
 
                 const result = await response.json();
                 if (result.success) {
-                    updateTable(result.data); // Update table with data
-                    updateChart(result.data); // Update chart with data
+                    updateTable(result.data); // Tampilkan data di tabel
+                    updateChart(result.data); // Perbarui chart
                 } else {
-                    alert(result.message || 'Failed to load data.');
+                    alert(result.message || 'Gagal memuat data.');
                 }
             } catch (error) {
-                console.error('Error:', error);
-                alert('An error occurred while loading data.');
+                console.error('Error fetching data:', error);
+                alert('Terjadi kesalahan saat memuat data.');
             }
         }
 
         // Update Table
+        // function updateTable(items) {
+        //     const tableBody = document.getElementById('data-table');
+        //     tableBody.innerHTML = ''; // Clear table
+
+        //     items.forEach((item) => {
+        //         const encodedItem = encodeURIComponent(JSON.stringify(item)); // Safely encode item data
+        //         const row = `
+    //     <tr class="border-b">
+    //         <td class="border px-4 py-2">${item.bulan_tahun}</td>
+    //         <td class="border px-4 py-2">${item.total_penjualan}</td>
+    //         <td class="border px-4 py-2 flex items-center justify-center space-x-2">
+    //             <button onclick="editData(${item.id})" 
+    //                     class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
+    //                 <i class="fas fa-edit mr-2"></i> Edit
+    //             </button>
+    //             <button onclick="deleteData(${item.id})" 
+    //                     class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
+    //                 <i class="fas fa-trash mr-2"></i> Delete
+    //             </button>
+    //         </td>
+    //     </tr>`;
+        //         tableBody.insertAdjacentHTML('beforeend', row);
+        //     });
+        // }
+
+
+        // // Update Chart
+        // function updateChart(items) {
+        //     const labels = items.map((item) => item.bulan_tahun);
+        //     const dataValues = items.map((item) => item.total_penjualan);
+        //     const backgroundColors = items.map(() =>
+        //         `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.7)`);
+
+        //     const ctx = chartCanvas.getContext('2d');
+        //     if (window.myChart) {
+        //         window.myChart.destroy();
+        //     }
+        //     window.myChart = new Chart(ctx, {
+        //         type: 'bar',
+        //         data: {
+        //             labels,
+        //             datasets: [{
+        //                 label: 'Total Penjualan (RP)',
+        //                 data: dataValues,
+        //                 backgroundColor: backgroundColors,
+        //                 borderWidth: 1,
+        //             }],
+        //         },
+        //         options: {
+        //             responsive: true,
+        //             plugins: {
+        //                 tooltip: {
+        //                     callbacks: {
+        //                         label: function(context) {
+        //                             return `Rp ${context.raw.toLocaleString()}`;
+        //                         },
+        //                     },
+        //                 },
+        //             },
+        //             scales: {
+        //                 y: {
+        //                     beginAtZero: true,
+        //                 },
+        //             },
+        //         },
+        //     });
+        // }
+
+
+        //table & chart sort by year
         function updateTable(items) {
             const tableBody = document.getElementById('data-table');
-            tableBody.innerHTML = '';
+            tableBody.innerHTML = ''; // Clear table
+
+            if (items.length === 0) {
+                tableBody.innerHTML = `
+            <tr>
+                <td colspan="3" class="text-center py-4">Tidak ada data untuk ditampilkan.</td>
+            </tr>`;
+                return;
+            }
+
             items.forEach((item) => {
                 const row = `
             <tr class="border-b">
                 <td class="border px-4 py-2">${item.bulan_tahun}</td>
                 <td class="border px-4 py-2">${item.total_penjualan}</td>
                 <td class="border px-4 py-2 flex items-center justify-center space-x-2">
-                    <button onclick="editData(${item.id}, ${JSON.stringify(item)})" 
+                    <button onclick="editData(${item.id})" 
                             class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
                         <i class="fas fa-edit mr-2"></i> Edit
                     </button>
@@ -213,8 +324,6 @@
             });
         }
 
-
-        // Update Chart
         function updateChart(items) {
             const labels = items.map((item) => item.bulan_tahun);
             const dataValues = items.map((item) => item.total_penjualan);
@@ -225,6 +334,30 @@
             if (window.myChart) {
                 window.myChart.destroy();
             }
+
+            if (items.length === 0) {
+                window.myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Tidak ada data'],
+                        datasets: [{
+                            label: 'Total Penjualan (RP)',
+                            data: [0],
+                            backgroundColor: 'rgba(200, 200, 200, 0.7)',
+                        }],
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                            },
+                        },
+                    },
+                });
+                return;
+            }
+
             window.myChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -257,10 +390,17 @@
         }
 
 
+
+
+
         // Edit Data
-        function editData(id, data) {
+        async function editData(id) {
+            // const response = await fetch(`/marketings/rekappenjualan/show/${id}`);
+            // const data = await response.json();
+            const parsedData = JSON.parse(data);
+
             editMode = true;
-            editId = id;
+            editId = true;
             modalTitle.textContent = 'Edit Data';
 
             document.getElementById('modal-bulan_tahun').value = data.bulan_tahun;
@@ -268,6 +408,7 @@
 
             modal.classList.remove('hidden');
         }
+
 
         // Initial Load
         updateData();

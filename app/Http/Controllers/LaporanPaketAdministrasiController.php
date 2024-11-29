@@ -55,7 +55,6 @@ class LaporanPaketAdministrasiController extends Controller
                 ], 400);
             }
 
-            // Store new data
             LaporanPaketAdministrasi::create($validatedData);
 
             return response()->json([

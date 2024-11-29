@@ -178,8 +178,6 @@
             const filterValue = document.getElementById('filter-bulan-tahun').value;
             updateData(filterValue);
         });
-
-        // Fetch and Update Data
         async function updateData(filter = '') {
             const url = filter ? `/marketings/laporanpaketadministrasi/data?bulan_tahun=${filter}` :
                 '/marketings/laporanpaketadministrasi/data';
