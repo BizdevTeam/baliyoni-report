@@ -5,65 +5,52 @@ use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LaporanPaketAdministrasiController;
 use App\Http\Controllers\RekapPenjualanController;
+use App\Http\Controllers\StatusPaketController;
+
 
 Route::middleware(['web'])->group(function () {
-    // Marketing Routes
-    // Route to display the laporan paket administrasi page (view)
+    // Rute Laporan Paket Administrasi
     Route::get('marketings/laporanpaketadministrasi', [LaporanPaketAdministrasiController::class, 'index'])
         ->name('marketings.laporanpaketadministrasi');
-
-    // Route to store new laporan paket administrasi data
     Route::post('marketings/laporanpaketadministrasi/store', [LaporanPaketAdministrasiController::class, 'store'])
         ->name('marketings.laporanpaketadministrasi.store');
-
-    // Route to update existing laporan paket administrasi data
     Route::put('marketings/laporanpaketadministrasi/update/{id}', [LaporanPaketAdministrasiController::class, 'update'])
         ->name('marketings.laporanpaketadministrasi.update');
-
-    // Route to fetch laporan paket administrasi data (API for table)
     Route::get('marketings/laporanpaketadministrasi/data', [LaporanPaketAdministrasiController::class, 'data'])
         ->name('marketings.laporanpaketadministrasi.data');
-
-    // Route to fetch filtered laporan paket administrasi data (optional for filtering purposes)
     Route::get('marketings/laporanpaketadministrasi/filter', [LaporanPaketAdministrasiController::class, 'filterData'])
         ->name('marketings.laporanpaketadministrasi.filter');
-
-    // Route to delete laporan paket administrasi data
     Route::delete('marketings/laporanpaketadministrasi/destroy/{id}', [LaporanPaketAdministrasiController::class, 'destroy'])
         ->name('marketings.laporanpaketadministrasi.destroy');
-    // Marketing Routes end
 
+    //rute rekap penjualan
     Route::get('marketings/rekappenjualan', [RekapPenjualanController::class, 'index'])
         ->name('marketings.rekappenjualan');
-
-    // Route to store new laporan paket administrasi data
     Route::post('marketings/rekappenjualan/store', [RekapPenjualanController::class, 'store'])
         ->name('marketings.rekappenjualan.store');
-
-    // Route to update existing laporan paket administrasi data
     Route::put('marketings/rekappenjualan/update/{id}', [RekapPenjualanController::class, 'update'])
         ->name('marketings.rekappenjualan.update');
-
-    // Route to fetch laporan paket administrasi data (API for table)
     Route::get('marketings/rekappenjualan/data', [RekapPenjualanController::class, 'data'])
         ->name('marketings.rekappenjualan.data');
-
-    // Route to fetch filtered laporan paket administrasi data (optional for filtering purposes)
     Route::get('marketings/rekappenjualan/filter', [RekapPenjualanController::class, 'filterData'])
         ->name('marketings.rekappenjualan.filterByYear');
-
-    // Route to delete laporan paket administrasi data
     Route::delete('marketings/rekappenjualan/destroy/{id}', [RekapPenjualanController::class, 'destroy'])
         ->name('marketings.rekappenjualan.destroy');
 
-    // Route::get('marketings/rekappenjualan', [RekapPenjualanController::class, 'index'])
-    //     ->name('marketings.rekappenjualan');
-    //     Route::get('/marketings/rekappenjualan/data', [RekapPenjualanController::class, 'getData']);    // Store new data
-    // Route::post('/marketings/rekappenjualan/store', [RekapPenjualanController::class, 'store']);
-    // // Update existing data
-    // Route::put('/marketings/rekappenjualan/update/{id}', [RekapPenjualanController::class, 'update']);
-    // // Delete data
-    // Route::delete('/marketings/rekappenjualan/destroy/{id}', [RekapPenjualanController::class, 'destroy']);
+
+    //rute Status Paket
+    Route::get('marketings/statuspaket', [StatusPaketController::class, 'index'])
+        ->name('marketings.statuspaket');
+    Route::post('marketings/statuspaket/store', [StatusPaketController::class, 'store'])
+        ->name('marketings.statuspaket.store');
+    Route::put('marketings/statuspaket/update/{id}', [StatusPaketController::class, 'update'])
+        ->name('marketings.statuspaket.update');
+    Route::get('marketings/statuspaket/data', [StatusPaketController::class, 'data'])
+        ->name('marketings.statuspaket.data');
+    Route::get('marketings/statuspaket/filter', [StatusPaketController::class, 'filterData'])
+        ->name('marketings.statuspaket.filter');
+    Route::delete('marketings/statuspaket/destroy/{id}', [StatusPaketController::class, 'destroy'])
+        ->name('marketings.statuspaket.destroy');
 });
 
 Route::middleware(['guest'])->group(function () {

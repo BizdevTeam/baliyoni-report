@@ -51,7 +51,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#"
+                        <a href="marketings/statuspaket"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="icon/LaporanStatusPaket.svg" class="w-5 h-5">
                             <span class="ml-2">Laporan Status Paket </span>
