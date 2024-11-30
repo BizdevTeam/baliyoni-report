@@ -44,11 +44,12 @@
                         <label for="modal-perusahaan" class="block text-sm font-medium">Perusahaan</label>
                         <select id="modal-perusahaan" name="perusahaan" class="w-full border-gray-300 rounded p-2"
                             required>
-                            <option value="" disabled selected>Pilih perusahaan</option>
-                            <option value="E - Katalog">E - Katalog</option>
-                            <option value="E - Katalog Luar Bali">E - Katalog Luar Bali</option>
-                            <option value="Balimall">Balimall</option>
-                            <option value="Siplah">Siplah</option>
+                            <option value="" disabled selected>Pilih Status Paket</option>
+                            <option value="Surat Pesanan">Surat Pesanan</option>
+                            <option value="Surat Pertanggungjawaban">Surat Pertanggungjawaban</option>
+                            <option value="Keuangan">Keuangan</option>
+                            <option value="Dokumen Akhir">Dokumen Akhir</option>
+                            <option value="Finish">Finish</option>
                         </select>
                     </div>
                     <div>
