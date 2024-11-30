@@ -41,8 +41,8 @@
                             class="w-full border-gray-300 rounded p-2" placeholder="Keterangan (opsional)">
                     </div>
                     <div>
-                        <label for="modal-perusahaan" class="block text-sm font-medium">Perusahaan</label>
-                        <select id="modal-perusahaan" name="perusahaan" class="w-full border-gray-300 rounded p-2"
+                        <label for="modal-status" class="block text-sm font-medium">status</label>
+                        <select id="modal-status" name="status" class="w-full border-gray-300 rounded p-2"
                             required>
                             <option value="" disabled selected>Pilih Status Paket</option>
                             <option value="Surat Pesanan">Surat Pesanan</option>
@@ -79,7 +79,7 @@
             <thead class="bg-gray-200">
                 <tr>
                     <th class="border border-gray-300 px-4 py-2">Bulan/Tahun</th>
-                    <th class="border border-gray-300 px-4 py-2">Perusahaan</th>
+                    <th class="border border-gray-300 px-4 py-2">status</th>
                     <th class="border border-gray-300 px-4 py-2">Paket (RP)</th>
                     <th class="border border-gray-300 px-4 py-2">Keterangan</th>
                     <th class="border border-gray-300 px-4 py-2">Aksi</th>
@@ -124,7 +124,7 @@
 
             const data = {
                 bulan_tahun: document.getElementById('modal-bulan_tahun').value,
-                perusahaan: document.getElementById('modal-perusahaan').value,
+                status: document.getElementById('modal-status').value,
                 paket_rp: Number(document.getElementById('modal-paket_rp').value),
                 keterangan: document.getElementById('modal-keterangan').value || null,
             };
@@ -216,7 +216,7 @@
                 const row = `
         <tr class="border-b">
             <td class="border px-4 py-2">${item.bulan_tahun}</td>
-            <td class="border px-4 py-2">${item.perusahaan}</td>
+            <td class="border px-4 py-2">${item.status}</td>
             <td class="border px-4 py-2">Rp ${item.paket_rp.toLocaleString()}</td>
             <td class="border px-4 py-2">${item.keterangan || '-'}</td>
             <td class="border px-4 py-2 flex items-center justify-center space-x-2">
@@ -246,7 +246,7 @@
 
         // Update Chart
         function updateChart(items) {
-            const labels = items.map((item) => item.perusahaan); // Label dari nama perusahaan
+            const labels = items.map((item) => item.status); // Label dari nama status
             const dataValues = items.map((item) => item.paket_rp); // Nilai paket
             const backgroundColors = items.map(() =>
                 `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.7)`); // Warna acak
@@ -309,7 +309,7 @@
 
             // Populate modal fields with existing data
             document.getElementById('modal-bulan_tahun').value = parsedData.bulan_tahun;
-            document.getElementById('modal-perusahaan').value = parsedData.perusahaan;
+            document.getElementById('modal-status').value = parsedData.status;
             document.getElementById('modal-paket_rp').value = parsedData.paket_rp;
             document.getElementById('modal-keterangan').value = parsedData.keterangan || '';
 

@@ -19,7 +19,7 @@ class StatusPaket extends Model
         'bulan_tahun',      // Format bulan dan tahun (contoh: '11/2024')
         'total_paket',      // Total paket dalam nilai integer
         'keterangan',       // Keterangan tambahan (nullable)
-        'perusahaan',          // Nama website (string)
+        'status',          // Nama website (string)
         'paket_rp',         // Nilai paket dalam rupiah (integer)
     ];
 }

@@ -49,15 +49,15 @@ class StatusPaketController extends Controller
         $validatedData = $this->validateData($request);
 
         try {
-            // Check if data already exists for the same bulan_tahun and perusahaan
+            // Check if data already exists for the same bulan_tahun and status
             $existingEntry = StatusPaket::where('bulan_tahun', $validatedData['bulan_tahun'])
-                ->where('perusahaan', $validatedData['perusahaan'])
+                ->where('status', $validatedData['status'])
                 ->first();
 
             if ($existingEntry) {
                 return response()->json([
                     'success' => false,
-                    'message' => "perusahaan {$validatedData['perusahaan']} sudah dipilih untuk bulan {$validatedData['bulan_tahun']}.",
+                    'message' => "status {$validatedData['status']} sudah dipilih untuk bulan {$validatedData['bulan_tahun']}.",
                 ], 400);
             }
 
@@ -85,14 +85,14 @@ class StatusPaketController extends Controller
 
             // Cek duplikasi data
             $existingEntry = StatusPaket::where('bulan_tahun', $validatedData['bulan_tahun'])
-                ->where('perusahaan', $validatedData['perusahaan'])
+                ->where('status', $validatedData['status'])
                 ->where('id', '!=', $id) // Abaikan data dengan ID yang sama
                 ->first();
 
             if ($existingEntry) {
                 return response()->json([
                     'success' => false,
-                    'message' => "perusahaan {$validatedData['perusahaan']} sudah dipilih untuk bulan {$validatedData['bulan_tahun']}.",
+                    'message' => "status {$validatedData['status']} sudah dipilih untuk bulan {$validatedData['bulan_tahun']}.",
                 ], 400);
             }
 
@@ -135,7 +135,7 @@ class StatusPaketController extends Controller
     {
         return $request->validate([
             'bulan_tahun' => ['required', 'regex:/^(0[1-9]|1[0-2])\/\d{4}$/'],  // Ensure month/year format
-            'perusahaan' => 'required|string|max:255',
+            'status' => 'required|string|max:255',
             'paket_rp' => 'required|integer|min:0',
             'keterangan' => 'nullable|string|max:255',
         ]);

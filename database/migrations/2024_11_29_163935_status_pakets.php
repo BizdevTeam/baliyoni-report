@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('bulan_tahun');
             $table->integer('total_paket')->default(0); // Tambahkan default value
             $table->string('keterangan')->nullable();
-            $table->string('perusahaan');
+            $table->string('status');
             $table->integer('paket_rp');
             $table->timestamps();
         });
