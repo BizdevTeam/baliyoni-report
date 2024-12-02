@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('status_pakets', function (Blueprint $table) {
         $table->id();
             $table->string('bulan_tahun');
-            $table->integer('total_paket')->default(0); // Tambahkan default value
             $table->string('keterangan')->nullable();
             $table->string('status');
             $table->integer('paket_rp');

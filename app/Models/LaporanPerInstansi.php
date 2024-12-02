@@ -6,19 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 
-class StatusPaket extends Model
+class LaporanPerInstansi extends Model
 {
-    //
     use HasFactory;
 
     // Tabel yang akan digunakan (opsional jika nama tabel sesuai konvensi Laravel, yaitu "laporan_paket_administrasis")
-    protected $table = 'status_pakets';
+    protected $table = 'laporan_per_instansis';
 
     // Kolom yang dapat diisi menggunakan metode mass assignment
     protected $fillable = [
         'bulan_tahun',      // Format bulan dan tahun (contoh: '11/2024')
         'keterangan',       // Keterangan tambahan (nullable)
-        'status',          // Nama website (string)
-        'paket_rp',         // Nilai paket dalam rupiah (integer)
+        'instansi',          // Nama website (string)
+        'nilai',         // Nilai paket dalam rupiah (integer)
     ];
 }

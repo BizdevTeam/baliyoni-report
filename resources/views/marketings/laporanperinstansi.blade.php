@@ -5,22 +5,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Rekap Penjualan</title>
+    <title>instansi Paket</title>
     @vite('resources/css/app.css')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
-
-
 </head>
 
 <body class="bg-gray-100 p-6">
     <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow">
-        <h1 class="text-2xl font-bold mb-4">Rekap Penjualan</h1>
+        <h1 class="text-2xl font-bold mb-4">Laporan Admin Per Instansi </h1>
 
         <!-- Button Tambah Data -->
-        <a href="/admin">
-        <button class="bg-red-600 text-white px-4 py-2 rounded mb-4">Kembali</button></a>
-        <button id="open-modal" class="bg-red-600 text-white px-4 py-2 rounded mb-4">Tambah Data</button>
+        <div class="relative inline-block">
+            <a href="/admin">
+                <button
+                    class="open-modal:absolute inset-y-0 bg-red-600 text-white px-4 py-2 rounded mb-4 ">Kembali</button></a>
+            <button id="open-modal"
+                class="open-modal:absolute open-modal:right-0 bg-red-600 text-white px-4 py-2 rounded mb-4 ">Tambah
+                Data</button>
+        </div>
 
         <!-- Modal -->
         <div id="modal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
@@ -33,24 +36,40 @@
                             class="w-full border-gray-300 rounded p-2" placeholder="mm/yyyy" required>
                     </div>
                     <div>
-                        <label for="modal-total_penjualan" class="block text-sm font-medium">Total Penjualan
-                            (RP)</label>
-                        <input type="text" id="modal-total_penjualan" name="total_penjualan"
+                        <label for="modal-keterangan" class="block text-sm font-medium">Keterangan</label>
+                        <input type="text" id="modal-keterangan" name="keterangan"
+                            class="w-full border-gray-300 rounded p-2" placeholder="Keterangan (opsional)">
+                    </div>
+                    <div>
+                        <label for="modal-instansi" class="block text-sm font-medium">Instansi</label>
+                        <select id="modal-instansi" name="instansi" class="w-full border-gray-300 rounded p-2"
+                            required>
+                            <option value="" disabled selected>Pilih Instansi</option>
+                            <option value="Badung">Badung</option>
+                            <option value="Denpasar">Denpasar</option>
+                            <option value="Provinsi">Provinsi</option>
+                            <option value="Bangli">Bangli</option>
+                            <option value="Klungkung">Klungkung</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="modal-nilai" class="block text-sm font-medium">Paket (RP)</label>
+                        <input type="text" id="modal-nilai" name="nilai"
                             class="w-full border-gray-300 rounded p-2" placeholder="0" min="0" required>
                     </div>
                     <div class="flex justify-end space-x-2">
                         <button type="button" id="close-modal"
                             class="bg-gray-500 text-white px-4 py-2 rounded">Batal</button>
                         <button type="submit" id="save-data"
-                            class="bg-blue-500 text-white px-4 py-2 rounded">Simpan</button>
+                            class="bg-red-600 text-white px-4 py-2 rounded">Simpan</button>
                     </div>
                 </form>
             </div>
         </div>
 
         <div class="mb-4">
-            <label for="filter-tahun" class="block text-sm font-medium">Filter Berdasarkan Tahun</label>
-            <input type="text" id="filter-tahun" class="border-gray-300 rounded p-2" placeholder="yyyy">
+            <label for="filter-bulan-tahun" class="block text-sm font-medium">Filter Bulan/Tahun</label>
+            <input type="text" id="filter-bulan-tahun" class="border-gray-300 rounded p-2" placeholder="mm/yyyy">
             <button type="button" id="apply-filter" class="bg-red-600 text-white px-4 py-2 rounded">Terapkan
                 Filter</button>
         </div>
@@ -60,7 +79,9 @@
             <thead class="bg-gray-200">
                 <tr>
                     <th class="border border-gray-300 px-4 py-2">Bulan/Tahun</th>
-                    <th class="border border-gray-300 px-4 py-2">Total Penjualan (RP)</th>
+                    <th class="border border-gray-300 px-4 py-2">Instansi</th>
+                    <th class="border border-gray-300 px-4 py-2">Nilai (RP)</th>
+                    <th class="border border-gray-300 px-4 py-2">Keterangan</th>
                     <th class="border border-gray-300 px-4 py-2">Aksi</th>
                 </tr>
             </thead>
@@ -103,11 +124,13 @@
 
             const data = {
                 bulan_tahun: document.getElementById('modal-bulan_tahun').value,
-                total_penjualan: Number(document.getElementById('modal-total_penjualan').value),
+                instansi: document.getElementById('modal-instansi').value,
+                nilai: Number(document.getElementById('modal-nilai').value),
+                keterangan: document.getElementById('modal-keterangan').value || null,
             };
 
-            const url = editMode ? `/marketings/rekappenjualan/update/${editId}` :
-                '/marketings/rekappenjualan/store';
+            const url = editMode ? `/marketings/laporanperinstansi/update/${editId}` :
+                '/marketings/laporanperinstansi/store';
             const method = editMode ? 'PUT' : 'POST';
 
             try {
@@ -122,7 +145,7 @@
 
                 const result = await response.json();
                 if (response.ok && result.success) {
-                    updateData(); // Refresh data
+                    updateData(); // Refresh data after saving
                     modal.classList.add('hidden'); // Hide modal
                 } else {
                     alert(result.message || 'Gagal menyimpan data.');
@@ -136,17 +159,16 @@
         // Delete Data
         async function deleteData(id) {
             try {
-                const response = await fetch(`/marketings/rekappenjualan/destroy/${id}`, {
+                const response = await fetch(`/marketings/laporanperinstansi/destroy/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        'Content-Type': 'application/json',
                     },
                 });
 
                 const result = await response.json();
-                if (result.success) {
-                    updateData(); // Refresh data after deletion
+                if (response.ok && result.success) {
+                    updateData();
                 } else {
                     alert(result.message || 'Gagal menghapus data.');
                 }
@@ -156,66 +178,26 @@
             }
         }
 
-        //filter tahun
-        async function updateDataByYear(year) {
-            const url = `/marketings/rekappenjualan/filter?tahun=${year}`;
-            try {
-                const response = await fetch(url, {
-                    method: 'GET',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    },
-                });
-
-                if (!response.ok) {
-                    console.error(`HTTP Error: ${response.status}`);
-                    throw new Error(`Failed to fetch data. Status: ${response.status}`);
-                }
-
-                const result = await response.json();
-                if (result.success && Array.isArray(result.data) && result.data.length > 0) {
-                    updateTable(result.data); // Update tabel
-                    updateChart(result.data); // Update chart
-                } else {
-                    alert(result.message || 'Data tidak ditemukan untuk tahun ini.');
-                    updateTable([]); // Kosongkan tabel
-                    updateChart([]); // Kosongkan chart
-                }
-            } catch (error) {
-                console.error('Error fetching data by year:', error.message);
-                alert('Terjadi kesalahan saat memuat data. Lihat console untuk detail.');
-            }
-        }
-
         // Apply Filter
         document.getElementById('apply-filter').addEventListener('click', () => {
-            const filterYear = document.getElementById('filter-tahun').value.trim();
-            if (filterYear.length === 4 && !isNaN(filterYear)) {
-                updateDataByYear(filterYear); // Panggil fungsi filter
-            } else {
-                alert('Masukkan tahun yang valid (format: yyyy).');
-            }
+            const filterValue = document.getElementById('filter-bulan-tahun').value;
+            updateData(filterValue);
         });
 
-
-
         async function updateData(filter = '') {
-            const url = filter ? `/marketings/rekappenjualan/filter?tahun=${filter}` :
-                '/marketings/rekappenjualan/data';
-
+            const url = filter ? `/marketings/laporanperinstansi/data?bulan_tahun=${filter}` : '/marketings/laporanperinstansi/data';
             try {
-                const response = await fetch(url, {
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    },
-                });
-
+                const response = await fetch(url);
                 const result = await response.json();
+
                 if (result.success) {
-                    updateTable(result.data); // Tampilkan data di tabel
-                    updateChart(result.data); // Perbarui chart
+                    const items = result.data; // Data untuk tabel dan grafik
+                    const totalPaket = result.total_paket; // Total Paket dari API
+
+                    updateTable(items, totalPaket); // Perbarui tabel
+                    updateChart(items); // Perbarui chart
                 } else {
-                    alert(result.message || 'Gagal memuat data.');
+                    alert('Gagal memuat data.');
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -223,79 +205,64 @@
             }
         }
 
-        //table & chart sort by year
-        function updateTable(items) {
+        function updateTable(items, totalPaket = 0) {
             const tableBody = document.getElementById('data-table');
-            tableBody.innerHTML = ''; // Clear table
+            tableBody.innerHTML = ''; // Bersihkan tabel sebelum merender ulang
 
-            if (items.length === 0) {
-                tableBody.innerHTML = `
-            <tr>
-                <td colspan="3" class="text-center py-4">Tidak ada data untuk ditampilkan.</td>
-            </tr>`;
-                return;
-            }
-
+            // Render data item per baris
             items.forEach((item) => {
                 const row = `
-            <tr class="border-b">
-                <td class="border px-4 py-2">${item.bulan_tahun}</td>
-                <td class="border px-4 py-2">${item.total_penjualan}</td>
-                <td class="border px-4 py-2 flex items-center justify-center space-x-2">
-                    <button onclick="editData(${item.id})" 
-                            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
-                        <i class="fas fa-edit mr-2"></i> Edit
-                    </button>
-                    <button onclick="deleteData(${item.id})" 
-                            class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
-                        <i class="fas fa-trash mr-2"></i> Delete
-                    </button>
-                </td>
-            </tr>`;
+        <tr class="border-b">
+            <td class="border px-4 py-2">${item.bulan_tahun}</td>
+            <td class="border px-4 py-2">${item.instansi}</td>
+            <td class="border px-4 py-2">Rp ${item.nilai.toLocaleString()}</td>
+            <td class="border px-4 py-2">${item.keterangan || '-'}</td>
+            <td class="border px-4 py-2 flex items-center justify-center space-x-2">
+                <button onclick="editData(${item.id}, JSON.stringify(${JSON.stringify(item)}))" 
+                        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
+                    <i class="fas fa-edit mr-2"></i> Edit
+                </button>
+                <button onclick="deleteData(${item.id})" 
+                        class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
+                    <i class="fas fa-trash mr-2"></i> Delete
+                </button>
+            </td>
+        </tr>`;
                 tableBody.insertAdjacentHTML('beforeend', row);
             });
+
+            // Tambahkan baris total paket
+            const totalRow = `
+            <tr class="border-t bg-gray-100">
+                <td colspan="4" class="text-center font-bold px-4 py-2">Total Paket</td>
+                <td class="border px-4 py-2 font-bold">Rp ${totalPaket.toLocaleString()}</td>
+            </tr>`;
+            tableBody.insertAdjacentHTML('beforeend', totalRow);
         }
 
+
+
+        // Update Chart
         function updateChart(items) {
-            const labels = items.map((item) => item.bulan_tahun);
-            const dataValues = items.map((item) => item.total_penjualan);
+            const labels = items.map((item) => item.instansi); // Label dari nama instansi
+            const dataValues = items.map((item) => item.nilai); // Nilai paket
             const backgroundColors = items.map(() =>
-                `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.7)`);
+                `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.7)`); // Warna acak
 
             const ctx = chartCanvas.getContext('2d');
+
+            // Hapus chart lama jika ada
             if (window.myChart) {
                 window.myChart.destroy();
             }
 
-            if (items.length === 0) {
-                window.myChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Tidak ada data'],
-                        datasets: [{
-                            label: 'Total Penjualan (RP)',
-                            data: [0],
-                            backgroundColor: 'rgba(200, 200, 200, 0.7)',
-                        }],
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                            },
-                        },
-                    },
-                });
-                return;
-            }
-
+            // Buat chart baru
             window.myChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels,
                     datasets: [{
-                        label: 'Total Penjualan (RP)',
+                        label: 'GRAFIK NILAI BERDASARKAN INSTANSI',
                         data: dataValues,
                         backgroundColor: backgroundColors,
                         borderWidth: 1,
@@ -304,6 +271,14 @@
                 options: {
                     responsive: true,
                     plugins: {
+                        legend: {
+                            labels: {
+                                font: {
+                                    size: 20, // Ukuran font label
+                                    weight: 'bold', // Tebal tulisan
+                                },
+                            },
+                        },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
@@ -322,27 +297,24 @@
         }
 
 
-
-
-
         // Edit Data
-        async function editData(id) {
-            // const response = await fetch(`/marketings/rekappenjualan/show/${id}`);
-            // const data = await response.json();
-            const parsedData = JSON.parse(data);
+        function editData(id, data) {
+            const parsedData = JSON.parse(data); // Parse JSON string
 
-            editMode = true;
-            editId = true;
-            modalTitle.textContent = 'Edit Data';
+            editMode = true; // Enable edit mode
+            editId = id; // Save the ID being edited
+            modalTitle.textContent = 'Edit Data'; // Update modal title
 
-            document.getElementById('modal-bulan_tahun').value = data.bulan_tahun;
-            document.getElementById('modal-total_penjualan').value = data.total_penjualan;
+            // Populate modal fields with existing data
+            document.getElementById('modal-bulan_tahun').value = parsedData.bulan_tahun;
+            document.getElementById('modal-instansi').value = parsedData.instansi;
+            document.getElementById('modal-nilai').value = parsedData.nilai;
+            document.getElementById('modal-keterangan').value = parsedData.keterangan || '';
 
-            modal.classList.remove('hidden');
+            modal.classList.remove('hidden'); // Show modal
         }
 
-
-        // Initial Load
+        // Initial Data Load
         updateData();
     </script>
 </body>

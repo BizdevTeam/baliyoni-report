@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LaporanPaketAdministrasiController;
 use App\Http\Controllers\RekapPenjualanController;
 use App\Http\Controllers\StatusPaketController;
+use App\Http\Controllers\LaporanPerInstansiController;
+use App\Http\Controllers\RekapPenjualanPerusahaanController;
 
 
 Route::middleware(['web'])->group(function () {
@@ -37,7 +39,6 @@ Route::middleware(['web'])->group(function () {
     Route::delete('marketings/rekappenjualan/destroy/{id}', [RekapPenjualanController::class, 'destroy'])
         ->name('marketings.rekappenjualan.destroy');
 
-
     //rute Status Paket
     Route::get('marketings/statuspaket', [StatusPaketController::class, 'index'])
         ->name('marketings.statuspaket');
@@ -51,6 +52,34 @@ Route::middleware(['web'])->group(function () {
         ->name('marketings.statuspaket.filter');
     Route::delete('marketings/statuspaket/destroy/{id}', [StatusPaketController::class, 'destroy'])
         ->name('marketings.statuspaket.destroy');
+
+    //RUTE LAPORAN PERINSTANSI
+        Route::get('marketings/laporanperinstansi', [LaporanPerInstansiController::class, 'index'])
+        ->name('marketings.laporanperinstansi');
+    Route::post('marketings/laporanperinstansi/store', [LaporanPerInstansiController::class, 'store'])
+        ->name('marketings.laporanperinstansi.store');
+    Route::put('marketings/laporanperinstansi/update/{id}', [LaporanPerInstansiController::class, 'update'])
+        ->name('marketings.laporanperinstansi.update');
+    Route::get('marketings/laporanperinstansi/data', [LaporanPerInstansiController::class, 'data'])
+        ->name('marketings.laporanperinstansi.data');
+    Route::get('marketings/laporanperinstansi/filter', [LaporanPerInstansiController::class, 'filterData'])
+        ->name('marketings.laporanperinstansi.filter');
+    Route::delete('marketings/laporanperinstansi/destroy/{id}', [LaporanPerInstansiController::class, 'destroy'])
+        ->name('marketings.laporanperinstansi.destroy');
+
+     //RUTE LAPORAN PENJUALAN PERUSAHAAN
+    Route::get('marketings/rekappenjualanperusahaan', [RekapPenjualanPerusahaanController::class, 'index'])
+        ->name('marketings.rekappenjualanperusahaan');
+    Route::post('marketings/rekappenjualanperusahaan/store', [RekapPenjualanPerusahaanController::class, 'store'])
+        ->name('marketings.rekappenjualanperusahaan.store');
+    Route::put('marketings/rekappenjualanperusahaan/update/{id}', [RekapPenjualanPerusahaanController::class, 'update'])
+        ->name('marketings.rekappenjualanperusahaan.update');
+    Route::get('marketings/rekappenjualanperusahaan/data', [RekapPenjualanPerusahaanController::class, 'data'])
+        ->name('marketings.rekappenjualanperusahaan.data');
+    Route::get('marketings/rekappenjualanperusahaan/filter', [RekapPenjualanPerusahaanController::class, 'filterData'])
+        ->name('marketings.rekappenjualanperusahaan.filter');
+    Route::delete('marketings/rekappenjualanperusahaan/destroy/{id}', [RekapPenjualanPerusahaanController::class, 'destroy'])
+        ->name('marketings.rekappenjualanperusahaan.destroy');    
 });
 
 Route::middleware(['guest'])->group(function () {
