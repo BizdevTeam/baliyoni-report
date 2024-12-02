@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('bulan_tahun');
             $table->string('keterangan')->nullable();
             $table->string('status');
-            $table->integer('paket_rp');
+            $table->integer('paket');
             $table->timestamps();
         });
     }

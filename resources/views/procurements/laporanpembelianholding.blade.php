@@ -13,7 +13,7 @@
 
 <body class="bg-gray-100 p-6">
     <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow">
-        <h1 class="text-2xl font-bold mb-4">Rekap Penjualan Perusahaan</h1>
+        <h1 class="text-2xl font-bold mb-4">Laporan Pembelian (HOLDING) </h1>
 
         <!-- Button Tambah Data -->
         <div class="relative inline-block">
@@ -36,27 +36,20 @@
                             class="w-full border-gray-300 rounded p-2" placeholder="mm/yyyy" required>
                     </div>
                     <div>
-                        <label for="modal-perusahaan" class="block text-sm font-medium">Pilih Perusahaan<abel>
-                                <select id="modal-perusahaan" name="perusahaan"
-                                    class="w-full border-gray-300 rounded p-2" required>
-                                    <option value="" disabled selected>Pilih Perusahaan</option>
-                                    <option value="CV. BUANA KOSA">CV. BUANA KOSA</option>
-                                    <option value="PT. BALI UNGGUL SEJAHTERA">PT. BALI UNGGUL SEJAHTERA</option>
-                                    <option value="CV. DANA RASA">CV. DANA RASA</option>
-                                    <option value="CV. LAGAAN SAKETI">CV. LAGAAN SAKETI</option>
-                                    <option value="CV. BALI JAKTI INFORMATIK">CV. BALI JAKTI INFORMATIK</option>
-                                    <option value="CV. BALI LINGGA KOMPUTER">CV. BALI LINGGA KOMPUTER</option>
-                                    <option value="CV. ARTSOLUTION">CV. ARTSOLUTION</option>
-                                    <option value="PT. BALI LINGGA KOMPUTER">PT. BALI LINGGA KOMPUTER</option>
-                                    <option value="CV. SAHABAT UTAMA">CV. SAHABAT UTAMA</option>
-                                    <option value="CV. N & b NET ACCESS">CV. N & b NET ACCESS</option>
-                                    <option value="PT. ELKA SOLUTION NUSANTARA">PT. ELKA SOLUTION NUSANTARA</option>
-                                    <option value="CV. ARINDAH">CV. ARINDAH</option>
-                                    <option value="ARFALINDO">ARFALINDO</option>
-                                </select>
+                        <label for="modal-perusahaan" class="block text-sm font-medium">Pilih Perusahaan</label>
+                        <select id="modal-perusahaan" name="perusahaan" class="w-full border-gray-300 rounded p-2"
+                            required>
+                            <option value="" disabled selected>Pilih Perusahaan</option>
+                            <option value="PT. BALIYONI SAGUNA">PT. BALIYONI SAGUNA</option>
+                            <option value="CV. ELKA MANDIRI">CV. ELKA MANDIRI</option>
+                            <option value="PT. NABA TECHNOLOGY SOLUTIONS">PT. NABA TECHNOLOGY SOLUTIONS</option>
+                            <option value="PT. DWI SRIKANDI INDONESIA">PT. DWI SRIKANDI INDONESIA</option>
+                            <option value="CV. BHIMA TEKNIK">CV. BHIMA TEKNIK</option>
+                            <option value="PT. DWI SRIKANDI NUSANTARA">PT. DWI SRIKANDI NUSANTARA</option>
+                        </select>
                     </div>
                     <div>
-                        <label for="modal-nilai" class="block text-sm font-medium">Nilai Paket (RP)</label>
+                        <label for="modal-nilai" class="block text-sm font-medium">Nilai (RP)</label>
                         <input type="text" id="modal-nilai" name="nilai" class="w-full border-gray-300 rounded p-2"
                             placeholder="0" min="0" required>
                     </div>
@@ -64,7 +57,7 @@
                         <button type="button" id="close-modal"
                             class="bg-gray-500 text-white px-4 py-2 rounded">Batal</button>
                         <button type="submit" id="save-data"
-                            class="bg-blue-500 text-white px-4 py-2 rounded">Simpan</button>
+                            class="bg-red-600 text-white px-4 py-2 rounded">Simpan</button>
                     </div>
                 </form>
             </div>
@@ -82,9 +75,8 @@
             <thead class="bg-gray-200">
                 <tr>
                     <th class="border border-gray-300 px-4 py-2">Bulan/Tahun</th>
-                    <th class="border border-gray-300 px-4 py-2">perusahaan</th>
-                    <th class="border border-gray-300 px-4 py-2">Nilai Paket (RP)</th>
-                    <th class="border border-gray-300 px-4 py-2">Keterangan</th>
+                    <th class="border border-gray-300 px-4 py-2">Perusahaan</th>
+                    <th class="border border-gray-300 px-4 py-2">Nilai (RP)</th>
                     <th class="border border-gray-300 px-4 py-2">Aksi</th>
                 </tr>
             </thead>
@@ -131,12 +123,12 @@
                 nilai: Number(document.getElementById('modal-nilai').value),
             };
 
-            const url = editMode ? `/marketings/rekappenjualanperusahaan/update/${editId}` :
-                '/marketings/rekappenjualanperusahaan/store';
+            const url = editMode ? `/procurements/laporanpembelianholding/update/${editId}` :
+                '/procurements/laporanpembelianholding/store';
             const method = editMode ? 'PUT' : 'POST';
 
-            try {
-                const response = await fetch(`/marketings/rekappenjualanperusahaan/update/${editId}`, {
+            try {   
+                const response = await fetch(`/procurements/laporanpembelianholding/update/${editId}`, {
                     method: 'PUT',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -161,7 +153,7 @@
         // Delete Data
         async function deleteData(id) {
             try {
-                const response = await fetch(`/marketings/rekappenjualanperusahaan/destroy/${id}`, {
+                const response = await fetch(`/procurements/laporanpembelianholding/destroy/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -187,8 +179,8 @@
         });
 
         async function updateData(filter = '') {
-            const url = filter ? `/marketings/rekappenjualanperusahaan/data?bulan_tahun=${filter}` :
-                '/marketings/rekappenjualanperusahaan/data';
+            const url = filter ? `/procurements/laporanpembelianholding/data?bulan_tahun=${filter}` :
+                '/procurements/laporanpembelianholding/data';
             try {
                 const response = await fetch(url);
                 const result = await response.json();
@@ -212,27 +204,15 @@
             const tableBody = document.getElementById('data-table');
             tableBody.innerHTML = ''; // Bersihkan tabel sebelum merender ulang
 
-            // Urutkan item berdasarkan nilai
-            const sortedItems = [...items].sort((a, b) => b.nilai - a.nilai);
-
-            // Tandai Top 1, 2, dan 3
-            sortedItems.forEach((item, index) => {
-                if (index === 0) item.keterangan = 'Top 1';
-                else if (index === 1) item.keterangan = 'Top 2';
-                else if (index === 2) item.keterangan = 'Top 3';
-                else item.keterangan = '-';
-            });
-
             // Render data item per baris
-            sortedItems.forEach((item) => {
+            items.forEach((item) => {
                 const row = `
         <tr class="border-b">
             <td class="border px-4 py-2">${item.bulan_tahun}</td>
             <td class="border px-4 py-2">${item.perusahaan}</td>
             <td class="border px-4 py-2">Rp ${item.nilai.toLocaleString()}</td>
-            <td class="border px-4 py-2">${item.keterangan}</td>
             <td class="border px-4 py-2 flex items-center justify-center space-x-2">
-                 <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
+                <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
                         class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
                     <i class="fas fa-edit mr-2"></i> Edit
                 </button>
@@ -247,12 +227,14 @@
 
             // Tambahkan baris total paket
             const totalRow = `
-        <tr class="border-t bg-gray-100">
-            <td colspan="4" class="text-center font-bold px-4 py-2">Total Nilai Paket</td>
-            <td class="border px-4 py-2 font-bold">Rp ${totalPaket.toLocaleString()}</td>
-        </tr>`;
+            <tr class="border-t bg-gray-100">
+                <td colspan="3" class="text-center font-bold px-4 py-2">Total Nilai Pembelian</td>
+                <td class="border px-4 py-2 font-bold">Rp ${totalPaket.toLocaleString()}</td>
+            </tr>`;
             tableBody.insertAdjacentHTML('beforeend', totalRow);
         }
+
+
 
         // Update Chart
         function updateChart(items) {
@@ -274,7 +256,7 @@
                 data: {
                     labels,
                     datasets: [{
-                        label: 'PENJUALAN PERUSAHAAN',
+                        label: 'GRAFIK LAPORAN PEMBELIAN (HOLDING)',
                         data: dataValues,
                         backgroundColor: backgroundColors,
                         borderWidth: 1,

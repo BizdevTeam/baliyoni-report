@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+r<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -111,8 +111,8 @@
             const method = editMode ? 'PUT' : 'POST';
 
             try {
-                const response = await fetch(url, {
-                    method,
+                const response = await fetch(`/marketings/rekappenjualan/update/${editId}`, {
+                    method: 'PUT',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                         'Content-Type': 'application/json',
@@ -197,31 +197,47 @@
             }
         });
 
-
-
         async function updateData(filter = '') {
             const url = filter ? `/marketings/rekappenjualan/filter?tahun=${filter}` :
                 '/marketings/rekappenjualan/data';
-
-            try {
-                const response = await fetch(url, {
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    },
-                });
-
+                try {
+                const response = await fetch(url);
                 const result = await response.json();
+
                 if (result.success) {
-                    updateTable(result.data); // Tampilkan data di tabel
-                    updateChart(result.data); // Perbarui chart
+                    const items = result.data; // Data untuk tabel dan grafik
+                    const totalPaket = result.total_paket; // Total Paket dari API
+
+                    updateTable(items, totalPaket); // Perbarui tabel
+                    updateChart(items); // Perbarui chart
                 } else {
-                    alert(result.message || 'Gagal memuat data.');
+                    alert('Gagal memuat data.');
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
                 alert('Terjadi kesalahan saat memuat data.');
             }
         }
+
+        //     try {
+        //         const response = await fetch(url, {
+        //             headers: {
+        //                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+        //             },
+        //         });
+
+        //         const result = await response.json();
+        //         if (result.success) {
+        //             updateTable(result.data); // Tampilkan data di tabel
+        //             updateChart(result.data); // Perbarui chart
+        //         } else {
+        //             alert(result.message || 'Gagal memuat data.');
+        //         }
+        //     } catch (error) {
+        //         console.error('Error fetching data:', error);
+        //         alert('Terjadi kesalahan saat memuat data.');
+        //     }
+        // }
 
         //table & chart sort by year
         function updateTable(items) {
@@ -242,7 +258,7 @@
                 <td class="border px-4 py-2">${item.bulan_tahun}</td>
                 <td class="border px-4 py-2">${item.total_penjualan}</td>
                 <td class="border px-4 py-2 flex items-center justify-center space-x-2">
-                    <button onclick="editData(${item.id})" 
+                    <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
                             class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
                         <i class="fas fa-edit mr-2"></i> Edit
                     </button>
@@ -321,22 +337,16 @@
             });
         }
 
-
-
-
-
         // Edit Data
-        async function editData(id) {
-            // const response = await fetch(`/marketings/rekappenjualan/show/${id}`);
-            // const data = await response.json();
-            const parsedData = JSON.parse(data);
+        async function editData(id, data) {
+            const parsedData = JSON.parse(decodeURIComponent(data));
 
             editMode = true;
-            editId = true;
+            editId = id;
             modalTitle.textContent = 'Edit Data';
 
-            document.getElementById('modal-bulan_tahun').value = data.bulan_tahun;
-            document.getElementById('modal-total_penjualan').value = data.total_penjualan;
+            document.getElementById('modal-bulan_tahun').value = parsedData.bulan_tahun;
+            document.getElementById('modal-total_penjualan').value = parsedData.total_penjualan;
 
             modal.classList.remove('hidden');
         }

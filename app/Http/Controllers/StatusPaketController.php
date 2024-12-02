@@ -28,7 +28,7 @@ class StatusPaketController extends Controller
             $pakets = $query->orderBy('created_at', 'desc')->get();
 
             // Perbaiki logika totalPaket
-            $totalPaket = $pakets->sum('paket_rp'); // Pakai tanda kutip tunggal (')
+            $totalPaket = $pakets->sum('paket'); // Pakai tanda kutip tunggal (')
 
             return response()->json([
                 'success' => true,
@@ -136,7 +136,7 @@ class StatusPaketController extends Controller
         return $request->validate([
             'bulan_tahun' => ['required', 'regex:/^(0[1-9]|1[0-2])\/\d{4}$/'],  // Ensure month/year format
             'status' => 'required|string|max:255',
-            'paket_rp' => 'required|integer|min:0',
+            'paket' => 'required|integer|min:0',
             'keterangan' => 'nullable|string|max:255',
         ]);
     }

@@ -134,8 +134,8 @@
             const method = editMode ? 'PUT' : 'POST';
 
             try {
-                const response = await fetch(url, {
-                    method,
+                const response = await fetch(`/marketings/laporanperinstansi/update/${editId}`, {
+                    method: 'PUT',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                         'Content-Type': 'application/json',
@@ -218,7 +218,7 @@
             <td class="border px-4 py-2">Rp ${item.nilai.toLocaleString()}</td>
             <td class="border px-4 py-2">${item.keterangan || '-'}</td>
             <td class="border px-4 py-2 flex items-center justify-center space-x-2">
-                <button onclick="editData(${item.id}, JSON.stringify(${JSON.stringify(item)}))" 
+                <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
                         class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
                     <i class="fas fa-edit mr-2"></i> Edit
                 </button>
@@ -239,8 +239,6 @@
             </tr>`;
             tableBody.insertAdjacentHTML('beforeend', totalRow);
         }
-
-
 
         // Update Chart
         function updateChart(items) {
@@ -299,7 +297,7 @@
 
         // Edit Data
         function editData(id, data) {
-            const parsedData = JSON.parse(data); // Parse JSON string
+            const parsedData = JSON.parse(decodeURIComponent(data)); // Parse JSON string
 
             editMode = true; // Enable edit mode
             editId = id; // Save the ID being edited

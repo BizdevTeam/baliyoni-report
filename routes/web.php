@@ -8,9 +8,11 @@ use App\Http\Controllers\RekapPenjualanController;
 use App\Http\Controllers\StatusPaketController;
 use App\Http\Controllers\LaporanPerInstansiController;
 use App\Http\Controllers\RekapPenjualanPerusahaanController;
+use App\Http\Controllers\LaporanPembelianHoldingController;
 
 
 Route::middleware(['web'])->group(function () {
+    //MARKETING
     // Rute Laporan Paket Administrasi
     Route::get('marketings/laporanpaketadministrasi', [LaporanPaketAdministrasiController::class, 'index'])
         ->name('marketings.laporanpaketadministrasi');
@@ -54,7 +56,7 @@ Route::middleware(['web'])->group(function () {
         ->name('marketings.statuspaket.destroy');
 
     //RUTE LAPORAN PERINSTANSI
-        Route::get('marketings/laporanperinstansi', [LaporanPerInstansiController::class, 'index'])
+    Route::get('marketings/laporanperinstansi', [LaporanPerInstansiController::class, 'index'])
         ->name('marketings.laporanperinstansi');
     Route::post('marketings/laporanperinstansi/store', [LaporanPerInstansiController::class, 'store'])
         ->name('marketings.laporanperinstansi.store');
@@ -79,7 +81,24 @@ Route::middleware(['web'])->group(function () {
     Route::get('marketings/rekappenjualanperusahaan/filter', [RekapPenjualanPerusahaanController::class, 'filterData'])
         ->name('marketings.rekappenjualanperusahaan.filter');
     Route::delete('marketings/rekappenjualanperusahaan/destroy/{id}', [RekapPenjualanPerusahaanController::class, 'destroy'])
-        ->name('marketings.rekappenjualanperusahaan.destroy');    
+        ->name('marketings.rekappenjualanperusahaan.destroy');  
+    //MARKETING  
+    
+    Route::get('procurements/laporanpembelianholding', [LaporanPembelianHoldingController::class, 'index'])
+    ->name('procurements/laporanpembelianholding');
+Route::post('procurements/laporanpembelianholding/store', [LaporanPembelianHoldingController::class, 'store'])
+    ->name('procurements/laporanpembelianholding.store');
+Route::put('procurements/laporanpembelianholding/update/{id}', [LaporanPembelianHoldingController::class, 'update'])
+    ->name('procurements/laporanpembelianholding.update');
+Route::get('procurements/laporanpembelianholding/data', [LaporanPembelianHoldingController::class, 'data'])
+    ->name('procurements/laporanpembelianholding.data');
+Route::get('procurements/laporanpembelianholding/filter', [LaporanPembelianHoldingController::class, 'filterData'])
+    ->name('procurements/laporanpembelianholding.filter');
+Route::delete('procurements/laporanpembelianholding/destroy/{id}', [LaporanPembelianHoldingController::class, 'destroy'])
+    ->name('procurements/laporanpembelianholding.destroy');  
+//MARKETING 
+    
+
 });
 
 Route::middleware(['guest'])->group(function () {

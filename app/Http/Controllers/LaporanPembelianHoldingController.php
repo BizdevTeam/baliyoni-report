@@ -1,25 +1,22 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use App\Models\RekapPenjualanPerusahaan;
-
+use App\Models\LaporanPembelianHolding;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-use Illuminate\Http\Request;
-
-class RekapPenjualanPerusahaanController extends Controller
+class LaporanPembelianHoldingController extends Controller
 {
     public function index()
     {
-        return view('marketings.rekappenjualanperusahaan');
+        return view('procurements.laporanpembelianholding');
     }
 
     public function data(Request $request)
     {
         try {
             $bulanTahun = $request->query('bulan_tahun');
-            $query = RekapPenjualanPerusahaan::query();
+            $query = LaporanPembelianHolding::query();
 
             if ($bulanTahun) {
                 $query->where('bulan_tahun', $bulanTahun);
@@ -50,7 +47,7 @@ class RekapPenjualanPerusahaanController extends Controller
 
         try {
             // Check if data already exists for the same bulan_tahun and perusahaan
-            $existingEntry = RekapPenjualanPerusahaan::where('bulan_tahun', $validatedData['bulan_tahun'])
+            $existingEntry = LaporanPembelianHolding::where('bulan_tahun', $validatedData['bulan_tahun'])
                 ->where('perusahaan', $validatedData['perusahaan'])
                 ->first();
 
@@ -61,7 +58,7 @@ class RekapPenjualanPerusahaanController extends Controller
                 ], 400);
             }
 
-            RekapPenjualanPerusahaan::create($validatedData);
+            LaporanPembelianHolding::create($validatedData);
 
             return response()->json([
                 'success' => true,
@@ -81,10 +78,10 @@ class RekapPenjualanPerusahaanController extends Controller
         $validatedData = $this->validateData($request);
 
         try {
-            $paket = RekapPenjualanPerusahaan::findOrFail($id);
+            $paket = LaporanPembelianHolding::findOrFail($id);
 
             // Cek duplikasi data
-            $existingEntry = RekapPenjualanPerusahaan::where('bulan_tahun', $validatedData['bulan_tahun'])
+            $existingEntry = LaporanPembelianHolding::where('bulan_tahun', $validatedData['bulan_tahun'])
                 ->where('perusahaan', $validatedData['perusahaan'])
                 ->where('id', '!=', $id) // Abaikan data dengan ID yang sama
                 ->first();
@@ -115,7 +112,7 @@ class RekapPenjualanPerusahaanController extends Controller
     public function destroy($id)
     {
         try {
-            $paket = RekapPenjualanPerusahaan::findOrFail($id);
+            $paket = LaporanPembelianHolding::findOrFail($id);
             $paket->delete();
 
             return response()->json([
