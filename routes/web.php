@@ -1,8 +1,12 @@
 <?php
 
-use App\Http\Controllers\SessionController;
-use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\SessionController;
+use App\Http\Controllers\ItBizdevDataController;
+use App\Http\Controllers\ItBizdevBulananController;
+use App\Http\Controllers\ItMultimediaTiktokController;
+use App\Http\Controllers\ItMultimediaInstagramController;
 use App\Http\Controllers\LaporanPaketAdministrasiController;
 use App\Http\Controllers\RekapPenjualanController;
 use App\Http\Controllers\StatusPaketController;
@@ -14,9 +18,27 @@ use App\Http\Controllers\LaporanPembelianOutletController;
 use App\Http\Controllers\LaporanNegosiasiController;
 
 
+
+
 Route::middleware(['web'])->group(function () {
     //MARKETING
     // Rute Laporan Paket Administrasi
+    // IT
+    Route::prefix('admin/it')->group(function () {
+        Route::resource('instagram', ItMultimediaInstagramController::class);
+        Route::resource('tiktok', ItMultimediaTiktokController::class);
+        Route::resource('bizdevbulanan', ItBizdevBulananController::class);
+        Route::prefix('bizdevbulanan/{bizdevbulanan_id}')->group(function () {
+            Route::get('bizdevdata', [ItBizdevDataController::class, 'index'])->name('bizdevdata.index');
+            Route::get('bizdevdata/create', [ItBizdevDataController::class, 'create'])->name('bizdevdata.create');
+            Route::post('bizdevdata/store', [ItBizdevDataController::class, 'store'])->name('bizdevdata.store');
+            Route::get('bizdevdata/{id_bizdevdata}/edit', [ItBizdevDataController::class, 'edit'])->name('bizdevdata.edit');
+            Route::put('bizdevdata/{id_bizdevdata}/update', [ItBizdevDataController::class, 'update'])->name('bizdevdata.update');
+            Route::delete('bizdevdata/{id_bizdevdata}/destroy', [ItBizdevDataController::class, 'destroy'])->name('bizdevdata.destroy');
+        });
+    });
+
+    // Menampilkan halaman laporan paket administrasi
     Route::get('marketings/laporanpaketadministrasi', [LaporanPaketAdministrasiController::class, 'index'])
         ->name('marketings.laporanpaketadministrasi');
     Route::post('marketings/laporanpaketadministrasi/store', [LaporanPaketAdministrasiController::class, 'store'])
@@ -170,8 +192,8 @@ Route::middleware(['guest'])->group(function () {
     Route::post('/', [SessionController::class, 'login']);
 });
 
-Route::middleware(['auth'])->group(function () {
     // Authenticated routes
+Route::middleware(['auth'])->group(function() {
     Route::get('/admin', [AdminController::class, 'index'])->name('layouts.admin')->middleware('UserAccess:superadmin');
     Route::get('/admin/marketing', [AdminController::class, 'marketing'])->middleware('UserAccess:marketing');
     Route::get('/admin/it', [AdminController::class, 'it'])->middleware('UserAccess:it');

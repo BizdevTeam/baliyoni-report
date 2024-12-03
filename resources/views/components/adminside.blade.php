@@ -119,21 +119,21 @@
                 </button>
                 <ul id="dropdown-IT" class="hidden py-2 pl-8 space-y-2">
                     <li>
-                        <a href="#"
+                        <a href="{{ route('instagram.index') }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
                             <img src="icon/RekapPenjualan.svg" class="w-5 h-5">
                             <span class="ml-2">Laporan Multimedia IG</span>
                         </a>
                     </li>
                     <li>    
-                        <a href="#"
+                        <a href="{{ route('tiktok.index') }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="icon/RekapPenjualanPerusahaan.svg" class="w-5 h-5">
                             <span class="ml-2">Laporan Multimedia Tiktok</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#"
+                        <a href="{{ route('bizdevbulanan.index') }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="icon/LaporanPaketAdministrasi.svg" class="w-5 h-5">
                             <span class="ml-2">Laporan Bizdev</span>

@@ -30,7 +30,7 @@
     <footer class="main-footer">
         <strong>Footer Information</strong>
     </footer>
-
+  </div>
 <!-- Scripts -->
 <script src="{{ asset('/templates/plugins/jquery/jquery.min.js') }}"></script>
 <script src="{{ asset('/templates/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
