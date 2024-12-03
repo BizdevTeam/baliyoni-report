@@ -97,6 +97,7 @@
         const modalForm = document.getElementById('modal-form');
         const modalTitle = document.getElementById('modal-title');
         const chartCanvas = document.getElementById('chart');
+        
         let editMode = false;
         let editId = null;
 
@@ -128,8 +129,8 @@
             const method = editMode ? 'PUT' : 'POST';
 
             try {   
-                const response = await fetch(`/procurements/laporanpembelianholding/update/${editId}`, {
-                    method: 'PUT',
+                const response = await fetch(url, {
+                    method,
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                         'Content-Type': 'application/json',

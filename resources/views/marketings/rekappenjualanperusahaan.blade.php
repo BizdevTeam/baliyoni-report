@@ -136,8 +136,8 @@
             const method = editMode ? 'PUT' : 'POST';
 
             try {
-                const response = await fetch(`/marketings/rekappenjualanperusahaan/update/${editId}`, {
-                    method: 'PUT',
+                const response = await fetch(url, {
+                    method,
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                         'Content-Type': 'application/json',

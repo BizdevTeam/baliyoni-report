@@ -73,7 +73,7 @@
                     class="flex items-center w-full px-4 py-2 text-gray-700 rounded-md . . transition"
                     aria-controls="dropdown-procurement" aria-expanded="false">
                     <img src="images/procurement.svg" class="w-5 h-5">
-                    <span class="menu-label flex-1 ml-3 text-left">procurement</span>
+                    <span class="menu-label flex-1 ml-3 text-left">Procurement</span>
                     <i class="fas fa-chevron-down ml-auto text-gray-400 group-hover:text-gray-700 transition-transform"></i>
                 </button>
                 <ul id="dropdown-procurement" class="hidden py-2 pl-8 space-y-2">
