@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Laporan Paket Administrasi</title>
+    <title>instansi Paket</title>
     @vite('resources/css/app.css')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
@@ -13,13 +13,16 @@
 
 <body class="bg-gray-100 p-6">
     <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow">
-        <h1 class="text-2xl font-bold mb-4">Laporan Paket Administrasi</h1>
+        <h1 class="text-2xl font-bold mb-4">Laporan Admin Per Instansi </h1>
 
         <!-- Button Tambah Data -->
         <div class="relative inline-block">
-        <a href="/admin">
-        <button class="open-modal:absolute inset-y-0 bg-red-600 text-white px-4 py-2 rounded mb-4 ">Kembali</button></a>
-        <button id="open-modal" class="open-modal:absolute open-modal:right-0 bg-red-600 text-white px-4 py-2 rounded mb-4 ">Tambah Data</button>
+            <a href="/admin">
+                <button
+                    class="open-modal:absolute inset-y-0 bg-red-600 text-white px-4 py-2 rounded mb-4 ">Kembali</button></a>
+            <button id="open-modal"
+                class="open-modal:absolute open-modal:right-0 bg-red-600 text-white px-4 py-2 rounded mb-4 ">Tambah
+                Data</button>
         </div>
 
         <!-- Modal -->
@@ -38,25 +41,27 @@
                             class="w-full border-gray-300 rounded p-2" placeholder="Keterangan (opsional)">
                     </div>
                     <div>
-                        <label for="modal-website" class="block text-sm font-medium">Website</label>
-                        <select id="modal-website" name="website" class="w-full border-gray-300 rounded p-2" required>
-                            <option value="" disabled selected>Pilih Website</option>
-                            <option value="E - Katalog">E - Katalog</option>
-                            <option value="E - Katalog Luar Bali">E - Katalog Luar Bali</option>
-                            <option value="Balimall">Balimall</option>
-                            <option value="Siplah">Siplah</option>
+                        <label for="modal-instansi" class="block text-sm font-medium">Instansi</label>
+                        <select id="modal-instansi" name="instansi" class="w-full border-gray-300 rounded p-2"
+                            required>
+                            <option value="" disabled selected>Pilih Instansi</option>
+                            <option value="Badung">Badung</option>
+                            <option value="Denpasar">Denpasar</option>
+                            <option value="Provinsi">Provinsi</option>
+                            <option value="Bangli">Bangli</option>
+                            <option value="Klungkung">Klungkung</option>
                         </select>
                     </div>
                     <div>
-                        <label for="modal-paket_rp" class="block text-sm font-medium">Paket (RP)</label>
-                        <input type="text" id="modal-paket_rp" name="paket_rp"
+                        <label for="modal-nilai" class="block text-sm font-medium">Paket (RP)</label>
+                        <input type="text" id="modal-nilai" name="nilai"
                             class="w-full border-gray-300 rounded p-2" placeholder="0" min="0" required>
                     </div>
                     <div class="flex justify-end space-x-2">
                         <button type="button" id="close-modal"
                             class="bg-gray-500 text-white px-4 py-2 rounded">Batal</button>
                         <button type="submit" id="save-data"
-                            class="bg-blue-500 text-white px-4 py-2 rounded">Simpan</button>
+                            class="bg-red-600 text-white px-4 py-2 rounded">Simpan</button>
                     </div>
                 </form>
             </div>
@@ -74,8 +79,8 @@
             <thead class="bg-gray-200">
                 <tr>
                     <th class="border border-gray-300 px-4 py-2">Bulan/Tahun</th>
-                    <th class="border border-gray-300 px-4 py-2">Website</th>
-                    <th class="border border-gray-300 px-4 py-2">Paket (RP)</th>
+                    <th class="border border-gray-300 px-4 py-2">Instansi</th>
+                    <th class="border border-gray-300 px-4 py-2">Nilai (RP)</th>
                     <th class="border border-gray-300 px-4 py-2">Keterangan</th>
                     <th class="border border-gray-300 px-4 py-2">Aksi</th>
                 </tr>
@@ -119,18 +124,18 @@
 
             const data = {
                 bulan_tahun: document.getElementById('modal-bulan_tahun').value,
-                website: document.getElementById('modal-website').value,
-                paket_rp: Number(document.getElementById('modal-paket_rp').value),
+                instansi: document.getElementById('modal-instansi').value,
+                nilai: Number(document.getElementById('modal-nilai').value),
                 keterangan: document.getElementById('modal-keterangan').value || null,
             };
 
-            const url = editMode ? `/marketings/laporanpaketadministrasi/update/${editId}` :
-                '/marketings/laporanpaketadministrasi/store';
+            const url = editMode ? `/marketings/laporanperinstansi/update/${editId}` :
+                '/marketings/laporanperinstansi/store';
             const method = editMode ? 'PUT' : 'POST';
 
             try {
-                const response = await fetch(url, {
-                    method,
+                const response = await fetch(`/marketings/laporanperinstansi/update/${editId}`, {
+                    method: 'PUT',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                         'Content-Type': 'application/json',
@@ -154,7 +159,7 @@
         // Delete Data
         async function deleteData(id) {
             try {
-                const response = await fetch(`/marketings/laporanpaketadministrasi/destroy/${id}`, {
+                const response = await fetch(`/marketings/laporanperinstansi/destroy/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -178,46 +183,45 @@
             const filterValue = document.getElementById('filter-bulan-tahun').value;
             updateData(filterValue);
         });
+
         async function updateData(filter = '') {
-            const url = filter ? `/marketings/laporanpaketadministrasi/data?bulan_tahun=${filter}` :
-                '/marketings/laporanpaketadministrasi/data';
+            const url = filter ? `/marketings/laporanperinstansi/data?bulan_tahun=${filter}` : '/marketings/laporanperinstansi/data';
             try {
                 const response = await fetch(url);
-                const data = await response.json();
-                if (data.success) {
-                    updateTable(data.data);
-                    updateChart(data.data);
+                const result = await response.json();
+
+                if (result.success) {
+                    const items = result.data; // Data untuk tabel dan grafik
+                    const totalPaket = result.total_paket; // Total Paket dari API
+
+                    updateTable(items, totalPaket); // Perbarui tabel
+                    updateChart(items); // Perbarui chart
                 } else {
                     alert('Gagal memuat data.');
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
+                alert('Terjadi kesalahan saat memuat data.');
             }
         }
 
-        // Update Table
-        function updateTable(items) {
+        function updateTable(items, totalPaket = 0) {
             const tableBody = document.getElementById('data-table');
-            tableBody.innerHTML = ''; // Clear table before populating
+            tableBody.innerHTML = ''; // Bersihkan tabel sebelum merender ulang
 
+            // Render data item per baris
             items.forEach((item) => {
-                // Safely stringify the data
-                const itemData = encodeURIComponent(JSON.stringify(item));
-
                 const row = `
         <tr class="border-b">
             <td class="border px-4 py-2">${item.bulan_tahun}</td>
-            <td class="border px-4 py-2">${item.website}</td>
-            <td class="border px-4 py-2">${item.paket_rp}</td>
+            <td class="border px-4 py-2">${item.instansi}</td>
+            <td class="border px-4 py-2">Rp ${item.nilai.toLocaleString()}</td>
             <td class="border px-4 py-2">${item.keterangan || '-'}</td>
             <td class="border px-4 py-2 flex items-center justify-center space-x-2">
-                <!-- Edit Button with Icon -->
-                <button onclick="editData(${item.id}, decodeURIComponent('${itemData}'))" 
+                <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
                         class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
                     <i class="fas fa-edit mr-2"></i> Edit
                 </button>
-
-                <!-- Delete Button with Icon -->
                 <button onclick="deleteData(${item.id})" 
                         class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
                     <i class="fas fa-trash mr-2"></i> Delete
@@ -226,25 +230,37 @@
         </tr>`;
                 tableBody.insertAdjacentHTML('beforeend', row);
             });
+
+            // Tambahkan baris total paket
+            const totalRow = `
+            <tr class="border-t bg-gray-100">
+                <td colspan="4" class="text-center font-bold px-4 py-2">Total Paket</td>
+                <td class="border px-4 py-2 font-bold">Rp ${totalPaket.toLocaleString()}</td>
+            </tr>`;
+            tableBody.insertAdjacentHTML('beforeend', totalRow);
         }
 
         // Update Chart
         function updateChart(items) {
-            const labels = items.map((item) => item.website);
-            const dataValues = items.map((item) => item.paket_rp);
+            const labels = items.map((item) => item.instansi); // Label dari nama instansi
+            const dataValues = items.map((item) => item.nilai); // Nilai paket
             const backgroundColors = items.map(() =>
-                `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.7)`);
+                `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.7)`); // Warna acak
 
             const ctx = chartCanvas.getContext('2d');
+
+            // Hapus chart lama jika ada
             if (window.myChart) {
                 window.myChart.destroy();
             }
+
+            // Buat chart baru
             window.myChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels,
                     datasets: [{
-                        label: 'Paket (RP)',
+                        label: 'GRAFIK NILAI BERDASARKAN INSTANSI',
                         data: dataValues,
                         backgroundColor: backgroundColors,
                         borderWidth: 1,
@@ -253,6 +269,14 @@
                 options: {
                     responsive: true,
                     plugins: {
+                        legend: {
+                            labels: {
+                                font: {
+                                    size: 20, // Ukuran font label
+                                    weight: 'bold', // Tebal tulisan
+                                },
+                            },
+                        },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
@@ -270,9 +294,10 @@
             });
         }
 
+
         // Edit Data
         function editData(id, data) {
-            const parsedData = JSON.parse(data); // Parse JSON string
+            const parsedData = JSON.parse(decodeURIComponent(data)); // Parse JSON string
 
             editMode = true; // Enable edit mode
             editId = id; // Save the ID being edited
@@ -280,8 +305,8 @@
 
             // Populate modal fields with existing data
             document.getElementById('modal-bulan_tahun').value = parsedData.bulan_tahun;
-            document.getElementById('modal-website').value = parsedData.website;
-            document.getElementById('modal-paket_rp').value = parsedData.paket_rp;
+            document.getElementById('modal-instansi').value = parsedData.instansi;
+            document.getElementById('modal-nilai').value = parsedData.nilai;
             document.getElementById('modal-keterangan').value = parsedData.keterangan || '';
 
             modal.classList.remove('hidden'); // Show modal

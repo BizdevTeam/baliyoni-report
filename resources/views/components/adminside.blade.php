@@ -6,7 +6,7 @@
             <img src="images/baliyoni.png" class="w-full" alt="Logo Full">
         </div>
         <div id="logo-mini" class="logo w-12 h-auto hidden">
-            <img src="images/baliyoni-mini.png" class="w-full" alt="Logo Mini">
+            <img src="images/baliyoni- mini.png" class="w-full" alt="Logo Mini">
         </div>
     </div>
     <nav class="mt-4">
@@ -30,35 +30,35 @@
                 </button>
                 <ul id="dropdown-marketing" class="hidden py-2 pl-8 space-y-2">
                     <li>
-                        <a href="#"
-                            class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
+                        <a href="/marketings/rekappenjualan"
+                            class="flex items-center block px-3 py-2 text-gray-700  hover:bg-red-600 hover:text-white transition">
                             <img src="icon/RekapPenjualan.svg" class="w-5 h-5">
                             <span class="ml-2">Rekap Penjualan</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#"
+                        <a href="marketings/rekappenjualanperusahaan"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="icon/RekapPenjualanPerusahaan.svg" class="w-5 h-5">
                             <span class="ml-2">Rekap Penjualan Perusahaan</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#"
+                        <a href="marketings/laporanpaketadministrasi"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="icon/LaporanPaketAdministrasi.svg" class="w-5 h-5">
                             <span class="ml-2">Laporan Paket Administrasi</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#"
+                        <a href="marketings/statuspaket"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="icon/LaporanStatusPaket.svg" class="w-5 h-5">
                             <span class="ml-2">Laporan Status Paket </span>
                         </a>
                     </li>
                     <li>
-                        <a href="#"
+                        <a href="marketings/laporanperinstansi"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="icon/LaporanPerinstansi.svg" class="w-5 h-5">
                             <span class="ml-2">Laporan Per Instansi</span>
@@ -78,28 +78,28 @@
                 </button>
                 <ul id="dropdown-procurement" class="hidden py-2 pl-8 space-y-2">
                     <li>
-                        <a href="#"
+                        <a href="procurements/laporanpembelianholding"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
                             <img src="icon/RekapPenjualan.svg" class="w-5 h-5">
                             <span class="ml-2">Laporan Pembelian (Holding)</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#"
+                        <a href="procurements/laporanstok"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="icon/RekapPenjualanPerusahaan.svg" class="w-5 h-5">
                             <span class="ml-2">Laporan Stok</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#"
+                        <a href="procurements/laporanpembelianoutlet"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="icon/LaporanPaketAdministrasi.svg" class="w-5 h-5">
-                            <span class="ml-2">Laporan Pembelian Oulet</span>
+                            <span class="ml-2">Laporan Pembelian Outlet</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#"
+                        <a href="procurements/laporannegosiasi"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="icon/LaporanStatusPaket.svg" class="w-5 h-5">
                             <span class="ml-2">Laporan Negosiasi</span>
@@ -219,7 +219,7 @@
                         <a href="#"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
                             <img src="icon/RekapPenjualan.svg" class="w-5 h-5">
-                            <span class="ml-2">Laporran
+                            <span class="ml-2">Laporan
                                 SPI</span>
                         </a>
                     </li>
