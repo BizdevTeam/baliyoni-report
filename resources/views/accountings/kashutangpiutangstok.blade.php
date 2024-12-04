@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Rekap Penjualan</title>
+    <title>Kas Hutang Piutang Stok</title>
     @vite('resources/css/app.css')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
@@ -15,12 +15,14 @@
 
 <body class="bg-gray-100 p-6">
     <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow">
-        <h1 class="text-2xl font-bold mb-4">Rekap Penjualan</h1>
+        <h1 class="text-2xl font-bold mb-4">Kas Hutang Piutang Stok</h1>
 
         <!-- Button Tambah Data -->
-        <a href="/admin">
-        <button class="bg-red-600 text-white px-4 py-2 rounded mb-4">Kembali</button></a>
-        <button id="open-modal" class="bg-red-600 text-white px-4 py-2 rounded mb-4">Tambah Data</button>
+        <div class="flex gap-4 mb-4">
+            <a href="/admin" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Kembali</a>
+            <button id="open-modal" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Tambah
+                Data</button>
+        </div>
 
         <!-- Modal -->
         <div id="modal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
@@ -33,16 +35,31 @@
                             class="w-full border-gray-300 rounded p-2" placeholder="mm/yyyy" required>
                     </div>
                     <div>
-                        <label for="modal-total_penjualan" class="block text-sm font-medium">Total Penjualan
-                            (RP)</label>
-                        <input type="text" id="modal-total_penjualan" name="total_penjualan"
+                        <label for="modal-kas" class="block text-sm font-medium">Kas (RP)</label>
+                        <input type="text" id="modal-kas" name="kas" class="w-full border-gray-300 rounded p-2"
+                            placeholder="0" min="0" required>
+                    </div>
+                    <div>
+                        <label for="modal-hutang" class="block text-sm font-medium">Hutang (RP)</label>
+                        <input type="text" id="modal-hutang" name="hutang"
                             class="w-full border-gray-300 rounded p-2" placeholder="0" min="0" required>
+                    </div>
+                    <div>
+                        <label for="modal-piutang" class="block text-sm font-medium">Piutang (RP)</label>
+                        <input type="text" id="modal-piutang" name="piutang"
+                            class="w-full border-gray-300 rounded p-2" placeholder="0" min="0" required>
+                    </div>
+                    <div>
+                        <label for="modal-stok" class="block text-sm font-medium">Stok (RP)</label>
+                        <input type="text" id="modal-stok" name="stok" class="w-full border-gray-300 rounded p-2"
+                            placeholder="0" min="0" required>
                     </div>
                     <div class="flex justify-end space-x-2">
                         <button type="button" id="close-modal"
-                            class="bg-gray-500 text-white px-4 py-2 rounded">Batal</button>
-                        <button type="submit" id="save-data"
-                            class="bg-blue-500 text-white px-4 py-2 rounded">Simpan</button>
+                            class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700">Batal</button>
+                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">
+                            Simpan
+                        </button>
                     </div>
                 </form>
             </div>
@@ -60,7 +77,10 @@
             <thead class="bg-gray-200">
                 <tr>
                     <th class="border border-gray-300 px-4 py-2">Bulan/Tahun</th>
-                    <th class="border border-gray-300 px-4 py-2">Total Penjualan (RP)</th>
+                    <th class="border border-gray-300 px-4 py-2">Kas (RP)</th>
+                    <th class="border border-gray-300 px-4 py-2">Hutang(RP)</th>
+                    <th class="border border-gray-300 px-4 py-2">Piutang (RP)</th>
+                    <th class="border border-gray-300 px-4 py-2">Stok (RP)</th>
                     <th class="border border-gray-300 px-4 py-2">Aksi</th>
                 </tr>
             </thead>
@@ -68,7 +88,7 @@
         </table>
 
         <!-- Chart -->
-        <div class="mt-6">
+        <div class="mt-6 items-center text-center mx-auto w-[600px]">
             <canvas id="chart"></canvas>
         </div>
 
@@ -104,11 +124,14 @@
 
             const data = {
                 bulan_tahun: document.getElementById('modal-bulan_tahun').value,
-                total_penjualan: Number(document.getElementById('modal-total_penjualan').value),
+                kas: Number(document.getElementById('modal-kas').value),
+                hutang: Number(document.getElementById('modal-hutang').value),
+                piutang: Number(document.getElementById('modal-piutang').value),
+                stok: Number(document.getElementById('modal-stok').value),
             };
 
-            const url = editMode ? `/marketings/rekappenjualan/update/${editId}` :
-                '/marketings/rekappenjualan/store';
+            const url = editMode ? `/accountings/kashutangpiutangstok/update/${editId}` :
+                '/accountings/kashutangpiutangstok/store';
             const method = editMode ? 'PUT' : 'POST';
 
             try {
@@ -123,7 +146,7 @@
 
                 const result = await response.json();
                 if (response.ok && result.success) {
-                    updateData(); // Refresh data
+                    await updateData(); // Refresh data
                     modal.classList.add('hidden'); // Hide modal
                 } else {
                     alert(result.message || 'Gagal menyimpan data.');
@@ -136,8 +159,10 @@
 
         // Delete Data
         async function deleteData(id) {
+            if (!confirm('Apakah Anda yakin ingin menghapus data ini?')) return;
+
             try {
-                const response = await fetch(`/marketings/rekappenjualan/destroy/${id}`, {
+                const response = await fetch(`/accountings/kashutangpiutangstok/destroy/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -147,7 +172,7 @@
 
                 const result = await response.json();
                 if (result.success) {
-                    updateData(); // Refresh data after deletion
+                    await updateData(); // Refresh data after deletion
                 } else {
                     alert(result.message || 'Gagal menghapus data.');
                 }
@@ -157,38 +182,30 @@
             }
         }
 
-        //filter tahun
+        // Update Data By Year
         async function updateDataByYear(year) {
-            const url = `/marketings/rekappenjualan/filter?tahun=${year}`;
             try {
-                const response = await fetch(url, {
+                const response = await fetch(`/accountings/kashutangpiutangstok/filter?tahun=${year}`, {
                     method: 'GET',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     },
                 });
 
-                if (!response.ok) {
-                    console.error(`HTTP Error: ${response.status}`);
-                    throw new Error(`Failed to fetch data. Status: ${response.status}`);
-                }
+                if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
 
                 const result = await response.json();
-
                 if (result.success) {
-                    const items = result.data; // Data untuk tabel dan grafik
-                    const totalPaket = items.reduce((sum, item) => sum + item.total_penjualan, 0);
-
-                    updateTable(items, totalPaket); // Update tabel
-                    updateChart(items); // Update chart
+                    updateTable(result.data);
+                    updateChart(result.data);
                 } else {
                     alert(result.message || 'Data tidak ditemukan untuk tahun ini.');
-                    updateTable([]); // Kosongkan tabel
-                    updateChart([]); // Kosongkan chart
+                    updateTable([]);
+                    updateChart([]);
                 }
             } catch (error) {
                 console.error('Error fetching data by year:', error.message);
-                alert('Terjadi kesalahan saat memuat data. Lihat console untuk detail.');
+                alert('Terjadi kesalahan saat memuat data.');
             }
         }
 
@@ -196,25 +213,27 @@
         document.getElementById('apply-filter').addEventListener('click', () => {
             const filterYear = document.getElementById('filter-tahun').value.trim();
             if (filterYear.length === 4 && !isNaN(filterYear)) {
-                updateDataByYear(filterYear); // Panggil fungsi filter
+                updateDataByYear(filterYear);
             } else {
                 alert('Masukkan tahun yang valid (format: yyyy).');
             }
         });
 
+        // Update Data
         async function updateData(filter = '') {
-            const url = filter ? `/marketings/rekappenjualan/filter?tahun=${filter}` :
-                '/marketings/rekappenjualan/data';
-                try {
+            const url = filter ? `/accountings/kashutangpiutangstok/filter?tahun=${filter}` :
+                '/accountings/kashutangpiutangstok/data';
+            try {
                 const response = await fetch(url);
                 const result = await response.json();
 
                 if (result.success) {
-                    const items = result.data; // Data untuk tabel dan grafik
-                    const totalPaket = items.reduce((sum, item) => sum + item.total_penjualan, 0);// Total Paket dari API
+                    console.log('Data diterima', result.data);
 
-                    updateTable(items, totalPaket); // Perbarui tabel
-                    updateChart(items); // Perbarui chart
+                    const items = result.data;
+
+                    updateTable(result.data);
+                    updateChart(result.data);
                 } else {
                     alert('Gagal memuat data.');
                 }
@@ -224,109 +243,103 @@
             }
         }
 
-        //table & chart sort by year
-        function updateTable(items, totalPaket = 0) {
+        // Update Table
+        function updateTable(items) {
             const tableBody = document.getElementById('data-table');
-            tableBody.innerHTML = ''; // Clear table
+            tableBody.innerHTML = '';
 
             if (items.length === 0) {
-                tableBody.innerHTML = `
-            <tr>
-                <td colspan="3" class="text-center py-4">Tidak ada data untuk ditampilkan.</td>
-            </tr>`;
+                tableBody.innerHTML =
+                    `<tr><td colspan="3" class="text-center py-4">Tidak ada data untuk ditampilkan.</td></tr>`;
                 return;
             }
 
             items.forEach((item) => {
                 const row = `
-            <tr class="border-b">
-                <td class="border px-4 py-2">${item.bulan_tahun}</td>
-                <td class="border px-4 py-2">Rp ${item.total_penjualan.toLocaleString()}</td>
-                <td class="border px-4 py-2 flex items-center justify-center space-x-2">
-                    <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
-                            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
-                        <i class="fas fa-edit mr-2"></i> Edit
-                    </button>
-                    <button onclick="deleteData(${item.id})" 
-                            class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
-                        <i class="fas fa-trash mr-2"></i> Delete
-                    </button>
-                </td>
-            </tr>`;
+                    <tr class="border-b">
+                        <td class="border px-4 py-2">${item.bulan_tahun}</td>
+                        <td class="border px-4 py-2">Rp ${item.kas.toLocaleString()}</td>
+                        <td class="border px-4 py-2">Rp ${item.hutang.toLocaleString()}</td>
+                        <td class="border px-4 py-2">Rp ${item.piutang.toLocaleString()}</td>
+                        <td class="border px-4 py-2">Rp ${item.stok.toLocaleString()}</td>
+                        <td class="border px-4 py-2 flex items-center justify-center space-x-2">
+                            <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
+                                <i class="fas fa-edit mr-2"></i> Edit
+                            </button>
+                            <button onclick="deleteData(${item.id})" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
+                                <i class="fas fa-trash mr-2"></i> Delete
+                            </button>
+                        </td>
+                    </tr>`;
                 tableBody.insertAdjacentHTML('beforeend', row);
             });
-
-            const totalRow = `
-            <tr class="border-t bg-gray-100">
-                <td colspan="2" class="text-center font-bold px-4 py-2">Total Paket</td>
-                <td class="border px-4 py-2 font-bold text-center items-center">Rp ${totalPaket.toLocaleString()}</td>
-            </tr>`;
-            tableBody.insertAdjacentHTML('beforeend', totalRow);
         }
 
+        //Update Chart
         function updateChart(items) {
-            const labels = items.map((item) => item.bulan_tahun);
-            const dataValues = items.map((item) => item.total_penjualan);
-            const backgroundColors = items.map(() =>
-                `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.7)`);
+            const labels = ['Kas', 'Hutang', 'Piutang', 'Stok'];
+            const dataValues = [
+                items.reduce((total, item) => total + item.kas, 0),
+                items.reduce((total, item) => total + item.hutang, 0),
+                items.reduce((total, item) => total + item.piutang, 0),
+                items.reduce((total, item) => total + item.stok, 0),
+            ];
+
+            // const dataValues = [data.kas, data.hutang, data.piutang, data.stok]; 
+            const backgroundColors = [
+                'rgba(75, 192, 192, 0.7)', // Warna untuk "Kas"
+                'rgba(255, 99, 132, 0.7)', // Warna untuk "Hutang"
+                'rgba(54, 162, 235, 0.7)', // Warna untuk "Piutang"
+                'rgba(255, 206, 86, 0.7)', // Warna untuk "Stok"
+            ];
 
             const ctx = chartCanvas.getContext('2d');
             if (window.myChart) {
+                console.log('Menghapus Chart Lama')
                 window.myChart.destroy();
             }
 
-            if (items.length === 0) {
-                window.myChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Tidak ada data'],
-                        datasets: [{
-                            label: 'Total Penjualan (RP)',
-                            data: [0],
-                            backgroundColor: backgroundColors,
-                        }],
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                            },
-                        },
-                    },
-                });
-                return;
-            }
-
             window.myChart = new Chart(ctx, {
-                type: 'bar',
+                type: 'pie',
                 data: {
                     labels,
                     datasets: [{
-                        label: 'Total Penjualan (RP)',
+                        label:  ['Kas', 'Hutang', 'Piutang', 'Stok'],
                         data: dataValues,
                         backgroundColor: backgroundColors,
                         borderWidth: 1,
                     }],
                 },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return `Rp ${context.raw.toLocaleString()}`;
-                                },
-                            },
-                        },
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
+           
+            options: {
+            responsive: true,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let total = context.dataset.data.reduce((acc, val) => acc + val, 0);
+                            let value = context.raw;
+                            let percentage = ((value / total) * 100).toFixed(2);
+                            return `Rp ${value.toLocaleString()} (${percentage}%)`;
                         },
                     },
                 },
-            });
+                datalabels: {
+                    color: '#fff',
+                    formatter: function(value, context) {
+                        let total = context.dataset.data.reduce((acc, val) => acc + val, 0);
+                        let percentage = ((value / total) * 100).toFixed(2);
+                        return `${percentage}%`;
+                    },
+                    font: {
+                        size: 20,
+                        weight: 'bold',
+                    },
+                },
+            },
+        },
+    });
+
         }
 
         // Edit Data
@@ -338,15 +351,18 @@
             modalTitle.textContent = 'Edit Data';
 
             document.getElementById('modal-bulan_tahun').value = parsedData.bulan_tahun;
-            document.getElementById('modal-total_penjualan').value = parsedData.total_penjualan;
+            document.getElementById('modal-kas').value = parsedData.kas;
+            document.getElementById('modal-hutang').value = parsedData.hutang;
+            document.getElementById('modal-piutang').value = parsedData.piutang;
+            document.getElementById('modal-stok').value = parsedData.stok;
 
             modal.classList.remove('hidden');
         }
 
-
         // Initial Load
         updateData();
     </script>
+
 </body>
 
 </html>

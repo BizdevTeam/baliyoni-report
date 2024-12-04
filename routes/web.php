@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ArusKasController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\ItBizdevDataController;
 use App\Http\Controllers\ItBizdevBulananController;
@@ -16,8 +17,7 @@ use App\Http\Controllers\LaporanPembelianHoldingController;
 use App\Http\Controllers\LaporanStokController;
 use App\Http\Controllers\LaporanPembelianOutletController;
 use App\Http\Controllers\LaporanNegosiasiController;
-
-
+use App\Http\Controllers\KasHutangPiutangStokController;
 
 
 Route::middleware(['web'])->group(function () {
@@ -140,20 +140,6 @@ Route::get('procurements/laporanstok/filter', [LaporanStokController::class, 'fi
 Route::delete('procurements/laporanstok/destroy/{id}', [LaporanStokController::class, 'destroy'])
 ->name('procurements.laporanstok.destroy');
 
-//LAPORAN STOK
-Route::get('procurements/laporanstok', [LaporanStokController::class, 'index'])
-->name('procurements.laporanstok');
-Route::post('procurements/laporanstok/store', [LaporanStokController::class, 'store'])
-->name('procurements.laporanstok.store');
-Route::put('procurements/laporanstok/update/{id}', [LaporanStokController::class, 'update'])
-->name('procurements.laporanstok.update');
-Route::get('procurements/laporanstok/data', [LaporanStokController::class, 'data'])
-->name('procurements.laporanstok.data');
-Route::get('procurements/laporanstok/filter', [LaporanStokController::class, 'filterData'])
-->name('procurements.laporanstok.filterByYear');
-Route::delete('procurements/laporanstok/destroy/{id}', [LaporanStokController::class, 'destroy'])
-->name('procurements.laporanstok.destroy');
-
 //LAPORAN PEMBELIAN OUTLET
 Route::get('procurements/laporanpembelianoutlet', [LaporanPembelianOutletController::class, 'index'])
 ->name('procurements.laporanpembelianoutlet');
@@ -181,8 +167,35 @@ Route::get('procurements/laporannegosiasi/filter', [LaporanNegosiasiController::
 ->name('procurements.laporannegosiasi.filterByYear');
 Route::delete('procurements/laporannegosiasi/destroy/{id}', [LaporanNegosiasiController::class, 'destroy'])
 ->name('procurements.laporannegosiasi.destroy');
+ 
+//ACCOUNTINGS
+//LAPORAN KAS HUTANG PIUTANG STOK
+Route::get('accountings/kashutangpiutangstok', [KasHutangPiutangStokController::class, 'index'])
+->name('accountings.kashutangpiutangstok');
+Route::post('accountings/kashutangpiutangstok/store', [KasHutangPiutangStokController::class, 'store'])
+->name('accountings.kashutangpiutangstok.store');
+Route::put('accountings/kashutangpiutangstok/update/{id}', [KasHutangPiutangStokController::class, 'update'])
+->name('accountings.kashutangpiutangstok.update');
+Route::get('accountings/kashutangpiutangstok/data', [KasHutangPiutangStokController::class, 'data'])
+->name('accountings.kashutangpiutangstok.data');
+Route::get('accountings/kashutangpiutangstok/filter', [KasHutangPiutangStokController::class, 'filterData'])
+->name('accountings.kashutangpiutangstok.filterByYear');
+Route::delete('accountings/kashutangpiutangstok/destroy/{id}', [KasHutangPiutangStokController::class, 'destroy'])
+->name('accountings.kashutangpiutangstok.destroy');
 
-    
+//LAPORAN ARUS KAS
+Route::get('accountings/aruskas', [ArusKasController::class, 'index'])
+    ->name('accountings/aruskas');
+Route::post('accountings/aruskas/store', [ArusKasController::class, 'store'])
+    ->name('accountings/aruskas.store');
+Route::put('accountings/aruskas/update/{id}', [ArusKasController::class, 'update'])
+    ->name('accountings/aruskas.update');
+Route::get('accountings/aruskas/data', [ArusKasController::class, 'data'])
+    ->name('accountings/aruskas.data');
+Route::get('accountings/aruskas/filter', [ArusKasController::class, 'filterData'])
+    ->name('accountings/aruskas.filter');
+Route::delete('accountings/aruskas/destroy/{id}', [ArusKasController::class, 'destroy'])
+    ->name('accountings/aruskas.destroy');  
 
 });
 
