@@ -3,23 +3,31 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\SessionController;
-use App\Http\Controllers\ItBizdevDataController;
-use App\Http\Controllers\ItBizdevBulananController;
-use App\Http\Controllers\ItMultimediaTiktokController;
-use App\Http\Controllers\ItMultimediaInstagramController;
-use App\Http\Controllers\LaporanPaketAdministrasiController;
-use App\Http\Controllers\RekapPenjualanController;
 use App\Http\Controllers\StatusPaketController;
+use App\Http\Controllers\ItBizdevDataController;
+use App\Http\Controllers\LaporanRasioController;
+use App\Http\Controllers\LaporanNeracaController;
+use App\Http\Controllers\RekapPenjualanController;
+use App\Http\Controllers\ItBizdevBulananController;
+use App\Http\Controllers\LaporanLabaRugiController;
+use App\Http\Controllers\LaporanTaxPlaningController;
+use App\Http\Controllers\ItMultimediaTiktokController;
 use App\Http\Controllers\LaporanPerInstansiController;
-use App\Http\Controllers\RekapPenjualanPerusahaanController;
+use App\Http\Controllers\ItMultimediaInstagramController;
 use App\Http\Controllers\LaporanPembelianHoldingController;
-
-
-
+use App\Http\Controllers\LaporanPaketAdministrasiController;
+use App\Http\Controllers\RekapPenjualanPerusahaanController;
 
 Route::middleware(['web'])->group(function () {
     //MARKETING
-    // Rute Laporan Paket Administrasi
+    // Accounting
+    Route::prefix('admin/accounting')->group(function() {
+        Route::resource('labarugi', LaporanLabaRugiController::class);
+        Route::resource('neraca', LaporanNeracaController::class);
+        Route::resource('rasio', LaporanRasioController::class);
+        Route::resource('taxplaning', LaporanTaxPlaningController::class);
+    });
+
     // IT
     Route::prefix('admin/it')->group(function () {
         Route::resource('instagram', ItMultimediaInstagramController::class);

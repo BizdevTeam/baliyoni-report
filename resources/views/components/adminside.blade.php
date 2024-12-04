@@ -154,21 +154,21 @@
                 </button>
                 <ul id="dropdown-accounting" class="hidden py-2 pl-8 space-y-2">
                     <li>
-                        <a href="#"
+                        <a href="{{ route('labarugi.index') }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
                             <img src="icon/RekapPenjualan.svg" class="w-5 h-5">
                             <span class="ml-2">Laporan Laba Rugi</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#"
+                        <a href="{{ route('neraca.index') }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="icon/RekapPenjualanPerusahaan.svg" class="w-5 h-5">
                             <span class="ml-2">Laporan Neraca</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#"
+                        <a href="{{ route('rasio.index') }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="icon/LaporanPaketAdministrasi.svg" class="w-5 h-5">
                             <span class="ml-2">Laporan Rasio</span>
@@ -196,7 +196,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#"
+                        <a href="{{ route('taxplaning.index') }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="icon/taxplanning.svg" class="w-5 h-5">
                             <span class="ml-2">Tax Planning vs Penjualan</span>

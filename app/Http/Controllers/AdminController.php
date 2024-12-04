@@ -19,7 +19,9 @@ class AdminController extends Controller
     }
     function it()
     {
-        return view('it.dashboardit');
+        echo "Hello Welcome Back IT!";
+        echo "<h1>" . Auth::user()->name . "</h1>" ;
+        echo "<a href='/logout' >Logout</a>";
     }
     function procurement(){
         echo "Hello Welcome Back Procurement!";
