@@ -18,7 +18,7 @@ class StatusPaketController extends Controller
     public function data(Request $request)
     {
         try {
-            $bulanTahun = $request->query('bulan_tahun');
+            $bulanTahun = $request->query('bulan_tahun'); 
             $query = StatusPaket::query();
 
             if ($bulanTahun) {

@@ -4,11 +4,17 @@ use App\Http\Controllers\SessionController;
 use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LaporanPaketAdministrasiController;
+use App\Http\Controllers\LaporanPpnController;
 use App\Http\Controllers\RekapPenjualanController;
 use App\Http\Controllers\StatusPaketController;
 
 
 Route::middleware(['web'])->group(function () {
+    //accounting
+    Route::prefix('admin/accounting')->group(function () {
+        Route::resource('laporanppn', LaporanPpnController::class);
+    });
+
     // Rute Laporan Paket Administrasi
     Route::get('marketings/laporanpaketadministrasi', [LaporanPaketAdministrasiController::class, 'index'])
         ->name('marketings.laporanpaketadministrasi');

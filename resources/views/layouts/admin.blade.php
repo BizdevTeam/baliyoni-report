@@ -28,7 +28,7 @@
         @yield('content')
     </x-admincontent>
     <footer class="main-footer">
-        <strong>Footer Information</strong>
+        {{-- <strong>Footer Information</strong> --}}
     </footer>
 
 <!-- Scripts -->

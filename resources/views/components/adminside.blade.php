@@ -6,7 +6,7 @@
             <img src="images/baliyoni.png" class="w-full" alt="Logo Full">
         </div>
         <div id="logo-mini" class="logo w-12 h-auto hidden">
-            <img src="images/baliyoni- mini.png" class="w-full" alt="Logo Mini">
+            <img src="images/BYS_LOGO.png" class="w-full" alt="Logo Mini">
         </div>
     </div>
     <nav class="mt-4">
@@ -189,7 +189,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#"
+                        <a href="{{ Route('laporanppn.index') }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="icon/ppnlebihbayar.svg" class="w-5 h-5">
                             <span class="ml-2">Laporan PPn</span>
