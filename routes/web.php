@@ -16,10 +16,28 @@ use App\Http\Controllers\LaporanPerInstansiController;
 use App\Http\Controllers\ItMultimediaInstagramController;
 use App\Http\Controllers\LaporanPembelianHoldingController;
 use App\Http\Controllers\LaporanPaketAdministrasiController;
+use App\Http\Controllers\LaporanPpnController;
+use App\Http\Controllers\RekapPenjualanController;
+use App\Http\Controllers\StatusPaketController;
+use App\Http\Controllers\LaporanPerInstansiController;
 use App\Http\Controllers\RekapPenjualanPerusahaanController;
+use App\Http\Controllers\LaporanPembelianHoldingController;
+use App\Http\Controllers\LaporanStokController;
+use App\Http\Controllers\LaporanPembelianOutletController;
+use App\Http\Controllers\LaporanNegosiasiController;
+
+
+
 
 Route::middleware(['web'])->group(function () {
     //MARKETING
+
+    //ACCOUNTING
+    Route::prefix('admin/accounting')->group(function () {
+        Route::resource('laporanppn', LaporanPpnController::class);
+    });
+
+    // Rute Laporan Paket Administrasi
     // Accounting
     Route::prefix('admin/accounting')->group(function() {
         Route::resource('labarugi', LaporanLabaRugiController::class);
@@ -114,7 +132,11 @@ Route::middleware(['web'])->group(function () {
         ->name('marketings.rekappenjualanperusahaan.destroy');  
     //MARKETING  
     
-    Route::get('procurements/laporanpembelianholding', [LaporanPembelianHoldingController::class, 'index'])
+
+//PROCUREMENT
+
+//LAPORAN PEMBELIAN HOLDING
+Route::get('procurements/laporanpembelianholding', [LaporanPembelianHoldingController::class, 'index'])
     ->name('procurements/laporanpembelianholding');
 Route::post('procurements/laporanpembelianholding/store', [LaporanPembelianHoldingController::class, 'store'])
     ->name('procurements/laporanpembelianholding.store');
@@ -126,7 +148,63 @@ Route::get('procurements/laporanpembelianholding/filter', [LaporanPembelianHoldi
     ->name('procurements/laporanpembelianholding.filter');
 Route::delete('procurements/laporanpembelianholding/destroy/{id}', [LaporanPembelianHoldingController::class, 'destroy'])
     ->name('procurements/laporanpembelianholding.destroy');  
-//MARKETING 
+
+//LAPORAN STOK
+Route::get('procurements/laporanstok', [LaporanStokController::class, 'index'])
+->name('procurements.laporanstok');
+Route::post('procurements/laporanstok/store', [LaporanStokController::class, 'store'])
+->name('procurements.laporanstok.store');
+Route::put('procurements/laporanstok/update/{id}', [LaporanStokController::class, 'update'])
+->name('procurements.laporanstok.update');
+Route::get('procurements/laporanstok/data', [LaporanStokController::class, 'data'])
+->name('procurements.laporanstok.data');
+Route::get('procurements/laporanstok/filter', [LaporanStokController::class, 'filterData'])
+->name('procurements.laporanstok.filterByYear');
+Route::delete('procurements/laporanstok/destroy/{id}', [LaporanStokController::class, 'destroy'])
+->name('procurements.laporanstok.destroy');
+
+//LAPORAN STOK
+Route::get('procurements/laporanstok', [LaporanStokController::class, 'index'])
+->name('procurements.laporanstok');
+Route::post('procurements/laporanstok/store', [LaporanStokController::class, 'store'])
+->name('procurements.laporanstok.store');
+Route::put('procurements/laporanstok/update/{id}', [LaporanStokController::class, 'update'])
+->name('procurements.laporanstok.update');
+Route::get('procurements/laporanstok/data', [LaporanStokController::class, 'data'])
+->name('procurements.laporanstok.data');
+Route::get('procurements/laporanstok/filter', [LaporanStokController::class, 'filterData'])
+->name('procurements.laporanstok.filterByYear');
+Route::delete('procurements/laporanstok/destroy/{id}', [LaporanStokController::class, 'destroy'])
+->name('procurements.laporanstok.destroy');
+
+//LAPORAN PEMBELIAN OUTLET
+Route::get('procurements/laporanpembelianoutlet', [LaporanPembelianOutletController::class, 'index'])
+->name('procurements.laporanpembelianoutlet');
+Route::post('procurements/laporanpembelianoutlet/store', [LaporanPembelianOutletController::class, 'store'])
+->name('procurements.laporanpembelianoutlet.store');
+Route::put('procurements/laporanpembelianoutlet/update/{id}', [LaporanPembelianOutletController::class, 'update'])
+->name('procurements.laporanpembelianoutlet.update');
+Route::get('procurements/laporanpembelianoutlet/data', [LaporanPembelianOutletController::class, 'data'])
+->name('procurements.laporanpembelianoutlet.data');
+Route::get('procurements/laporanpembelianoutlet/filter', [LaporanPembelianOutletController::class, 'filterData'])
+->name('procurements.laporanpembelianoutlet.filterByYear');
+Route::delete('procurements/laporanpembelianoutlet/destroy/{id}', [LaporanPembelianOutletController::class, 'destroy'])
+->name('procurements.laporanpembelianoutlet.destroy');
+
+//LAPORAN NEGOSIASI
+Route::get('procurements/laporannegosiasi', [LaporanNegosiasiController::class, 'index'])
+->name('procurements.laporannegosiasi');
+Route::post('procurements/laporannegosiasi/store', [LaporanNegosiasiController::class, 'store'])
+->name('procurements.laporannegosiasi.store');
+Route::put('procurements/laporannegosiasi/update/{id}', [LaporanNegosiasiController::class, 'update'])
+->name('procurements.laporannegosiasi.update');
+Route::get('procurements/laporannegosiasi/data', [LaporanNegosiasiController::class, 'data'])
+->name('procurements.laporannegosiasi.data');
+Route::get('procurements/laporannegosiasi/filter', [LaporanNegosiasiController::class, 'filterData'])
+->name('procurements.laporannegosiasi.filterByYear');
+Route::delete('procurements/laporannegosiasi/destroy/{id}', [LaporanNegosiasiController::class, 'destroy'])
+->name('procurements.laporannegosiasi.destroy');
+
     
 
 });

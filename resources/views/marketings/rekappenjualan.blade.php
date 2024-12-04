@@ -1,4 +1,4 @@
-r<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -81,6 +81,7 @@ r<!DOCTYPE html>
         const modalForm = document.getElementById('modal-form');
         const modalTitle = document.getElementById('modal-title');
         const chartCanvas = document.getElementById('chart');
+
         let editMode = false;
         let editId = null;
 
@@ -111,8 +112,8 @@ r<!DOCTYPE html>
             const method = editMode ? 'PUT' : 'POST';
 
             try {
-                const response = await fetch(`/marketings/rekappenjualan/update/${editId}`, {
-                    method: 'PUT',
+                const response = await fetch(url, {
+                    method,
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                         'Content-Type': 'application/json',
@@ -173,9 +174,13 @@ r<!DOCTYPE html>
                 }
 
                 const result = await response.json();
-                if (result.success && Array.isArray(result.data) && result.data.length > 0) {
-                    updateTable(result.data); // Update tabel
-                    updateChart(result.data); // Update chart
+
+                if (result.success) {
+                    const items = result.data; // Data untuk tabel dan grafik
+                    const totalPaket = items.reduce((sum, item) => sum + item.total_penjualan, 0);
+
+                    updateTable(items, totalPaket); // Update tabel
+                    updateChart(items); // Update chart
                 } else {
                     alert(result.message || 'Data tidak ditemukan untuk tahun ini.');
                     updateTable([]); // Kosongkan tabel
@@ -206,7 +211,7 @@ r<!DOCTYPE html>
 
                 if (result.success) {
                     const items = result.data; // Data untuk tabel dan grafik
-                    const totalPaket = result.total_paket; // Total Paket dari API
+                    const totalPaket = items.reduce((sum, item) => sum + item.total_penjualan, 0);// Total Paket dari API
 
                     updateTable(items, totalPaket); // Perbarui tabel
                     updateChart(items); // Perbarui chart
@@ -219,28 +224,8 @@ r<!DOCTYPE html>
             }
         }
 
-        //     try {
-        //         const response = await fetch(url, {
-        //             headers: {
-        //                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-        //             },
-        //         });
-
-        //         const result = await response.json();
-        //         if (result.success) {
-        //             updateTable(result.data); // Tampilkan data di tabel
-        //             updateChart(result.data); // Perbarui chart
-        //         } else {
-        //             alert(result.message || 'Gagal memuat data.');
-        //         }
-        //     } catch (error) {
-        //         console.error('Error fetching data:', error);
-        //         alert('Terjadi kesalahan saat memuat data.');
-        //     }
-        // }
-
         //table & chart sort by year
-        function updateTable(items) {
+        function updateTable(items, totalPaket = 0) {
             const tableBody = document.getElementById('data-table');
             tableBody.innerHTML = ''; // Clear table
 
@@ -256,7 +241,7 @@ r<!DOCTYPE html>
                 const row = `
             <tr class="border-b">
                 <td class="border px-4 py-2">${item.bulan_tahun}</td>
-                <td class="border px-4 py-2">${item.total_penjualan}</td>
+                <td class="border px-4 py-2">Rp ${item.total_penjualan.toLocaleString()}</td>
                 <td class="border px-4 py-2 flex items-center justify-center space-x-2">
                     <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
                             class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
@@ -270,6 +255,13 @@ r<!DOCTYPE html>
             </tr>`;
                 tableBody.insertAdjacentHTML('beforeend', row);
             });
+
+            const totalRow = `
+            <tr class="border-t bg-gray-100">
+                <td colspan="2" class="text-center font-bold px-4 py-2">Total Paket</td>
+                <td class="border px-4 py-2 font-bold text-center items-center">Rp ${totalPaket.toLocaleString()}</td>
+            </tr>`;
+            tableBody.insertAdjacentHTML('beforeend', totalRow);
         }
 
         function updateChart(items) {

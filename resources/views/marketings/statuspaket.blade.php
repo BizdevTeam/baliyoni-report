@@ -79,7 +79,7 @@
             <thead class="bg-gray-200">
                 <tr>
                     <th class="border border-gray-300 px-4 py-2">Bulan/Tahun</th>
-                    <th class="border border-gray-300 px-4 py-2">status</th>
+                    <th class="border border-gray-300 px-4 py-2">Status</th>
                     <th class="border border-gray-300 px-4 py-2">Paket</th>
                     <th class="border border-gray-300 px-4 py-2">Keterangan</th>
                     <th class="border border-gray-300 px-4 py-2">Aksi</th>
@@ -134,8 +134,8 @@
             const method = editMode ? 'PUT' : 'POST';
 
             try {
-                const response = await fetch(`/marketings/statuspaket/update/${editId}`, {
-                    method: 'PUT',
+                const response = await fetch(url, {
+                    method,
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                         'Content-Type': 'application/json',
@@ -215,7 +215,7 @@
         <tr class="border-b">
             <td class="border px-4 py-2">${item.bulan_tahun}</td>
             <td class="border px-4 py-2">${item.status}</td>
-            <td class="border px-4 py-2">Rp ${item.paket.toLocaleString()}</td>
+            <td class="border px-4 py-2">${item.paket.toLocaleString()}</td>
             <td class="border px-4 py-2">${item.keterangan || '-'}</td>
             <td class="border px-4 py-2 flex items-center justify-center space-x-2">
                 <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"

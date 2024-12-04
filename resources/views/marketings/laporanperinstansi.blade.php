@@ -102,6 +102,7 @@
         const modalForm = document.getElementById('modal-form');
         const modalTitle = document.getElementById('modal-title');
         const chartCanvas = document.getElementById('chart');
+        
         let editMode = false;
         let editId = null;
 
@@ -134,8 +135,8 @@
             const method = editMode ? 'PUT' : 'POST';
 
             try {
-                const response = await fetch(`/marketings/laporanperinstansi/update/${editId}`, {
-                    method: 'PUT',
+                const response = await fetch(url, {
+                    method,
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                         'Content-Type': 'application/json',
@@ -191,11 +192,8 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    const items = result.data; // Data untuk tabel dan grafik
-                    const totalPaket = result.total_paket; // Total Paket dari API
-
-                    updateTable(items, totalPaket); // Perbarui tabel
-                    updateChart(items); // Perbarui chart
+                    updateTable(result.data);
+                    updateChart(result.data);
                 } else {
                     alert('Gagal memuat data.');
                 }
@@ -234,7 +232,7 @@
             // Tambahkan baris total paket
             const totalRow = `
             <tr class="border-t bg-gray-100">
-                <td colspan="4" class="text-center font-bold px-4 py-2">Total Paket</td>
+                <td colspan="4" class="text-center font-bold px-4 py-2">Total Nilai</td>
                 <td class="border px-4 py-2 font-bold">Rp ${totalPaket.toLocaleString()}</td>
             </tr>`;
             tableBody.insertAdjacentHTML('beforeend', totalRow);
