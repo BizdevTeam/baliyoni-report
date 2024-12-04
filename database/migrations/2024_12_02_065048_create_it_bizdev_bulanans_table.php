@@ -11,21 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('status_pakets', function (Blueprint $table) {
-        $table->id();
-            $table->string('bulan_tahun');
-            $table->string('keterangan')->nullable();
-            $table->string('status');
-            $table->integer('paket');
+        Schema::create('it_bizdev_bulanans', function (Blueprint $table) {
+            $table->id('id_bizdevbulanan');
+            $table->string('bulan');
+            $table->string('judul');
             $table->timestamps();
         });
     }
+
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('status_pakets');
-
+        Schema::dropIfExists('it_bizdev_bulanans');
     }
 };

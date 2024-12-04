@@ -1,25 +1,22 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use App\Models\StatusPaket;
-
+use App\Models\LaporanPembelianHolding;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-use Illuminate\Http\Request;
-
-class StatusPaketController extends Controller
+class LaporanPembelianHoldingController extends Controller
 {
     public function index()
     {
-        return view('marketings.statuspaket');
+        return view('procurements.laporanpembelianholding');
     }
 
     public function data(Request $request)
     {
         try {
-            $bulanTahun = $request->query('bulan_tahun'); 
-            $query = StatusPaket::query();
+            $bulanTahun = $request->query('bulan_tahun');
+            $query = LaporanPembelianHolding::query();
 
             if ($bulanTahun) {
                 $query->where('bulan_tahun', $bulanTahun);
@@ -28,7 +25,7 @@ class StatusPaketController extends Controller
             $pakets = $query->orderBy('created_at', 'desc')->get();
 
             // Perbaiki logika totalPaket
-            $totalPaket = $pakets->sum('paket'); // Pakai tanda kutip tunggal (')
+            $totalPaket = $pakets->sum('nilai'); // Pakai tanda kutip tunggal (')
 
             return response()->json([
                 'success' => true,
@@ -42,26 +39,26 @@ class StatusPaketController extends Controller
                 'message' => 'Terjadi kesalahan saat mengambil data.',
             ], 500);
         }
-    }
+    }   
 
     public function store(Request $request)
     {
         $validatedData = $this->validateData($request);
 
         try {
-            // Check if data already exists for the same bulan_tahun and status
-            $existingEntry = StatusPaket::where('bulan_tahun', $validatedData['bulan_tahun'])
-                ->where('status', $validatedData['status'])
+            // Check if data already exists for the same bulan_tahun and perusahaan
+            $existingEntry = LaporanPembelianHolding::where('bulan_tahun', $validatedData['bulan_tahun'])
+                ->where('perusahaan', $validatedData['perusahaan'])
                 ->first();
 
             if ($existingEntry) {
                 return response()->json([
                     'success' => false,
-                    'message' => "status {$validatedData['status']} sudah dipilih untuk bulan {$validatedData['bulan_tahun']}.",
+                    'message' => "perusahaan {$validatedData['perusahaan']} sudah dipilih untuk bulan {$validatedData['bulan_tahun']}.",
                 ], 400);
             }
 
-            StatusPaket::create($validatedData);
+            LaporanPembelianHolding::create($validatedData);
 
             return response()->json([
                 'success' => true,
@@ -81,18 +78,18 @@ class StatusPaketController extends Controller
         $validatedData = $this->validateData($request);
 
         try {
-            $paket = StatusPaket::findOrFail($id);
+            $paket = LaporanPembelianHolding::findOrFail($id);
 
             // Cek duplikasi data
-            $existingEntry = StatusPaket::where('bulan_tahun', $validatedData['bulan_tahun'])
-                ->where('status', $validatedData['status'])
+            $existingEntry = LaporanPembelianHolding::where('bulan_tahun', $validatedData['bulan_tahun'])
+                ->where('perusahaan', $validatedData['perusahaan'])
                 ->where('id', '!=', $id) // Abaikan data dengan ID yang sama
                 ->first();
 
             if ($existingEntry) {
                 return response()->json([
                     'success' => false,
-                    'message' => "status {$validatedData['status']} sudah dipilih untuk bulan {$validatedData['bulan_tahun']}.",
+                    'message' => "perusahaan {$validatedData['perusahaan']} sudah dipilih untuk bulan {$validatedData['bulan_tahun']}.",
                 ], 400);
             }
 
@@ -115,7 +112,7 @@ class StatusPaketController extends Controller
     public function destroy($id)
     {
         try {
-            $paket = StatusPaket::findOrFail($id);
+            $paket = LaporanPembelianHolding::findOrFail($id);
             $paket->delete();
 
             return response()->json([
@@ -135,9 +132,8 @@ class StatusPaketController extends Controller
     {
         return $request->validate([
             'bulan_tahun' => ['required', 'regex:/^(0[1-9]|1[0-2])\/\d{4}$/'],  // Ensure month/year format
-            'status' => 'required|string|max:255',
-            'paket' => 'required|integer|min:0',
-            'keterangan' => 'nullable|string|max:255',
+            'perusahaan' => 'required|string|max:255',
+            'nilai' => 'required|integer|min:0',
         ]);
     }
 }

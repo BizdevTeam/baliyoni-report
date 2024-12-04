@@ -3,15 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\RekapPenjualan;
+use App\Models\LaporanPembelianOutlet;
 use Illuminate\Support\Facades\Log;
 
-class RekapPenjualanController extends Controller
+class LaporanPembelianOutletController extends Controller
 {
-    // Show the view
     public function index()
     {
-        return view('marketings.rekappenjualan');
+        return view('procurements.laporanpembelianoutlet');
     }
 
     public function filterByYear(Request $request)
@@ -27,7 +26,7 @@ class RekapPenjualanController extends Controller
     }
 
     // Filter data berdasarkan tahun
-    $data = RekapPenjualan::whereYear('bulan_tahun', $tahun)->get();
+    $data = LaporanPembelianOutlet::whereYear('bulan_tahun', $tahun)->get();
 
     return response()->json([
         'success' => true,
@@ -39,7 +38,7 @@ class RekapPenjualanController extends Controller
     {
         try {
             $tahun = $request->input('tahun');
-            $data = RekapPenjualan::whereRaw("RIGHT(bulan_tahun, 4) = ?", [$tahun])->get();
+            $data = LaporanPembelianOutlet::whereRaw("RIGHT(bulan_tahun, 4) = ?", [$tahun])->get();
 
             // Validasi input tahun
             if (!$tahun || !is_numeric($tahun) || strlen($tahun) !== 4) {
@@ -49,7 +48,7 @@ class RekapPenjualanController extends Controller
                 ], 400);
             }
 
-            $data = RekapPenjualan::whereRaw("RIGHT(bulan_tahun, 4) = ?", [$tahun])->get();
+            $data = LaporanPembelianOutlet::whereRaw("RIGHT(bulan_tahun, 4) = ?", [$tahun])->get();
 
             return response()->json([
                 'success' => true,
@@ -68,19 +67,17 @@ class RekapPenjualanController extends Controller
     {
         try {
             $bulanTahun = $request->query('bulan_tahun');
-            $query = RekapPenjualan::query();
+            $query = LaporanPembelianOutlet::query();
 
             if ($bulanTahun) {
                 $query->where('bulan_tahun', $bulanTahun);
             }
 
             $pakets = $query->orderBy('created_at', 'desc')->get();
-            $totalPaket = $pakets->sum('total_penjualan'); // Pakai tanda kutip tunggal (')
 
             return response()->json([
                 'success' => true,
                 'data' => $pakets,
-                'total_paket' => $totalPaket,
             ], 200);
         } catch (\Exception $e) {
             Log::error('Error fetching data: ' . $e->getMessage());
@@ -98,7 +95,7 @@ class RekapPenjualanController extends Controller
 
         try {
             // Check for duplicate data
-            $existingData = RekapPenjualan::where('bulan_tahun', $validatedData['bulan_tahun'])->first();
+            $existingData = LaporanPembelianOutlet::where('bulan_tahun', $validatedData['bulan_tahun'])->first();
 
             if ($existingData) {
                 return response()->json([
@@ -107,7 +104,7 @@ class RekapPenjualanController extends Controller
                 ], 400);
             }
 
-            RekapPenjualan::create($validatedData);
+            LaporanPembelianOutlet::create($validatedData);
 
             return response()->json([
                 'success' => true,
@@ -128,10 +125,10 @@ class RekapPenjualanController extends Controller
         $validatedData = $this->validateData($request);
 
         try {
-            $paket = RekapPenjualan::findOrFail($id);
+            $paket = LaporanPembelianOutlet::findOrFail($id);
 
             // Prevent duplicate month-year for other records
-            $existingData = RekapPenjualan::where('bulan_tahun', $validatedData['bulan_tahun'])
+            $existingData = LaporanPembelianOutlet::where('bulan_tahun', $validatedData['bulan_tahun'])
                 ->where('id', '!=', $id)
                 ->first();
 
@@ -161,7 +158,7 @@ class RekapPenjualanController extends Controller
     public function destroy($id)
     {
         try {
-            $paket = RekapPenjualan::findOrFail($id);
+            $paket = LaporanPembelianOutlet::findOrFail($id);
             $paket->delete();
 
             return response()->json([
@@ -187,8 +184,8 @@ class RekapPenjualanController extends Controller
     private function validateData(Request $request)
     {
         return $request->validate([
-            'bulan_tahun' => ['required', 'regex:/^(0[1-9]|1[0-2])\/\d{4}$/'],  // Format YYYY-MM
-            'total_penjualan' => 'required|integer|min:0',
+            'bulan_tahun' => ['required', 'regex:/^(0[1-9]|1[0-2])\/\d{4}$/'], 
+            'total_pembelian' => 'required|integer|min:0',
         ]);
     }
 }

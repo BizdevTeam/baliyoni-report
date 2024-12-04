@@ -81,6 +81,7 @@
         const modalForm = document.getElementById('modal-form');
         const modalTitle = document.getElementById('modal-title');
         const chartCanvas = document.getElementById('chart');
+
         let editMode = false;
         let editId = null;
 
@@ -173,9 +174,13 @@
                 }
 
                 const result = await response.json();
-                if (result.success && Array.isArray(result.data) && result.data.length > 0) {
-                    updateTable(result.data); // Update tabel
-                    updateChart(result.data); // Update chart
+
+                if (result.success) {
+                    const items = result.data; // Data untuk tabel dan grafik
+                    const totalPaket = items.reduce((sum, item) => sum + item.total_penjualan, 0);
+
+                    updateTable(items, totalPaket); // Update tabel
+                    updateChart(items); // Update chart
                 } else {
                     alert(result.message || 'Data tidak ditemukan untuk tahun ini.');
                     updateTable([]); // Kosongkan tabel
@@ -197,25 +202,21 @@
             }
         });
 
-
-
         async function updateData(filter = '') {
             const url = filter ? `/marketings/rekappenjualan/filter?tahun=${filter}` :
                 '/marketings/rekappenjualan/data';
-
-            try {
-                const response = await fetch(url, {
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    },
-                });
-
+                try {
+                const response = await fetch(url);
                 const result = await response.json();
+
                 if (result.success) {
-                    updateTable(result.data); // Tampilkan data di tabel
-                    updateChart(result.data); // Perbarui chart
+                    const items = result.data; // Data untuk tabel dan grafik
+                    const totalPaket = items.reduce((sum, item) => sum + item.total_penjualan, 0);// Total Paket dari API
+
+                    updateTable(items, totalPaket); // Perbarui tabel
+                    updateChart(items); // Perbarui chart
                 } else {
-                    alert(result.message || 'Gagal memuat data.');
+                    alert('Gagal memuat data.');
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -223,78 +224,8 @@
             }
         }
 
-        // Update Table
-        // function updateTable(items) {
-        //     const tableBody = document.getElementById('data-table');
-        //     tableBody.innerHTML = ''; // Clear table
-
-        //     items.forEach((item) => {
-        //         const encodedItem = encodeURIComponent(JSON.stringify(item)); // Safely encode item data
-        //         const row = `
-    //     <tr class="border-b">
-    //         <td class="border px-4 py-2">${item.bulan_tahun}</td>
-    //         <td class="border px-4 py-2">${item.total_penjualan}</td>
-    //         <td class="border px-4 py-2 flex items-center justify-center space-x-2">
-    //             <button onclick="editData(${item.id})" 
-    //                     class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
-    //                 <i class="fas fa-edit mr-2"></i> Edit
-    //             </button>
-    //             <button onclick="deleteData(${item.id})" 
-    //                     class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
-    //                 <i class="fas fa-trash mr-2"></i> Delete
-    //             </button>
-    //         </td>
-    //     </tr>`;
-        //         tableBody.insertAdjacentHTML('beforeend', row);
-        //     });
-        // }
-
-
-        // // Update Chart
-        // function updateChart(items) {
-        //     const labels = items.map((item) => item.bulan_tahun);
-        //     const dataValues = items.map((item) => item.total_penjualan);
-        //     const backgroundColors = items.map(() =>
-        //         `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.7)`);
-
-        //     const ctx = chartCanvas.getContext('2d');
-        //     if (window.myChart) {
-        //         window.myChart.destroy();
-        //     }
-        //     window.myChart = new Chart(ctx, {
-        //         type: 'bar',
-        //         data: {
-        //             labels,
-        //             datasets: [{
-        //                 label: 'Total Penjualan (RP)',
-        //                 data: dataValues,
-        //                 backgroundColor: backgroundColors,
-        //                 borderWidth: 1,
-        //             }],
-        //         },
-        //         options: {
-        //             responsive: true,
-        //             plugins: {
-        //                 tooltip: {
-        //                     callbacks: {
-        //                         label: function(context) {
-        //                             return `Rp ${context.raw.toLocaleString()}`;
-        //                         },
-        //                     },
-        //                 },
-        //             },
-        //             scales: {
-        //                 y: {
-        //                     beginAtZero: true,
-        //                 },
-        //             },
-        //         },
-        //     });
-        // }
-
-
         //table & chart sort by year
-        function updateTable(items) {
+        function updateTable(items, totalPaket = 0) {
             const tableBody = document.getElementById('data-table');
             tableBody.innerHTML = ''; // Clear table
 
@@ -310,9 +241,9 @@
                 const row = `
             <tr class="border-b">
                 <td class="border px-4 py-2">${item.bulan_tahun}</td>
-                <td class="border px-4 py-2">${item.total_penjualan}</td>
+                <td class="border px-4 py-2">Rp ${item.total_penjualan.toLocaleString()}</td>
                 <td class="border px-4 py-2 flex items-center justify-center space-x-2">
-                    <button onclick="editData(${item.id})" 
+                    <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
                             class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
                         <i class="fas fa-edit mr-2"></i> Edit
                     </button>
@@ -324,6 +255,13 @@
             </tr>`;
                 tableBody.insertAdjacentHTML('beforeend', row);
             });
+
+            const totalRow = `
+            <tr class="border-t bg-gray-100">
+                <td colspan="2" class="text-center font-bold px-4 py-2">Total Paket</td>
+                <td class="border px-4 py-2 font-bold text-center items-center">Rp ${totalPaket.toLocaleString()}</td>
+            </tr>`;
+            tableBody.insertAdjacentHTML('beforeend', totalRow);
         }
 
         function updateChart(items) {
@@ -391,22 +329,16 @@
             });
         }
 
-
-
-
-
         // Edit Data
-        async function editData(id) {
-            // const response = await fetch(`/marketings/rekappenjualan/show/${id}`);
-            // const data = await response.json();
-            const parsedData = JSON.parse(data);
+        async function editData(id, data) {
+            const parsedData = JSON.parse(decodeURIComponent(data));
 
             editMode = true;
-            editId = true;
+            editId = id;
             modalTitle.textContent = 'Edit Data';
 
-            document.getElementById('modal-bulan_tahun').value = data.bulan_tahun;
-            document.getElementById('modal-total_penjualan').value = data.total_penjualan;
+            document.getElementById('modal-bulan_tahun').value = parsedData.bulan_tahun;
+            document.getElementById('modal-total_penjualan').value = parsedData.total_penjualan;
 
             modal.classList.remove('hidden');
         }

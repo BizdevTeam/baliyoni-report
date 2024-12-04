@@ -53,8 +53,8 @@
                         </select>
                     </div>
                     <div>
-                        <label for="modal-paket_rp" class="block text-sm font-medium">Paket (RP)</label>
-                        <input type="text" id="modal-paket_rp" name="paket_rp"
+                        <label for="modal-paket" class="block text-sm font-medium">Paket</label>
+                        <input type="text" id="modal-paket" name="paket"
                             class="w-full border-gray-300 rounded p-2" placeholder="0" min="0" required>
                     </div>
                     <div class="flex justify-end space-x-2">
@@ -79,8 +79,8 @@
             <thead class="bg-gray-200">
                 <tr>
                     <th class="border border-gray-300 px-4 py-2">Bulan/Tahun</th>
-                    <th class="border border-gray-300 px-4 py-2">status</th>
-                    <th class="border border-gray-300 px-4 py-2">Paket (RP)</th>
+                    <th class="border border-gray-300 px-4 py-2">Status</th>
+                    <th class="border border-gray-300 px-4 py-2">Paket</th>
                     <th class="border border-gray-300 px-4 py-2">Keterangan</th>
                     <th class="border border-gray-300 px-4 py-2">Aksi</th>
                 </tr>
@@ -125,7 +125,7 @@
             const data = {
                 bulan_tahun: document.getElementById('modal-bulan_tahun').value,
                 status: document.getElementById('modal-status').value,
-                paket_rp: Number(document.getElementById('modal-paket_rp').value),
+                paket: Number(document.getElementById('modal-paket').value),
                 keterangan: document.getElementById('modal-keterangan').value || null,
             };
 
@@ -205,8 +205,6 @@
             }
         }
 
-
-
         function updateTable(items, totalPaket = 0) {
             const tableBody = document.getElementById('data-table');
             tableBody.innerHTML = ''; // Bersihkan tabel sebelum merender ulang
@@ -217,10 +215,10 @@
         <tr class="border-b">
             <td class="border px-4 py-2">${item.bulan_tahun}</td>
             <td class="border px-4 py-2">${item.status}</td>
-            <td class="border px-4 py-2">Rp ${item.paket_rp.toLocaleString()}</td>
+            <td class="border px-4 py-2">${item.paket.toLocaleString()}</td>
             <td class="border px-4 py-2">${item.keterangan || '-'}</td>
             <td class="border px-4 py-2 flex items-center justify-center space-x-2">
-                <button onclick="editData(${item.id}, JSON.stringify(${JSON.stringify(item)}))" 
+                <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
                         class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
                     <i class="fas fa-edit mr-2"></i> Edit
                 </button>
@@ -237,7 +235,7 @@
             const totalRow = `
             <tr class="border-t bg-gray-100">
                 <td colspan="4" class="text-center font-bold px-4 py-2">Total Paket</td>
-                <td class="border px-4 py-2 font-bold">Rp ${totalPaket.toLocaleString()}</td>
+                <td class="border px-4 py-2 font-bold text-center items-center">${totalPaket.toLocaleString()}</td>
             </tr>`;
             tableBody.insertAdjacentHTML('beforeend', totalRow);
         }
@@ -247,7 +245,7 @@
         // Update Chart
         function updateChart(items) {
             const labels = items.map((item) => item.status); // Label dari nama status
-            const dataValues = items.map((item) => item.paket_rp); // Nilai paket
+            const dataValues = items.map((item) => item.paket); // Nilai paket
             const backgroundColors = items.map(() =>
                 `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.7)`); // Warna acak
 
@@ -284,7 +282,7 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return `Rp ${context.raw.toLocaleString()}`;
+                                    return `${context.raw.toLocaleString()}`;
                                 },
                             },
                         },
@@ -301,7 +299,7 @@
 
         // Edit Data
         function editData(id, data) {
-            const parsedData = JSON.parse(data); // Parse JSON string
+            const parsedData = JSON.parse(decodeURIComponent(data)); // Parse JSON string
 
             editMode = true; // Enable edit mode
             editId = id; // Save the ID being edited
@@ -310,7 +308,7 @@
             // Populate modal fields with existing data
             document.getElementById('modal-bulan_tahun').value = parsedData.bulan_tahun;
             document.getElementById('modal-status').value = parsedData.status;
-            document.getElementById('modal-paket_rp').value = parsedData.paket_rp;
+            document.getElementById('modal-paket').value = parsedData.paket;
             document.getElementById('modal-keterangan').value = parsedData.keterangan || '';
 
             modal.classList.remove('hidden'); // Show modal
