@@ -5,15 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Multimedia Instagram</title>
+    <title>Laporan Rasio</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-gray-100 p-6">
-
     <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow">
         <!-- Page Header -->
-        <h1 class="text-3xl font-bold mb-5">Multimedia Instagram</h1>
+        <h1 class="text-3xl font-bold mb-5">Laporan rasio</h1>
 
         <!-- Action Buttons -->
         <div class="flex justify-between items-center mb-4">
@@ -45,31 +44,41 @@
                 <thead class="bg-gray-200">
                     <tr>
                         <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Gambar</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Thumbnail</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">File Excel</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($itmultimediainstagrams as $key => $itmultimediainstagram)
+                    @foreach ($laporanrasios as $laporanrasio)
                         <tr class="hover:bg-gray-100">
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $itmultimediainstagram->bulan_formatted }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanrasio->bulan_formatted }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">
-                                @if ($itmultimediainstagram->gambar)
-                                    <img src="{{ asset('images/it/multimediainstagram/' . $itmultimediainstagram->gambar) }}" alt="Eror Image" class="h-16 mx-auto">
+                                @if ($laporanrasio->gambar)
+                                    <img src="{{ asset('images/accounting/rasio/' . $laporanrasio->gambar) }}" alt="Eror Image" class="h-16 mx-auto">
                                 @else
                                     <img src="{{ asset('images/no_image.png') }}" alt="Default Image" class="h-16 mx-auto">
                                 @endif
                             </td>
-                            <td class="border border-gray-300 px-4 py-2">{{ $itmultimediainstagram->keterangan }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">
+                                @if ($laporanrasio->file_excel)
+                                    <a href="{{ asset('files/accounting/rasio/' . $laporanrasio->file_excel) }}" 
+                                       class="text-blue-600 underline hover:text-blue-800" 
+                                       download>
+                                        Unduh File Excel
+                                    </a>
+                                @endif
+                            </td>
+                            <td class="border border-gray-300 px-4 py-2">{{ $laporanrasio->keterangan }}</td>
                             <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
                                 <!-- Edit Button -->
-                                <button class="bg-yellow-500 text-white px-3 py-2 rounded hover:bg-yellow-600" data-modal-target="#editEventModal{{ $itmultimediainstagram->id_instagram }}">
+                                <button class="bg-yellow-500 text-white px-3 py-2 rounded hover:bg-yellow-600" data-modal-target="#editEventModal{{ $laporanrasio->id_rasio }}">
                                     <i class="fa fa-pen"></i>
                                     Edit
                                 </button>
                                 <!-- Delete Form -->
-                                <form method="POST" action="{{ route('instagram.destroy', $itmultimediainstagram->id_instagram) }}">
+                                <form method="POST" action="{{ route('rasio.destroy', $laporanrasio->id_rasio) }}">
                                     @csrf
                                     @method('DELETE')
                                     <button class="bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600" onclick="return confirm('Are you sure to delete?')">
@@ -81,27 +90,37 @@
                         </tr>
 
                         <!-- Modal for Edit Event -->
-                        <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="editEventModal{{ $itmultimediainstagram->id_instagram }}">
+                        <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="editEventModal{{ $laporanrasio->id_rasio}}">
                             <div class="bg-white w-1/2 p-6 rounded shadow-lg">
                                 <h3 class="text-xl font-semibold mb-4">Edit Data</h3>
-                                <form method="POST" action="{{ route('instagram.update', $itmultimediainstagram->id_instagram) }}" enctype="multipart/form-data">
+                                <form method="POST" action="{{ route('rasio.update', $laporanrasio->id_rasio) }}" enctype="multipart/form-data">
                                     @csrf
                                     @method('PUT')
                                     <div class="space-y-4">
                                         <div>
                                             <label for="bulan" class="block text-sm font-medium">Bulan</label>
-                                            <input type="month" name="bulan" class="w-full p-2 border rounded" value="{{ $itmultimediainstagram->bulan }}" required>
+                                            <input type="month" name="bulan" class="w-full p-2 border rounded" value="{{ $laporanrasio->bulan }}" required>
                                         </div>
                                         <div>
-                                            <label for="gambar" class="block text-sm font-medium">Gambar</label>
+                                            <label for="gambar" class="block text-sm font-medium">Thumbnail</label>
                                             <input type="file" name="gambar" class="w-full p-2 border rounded">
                                             <div class="mt-2">
-                                                <img src="{{ asset('images/it/multimediainstagram/' . $itmultimediainstagram->gambar) }}" alt="Event Image" class="h-16">
+                                                <img src="{{ asset('images/accounting/labarugi/' . $laporanrasio->gambar) }}" alt="Event Image" class="h-16">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label for="file_excel" class="block text-sm font-medium">File Excel</label>
+                                            <input type="file" name="file_excel" class="w-full p-2 border rounded">
+                                            <div class="mt-2">
+                                                    <a href="{{ asset('files/accounting/labarugi/' . $laporanrasio->file_excel) }}" 
+                                                       class="text-blue-600 underline hover:text-blue-800">
+                                                        Unduh File Excel
+                                                    </a>
                                             </div>
                                         </div>
                                         <div>
                                             <label for="keterangan" class="block text-sm font-medium">Keterangan</label>
-                                            <textarea name="keterangan" class="w-full p-2 border rounded" rows="3" required>{{ $itmultimediainstagram->keterangan }}</textarea>
+                                            <textarea name="keterangan" class="w-full p-2 border rounded" rows="3" required>{{ $laporanrasio->keterangan }}</textarea>
                                         </div>
                                     </div>
                                     <div class="mt-4 flex justify-end gap-2">
@@ -120,7 +139,7 @@
 <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">
     <div class="bg-white w-1/2 p-6 rounded shadow-lg">
         <h3 class="text-xl font-semibold mb-4">Add New Data</h3>
-        <form method="POST" action="{{ route('instagram.store') }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('rasio.store') }}" enctype="multipart/form-data">
             @csrf
             <div class="space-y-4">
                 <div>
@@ -130,6 +149,10 @@
                 <div>
                     <label for="gambar" class="block text-sm font-medium">Gambar</label>
                     <input type="file" name="gambar" class="w-full p-2 border rounded">
+                </div>
+                <div>
+                    <label for="file_excel" class="block text-sm font-medium">File Excel</label>
+                    <input type="file" name="file_excel" class="w-full p-2 border rounded">
                 </div>
                 <div>
                     <label for="keterangan" class="block text-sm font-medium">Keterangan</label>

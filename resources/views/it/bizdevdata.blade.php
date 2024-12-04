@@ -8,9 +8,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-gray-100 p-6">
 
-    <div class="container mx-auto p-5">
+    <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow">
         <!-- Page Header -->
         <h1 class="text-3xl font-bold mb-5">Data Bizdev untuk Bulan {{ $bizdevbulanan->bulan }}</h1>
 
@@ -20,10 +20,17 @@
                 <i class="bi bi-arrow-repeat"></i>
                 Refresh
             </button>
-            <button class="bg-gray-500 text-white px-4 py-2 rounded shadow hover:bg-gray-600 flex items-center gap-2" data-modal-target="#addEventModal">
-                <i class="fa fa-plus"></i>
-                Add
-            </button>
+            <div>
+                <button class="bg-gray-500 text-white px-4 py-2 mr-4 rounded shadow hover:bg-gray-600 float-left flex items-center gap-2">
+                    <a href="{{ route('bizdevbulanan.index') }}"><i class="fa fa-plus"></i>
+                    Back
+                    </a>
+                </button>
+                <button class="bg-gray-500 text-white px-4 py-2 rounded shadow hover:bg-gray-600 flex items-center gap-2" data-modal-target="#addEventModal">
+                    <i class="fa fa-plus"></i>
+                    Add
+                </button>
+            </div>
         </div>
 
         <!-- Success or Error Messages -->
