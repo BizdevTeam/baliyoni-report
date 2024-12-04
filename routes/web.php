@@ -22,6 +22,7 @@ use App\Http\Controllers\LaporanPembelianOutletController;
 use App\Http\Controllers\LaporanPembelianHoldingController;
 use App\Http\Controllers\LaporanPaketAdministrasiController;
 use App\Http\Controllers\RekapPenjualanPerusahaanController;
+use App\Http\Controllers\KasHutangPiutangStokController;
 
 
 
