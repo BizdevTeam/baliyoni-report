@@ -2,22 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\LaporanPaketAdministrasi;
+use App\Models\RekapPenjualanPerusahaan;
+
 use Illuminate\Support\Facades\Log;
 
-class LaporanPaketAdministrasiController extends Controller
+use Illuminate\Http\Request;
+
+class RekapPenjualanPerusahaanController extends Controller
 {
     public function index()
     {
-        return view('marketings.laporanpaketadministrasi');
+        return view('marketings.rekappenjualanperusahaan');
     }
 
     public function data(Request $request)
     {
         try {
             $bulanTahun = $request->query('bulan_tahun');
-            $query = LaporanPaketAdministrasi::query();
+            $query = RekapPenjualanPerusahaan::query();
 
             if ($bulanTahun) {
                 $query->where('bulan_tahun', $bulanTahun);
@@ -25,9 +27,13 @@ class LaporanPaketAdministrasiController extends Controller
 
             $pakets = $query->orderBy('created_at', 'desc')->get();
 
+            // Perbaiki logika totalPaket
+            $totalPaket = $pakets->sum('nilai'); // Pakai tanda kutip tunggal (')
+
             return response()->json([
                 'success' => true,
                 'data' => $pakets,
+                'total_paket' => $totalPaket,
             ], 200);
         } catch (\Exception $e) {
             Log::error('Error fetching data: ' . $e->getMessage());
@@ -36,26 +42,26 @@ class LaporanPaketAdministrasiController extends Controller
                 'message' => 'Terjadi kesalahan saat mengambil data.',
             ], 500);
         }
-    }
+    }   
 
     public function store(Request $request)
     {
         $validatedData = $this->validateData($request);
 
         try {
-            // Check if data already exists for the same bulan_tahun and website
-            $existingEntry = LaporanPaketAdministrasi::where('bulan_tahun', $validatedData['bulan_tahun'])
-                ->where('website', $validatedData['website'])
+            // Check if data already exists for the same bulan_tahun and perusahaan
+            $existingEntry = RekapPenjualanPerusahaan::where('bulan_tahun', $validatedData['bulan_tahun'])
+                ->where('perusahaan', $validatedData['perusahaan'])
                 ->first();
 
             if ($existingEntry) {
                 return response()->json([
                     'success' => false,
-                    'message' => "Website {$validatedData['website']} sudah dipilih untuk bulan {$validatedData['bulan_tahun']}.",
+                    'message' => "perusahaan {$validatedData['perusahaan']} sudah dipilih untuk bulan {$validatedData['bulan_tahun']}.",
                 ], 400);
             }
 
-            LaporanPaketAdministrasi::create($validatedData);
+            RekapPenjualanPerusahaan::create($validatedData);
 
             return response()->json([
                 'success' => true,
@@ -75,18 +81,18 @@ class LaporanPaketAdministrasiController extends Controller
         $validatedData = $this->validateData($request);
 
         try {
-            $paket = LaporanPaketAdministrasi::findOrFail($id);
+            $paket = RekapPenjualanPerusahaan::findOrFail($id);
 
             // Cek duplikasi data
-            $existingEntry = LaporanPaketAdministrasi::where('bulan_tahun', $validatedData['bulan_tahun'])
-                ->where('website', $validatedData['website'])
+            $existingEntry = RekapPenjualanPerusahaan::where('bulan_tahun', $validatedData['bulan_tahun'])
+                ->where('perusahaan', $validatedData['perusahaan'])
                 ->where('id', '!=', $id) // Abaikan data dengan ID yang sama
                 ->first();
 
             if ($existingEntry) {
                 return response()->json([
                     'success' => false,
-                    'message' => "Website {$validatedData['website']} sudah dipilih untuk bulan {$validatedData['bulan_tahun']}.",
+                    'message' => "perusahaan {$validatedData['perusahaan']} sudah dipilih untuk bulan {$validatedData['bulan_tahun']}.",
                 ], 400);
             }
 
@@ -109,7 +115,7 @@ class LaporanPaketAdministrasiController extends Controller
     public function destroy($id)
     {
         try {
-            $paket = LaporanPaketAdministrasi::findOrFail($id);
+            $paket = RekapPenjualanPerusahaan::findOrFail($id);
             $paket->delete();
 
             return response()->json([
@@ -129,9 +135,8 @@ class LaporanPaketAdministrasiController extends Controller
     {
         return $request->validate([
             'bulan_tahun' => ['required', 'regex:/^(0[1-9]|1[0-2])\/\d{4}$/'],  // Ensure month/year format
-            'website' => 'required|string|max:255',
-            'paket_rp' => 'required|integer|min:0',
-            'keterangan' => 'nullable|string|max:255',
+            'perusahaan' => 'required|string|max:255',
+            'nilai' => 'required|integer|min:0',
         ]);
     }
 }
