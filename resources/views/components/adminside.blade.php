@@ -6,7 +6,7 @@
             <img src="images/baliyoni.png" class="w-full" alt="Logo Full">
         </div>
         <div id="logo-mini" class="logo w-12 h-auto hidden">
-            <img src="images/baliyoni- mini.png" class="w-full" alt="Logo Mini">
+            <img src="images/BYS_LOGO.png" class="w-full" alt="Logo Mini">
         </div>
     </div>
     <nav class="mt-4">
@@ -154,21 +154,21 @@
                 </button>
                 <ul id="dropdown-accounting" class="hidden py-2 pl-8 space-y-2">
                     <li>
-                        <a href="#"
+                        <a href="{{ route('labarugi.index') }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
                             <img src="icon/RekapPenjualan.svg" class="w-5 h-5">
                             <span class="ml-2">Laporan Laba Rugi</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#"
+                        <a href="{{ route('neraca.index') }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="icon/RekapPenjualanPerusahaan.svg" class="w-5 h-5">
                             <span class="ml-2">Laporan Neraca</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#"
+                        <a href="{{ route('rasio.index') }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="icon/LaporanPaketAdministrasi.svg" class="w-5 h-5">
                             <span class="ml-2">Laporan Rasio</span>
@@ -189,14 +189,14 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#"
+                        <a href="{{ Route('laporanppn.index') }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="icon/ppnlebihbayar.svg" class="w-5 h-5">
                             <span class="ml-2">Laporan PPn</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#"
+                        <a href="{{ route('taxplaning.index') }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="icon/taxplanning.svg" class="w-5 h-5">
                             <span class="ml-2">Tax Planning vs Penjualan</span>
@@ -209,9 +209,64 @@
             <li class="relative">
                 <button type="button"
                     class="flex items-center w-full px-4 py-2 text-gray-700 rounded-md . . transition"
+                    aria-controls="dropdown-hrga" aria-expanded="false">
+                    <img src="images/hrga.svg" class="w-5 h-5">
+                    <span class="menu-label flex-1 ml-3 text-left">HRGA</span>
+                    <i class="fas fa-chevron-down ml-auto text-gray-400 group-hover:text-gray-700 transition-transform"></i>
+                </button>
+                <ul id="dropdown-hrga" class="hidden py-2 pl-8 space-y-2">
+                    <li>
+                        <a href="hrga/laporanptbos"
+                            class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
+                            <img src="icon/ptbos.svg" class="w-5 h-5">
+                            <span class="ml-2">PT.BOS</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="hrga/laporanijasa"
+                            class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
+                            <img src="icon/ijasa.svg" class="w-5 h-5">
+                            <span class="ml-2">iJASA</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="hrga/laporansakit"
+                            class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
+                            <img src="icon/laporansakit.svg" class="w-5 h-5">
+                            <span class="ml-2">Laporan Sakit</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="hrga/laporanizin"
+                            class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
+                            <img src="icon/laporanizin.svg" class="w-5 h-5">
+                            <span class="ml-2">Laporan Izin</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="hrga/laporancuti"
+                            class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
+                            <img src="icon/laporancuti.svg" class="w-5 h-5">
+                            <span class="ml-2">Laporan Cuti</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="hrga/laporanterlambat"
+                            class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
+                            <img src="icon/laporanterlambat.svg" class="w-5 h-5">
+                            <span class="ml-2">Laporan Terlambat</span>
+                        </a>
+                    </li>
+
+                </ul>
+
+            </li>
+            <li class="relative">
+                <button type="button"
+                    class="flex items-center w-full px-4 py-2 text-gray-700 rounded-md . . transition"
                     aria-controls="dropdown-spi" aria-expanded="false">
                     <img src="images/spi.svg" class="w-5 h-5">
-                    <span class="menu-label flex-1 ml-3 text-left">Accounting</span>
+                    <span class="menu-label flex-1 ml-3 text-left">SPI</span>
                     <i class="fas fa-chevron-down ml-auto text-gray-400 group-hover:text-gray-700 transition-transform"></i>
                 </button>
                 <ul id="dropdown-spi" class="hidden py-2 pl-8 space-y-2">
@@ -219,16 +274,19 @@
                         <a href="#"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
                             <img src="icon/RekapPenjualan.svg" class="w-5 h-5">
+<<<<<<< HEAD
+                            <span class="ml-2">Laporan SPI</span>
+=======
                             <span class="ml-2">Laporan
                                 SPI</span>
+>>>>>>> a42a0a6e82f0a819df867a95a38ba544c7c31e8b
                         </a>
                     </li>
-                    <>
+                    
                         <a href="#"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="icon/RekapPenjualanPerusahaan.svg" class="w-5 h-5">
-                            <span class="ml-2">Laporan
-                                SPI-IT</span>
+                            <span class="ml-2">Laporan SPI-IT</span>
                         </a>
             </li>
         </ul>
