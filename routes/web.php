@@ -5,24 +5,30 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ArusKasController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\LaporanPpnController;
+use App\Http\Controllers\LaporanCutiController;
+use App\Http\Controllers\LaporanIzinController;
 use App\Http\Controllers\LaporanStokController;
 use App\Http\Controllers\StatusPaketController;
 use App\Http\Controllers\ItBizdevDataController;
+use App\Http\Controllers\LaporanIjasaController;
+use App\Http\Controllers\LaporanPtBosController;
 use App\Http\Controllers\LaporanRasioController;
+use App\Http\Controllers\LaporanSakitController;
 use App\Http\Controllers\LaporanNeracaController;
 use App\Http\Controllers\RekapPenjualanController;
 use App\Http\Controllers\ItBizdevBulananController;
 use App\Http\Controllers\LaporanLabaRugiController;
 use App\Http\Controllers\LaporanNegosiasiController;
+use App\Http\Controllers\LaporanTerlambatController;
 use App\Http\Controllers\LaporanTaxPlaningController;
 use App\Http\Controllers\ItMultimediaTiktokController;
 use App\Http\Controllers\LaporanPerInstansiController;
+use App\Http\Controllers\KasHutangPiutangStokController;
 use App\Http\Controllers\ItMultimediaInstagramController;
 use App\Http\Controllers\LaporanPembelianOutletController;
 use App\Http\Controllers\LaporanPembelianHoldingController;
 use App\Http\Controllers\LaporanPaketAdministrasiController;
 use App\Http\Controllers\RekapPenjualanPerusahaanController;
-use App\Http\Controllers\KasHutangPiutangStokController;
 
 
 
@@ -210,6 +216,102 @@ Route::get('accountings/aruskas/filter', [ArusKasController::class, 'filterData'
     ->name('accountings/aruskas.filter');
 Route::delete('accountings/aruskas/destroy/{id}', [ArusKasController::class, 'destroy'])
     ->name('accountings/aruskas.destroy');  
+
+    Route::get('hrga/laporansakit', [LaporanSakitController::class, 'index'])
+    ->name('hrga.laporansakit');
+
+Route::post('hrga/laporansakit/store', [LaporanSakitController::class, 'store'])
+    ->name('hrga.laporansakit.store');
+
+Route::put('hrga/laporansakit/update/{id}', [LaporanSakitController::class, 'update'])
+    ->name('hrga.laporansakit.update');
+
+Route::get('hrga/laporansakit/data', [LaporanSakitController::class, 'getData'])
+    ->name('hrga.laporansakit.getData');
+    
+Route::delete('hrga/laporansakit/destroy/{id}', [LaporanSakitController::class, 'destroy'])
+    ->name('hrga.laporansakit.destroy');
+
+//Route untuk laporan izin hrga
+Route::get('hrga/laporanizin', [LaporanIzinController::class, 'index'])
+    ->name('hrga.laporanizin');
+
+Route::post('hrga/laporanizin/store', [LaporanIzinController::class, 'store'])
+    ->name('hrga.laporanizin.store');
+
+Route::put('hrga/laporanizin/update/{id}', [LaporanIzinController::class, 'update'])
+    ->name('hrga.laporanizin.update');
+
+Route::get('hrga/laporanizin/data', [LaporanIzinController::class, 'getData'])
+    ->name('hrga.laporanizin.getData');
+ 
+Route::delete('hrga/laporanizin/destroy/{id}', [LaporanIzinController::class, 'destroy'])
+    ->name('hrga.laporanizin.destroy');
+
+//Route untuk laporan cuti hrga
+Route::get('hrga/laporancuti', [LaporanCutiController::class, 'index'])
+    ->name('hrga.laporancuti');
+
+Route::post('hrga/laporancuti/store', [LaporanCutiController::class, 'store'])
+    ->name('hrga.laporancuti.store');
+
+Route::put('hrga/laporancuti/update/{id}', [LaporanCutiController::class, 'update'])
+    ->name('hrga.laporancuti.update');
+
+Route::get('hrga/laporancuti/data', [LaporanCutiController::class, 'getData'])
+    ->name('hrga.laporancuti.getData');
+ 
+Route::delete('hrga/laporancuti/destroy/{id}', [LaporanCutiController::class, 'destroy'])
+    ->name('hrga.laporancuti.destroy');
+
+ //Route untuk laporan terlambat hrga
+Route::get('hrga/laporanterlambat', [LaporanTerlambatController::class, 'index'])
+    ->name('hrga.laporaterlambat');
+
+Route::post('hrga/laporanterlambat/store', [LaporanTerlambatController::class, 'store'])
+    ->name('hrga.laporanterlambat.store');
+
+Route::put('hrga/laporanterlambat/update/{id}', [LaporanTerlambatController::class, 'update'])
+    ->name('hrga.laporanterlambat.update');
+
+Route::get('hrga/laporanterlambat/data', [LaporanTerlambatController::class, 'getData'])
+    ->name('hrga.laporanterlambat.getData');
+ 
+Route::delete('hrga/laporanterlambat/destroy/{id}', [LaporanTerlambatController::class, 'destroy'])
+    ->name('hrga.laporanterlambat.destroy');
+
+//Route untuk laporan ptboss hrga
+Route::get('hrga/laporanptbos', [LaporanPtBosController::class, 'index'])
+    ->name('hrga.laporanptbos');
+
+Route::post('hrga/laporanptbos/store', [LaporanPtBosController::class, 'store'])
+    ->name('hrga.laporanptbos.store');
+
+Route::put('hrga/laporanptbos/update/{id}', [LaporanPtBosController::class, 'update'])
+    ->name('hrga.laporanptbos.update');
+
+Route::get('hrga/laporanptbos/data', [LaporanPtBosController::class, 'getData'])
+    ->name('hrga.laporanptbos.getData');
+ 
+Route::delete('hrga/laporanptbos/destroy/{id}', [LaporanPtBosController::class, 'destroy'])
+    ->name('hrga.laporanptbos.destroy');
+
+
+//Route untuk laporan ijasa hrga
+Route::get('hrga/laporanijasa', [LaporanIjasaController::class, 'index'])
+    ->name('hrga.laporanijasa');
+
+Route::post('hrga/laporanijasa/store', [LaporanIjasaController::class, 'store'])
+    ->name('hrga.laporanijasa.store');
+
+Route::put('hrga/laporanijasa/update/{id}', [LaporanIjasaController::class, 'update'])
+    ->name('hrga.laporanijasa.update');
+
+Route::get('hrga/laporanijasa/data', [LaporanIjasaController::class, 'getData'])
+    ->name('hrga.laporanijasa.getData');
+ 
+Route::delete('hrga/laporanijasa/destroy/{id}', [LaporanIjasaController::class, 'destroy'])
+    ->name('hrga.laporanijasa.destroy');
 
 });
 

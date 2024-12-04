@@ -274,15 +274,10 @@
                         <a href="#"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
                             <img src="icon/RekapPenjualan.svg" class="w-5 h-5">
-<<<<<<< HEAD
-                            <span class="ml-2">Laporan SPI</span>
-=======
                             <span class="ml-2">Laporan
                                 SPI</span>
->>>>>>> a42a0a6e82f0a819df867a95a38ba544c7c31e8b
                         </a>
                     </li>
-                    
                         <a href="#"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="icon/RekapPenjualanPerusahaan.svg" class="w-5 h-5">
