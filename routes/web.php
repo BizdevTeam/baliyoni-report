@@ -3,13 +3,19 @@ use App\Http\Controllers\SessionController;
 use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LaporanPaketAdministrasiController;
+use App\Http\Controllers\LaporanSPIController;
+use App\Http\Controllers\laporanSPITiController;
 
 //marketing : 
 Route::middleware(['web'])->group(function () {
     Route::get('marketings/laporanpaketadministrasi', [LaporanPaketAdministrasiController::class, 'index'])->name('marketings.laporanpaketadministrasi');
     Route::post('marketings/laporanpaketadministrasi/store', [LaporanPaketAdministrasiController::class, 'store'])->name('marketings.store');
     Route::get('marketings/laporanpaketadministrasi/data', [LaporanPaketAdministrasiController::class, 'data'])->name('marketings.data');
+    //spi
+    Route::resource('laporanspi', LaporanSPIController::class);
+    route::resource("laporanspiti", controller : laporanSPITiController::class);
 });
+
 
 
 

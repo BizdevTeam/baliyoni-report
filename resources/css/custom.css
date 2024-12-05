@@ -34,17 +34,17 @@ nav ul li button {
     padding: 0.5rem 1rem;
     border-radius: 0.375rem; /* Rounded corners */
     transition: all 0.9s ease-in-out; /* Haluskan transisi */
-    color: #4a4a4a; /* Warna teks default */
     text-decoration: none; /* Hilangkan underline */
 }
 
 /* Hover effect untuk menu utama */
-.home:hover {
-    background-color: #ffffff; /* Warna merah saat hover */
-    color: black; /* Ubah warna teks menjadi putih */
-    box-shadow: 0 4px 10px rgba(70, 62, 62, 0.5); /* Bayangan saat hover */
+.home:hover{
+    background-color: #ff4d4d; /* Warna merah saat hover */
+    box-shadow: 0 4px 10px rgba(255, 77, 77, 0.5); /* Bayangan saat hover */
     transform: scale(1.05); /* Membesarkan elemen sedikit */
 }
+
+
 nav ul li button:hover {
     background-color: #ff4d4d; /* Warna merah saat hover */
     color: white; /* Ubah warna teks menjadi putih */
@@ -62,9 +62,11 @@ nav ul li button:active {
 /* Hover effect khusus untuk submenu items */
 nav ul li ul li a {
     transition: all 0.9s ease-in-out; /* Haluskan transisi teks */
-    color: #4a4a4a; /* Warna teks default */
     text-decoration: none; /* Hilangkan underline */
+    font-size:15px;
 }
+
+
 
 nav ul li ul li a:hover {
     color: #ff4d4d; /* Teks berubah menjadi merah */
@@ -94,6 +96,20 @@ nav ul li ul.hidden {
 
 nav ul li ul.visible {
     display: block;
+}
+
+.sidebar-minimized .menu-item {
+    justify-content: center;
+}
+
+/* Ubah ukuran ikon saat sidebar minim */
+.sidebar-minimized .menu-item img {
+    width: 20px; /* Ukuran ikon lebih kecil saat sidebar minim */
+    height: 20px;
+}
+
+.navbar-right {
+    margin-right: 18px; /* Sesuaikan jaraknya */
 }
 
 

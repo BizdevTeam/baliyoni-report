@@ -27,9 +27,7 @@
     <x-admincontent>
         @yield('content')
     </x-admincontent>
-    <footer class="main-footer">
-        <strong>Footer Information</strong>
-    </footer>
+  
 
 <!-- Scripts -->
 <script src="{{ asset('/templates/plugins/jquery/jquery.min.js') }}"></script>
