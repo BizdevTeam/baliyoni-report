@@ -15,7 +15,7 @@
 
 <body class="bg-gray-100 p-6">
     <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow">
-        <h1 class="text-2xl font-bold mb-4">Rekap Penjualan</h1>
+        <h1 class="text-2xl font-bold mb-4">Laporan Samitra</h1>
 
         <!-- Button Tambah Data -->
         <a href="/admin">
@@ -33,7 +33,7 @@
                             class="w-full border-gray-300 rounded p-2" placeholder="mm/yyyy" required>
                     </div>
                     <div>
-                        <label for="modal-total_pengiriman" class="block text-sm font-medium">Total Penjualan
+                        <label for="modal-total_pengiriman" class="block text-sm font-medium">Total Pengiriman
                             (RP)</label>
                         <input type="text" id="modal-total_pengiriman" name="total_pengiriman"
                             class="w-full border-gray-300 rounded p-2" placeholder="0" min="0" required>
@@ -107,8 +107,8 @@
                 total_pengiriman: Number(document.getElementById('modal-total_pengiriman').value),
             };
 
-            const url = editMode ? `/supports/laporansamitra/update/${editId}` :
-                '/supports/laporansamitra/store';
+            const url = editMode ? `/supports/laporandetrans/update/${editId}` :
+                '/supports/laporandetrans/store';
             const method = editMode ? 'PUT' : 'POST';
 
             try {
@@ -137,7 +137,7 @@
         // Delete Data
         async function deleteData(id) {
             try {
-                const response = await fetch(`/supports/laporansamitra/destroy/${id}`, {
+                const response = await fetch(`/supports/laporandetrans/destroy/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -159,7 +159,7 @@
 
         //filter tahun
         async function updateDataByYear(year) {
-            const url = `/supports/laporansamitra/filter?tahun=${year}`;
+            const url = `/supports/laporandetrans/filter?tahun=${year}`;
             try {
                 const response = await fetch(url, {
                     method: 'GET',
@@ -202,9 +202,9 @@
             }
         });
 
-        async function updateData(filter = '') {
-            const url = filter ? `/supports/laporansamitra/filter?tahun=${filter}` :
-                '/supports/laporansamitra/data';
+        async function updateData(filter = '') {                                                                        
+            const url = filter ? `/supports/laporandetrans/filter?tahun=${filter}` :
+                '/supports/laporandetrans/data';
                 try {
                 const response = await fetch(url);
                 const result = await response.json();
@@ -281,7 +281,7 @@
                     data: {
                         labels: ['Tidak ada data'],
                         datasets: [{
-                            label: 'Total Penjualan (RP)',
+                            label: 'Total Pengiriman (RP)',
                             data: [0],
                             backgroundColor: backgroundColors,
                         }],
@@ -303,7 +303,7 @@
                 data: {
                     labels,
                     datasets: [{
-                        label: 'Total Penjualan (RP)',
+                        label: 'Total Pengiriman (RP)',
                         data: dataValues,
                         backgroundColor: backgroundColors,
                         borderWidth: 1,
