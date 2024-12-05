@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('laporan_sakits', function (Blueprint $table) {
+        Schema::create('rekap_penjualans', function (Blueprint $table) {
             $table->id();
             $table->string('bulan_tahun')->unique(); // Pastikan tidak ada duplikasi
             $table->integer('total_sakit')->default(0); // Default value untuk menghindari nilai null
