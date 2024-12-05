@@ -28,6 +28,7 @@ use App\Http\Controllers\ItMultimediaInstagramController;
 use App\Http\Controllers\LaporanPembelianOutletController;
 use App\Http\Controllers\LaporanPembelianHoldingController;
 use App\Http\Controllers\LaporanPaketAdministrasiController;
+use App\Http\Controllers\LaporanSamitraController;
 use App\Http\Controllers\RekapPenjualanPerusahaanController;
 use App\Http\Controllers\RekapPendapatanServisAspController;
 use App\Http\Controllers\RekapPiutangServisAspController;
@@ -362,6 +363,19 @@ Route::middleware(['web'])->group(function () {
         ->name('hrga.laporanijasa.destroy');
 
 });
+
+Route::get('supports/laporansamitra', [LaporanSamitraController::class, 'index'])
+        ->name('supports.laporansamitra');
+    Route::post('supports/laporansamitra/store', [LaporanSamitraController::class, 'store'])
+        ->name('supports.laporansamitra.store');
+    Route::put('supports/laporansamitra/update/{id}', [LaporanSamitraController::class, 'update'])
+        ->name('supports.laporansamitra.update');
+    Route::get('supports/laporansamitra/data', [LaporanSamitraController::class, 'data'])
+        ->name('supports.laporansamitra.data');
+    Route::get('supports/laporansamitra/filter', [LaporanSamitraController::class, 'filterData'])
+        ->name('supports.laporansamitra.filterByYear');
+    Route::delete('supports/laporansamitra/destroy/{id}', [LaporanSamitraController::class, 'destroy'])
+        ->name('supports.laporansamitra.destroy');
 
 Route::middleware(['web'])->group(function () {
 
