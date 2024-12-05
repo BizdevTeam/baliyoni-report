@@ -1,8 +1,4 @@
 <?php
-use App\Http\Controllers\SessionController;
-use App\Http\Controllers\AdminController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\LaporanPaketAdministrasiController;
 use App\Http\Controllers\LaporanSPIController;
 use App\Http\Controllers\laporanSPITiController;
 
@@ -319,6 +315,13 @@ Route::get('hrga/laporanijasa/data', [LaporanIjasaController::class, 'getData'])
 Route::delete('hrga/laporanijasa/destroy/{id}', [LaporanIjasaController::class, 'destroy'])
     ->name('hrga.laporanijasa.destroy');
 
+});
+
+Route::middleware(['web'])->group(function () {
+
+    //spi
+    Route::resource('laporanspi', LaporanSPIController::class);
+    route::resource("laporanspiti", controller : laporanSPITiController::class);
 });
 
 Route::middleware(['guest'])->group(function () {
