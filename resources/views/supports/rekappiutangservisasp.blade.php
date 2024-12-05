@@ -33,22 +33,25 @@
                         <input type="text" id="modal-bulan_tahun" name="bulan_tahun"
                             class="w-full border-gray-300 rounded p-2" placeholder="mm/yyyy" required>
                     </div>
-                    <div id="perusahaan-container">
-                        <div class="perusahaan-item flex items-center space-x-2 mb-2">
-                            <select name="perusahaan[]" class="w-full border-gray-300 rounded p-2 perusahaan-select"
+                    <div id="pelaksana-container">
+                        <div class="pelaksana-item flex items-center space-x-2 mb-2">
+                            <select name="pelaksana[]" class="w-full border-gray-300 rounded p-2 pelaksana-select"
                                 required>
-                                <option value="" disabled selected>Pilih Perusahaan</option>
-                                <option value="CV. BUANA KOSA">CV. BUANA KOSA</option>
-                                <option value="PT. BALI UNGGUL SEJAHTERA">PT. BALI UNGGUL SEJAHTERA</option>
+                                <option value="" disabled selected>Pilih Pelaksana</option>
+                                <option value="CV. ARI DISTRIBUTION CENTER">CV. ARI DISTRIBUTION CENTER</option>
+                                <option value="CV. BALIYONI COMPUTER">CV. BALIYONI COMPUTER</option>
+                                <option value="PT. NABA TECHNOLOGY SOLUTIONS">PT. NABA TECHNOLOGY SOLUTIONS</option>
+                                <option value="CV. ELKA MANDIRI (50%)-SAMITRA">CV. ELKA MANDIRI (50%)-SAMITRA</option>
+                                <option value="CV. ELKA MANDIRI (50%)-DETRAN">CV. ELKA MANDIRI (50%)-DETRAN</option>
                             </select>
-                            <input type="text" name="nilai_pendapatan[]" class="w-full border-gray-300 rounded p-2"
-                                placeholder="Nilai Pendapatan" required>
+                            <input type="text" name="nilai_piutang[]" class="w-full border-gray-300 rounded p-2"
+                                placeholder="Nilai Piutang" required>
                             <button type="button"
-                                class="remove-perusahaan bg-red-500 text-white px-2 py-1 rounded">Hapus</button>
+                                class="remove-pelaksana bg-red-500 text-white px-2 py-1 rounded">Hapus</button>
                         </div>
                     </div>
-                    <button type="button" id="add-perusahaan" class="bg-green-500 text-white px-4 py-2 rounded">Tambah
-                        Perusahaan</button>
+                    <button type="button" id="add-pelaksana" class="bg-green-500 text-white px-4 py-2 rounded">Tambah
+                        pelaksana</button>
                     <div class="flex justify-end space-x-2 mt-4">
                         <button type="button" id="close-modal"
                             class="bg-gray-500 text-white px-4 py-2 rounded">Batal</button>
@@ -70,8 +73,8 @@
             <thead class="bg-gray-200">
                 <tr>
                     <th class="border border-gray-300 px-4 py-2">Bulan/Tahun</th>
-                    <th class="border border-gray-300 px-4 py-2">Perusahaan</th>
-                    <th class="border border-gray-300 px-4 py-2">Nilai Pendapatan</th>
+                    <th class="border border-gray-300 px-4 py-2">pelaksana</th>
+                    <th class="border border-gray-300 px-4 py-2">Nilai Piutang</th>
                     <th class="border border-gray-300 px-4 py-2">Aksi</th>
                 </tr>
             </thead>
@@ -86,48 +89,51 @@
     </div>
 
     <script>
-        document.getElementById('add-perusahaan').addEventListener('click', () => {
-            const perusahaanContainer = document.getElementById('perusahaan-container');
+        document.getElementById('add-pelaksana').addEventListener('click', () => {
+            const pelaksanaContainer = document.getElementById('pelaksana-container');
 
-            // Membuat elemen perusahaan dan nilai pendapatan
-            const newPerusahaanItem = document.createElement('div');
-            newPerusahaanItem.className = 'perusahaan-item flex items-center space-x-2 mb-2';
+            // Membuat elemen pelaksana dan nilai Piutang
+            const newpelaksanaItem = document.createElement('div');
+            newpelaksanaItem.className = 'pelaksana-item flex items-center space-x-2 mb-2';
 
-            const perusahaanSelect = document.createElement('select');
-            perusahaanSelect.name = 'perusahaan[]';
-            perusahaanSelect.className = 'w-full border-gray-300 rounded p-2 perusahaan-select';
-            perusahaanSelect.required = true;
+            const pelaksanaSelect = document.createElement('select');
+            pelaksanaSelect.name = 'pelaksana[]';
+            pelaksanaSelect.className = 'w-full border-gray-300 rounded p-2 pelaksana-select';
+            pelaksanaSelect.required = true;
 
-            // Menambahkan opsi default dan perusahaan
-            perusahaanSelect.innerHTML = `
-                <option value="" disabled selected>Pilih Perusahaan</option>
-                <option value="CV. BUANA KOSA">CV. BUANA KOSA</option>
-                <option value="PT. BALI UNGGUL SEJAHTERA">PT. BALI UNGGUL SEJAHTERA</option>
+            // Menambahkan opsi default dan pelaksana
+            pelaksanaSelect.innerHTML = `
+                <option value="" disabled selected>Pilih pelaksana</option>
+                    <option value="CV. ARI DISTRIBUTION CENTER">CV. ARI DISTRIBUTION CENTER</option>
+                    <option value="CV. BALIYONI COMPUTER">CV. BALIYONI COMPUTER</option>
+                    <option value="PT. NABA TECHNOLOGY SOLUTIONS">PT. NABA TECHNOLOGY SOLUTIONS</option>
+                    <option value="CV. ELKA MANDIRI (50%)-SAMITRA">CV. ELKA MANDIRI (50%)-SAMITRA</option>
+                    <option value="CV. ELKA MANDIRI (50%)-DETRAN">CV. ELKA MANDIRI (50%)-DETRAN</option>
             `;
 
-            const pendapatanInput = document.createElement('input');
-            pendapatanInput.type = 'text';
-            pendapatanInput.name = 'nilai_pendapatan[]';
-            pendapatanInput.className = 'w-full border-gray-300 rounded p-2';
-            pendapatanInput.placeholder = 'Nilai Pendapatan';
-            pendapatanInput.required = true;
+            const piutangInput = document.createElement('input');
+            piutangInput.type = 'text';
+            piutangInput.name = 'nilai_piutang[]';
+            piutangInput.className = 'w-full border-gray-300 rounded p-2';
+            piutangInput.placeholder = 'Nilai Piutang';
+            piutangInput.required = true;
 
             const removeButton = document.createElement('button');
             removeButton.type = 'button';
-            removeButton.className = 'remove-perusahaan bg-red-500 text-white px-2 py-1 rounded';
+            removeButton.className = 'remove-pelaksana bg-red-500 text-white px-2 py-1 rounded';
             removeButton.textContent = 'Hapus';
 
             // Menambahkan logika hapus
             removeButton.addEventListener('click', () => {
-                newPerusahaanItem.remove();
+                newpelaksanaItem.remove();
             });
 
             // Menambahkan elemen ke container
-            newPerusahaanItem.appendChild(perusahaanSelect);
-            newPerusahaanItem.appendChild(pendapatanInput);
-            newPerusahaanItem.appendChild(removeButton);
+            newpelaksanaItem.appendChild(pelaksanaSelect);
+            newpelaksanaItem.appendChild(piutangInput);
+            newpelaksanaItem.appendChild(removeButton);
 
-            perusahaanContainer.appendChild(newPerusahaanItem);
+            pelaksanaContainer.appendChild(newpelaksanaItem);
         });
 
         const modal = document.getElementById('modal');
@@ -154,20 +160,20 @@
         });
 
         // Validate Duplicate Entries
-        function isDuplicateEntry(bulanTahun, perusahaanList, items) {
-            const hasDuplicate = new Set(perusahaanList).size !== perusahaanList.length;
+        function isDuplicateEntry(bulanTahun, pelaksanaList, items) {
+            const hasDuplicate = new Set(pelaksanaList).size !== pelaksanaList.length;
             if (hasDuplicate) {
-                alert('Perusahaan yang sama tidak boleh ditambahkan dalam bulan/tahun yang sama.');
+                alert('pelaksana yang sama tidak boleh ditambahkan dalam bulan/tahun yang sama.');
                 return true;
             }
 
-            return items.some(item => item.bulan_tahun === bulanTahun && perusahaanList.includes(item.perusahaan));
+            return items.some(item => item.bulan_tahun === bulanTahun && pelaksanaList.includes(item.pelaksana));
         }
 
         // Fetch Existing Data
         async function fetchData() {
             try {
-                const response = await fetch('/supports/rekappendapatanservisasp/data');
+                const response = await fetch('/supports/rekappiutangservisasp/data');
                 const result = await response.json();
                 return result.success ? result.data : [];
             } catch (error) {
@@ -180,34 +186,34 @@
             e.preventDefault();
 
             const bulanTahun = document.getElementById('modal-bulan_tahun').value.trim();
-            const perusahaanList = [...document.querySelectorAll('select[name="perusahaan[]"]')].map(select =>
+            const pelaksanaList = [...document.querySelectorAll('select[name="pelaksana[]"]')].map(select =>
                 select.value.trim());
-            const nilaiPendapatanList = [...document.querySelectorAll('input[name="nilai_pendapatan[]"]')].map(
+            const nilaiPiutangList = [...document.querySelectorAll('input[name="nilai_piutang[]"]')].map(
                 input => parseFloat(input.value.trim()));
 
-            if (!bulanTahun || perusahaanList.some(p => !p) || nilaiPendapatanList.some(isNaN)) {
+            if (!bulanTahun || pelaksanaList.some(p => !p) || nilaiPiutangList.some(isNaN)) {
                 alert('Semua kolom harus diisi dengan benar.');
                 return;
             }
 
-            // Cek duplikasi perusahaan
-            if (new Set(perusahaanList).size !== perusahaanList.length) {
-                alert('Perusahaan tidak boleh duplikat dalam satu input.');
-                return;
-            }
+            const payload = {
+                id: editId,
+                bulan_tahun: bulanTahun,
+                pelaksana: pelaksanaList,
+                nilai_piutang: nilaiPiutangList
+            };
+
+            const url = editMode ? `/supports/rekappiutangservisasp/update/${editId}` :
+                '/supports/rekappiutangservisasp/store';
 
             try {
-                const response = await fetch('/supports/rekappendapatanservisasp/store', {
-                    method: 'POST',
+                const response = await fetch(url, {
+                    method: editMode ? 'PUT' : 'POST',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        bulan_tahun: bulanTahun,
-                        perusahaan: perusahaanList,
-                        nilai_pendapatan: nilaiPendapatanList
-                    }),
+                    body: JSON.stringify(payload),
                 });
 
                 const result = await response.json();
@@ -225,13 +231,12 @@
         });
 
 
-
         // Delete Data
         async function deleteData(id) {
             if (!confirm('Apakah Anda yakin ingin menghapus data ini?')) return;
 
             try {
-                const response = await fetch(`/supports/rekappendapatanservisasp/destroy/${id}`, {
+                const response = await fetch(`/supports/rekappiutangservisasp/destroy/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -258,8 +263,8 @@
 
         // Update Data
         async function updateData(filter = '') {
-            const url = filter ? `/supports/rekappendapatanservisasp/data?bulan_tahun=${filter}` :
-                '/supports/rekappendapatanservisasp/data';
+            const url = filter ? `/supports/rekappiutangservisasp/data?bulan_tahun=${filter}` :
+                '/supports/rekappiutangservisasp/data';
 
             try {
                 const response = await fetch(url);
@@ -290,8 +295,8 @@
                     const row = `
                 <tr class="border-b">
                     <td class="border px-4 py-2">${item.bulan_tahun}</td>
-                    <td class="border px-4 py-2">${item.perusahaan}</td>
-                    <td class="border px-4 py-2">Rp ${item.nilai_pendapatan.toLocaleString()}</td>
+                    <td class="border px-4 py-2">${item.pelaksana}</td>
+                    <td class="border px-4 py-2">Rp ${item.nilai_piutang.toLocaleString()}</td>
                     <td class="border px-4 py-2 flex items-center justify-center space-x-2">
                         <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
                                 class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">
@@ -310,19 +315,19 @@
 
         // Update Chart
         function updateChart(items) {
-            const labels = items.map(item => item.perusahaan);
-            const dataValues = items.map(item => item.nilai_pendapatan);
+            const labels = items.map(item => item.pelaksana);
+            const dataValues = items.map(item => item.nilai_piutang);
             const colors = ['#4bc0c0', '#ff6384', '#ffce56', '#36a2eb', '#9966ff'];
 
             const ctx = chartCanvas.getContext('2d');
             if (window.myChart) window.myChart.destroy();
 
             window.myChart = new Chart(ctx, {
-                type: 'bar',
+                type: 'pie',
                 data: {
                     labels,
                     datasets: [{
-                        label: 'Pendapatan Perusahaan',
+                        label: 'Piutang pelaksana',
                         data: dataValues,
                         backgroundColor: colors,
                         borderWidth: 1,
@@ -334,14 +339,14 @@
                         x: {
                             title: {
                                 display: true,
-                                text: 'Perusahaan'
+                                text: 'pelaksana'
                             }
                         },
                         y: {
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: 'Pendapatan (Rp)'
+                                text: 'Piutang (Rp)'
                             }
                         },
                     },
@@ -351,25 +356,75 @@
 
         // Edit Data
         function editData(id, data) {
-            const parsedData = JSON.parse(decodeURIComponent(data));
-            editMode = true;
-            editId = id;
+            const parsedData = JSON.parse(decodeURIComponent(data)); // Parse data dari string ke objek
+            console.log(parsedData); // Debugging: cek struktur data
 
+            // Pastikan `pelaksana` adalah array
+            parsedData.pelaksana = Array.isArray(parsedData.pelaksana) ?
+                parsedData.pelaksana :
+                (typeof parsedData.pelaksana === 'string' ? parsedData.pelaksana.split(',') : []);
+
+            // Pastikan `nilai_piutang` adalah array
+            parsedData.nilai_piutang = Array.isArray(parsedData.nilai_piutang) ?
+                parsedData.nilai_piutang :
+                (typeof parsedData.nilai_piutang === 'string' ? parsedData.nilai_piutang.split(',').map(Number) : []);
+
+            editMode = true; // Aktifkan mode edit
+            editId = id; // Simpan ID data yang sedang diedit
+
+            // Set judul modal
             modalTitle.textContent = 'Edit Data';
             document.getElementById('modal-bulan_tahun').value = parsedData.bulan_tahun;
 
-            // Update perusahaan and nilai_pendapatan fields dynamically
-            const perusahaanSelects = document.querySelectorAll('select[name="perusahaan[]"]');
-            const nilaiPendapatanInputs = document.querySelectorAll('input[name="nilai_pendapatan[]"]');
+            // Bersihkan container pelaksana
+            const pelaksanaContainer = document.getElementById('pelaksana-container');
+            pelaksanaContainer.innerHTML = '';
 
-            perusahaanSelects.forEach((select, index) => {
-                select.value = parsedData.perusahaan[index] || '';
+            // Tambahkan elemen pelaksana dan nilai pendapatan
+            parsedData.pelaksana.forEach((pelaksana, index) => {
+                const newPelaksanaItem = document.createElement('div');
+                newPelaksanaItem.className = 'pelaksana-item flex items-center space-x-2 mb-2';
+
+                const pelaksanaSelect = document.createElement('select');
+                pelaksanaSelect.name = 'pelaksana[]';
+                pelaksanaSelect.className = 'w-full border-gray-300 rounded p-2 pelaksana-select';
+                pelaksanaSelect.required = true;
+
+                pelaksanaSelect.innerHTML = `
+            <option value="" disabled>Pilih Pelaksana</option>
+            <option value="CV. ARI DISTRIBUTION CENTER">CV. ARI DISTRIBUTION CENTER</option>
+            <option value="CV. BALIYONI COMPUTER">CV. BALIYONI COMPUTER</option>
+            <option value="PT. NABA TECHNOLOGY SOLUTIONS">PT. NABA TECHNOLOGY SOLUTIONS</option>
+            <option value="CV. ELKA MANDIRI (50%)-SAMITRA">CV. ELKA MANDIRI (50%)-SAMITRA</option>
+            <option value="CV. ELKA MANDIRI (50%)-DETRAN">CV. ELKA MANDIRI (50%)-DETRAN</option>
+        `;
+                pelaksanaSelect.value = pelaksana; // Set nilai pelaksana
+
+                const nilaiPiutangInput = document.createElement('input');
+                nilaiPiutangInput.type = 'text';
+                nilaiPiutangInput.name = 'nilai_piutang[]';
+                nilaiPiutangInput.className = 'w-full border-gray-300 rounded p-2';
+                nilaiPiutangInput.placeholder = 'Nilai Pendapatan';
+                nilaiPiutangInput.value = parsedData.nilai_piutang[index] || ''; // Set nilai pendapatan
+                nilaiPiutangInput.required = true;
+
+                const removeButton = document.createElement('button');
+                removeButton.type = 'button';
+                removeButton.className = 'remove-pelaksana bg-red-500 text-white px-2 py-1 rounded';
+                removeButton.textContent = 'Hapus';
+
+                removeButton.addEventListener('click', () => {
+                    newPelaksanaItem.remove();
+                });
+
+                newPelaksanaItem.appendChild(pelaksanaSelect);
+                newPelaksanaItem.appendChild(nilaiPiutangInput);
+                newPelaksanaItem.appendChild(removeButton);
+
+                pelaksanaContainer.appendChild(newPelaksanaItem);
             });
 
-            nilaiPendapatanInputs.forEach((input, index) => {
-                input.value = parsedData.nilai_pendapatan[index] || '';
-            });
-
+            // Tampilkan modal
             modal.classList.remove('hidden');
         }
 

@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('rekap_pendapatan_servis_asps', function (Blueprint $table) {
+        Schema::create('rekap_piutang_servis_asps', function (Blueprint $table) {
             $table->id();
                 $table->string('bulan_tahun');
                 $table->string('pelaksana');
-                $table->integer('nilai_pendapatan');
+                $table->integer('nilai_piutang');
                 $table->timestamps();
 
                 $table->unique(['bulan_tahun', 'pelaksana']);
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('rekap_pendapatan_servis_asps');
+        Schema::dropIfExists('rekap_piutang_servis_asps');
     }
 };

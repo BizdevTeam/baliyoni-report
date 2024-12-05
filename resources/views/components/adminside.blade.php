@@ -301,7 +301,7 @@
                             <span class="ml-2">Rekap Pendapatan Servis ASP</span>
                         </a>
                     </li>
-                        <a href="#"
+                        <a href="supports/rekappiutangservisasp"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="icon/RekapPenjualanPerusahaan.svg" class="w-5 h-5">
                             <span class="ml-2">Rekap Piutang Servis ASP</span>
@@ -314,7 +314,7 @@
                             <span class="ml-2">PT. Saguna Mitra Transindo</span>
                         </a>
                     </li>
-                        <a href="#"
+                        <a href="supports/laporandetrans"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="icon/RekapPenjualanPerusahaan.svg" class="w-5 h-5">
                             <span class="ml-2">PT. Detran Jelajah Nusantara</span>

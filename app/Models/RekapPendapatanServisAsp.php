@@ -14,7 +14,7 @@ class RekapPendapatanServisAsp extends Model
     
         protected $fillable = [
             'bulan_tahun', 
-            'perusahaan',     
+            'pelaksana',     
             'nilai_pendapatan',        
         ];
         protected $casts = [

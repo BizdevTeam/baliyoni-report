@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\RekapPendapatanServisAsp;
+use App\Models\RekapPiutangServisAsp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 
-class RekapPendapatanServisAspController extends Controller
+class RekapPiutangServisAspController extends Controller
 {
     // Menampilkan halaman utama
     public function index()
     {
-        return view('supports.rekappendapatanservisasp');
+        return view('supports.rekappiutangservisasp');
     }
 
     // Fetch data dengan filter
@@ -20,7 +20,7 @@ class RekapPendapatanServisAspController extends Controller
     {
         try {
             $bulanTahun = $request->query('bulan_tahun');
-            $query = RekapPendapatanServisAsp::query();
+            $query = RekapPiutangServisAsp::query();
 
             if ($bulanTahun) {
                 $query->where('bulan_tahun', $bulanTahun);
@@ -48,14 +48,14 @@ class RekapPendapatanServisAspController extends Controller
             'bulan_tahun' => 'required|date_format:m/Y',
             'pelaksana' => 'required|array|min:1',
             'pelaksana.*' => 'required|string|max:255',
-            'nilai_pendapatan' => 'required|array|min:1',
-            'nilai_pendapatan.*' => 'required|numeric|min:0',
+            'nilai_piutang' => 'required|array|min:1',
+            'nilai_piutang.*' => 'required|numeric|min:0',
         ]);
 
         try {
             $dataToInsert = $this->prepareDataForInsert($validated);
 
-            RekapPendapatanServisAsp::insert($dataToInsert);
+            RekapPiutangServisAsp::insert($dataToInsert);
 
             return response()->json(['success' => true, 'message' => 'Data berhasil disimpan.']);
         } catch (\Exception $e) {
@@ -71,16 +71,16 @@ class RekapPendapatanServisAspController extends Controller
             'bulan_tahun' => 'required|date_format:m/Y',
             'pelaksana' => 'required|array|min:1',
             'pelaksana.*' => 'required|string|max:255',
-            'nilai_pendapatan' => 'required|array|min:1',
-            'nilai_pendapatan.*' => 'required|numeric|min:0',
+            'nilai_piutang' => 'required|array|min:1',
+            'nilai_piutang.*' => 'required|numeric|min:0',
         ]);
 
         try {
             // Hapus data lama untuk pelaksana terkait
-            RekapPendapatanServisAsp::where('id', $id)->delete();
+            RekapPiutangServisAsp::where('id', $id)->delete();
 
             $dataToInsert = $this->prepareDataForInsert($validated);
-            RekapPendapatanServisAsp::insert($dataToInsert);
+            RekapPiutangServisAsp::insert($dataToInsert);
 
             return response()->json(['success' => true, 'message' => 'Data berhasil diperbarui.']);
         } catch (\Exception $e) {
@@ -93,7 +93,7 @@ class RekapPendapatanServisAspController extends Controller
     public function destroy($id)
     {
         try {
-            $paket = RekapPendapatanServisAsp::findOrFail($id);
+            $paket = RekapPiutangServisAsp::findOrFail($id);
             $paket->delete();
 
             return response()->json(['success' => true, 'message' => 'Data berhasil dihapus.'], 200);
@@ -114,7 +114,7 @@ class RekapPendapatanServisAspController extends Controller
             $dataToInsert[] = [
                 'bulan_tahun' => $validated['bulan_tahun'],
                 'pelaksana' => $pelaksana,
-                'nilai_pendapatan' => $validated['nilai_pendapatan'][$index],
+                'nilai_piutang' => $validated['nilai_piutang'][$index],
                 'created_at' => now(),
                 'updated_at' => now(),
             ];

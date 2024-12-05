@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('rekap_penjualans', function (Blueprint $table) {
+        Schema::create('laporan_detrans', function (Blueprint $table) {
             $table->id();
             $table->string('bulan_tahun')->unique(); // Pastikan tidak ada duplikasi
-            $table->integer('total_penjualan')->default(0); // Default value untuk menghindari nilai null
+            $table->integer('total_pengiriman')->default(0); // Default value untuk menghindari nilai null
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('rekap_penjualans');
+     Schema::dropIfExists('laporan_detrans');
     }
 };
