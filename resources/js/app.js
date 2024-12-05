@@ -1,6 +1,3 @@
-import './bootstrap.js';
-import '../css/app.css';
-
 document.addEventListener('DOMContentLoaded', () => {
     const sidebar = document.getElementById('sidebar');
     const toggleSidebar = document.getElementById('toggle-sidebar');
@@ -9,6 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const navbar = document.getElementById('navbar');
     const admincontent = document.getElementById('admincontent'); // Konten utama
     const footer = document.getElementById("main-footer"); // Footer utama
+  
+
 
     // Fungsi untuk menyesuaikan layout berdasarkan status sidebar
     const adjustLayout = (isMinimized) => {
@@ -18,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         admincontent.style.width = `calc(100% - ${sidebarWidth})`;
         footer.style.marginLeft = sidebarWidth;
     };
-
+    
     // Toggle Sidebar
     toggleSidebar?.addEventListener('click', () => {
         const isMinimized = sidebar.getAttribute('data-minimized') === 'true';
@@ -36,6 +35,28 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.menu-label').forEach(label => {
             label.classList.toggle('hidden', isMinimized);
         });
+        document.querySelectorAll('.fa-chevron-down').forEach(icon => {
+            icon.classList.toggle('hidden', isMinimized);
+        });
+
+        // Tutup semua dropdown jika sidebar diminimalkan
+        if (isMinimized) {
+            document.querySelectorAll('[aria-controls]').forEach(button => {
+                const dropdownId = button.getAttribute('aria-controls');
+                const dropdown = document.getElementById(dropdownId);
+
+                if (dropdown) {
+                    dropdown.classList.add('hidden'); // Tutup dropdown
+                    button.setAttribute('aria-expanded', 'false'); // Update atribut aria
+
+                    // Reset ikon indikator
+                    const icon = button.querySelector('.fa-chevron-down');
+                    if (icon) {
+                        icon.classList.remove('rotate-180');
+                    }
+                }
+            });
+        }
 
         // Sesuaikan layout
         adjustLayout(isMinimized);
@@ -46,12 +67,31 @@ document.addEventListener('DOMContentLoaded', () => {
         button.addEventListener('click', () => {
             const dropdownId = button.getAttribute('aria-controls');
             const dropdown = document.getElementById(dropdownId);
+
             if (dropdown) {
                 const isHidden = dropdown.classList.contains('hidden');
+
+                // Tutup semua dropdown yang terbuka
+                document.querySelectorAll('[aria-controls]').forEach(otherButton => {
+                    const otherDropdownId = otherButton.getAttribute('aria-controls');
+                    const otherDropdown = document.getElementById(otherDropdownId);
+                    if (otherDropdown && otherDropdownId !== dropdownId) {
+                        otherDropdown.classList.add('hidden');
+                        otherButton.setAttribute('aria-expanded', 'false');
+
+                        // Reset indikator
+                        const otherIcon = otherButton.querySelector('.fa-chevron-down');
+                        if (otherIcon) {
+                            otherIcon.classList.remove('rotate-180');
+                        }
+                    }
+                });
+
+                // Toggle dropdown yang dipilih
                 dropdown.classList.toggle('hidden', !isHidden);
                 button.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
 
-                // Rotate indicator (optional)
+                // Rotate indikator (optional)
                 const icon = button.querySelector('.fa-chevron-down');
                 if (icon) {
                     icon.classList.toggle('rotate-180', isHidden);
@@ -63,4 +103,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Inisialisasi layout saat halaman dimuat
     const isMinimized = sidebar.getAttribute('data-minimized') === 'true';
     adjustLayout(isMinimized);
+    
+
+    // Inisialisasi layout saat halaman dimuat
+
+
 });

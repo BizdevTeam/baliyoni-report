@@ -5,16 +5,16 @@
         <div id="logo-full" class="logo w-40 h-auto">
             <img src="images/baliyoni.png" class="w-full" alt="Logo Full">
         </div>
-        <div id="logo-mini" class="logo w-12 h-auto hidden">
-            <img src="images/BYS_LOGO.png" class="w-full" alt="Logo Mini">
+        <div id="logo-mini" class="logo w-10 h-auto hidden">
+            <img src="images/BYS_LOGO.png" class="w-full" alt="Logo Full">
         </div>
     </div>
     <nav class="mt-4">
         <ul class="flex flex-col space-y-3">
             <div class="home">
-            <li class="group">
+            <li class="group hover:text-white menu-item">
                 <a href="#"
-                    class="flex items-center space-x-3 px-4 py-2 rounded-md text-gray-700  transition">
+                    class="flex items-center space-x-3 px-4 py-2 rounded-md transition">
                     <img src="images/homepage.svg" class="w-5 h-5">
                     <span class="menu-label">Homepage</span>
                 </a>
@@ -269,18 +269,19 @@
                 </button>
                 <ul id="dropdown-spi" class="hidden py-2 pl-8 space-y-2">
                     <li>
-                        <a href="#"
+                        <a href="{{ route('laporanspi.index') }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
                             <img src="icon/RekapPenjualan.svg" class="w-5 h-5">
-                            <span class="ml-2">Laporan
-                                SPI</span>
+                            <span class="ml-2">Laporan SPI</span>
                         </a>
                     </li>
-                        <a href="#"
-                            class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
+                    <li>
+                        <a href="{{ route('laporanspiti.index') }}"
+                            class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
                             <img src="icon/RekapPenjualanPerusahaan.svg" class="w-5 h-5">
-                            <span class="ml-2">Laporan SPI-IT</span>
+                            <span class="ml-2">Laporan SPI IT</span>
                         </a>
+                    </li>
             </li>
         </ul>
 
