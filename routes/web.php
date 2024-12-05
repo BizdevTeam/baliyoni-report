@@ -331,6 +331,13 @@ Route::delete('hrga/laporanijasa/destroy/{id}', [LaporanIjasaController::class, 
 
 });
 
+Route::middleware(['web'])->group(function () {
+
+    //spi
+    Route::resource('laporanspi', LaporanSPIController::class);
+    route::resource("laporanspiti", controller : laporanSPITiController::class);
+});
+
 Route::middleware(['guest'])->group(function () {
     // Guest routes for login
     Route::get('/', [SessionController::class, 'index'])->name('login');
