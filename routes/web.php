@@ -1,11 +1,9 @@
 <?php
-use App\Http\Controllers\LaporanSPIController;
-use App\Http\Controllers\laporanSPITiController;
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SessionController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ArusKasController;
-use App\Http\Controllers\SessionController;
 use App\Http\Controllers\LaporanPpnController;
 use App\Http\Controllers\LaporanCutiController;
 use App\Http\Controllers\LaporanIzinController;
@@ -31,7 +29,9 @@ use App\Http\Controllers\LaporanPembelianOutletController;
 use App\Http\Controllers\LaporanPembelianHoldingController;
 use App\Http\Controllers\LaporanPaketAdministrasiController;
 use App\Http\Controllers\RekapPenjualanPerusahaanController;
-
+use App\Http\Controllers\RekapPendapatanServisAspController;
+use App\Http\Controllers\LaporanSPIController;
+use App\Http\Controllers\laporanSPITiController;
 
 
 
@@ -219,6 +219,20 @@ Route::get('accountings/aruskas/filter', [ArusKasController::class, 'filterData'
 Route::delete('accountings/aruskas/destroy/{id}', [ArusKasController::class, 'destroy'])
     ->name('accountings/aruskas.destroy');  
 
+
+//LAPORAN REKAP PENDAPATAN SERVIS ASP
+Route::get('supports/rekappendapatanservisasp', [RekapPendapatanServisAspController::class, 'index'])
+    ->name('supports/rekappendapatanservisasp');
+Route::post('supports/rekappendapatanservisasp/store', [RekapPendapatanServisAspController::class, 'store'])
+    ->name('supports/rekappendapatanservisasp.store');
+Route::put('supports/rekappendapatanservisasp/update/{id}', [RekapPendapatanServisAspController::class, 'update'])
+    ->name('supports/rekappendapatanservisasp.update');
+Route::get('supports/rekappendapatanservisasp/data', [RekapPendapatanServisAspController::class, 'data'])
+    ->name('supports/rekappendapatanservisasp.data');
+Route::get('supports/rekappendapatanservisasp/filter', [RekapPendapatanServisAspController::class, 'filterData'])
+    ->name('supports/rekappendapatanservisasp.filter');
+Route::delete('supports/rekappendapatanservisasp/destroy/{id}', [RekapPendapatanServisAspController::class, 'destroy'])
+    ->name('supports/rekappendapatanservisasp.destroy');  
     Route::get('hrga/laporansakit', [LaporanSakitController::class, 'index'])
     ->name('hrga.laporansakit');
 
