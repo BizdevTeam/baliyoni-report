@@ -312,6 +312,14 @@
                 options: {
                     responsive: true,
                     plugins: {
+                        legend: {
+                            labels: {
+                                font: {
+                                    size: 20, // Ukuran font label
+                                    weight: 'bold', // Tebal tulisan
+                                },
+                            },
+                        },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
