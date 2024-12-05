@@ -1,23 +1,22 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\ArusKas;
 use Illuminate\Http\Request;
-use App\Models\LaporanPaketAdministrasi;
 use Illuminate\Support\Facades\Log;
 
-class LaporanPaketAdministrasiController extends Controller
+class ArusKasController extends Controller
 {
     public function index()
     {
-        return view('marketings.laporanpaketadministrasi');
+        return view('accountings.aruskas');
     }
 
     public function data(Request $request)
     {
         try {
             $bulanTahun = $request->query('bulan_tahun');
-            $query = LaporanPaketAdministrasi::query();
+            $query = ArusKas::query();
 
             if ($bulanTahun) {
                 $query->where('bulan_tahun', $bulanTahun);
@@ -36,26 +35,24 @@ class LaporanPaketAdministrasiController extends Controller
                 'message' => 'Terjadi kesalahan saat mengambil data.',
             ], 500);
         }
-    }
+    }   
 
     public function store(Request $request)
     {
         $validatedData = $this->validateData($request);
 
         try {
-            // Check if data already exists for the same bulan_tahun and website
-            $existingEntry = LaporanPaketAdministrasi::where('bulan_tahun', $validatedData['bulan_tahun'])
-                ->where('website', $validatedData['website'])
-                ->first();
+            // Check if data already exists for the same bulan_tahun and perusahaan
+            $existingEntry = ArusKas::where('bulan_tahun', $validatedData['bulan_tahun'])->first();
 
             if ($existingEntry) {
                 return response()->json([
                     'success' => false,
-                    'message' => "Website {$validatedData['website']} sudah dipilih untuk bulan {$validatedData['bulan_tahun']}.",
+                    'message' => "Data dengan bulan dan tahun yang sama sudah ada.",
                 ], 400);
             }
 
-            LaporanPaketAdministrasi::create($validatedData);
+            ArusKas::create($validatedData);
 
             return response()->json([
                 'success' => true,
@@ -75,18 +72,17 @@ class LaporanPaketAdministrasiController extends Controller
         $validatedData = $this->validateData($request);
 
         try {
-            $paket = LaporanPaketAdministrasi::findOrFail($id);
+            $paket = ArusKas::findOrFail($id);
 
             // Cek duplikasi data
-            $existingEntry = LaporanPaketAdministrasi::where('bulan_tahun', $validatedData['bulan_tahun'])
-                ->where('website', $validatedData['website'])
-                ->where('id', '!=', $id) // Abaikan data dengan ID yang sama
+            $existingEntry = ArusKas::where('bulan_tahun', $validatedData['bulan_tahun'])
+                ->where('id', '!=', $id) 
                 ->first();
 
             if ($existingEntry) {
                 return response()->json([
                     'success' => false,
-                    'message' => "Website {$validatedData['website']} sudah dipilih untuk bulan {$validatedData['bulan_tahun']}.",
+                    'message' => 'Data dengan bulan dan tahun yang sama sudah ada.',
                 ], 400);
             }
 
@@ -98,7 +94,7 @@ class LaporanPaketAdministrasiController extends Controller
                 'message' => 'Data berhasil diperbarui.',
             ], 200);
         } catch (\Exception $e) {
-            Log::error('Error updating data: ' . $e->getMessage(), ['id' => $id, 'data' => $validatedData]);
+            Log::error('Error updating data: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat memperbarui data.',
@@ -109,13 +105,19 @@ class LaporanPaketAdministrasiController extends Controller
     public function destroy($id)
     {
         try {
-            $paket = LaporanPaketAdministrasi::findOrFail($id);
+            $paket = ArusKas::findOrFail($id);
             $paket->delete();
-
+    
             return response()->json([
                 'success' => true,
                 'message' => 'Data berhasil dihapus.',
             ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            Log::error('Data not found: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak ditemukan.',
+            ], 404);
         } catch (\Exception $e) {
             Log::error('Error deleting data: ' . $e->getMessage());
             return response()->json([
@@ -129,9 +131,8 @@ class LaporanPaketAdministrasiController extends Controller
     {
         return $request->validate([
             'bulan_tahun' => ['required', 'regex:/^(0[1-9]|1[0-2])\/\d{4}$/'],  // Ensure month/year format
-            'website' => 'required|string|max:255',
-            'paket_rp' => 'required|integer|min:0',
-            'keterangan' => 'nullable|string|max:255',
+            'kas_masuk' => 'required|integer|min:0',
+            'kas_keluar' => 'required|integer|min:0',
         ]);
     }
 }
