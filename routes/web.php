@@ -23,6 +23,7 @@ use App\Http\Controllers\LaporanPembelianHoldingController;
 use App\Http\Controllers\LaporanPaketAdministrasiController;
 use App\Http\Controllers\RekapPenjualanPerusahaanController;
 use App\Http\Controllers\KasHutangPiutangStokController;
+use App\Http\Controllers\RekapPendapatanServisAspController;
 
 
 
@@ -210,6 +211,21 @@ Route::get('accountings/aruskas/filter', [ArusKasController::class, 'filterData'
     ->name('accountings/aruskas.filter');
 Route::delete('accountings/aruskas/destroy/{id}', [ArusKasController::class, 'destroy'])
     ->name('accountings/aruskas.destroy');  
+
+
+//LAPORAN REKAP PENDAPATAN SERVIS ASP
+Route::get('supports/rekappendapatanservisasp', [RekapPendapatanServisAspController::class, 'index'])
+    ->name('supports/rekappendapatanservisasp');
+Route::post('supports/rekappendapatanservisasp/store', [RekapPendapatanServisAspController::class, 'store'])
+    ->name('supports/rekappendapatanservisasp.store');
+Route::put('supports/rekappendapatanservisasp/update/{id}', [RekapPendapatanServisAspController::class, 'update'])
+    ->name('supports/rekappendapatanservisasp.update');
+Route::get('supports/rekappendapatanservisasp/data', [RekapPendapatanServisAspController::class, 'data'])
+    ->name('supports/rekappendapatanservisasp.data');
+Route::get('supports/rekappendapatanservisasp/filter', [RekapPendapatanServisAspController::class, 'filterData'])
+    ->name('supports/rekappendapatanservisasp.filter');
+Route::delete('supports/rekappendapatanservisasp/destroy/{id}', [RekapPendapatanServisAspController::class, 'destroy'])
+    ->name('supports/rekappendapatanservisasp.destroy');  
 
 });
 
