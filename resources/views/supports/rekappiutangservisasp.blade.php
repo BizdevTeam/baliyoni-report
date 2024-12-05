@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Rekap Pendapatan Servis ASP</title>
+    <title>Rekap Piutang Servis ASP</title>
     @vite('resources/css/app.css')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
@@ -13,7 +13,7 @@
 
 <body class="bg-gray-100 p-6">
     <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow">
-        <h1 class="text-2xl font-bold mb-4">Rekap Pendapatan Servis ASP</h1>
+        <h1 class="text-2xl font-bold mb-4">Rekap Piutang Servis ASP</h1>
 
         <!-- Button Tambah Data -->
         <div class="flex gap-4 mb-4">
@@ -176,66 +176,6 @@
             }
         }
 
-        // Submit Form
-        // modalForm.addEventListener('submit', async (e) => {
-        //     e.preventDefault();
-
-        //     const bulanTahun = document.getElementById('modal-bulan_tahun').value.trim();
-
-        //     // Ambil semua nilai perusahaan dan pendapatan
-        //     const perusahaanList = [...document.querySelectorAll('select[name="perusahaan[]"]')].map(select =>
-        //         select.value.trim()
-        //     );
-        //     const nilaiPendapatanList = [...document.querySelectorAll('input[name="nilai_pendapatan[]"]')].map(
-        //         input => parseFloat(input.value.trim())
-        //     );
-
-        //     // Validasi data input
-        //     if (!bulanTahun || perusahaanList.some(perusahaan => perusahaan === '') || nilaiPendapatanList.some(
-        //             isNaN)) {
-        //         alert('Semua kolom harus diisi dengan benar.');
-        //         return;
-        //     }
-
-        //     const data = {
-        //         bulan_tahun: bulanTahun,
-        //         perusahaan: perusahaanList,
-        //         nilai_pendapatan: nilaiPendapatanList
-        //     };
-
-        //     const url = editMode ? `/supports/rekappendapatanservisasp/update/${editId}` :
-        //         '/supports/rekappendapatanservisasp/store';
-        //     const method = editMode ? 'PUT' : 'POST';
-
-        //     try {
-        //         const response = await fetch(url, {
-        //             method,
-        //             headers: {
-        //                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-        //                 'Content-Type': 'application/json',
-        //             },
-        //             body: JSON.stringify(data),
-        //         });
-
-        //         if (!response.ok) {
-        //             const result = await response.json();
-        //             alert(result.message || 'Terjadi kesalahan saat menyimpan data.');
-        //             console.error('Error Response:', result);
-        //             return;
-        //         }
-
-        //         const result = await response.json();
-        //         if (result.success) {
-        //             updateData(); // Fungsi ini harus merefresh atau mengupdate data di tabel.
-        //             modal.classList.add('hidden');
-        //         } else {
-        //             alert(result.message || 'Terjadi kesalahan saat menyimpan data.');
-        //         }
-        //     } catch (error) {
-        //         console.error('Network Error:', error);
-        //         alert('Terjadi kesalahan jaringan saat menyimpan data.');
-        //     }
-        // });
         modalForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
