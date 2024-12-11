@@ -15,8 +15,11 @@ return new class extends Migration
             $table->id();
                 $table->string('bulan_tahun');
                 $table->string('perusahaan');
-                $table->integer('nilai');
+                $table->integer('nilai_paket');
                 $table->timestamps();
+
+                $table->unique(['bulan_tahun', 'perusahaan']);
+
             });
     }
 

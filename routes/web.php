@@ -121,17 +121,17 @@ Route::middleware(['web'])->group(function () {
 
     //RUTE LAPORAN PENJUALAN PERUSAHAAN
     Route::get('marketings/rekappenjualanperusahaan', [RekapPenjualanPerusahaanController::class, 'index'])
-        ->name('marketings.rekappenjualanperusahaan');
-    Route::post('marketings/rekappenjualanperusahaan/store', [RekapPenjualanPerusahaanController::class, 'store'])
-        ->name('marketings.rekappenjualanperusahaan.store');
-    Route::put('marketings/rekappenjualanperusahaan/update/{id}', [RekapPenjualanPerusahaanController::class, 'update'])
-        ->name('marketings.rekappenjualanperusahaan.update');
-    Route::get('marketings/rekappenjualanperusahaan/data', [RekapPenjualanPerusahaanController::class, 'data'])
-        ->name('marketings.rekappenjualanperusahaan.data');
-    Route::get('marketings/rekappenjualanperusahaan/filter', [RekapPenjualanPerusahaanController::class, 'filterData'])
-        ->name('marketings.rekappenjualanperusahaan.filter');
-    Route::delete('marketings/rekappenjualanperusahaan/destroy/{id}', [RekapPenjualanPerusahaanController::class, 'destroy'])
-        ->name('marketings.rekappenjualanperusahaan.destroy');
+    ->name('marketings/rekappenjualanperusahaan');
+Route::post('marketings/rekappenjualanperusahaan/store', [RekapPenjualanPerusahaanController::class, 'store'])
+    ->name('marketings/rekappenjualanperusahaan.store');
+Route::put('marketings/rekappenjualanperusahaan/update/{id}', [RekapPenjualanPerusahaanController::class, 'update'])
+    ->name('marketings/rekappenjualanperusahaan.update');
+Route::get('marketings/rekappenjualanperusahaan/data', [RekapPenjualanPerusahaanController::class, 'data'])
+    ->name('marketings/rekappenjualanperusahaan.data');
+Route::get('marketings/rekappenjualanperusahaan/filter', [RekapPenjualanPerusahaanController::class, 'filterData'])
+    ->name('marketings/rekappenjualanperusahaan.filter');
+Route::delete('marketings/rekappenjualanperusahaan/destroy/{id}', [RekapPenjualanPerusahaanController::class, 'destroy'])
+    ->name('marketings/rekappenjualanperusahaan.destroy');
     //MARKETING  
 
 

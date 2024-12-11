@@ -52,14 +52,14 @@
                                 <option value="CV. ARINDAH">CV. ARINDAH</option>
                                 <option value="ARFALINDO">ARFALINDO</option>
                             </select>
-                            <input type="text" name="nilai_paket[]" class="w-full border-gray-300 rounded p-2"
-                                placeholder="Nilai Paket" required>
+                            <input type="text" name="nilai[]" class="w-full border-gray-300 rounded p-2"
+                                placeholder="Nilai " required>
                             <button type="button"
                                 class="remove-perusahaan bg-red-500 text-white px-2 py-1 rounded">Hapus</button>
                         </div>
                     </div>
                     <button type="button" id="add-perusahaan" class="bg-green-500 text-white px-4 py-2 rounded">Tambah
-                        perusahaan</button>
+                        Perusahaan</button>
                     <div class="flex justify-end space-x-2 mt-4">
                         <button type="button" id="close-modal"
                             class="bg-gray-500 text-white px-4 py-2 rounded">Batal</button>
@@ -81,8 +81,9 @@
             <thead class="bg-gray-200">
                 <tr>
                     <th class="border border-gray-300 px-4 py-2">Bulan/Tahun</th>
-                    <th class="border border-gray-300 px-4 py-2">perusahaan</th>
+                    <th class="border border-gray-300 px-4 py-2">Perusahaan</th>
                     <th class="border border-gray-300 px-4 py-2">Nilai Paket</th>
+                    <th class="border border-gray-300 px-4 py-2">Keterangan</th>
                     <th class="border border-gray-300 px-4 py-2">Aksi</th>
                 </tr>
             </thead>
@@ -100,7 +101,7 @@
         document.getElementById('add-perusahaan').addEventListener('click', () => {
             const perusahaanContainer = document.getElementById('perusahaan-container');
 
-            // Membuat elemen perusahaan dan nilai paket
+            // Membuat elemen perusahaan dan nilai 
             const newperusahaanItem = document.createElement('div');
             newperusahaanItem.className = 'perusahaan-item flex items-center space-x-2 mb-2';
 
@@ -111,28 +112,27 @@
 
             // Menambahkan opsi default dan perusahaan
             perusahaanSelect.innerHTML = `
-                <option value="" disabled selected>Pilih Perusahaan</option>
-                  <option value="CV. ARI DISTRIBUTION CENTER">CV. ARI DISTRIBUTION CENTER</option>
-     <option value="CV. BUANA KOSA">CV. BUANA KOSA</option>
-                                <option value="PT. BALI UNGGUL SEJAHTERA">PT. BALI UNGGUL SEJAHTERA</option>
-                                <option value="CV. DANA RASA">CV. DANA RASA</option>
-                                <option value="CV. LAGAAN SAKETI">CV. LAGAAN SAKETI</option>
-                                <option value="CV. BALI JAKTI INFORMATIK">CV. BALI JAKTI INFORMATIK</option>
-                                <option value="CV. BALI LINGGA KOMPUTER">CV. BALI LINGGA KOMPUTER</option>
-                                <option value="CV. ARTSOLUTION">CV. ARTSOLUTION</option>
-                                <option value="PT. BALI LINGGA KOMPUTER">PT. BALI LINGGA KOMPUTER</option>
-                                <option value="CV. SAHABAT UTAMA">CV. SAHABAT UTAMA</option>
-                                <option value="CV. N & b NET ACCESS">CV. N & b NET ACCESS</option>
-                                <option value="PT. ELKA SOLUTION NUSANTARA">PT. ELKA SOLUTION NUSANTARA</option>
-                                <option value="CV. ARINDAH">CV. ARINDAH</option>
-                                <option value="ARFALINDO">ARFALINDO</option>            `;
+                <option value="" disabled selected>Pilih perusahaan</option>
+                  <option value="CV. BUANA KOSA">CV. BUANA KOSA</option>
+                                    <option value="PT. BALI UNGGUL SEJAHTERA">PT. BALI UNGGUL SEJAHTERA</option>
+                                    <option value="CV. DANA RASA">CV. DANA RASA</option>
+                                    <option value="CV. LAGAAN SAKETI">CV. LAGAAN SAKETI</option>
+                                    <option value="CV. BALI JAKTI INFORMATIK">CV. BALI JAKTI INFORMATIK</option>
+                                    <option value="CV. BALI LINGGA KOMPUTER">CV. BALI LINGGA KOMPUTER</option>
+                                    <option value="CV. ARTSOLUTION">CV. ARTSOLUTION</option>
+                                    <option value="PT. BALI LINGGA KOMPUTER">PT. BALI LINGGA KOMPUTER</option>
+                                    <option value="CV. SAHABAT UTAMA">CV. SAHABAT UTAMA</option>
+                                    <option value="CV. N & b NET ACCESS">CV. N & b NET ACCESS</option>
+                                    <option value="PT. ELKA SOLUTION NUSANTARA">PT. ELKA SOLUTION NUSANTARA</option>
+                                    <option value="CV. ARINDAH">CV. ARINDAH</option>
+                                    <option value="ARFALINDO">ARFALINDO</option>              `;
 
-            const paketInput = document.createElement('input');
-            paketInput.type = 'text';
-            paketInput.name = 'nilai_paket[]';
-            paketInput.className = 'w-full border-gray-300 rounded p-2';
-            paketInput.placeholder = 'Nilai paket';
-            paketInput.required = true;
+            const nilaiInput = document.createElement('input');
+            nilaiInput.type = 'text';
+            nilaiInput.name = 'nilai[]';
+            nilaiInput.className = 'w-full border-gray-300 rounded p-2';
+            nilaiInput.placeholder = 'Nilai ';
+            nilaiInput.required = true;
 
             const removeButton = document.createElement('button');
             removeButton.type = 'button';
@@ -146,7 +146,7 @@
 
             // Menambahkan elemen ke container
             newperusahaanItem.appendChild(perusahaanSelect);
-            newperusahaanItem.appendChild(paketInput);
+            newperusahaanItem.appendChild(nilaiInput);
             newperusahaanItem.appendChild(removeButton);
 
             perusahaanContainer.appendChild(newperusahaanItem);
@@ -189,15 +189,33 @@
         // Fetch Existing Data
         async function fetchData() {
             try {
-                const response = await fetch('/marketings/rekappenjualanperusahaan/data');
-                console.log('Response Status:', response.status);
-                console.log('Response Content:', await response.text());
-                const result = await response.json();
-                return result.success ? result.data : [];
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                return [];
-            }
+    const response = await fetch(url, {
+        method: editMode ? 'PUT' : 'POST',
+        headers: {
+            'X-CSRF-TOKEN': csrfToken,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP Error: ${response.status}`);
+    }
+
+    const result = await response.json();
+    console.log('Server Response:', result);
+
+    if (result.success) {
+        alert('Data berhasil disimpan.');
+        modal.classList.add('hidden');
+        updateData();
+    } else {
+        alert(result.message || 'Gagal menyimpan data.');
+    }
+} catch (error) {
+    console.error('Error saat menyimpan data:', error.message);
+    alert('Terjadi kesalahan: ' + error.message);
+}
         }
 
         modalForm.addEventListener('submit', async (e) => {
@@ -206,24 +224,32 @@
             const bulanTahun = document.getElementById('modal-bulan_tahun').value.trim();
             const perusahaanList = [...document.querySelectorAll('select[name="perusahaan[]"]')].map(select =>
                 select.value.trim());
-            const nilaiPaketList = [...document.querySelectorAll('input[name="nilai_paket[]"]')].map(
+            const nilaiList = [...document.querySelectorAll('input[name="nilai[]"]')].map(
                 input => parseFloat(input.value.trim()));
 
-            if (!bulanTahun || perusahaanList.some(p => !p) || nilaiPaketList.some(isNaN)) {
-                alert('Semua kolom harus diisi dengan benar.');
+            if (!bulanTahun || perusahaanList.some(p => !p.trim()) || nilaiList.some(n => isNaN(n))) {
+                alert('Pastikan semua kolom diisi dengan benar!');
                 return;
             }
+
 
             const payload = {
                 id: editId,
                 bulan_tahun: bulanTahun,
                 perusahaan: perusahaanList,
-                nilai_paket: nilaiPaketList
+                nilai: nilaiList
             };
 
-            const url = editMode ? `/marketings/rekappenjualanperusahaan/update/${editId}` :
-                '/marketings/rekappenjualanperusahaan/store';
+            const url = editMode ? `/marketings/rekappenjualanperusahaans/update/${editId}` :
+                '/marketings/rekappenjualanperusahaans/store';
 
+            // // const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+            // // if (!csrfToken) {
+            // //     alert('CSRF Token tidak ditemukan!');
+            // //     return;
+                
+            // }
+            console.log('Payload:', payload);
             try {
                 const response = await fetch(url, {
                     method: editMode ? 'PUT' : 'POST',
@@ -235,6 +261,7 @@
                 });
 
                 const result = await response.json();
+                console.log('Response:', result);
                 if (result.success) {
                     alert('Data berhasil disimpan.');
                     modal.classList.add('hidden');
@@ -248,12 +275,13 @@
             }
         });
 
+
         // Delete Data
         async function deleteData(id) {
             if (!confirm('Apakah Anda yakin ingin menghapus data ini?')) return;
 
             try {
-                const response = await fetch(`/marketings/rekappenjualanperusahaan/destroy/${id}`, {
+                const response = await fetch(`/marketings/rekappenjualanperusahaans/destroy/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -280,8 +308,8 @@
 
         // Update Data
         async function updateData(filter = '') {
-            const url = filter ? `/marketings/rekappenjualanperusahaan/data?bulan_tahun=${filter}` :
-                '/marketings/rekappenjualanperusahaan/data';
+            const url = filter ? `/marketings/rekappenjualanperusahaans/data?bulan_tahun=${filter}` :
+                '/marketings/rekappenjualanperusahaans/data';
 
             try {
                 const response = await fetch(url);
@@ -313,7 +341,7 @@
                 <tr class="border-b">
                     <td class="border px-4 py-2">${item.bulan_tahun}</td>
                     <td class="border px-4 py-2">${item.perusahaan}</td>
-                    <td class="border px-4 py-2">Rp ${item.nilai_paket.toLocaleString()}</td>
+                    <td class="border px-4 py-2">Rp ${item.nilai.toLocaleString()}</td>
                     <td class="border px-4 py-2 flex items-center justify-center space-x-2">
                         <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
                                 class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">
@@ -333,7 +361,7 @@
         // Update Chart
         function updateChart(items) {
             const labels = items.map((item) => item.perusahaan); // Label dari nama perusahaan
-            const dataValues = items.map((item) => item.nilai_paket); // Nilai paket
+            const dataValues = items.map((item) => item.nilai); // Nilai paket
             const backgroundColors = items.map(() =>
                 `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.7)`); // Warna acak
 
@@ -394,10 +422,10 @@
                 parsedData.perusahaan :
                 (typeof parsedData.perusahaan === 'string' ? parsedData.perusahaan.split(',') : []);
 
-            // Pastikan `nilai_paket` adalah array
-            parsedData.nilai_paket = Array.isArray(parsedData.nilai_paket) ?
-                parsedData.nilai_paket :
-                (typeof parsedData.nilai_paket === 'string' ? parsedData.nilai_paket.split(',').map(Number) : []);
+            // Pastikan `nilai` adalah array
+            parsedData.nilai = Array.isArray(parsedData.nilai) ?
+                parsedData.nilai :
+                (typeof parsedData.nilai === 'string' ? parsedData.nilai.split(',').map(Number) : []);
 
             editMode = true; // Aktifkan mode edit
             editId = id; // Simpan ID data yang sedang diedit
@@ -410,7 +438,7 @@
             const perusahaanContainer = document.getElementById('perusahaan-container');
             perusahaanContainer.innerHTML = '';
 
-            // Tambahkan elemen perusahaan dan nilai paket
+            // Tambahkan elemen perusahaan dan nilai pendapatan
             parsedData.perusahaan.forEach((perusahaan, index) => {
                 const newperusahaanItem = document.createElement('div');
                 newperusahaanItem.className = 'perusahaan-item flex items-center space-x-2 mb-2';
@@ -421,29 +449,29 @@
                 perusahaanSelect.required = true;
 
                 perusahaanSelect.innerHTML = `
-            <option value="" disabled>Pilih perusahaan</option>
-     <option value="CV. BUANA KOSA">CV. BUANA KOSA</option>
-                                <option value="PT. BALI UNGGUL SEJAHTERA">PT. BALI UNGGUL SEJAHTERA</option>
-                                <option value="CV. DANA RASA">CV. DANA RASA</option>
-                                <option value="CV. LAGAAN SAKETI">CV. LAGAAN SAKETI</option>
-                                <option value="CV. BALI JAKTI INFORMATIK">CV. BALI JAKTI INFORMATIK</option>
-                                <option value="CV. BALI LINGGA KOMPUTER">CV. BALI LINGGA KOMPUTER</option>
-                                <option value="CV. ARTSOLUTION">CV. ARTSOLUTION</option>
-                                <option value="PT. BALI LINGGA KOMPUTER">PT. BALI LINGGA KOMPUTER</option>
-                                <option value="CV. SAHABAT UTAMA">CV. SAHABAT UTAMA</option>
-                                <option value="CV. N & b NET ACCESS">CV. N & b NET ACCESS</option>
-                                <option value="PT. ELKA SOLUTION NUSANTARA">PT. ELKA SOLUTION NUSANTARA</option>
-                                <option value="CV. ARINDAH">CV. ARINDAH</option>
-                                <option value="ARFALINDO">ARFALINDO</option>        `;
+            <option value="" disabled>Pilih Perusahaan</option>
+       <option value="CV. BUANA KOSA">CV. BUANA KOSA</option>
+                                    <option value="PT. BALI UNGGUL SEJAHTERA">PT. BALI UNGGUL SEJAHTERA</option>
+                                    <option value="CV. DANA RASA">CV. DANA RASA</option>
+                                    <option value="CV. LAGAAN SAKETI">CV. LAGAAN SAKETI</option>
+                                    <option value="CV. BALI JAKTI INFORMATIK">CV. BALI JAKTI INFORMATIK</option>
+                                    <option value="CV. BALI LINGGA KOMPUTER">CV. BALI LINGGA KOMPUTER</option>
+                                    <option value="CV. ARTSOLUTION">CV. ARTSOLUTION</option>
+                                    <option value="PT. BALI LINGGA KOMPUTER">PT. BALI LINGGA KOMPUTER</option>
+                                    <option value="CV. SAHABAT UTAMA">CV. SAHABAT UTAMA</option>
+                                    <option value="CV. N & b NET ACCESS">CV. N & b NET ACCESS</option>
+                                    <option value="PT. ELKA SOLUTION NUSANTARA">PT. ELKA SOLUTION NUSANTARA</option>
+                                    <option value="CV. ARINDAH">CV. ARINDAH</option>
+                                    <option value="ARFALINDO">ARFALINDO</option>          `;
                 perusahaanSelect.value = perusahaan; // Set nilai perusahaan
 
-                const nilaiPaketInput = document.createElement('input');
-                nilaiPaketInput.type = 'text';
-                nilaiPaketInput.name = 'nilai_paket[]';
-                nilaiPaketInput.className = 'w-full border-gray-300 rounded p-2';
-                nilaiPaketInput.placeholder = 'Nilai Paket';
-                nilaiPaketInput.value = parsedData.nilai_paket[index] || ''; // Set nilai paket
-                nilaiPaketInput.required = true;
+                const nilaiInput = document.createElement('input');
+                nilaiInput.type = 'text';
+                nilaiInput.name = 'nilai[]';
+                nilaiInput.className = 'w-full border-gray-300 rounded p-2';
+                nilaiInput.placeholder = 'Nilai Paket';
+                nilaiInput.value = parsedData.nilai[index] || ''; // Set nilai pendapatan
+                nilaiInput.required = true;
 
                 const removeButton = document.createElement('button');
                 removeButton.type = 'button';
@@ -455,7 +483,7 @@
                 });
 
                 newperusahaanItem.appendChild(perusahaanSelect);
-                newperusahaanItem.appendChild(nilaiPaketInput);
+                newperusahaanItem.appendChild(nilaiInput);
                 newperusahaanItem.appendChild(removeButton);
 
                 perusahaanContainer.appendChild(newperusahaanItem);

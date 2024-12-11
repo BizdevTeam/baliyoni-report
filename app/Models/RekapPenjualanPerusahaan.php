@@ -17,7 +17,10 @@ class RekapPenjualanPerusahaan extends Model
     protected $fillable = [
         'bulan_tahun', 
         'perusahaan',     
-        'nilai',        
+        'nilai_paket',        
+    ];
+    protected $casts = [
+        'nilai_paket' => 'integer',
     ];
 }
 
