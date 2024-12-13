@@ -13,7 +13,7 @@
         <ul class="flex flex-col space-y-3">
             <div class="home">
             <li class="group hover:text-white menu-item">
-                <a href="#"
+                <a href="/admin"
                     class="flex items-center space-x-3 px-4 py-2 rounded-md transition">
                     <img src="{{ asset ("images/homepage.svg") }}" class="w-5 h-5">
                     <span class="menu-label">Homepage</span>
@@ -77,28 +77,28 @@
                 </button>
                 <ul id="dropdown-procurement" class="hidden py-2 pl-8 space-y-2">
                     <li>
-                        <a href="procurements/laporanpembelianholding"
+                        <a href="{{ route("procurements.laporanpembelianholding") }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
                             <img src="{{ asset("icon/RekapPenjualan.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Pembelian (Holding)</span>
                         </a>
                     </li>
                     <li>
-                        <a href="procurements/laporanstok"
+                        <a href="{{ route("procurements.laporanstok") }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/RekapPenjualanPerusahaan.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Stok</span>
                         </a>
                     </li>
                     <li>
-                        <a href="procurements/laporanpembelianoutlet"
+                        <a href="{{ route("procurements.laporanpembelianoutlet") }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/LaporanPaketAdministrasi.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Pembelian Outlet</span>
                         </a>
                     </li>
                     <li>
-                        <a href="procurements/laporannegosiasi"
+                        <a href="{{ route("procurements.laporannegosiasi") }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/LaporanStatusPaket.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Negosiasi</span>
