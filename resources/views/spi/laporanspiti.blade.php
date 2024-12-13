@@ -2,16 +2,39 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Laporan PPN</title>
-    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
-     @vite('resources/css/app.css')  
+    @vite('resources/css/app.css')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
+    <!-- Tempusdominus Bootstrap 4 -->
+    <link rel="stylesheet"
+        href="{{ asset('templates/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
+    <!-- Theme style -->
+    <!-- overlayScrollbars -->
+    <link rel="stylesheet" href="{{ asset('templates/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    @vite('resources/css/tailwind.css')
+    @vite('resources/css/custom.css')
+    @vite('resources/js/app.js')
 </head>
 
 <body class="bg-gray-100">
+    
+  <!-- Include Sidebar -->
+  <x-adminside class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
 
+<!-- Navbar -->
+<x-adminnav class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
+
+<div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 transition-all duration-300">
     <div class="container mx-auto p-5">
         <!-- Page Header -->
         <h1 class="text-3xl font-bold mb-5">Laporan SPI TI</h1>
@@ -122,6 +145,7 @@
                 </tbody>
             </table>
         </div>
+    </div>
     </div>
     <!-- Modal untuk Add Data -->
 <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">
