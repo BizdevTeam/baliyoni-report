@@ -63,76 +63,79 @@ Route::middleware(['web'])->group(function () {
         });
     });
 
-    // Menampilkan halaman laporan paket administrasi
-    Route::get('marketings/laporanpaketadministrasi', [LaporanPaketAdministrasiController::class, 'index'])
+// Menampilkan halaman laporan paket administrasi
+Route::prefix('marketings')->group(function () {
+    // Laporan Paket Administrasi
+    Route::get('laporanpaketadministrasi', [LaporanPaketAdministrasiController::class, 'index'])
         ->name('marketings.laporanpaketadministrasi');
-    Route::post('marketings/laporanpaketadministrasi/store', [LaporanPaketAdministrasiController::class, 'store'])
+    Route::post('laporanpaketadministrasi/store', [LaporanPaketAdministrasiController::class, 'store'])
         ->name('marketings.laporanpaketadministrasi.store');
-    Route::put('marketings/laporanpaketadministrasi/update/{id}', [LaporanPaketAdministrasiController::class, 'update'])
+    Route::put('laporanpaketadministrasi/update/{id}', [LaporanPaketAdministrasiController::class, 'update'])
         ->name('marketings.laporanpaketadministrasi.update');
-    Route::get('marketings/laporanpaketadministrasi/data', [LaporanPaketAdministrasiController::class, 'data'])
+    Route::get('laporanpaketadministrasi/data', [LaporanPaketAdministrasiController::class, 'data'])
         ->name('marketings.laporanpaketadministrasi.data');
-    Route::get('marketings/laporanpaketadministrasi/filter', [LaporanPaketAdministrasiController::class, 'filterData'])
+    Route::get('laporanpaketadministrasi/filter', [LaporanPaketAdministrasiController::class, 'filterData'])
         ->name('marketings.laporanpaketadministrasi.filter');
-    Route::delete('marketings/laporanpaketadministrasi/destroy/{id}', [LaporanPaketAdministrasiController::class, 'destroy'])
+    Route::delete('laporanpaketadministrasi/destroy/{id}', [LaporanPaketAdministrasiController::class, 'destroy'])
         ->name('marketings.laporanpaketadministrasi.destroy');
 
-    //rute rekap penjualan
-    Route::get('marketings/rekappenjualan', [RekapPenjualanController::class, 'index'])
+    // Rekap Penjualan
+    Route::get('rekappenjualan', [RekapPenjualanController::class, 'index'])
         ->name('marketings.rekappenjualan');
-    Route::post('marketings/rekappenjualan/store', [RekapPenjualanController::class, 'store'])
+    Route::post('rekappenjualan/store', [RekapPenjualanController::class, 'store'])
         ->name('marketings.rekappenjualan.store');
-    Route::put('marketings/rekappenjualan/update/{id}', [RekapPenjualanController::class, 'update'])
+    Route::put('rekappenjualan/update/{id}', [RekapPenjualanController::class, 'update'])
         ->name('marketings.rekappenjualan.update');
-    Route::get('marketings/rekappenjualan/data', [RekapPenjualanController::class, 'data'])
+    Route::get('rekappenjualan/data', [RekapPenjualanController::class, 'data'])
         ->name('marketings.rekappenjualan.data');
-    Route::get('marketings/rekappenjualan/filter', [RekapPenjualanController::class, 'filterData'])
+    Route::get('rekappenjualan/filter', [RekapPenjualanController::class, 'filterData'])
         ->name('marketings.rekappenjualan.filterByYear');
-    Route::delete('marketings/rekappenjualan/destroy/{id}', [RekapPenjualanController::class, 'destroy'])
+    Route::delete('rekappenjualan/destroy/{id}', [RekapPenjualanController::class, 'destroy'])
         ->name('marketings.rekappenjualan.destroy');
 
-    //rute Status Paket
-    Route::get('marketings/statuspaket', [StatusPaketController::class, 'index'])
-        ->name('marketings.statuspaket');
-    Route::post('marketings/statuspaket/store', [StatusPaketController::class, 'store'])
-        ->name('marketings.statuspaket.store');
-    Route::put('marketings/statuspaket/update/{id}', [StatusPaketController::class, 'update'])
-        ->name('marketings.statuspaket.update');
-    Route::get('marketings/statuspaket/data', [StatusPaketController::class, 'data'])
-        ->name('marketings.statuspaket.data');
-    Route::get('marketings/statuspaket/filter', [StatusPaketController::class, 'filterData'])
-        ->name('marketings.statuspaket.filter');
-    Route::delete('marketings/statuspaket/destroy/{id}', [StatusPaketController::class, 'destroy'])
-        ->name('marketings.statuspaket.destroy');
+    // Status Paket
+    Route::get('statuspaket', [StatusPaketController::class, 'index'])
+        ->name('marketings.laporanstatuspaket');
+    Route::post('statuspaket/store', [StatusPaketController::class, 'store'])
+        ->name('marketings.laporanstatuspaket.store');
+    Route::put('statuspaket/update/{id}', [StatusPaketController::class, 'update'])
+        ->name('marketings.laporanstatuspaket.update');
+    Route::get('statuspaket/data', [StatusPaketController::class, 'data'])
+        ->name('marketings.laporanstatuspaket.data');
+    Route::get('statuspaket/filter', [StatusPaketController::class, 'filterData'])
+        ->name('marketings.laporanstatuspaket.filter');
+    Route::delete('statuspaket/destroy/{id}', [StatusPaketController::class, 'destroy'])
+        ->name('marketings.laporanstatuspaket.destroy');
 
-    //RUTE LAPORAN PERINSTANSI
-    Route::get('marketings/laporanperinstansi', [LaporanPerInstansiController::class, 'index'])
+    // Laporan Per Instansi
+    Route::get('laporanperinstansi', [LaporanPerInstansiController::class, 'index'])
         ->name('marketings.laporanperinstansi');
-    Route::post('marketings/laporanperinstansi/store', [LaporanPerInstansiController::class, 'store'])
+    Route::post('laporanperinstansi/store', [LaporanPerInstansiController::class, 'store'])
         ->name('marketings.laporanperinstansi.store');
-    Route::put('marketings/laporanperinstansi/update/{id}', [LaporanPerInstansiController::class, 'update'])
+    Route::put('laporanperinstansi/update/{id}', [LaporanPerInstansiController::class, 'update'])
         ->name('marketings.laporanperinstansi.update');
-    Route::get('marketings/laporanperinstansi/data', [LaporanPerInstansiController::class, 'data'])
+    Route::get('laporanperinstansi/data', [LaporanPerInstansiController::class, 'data'])
         ->name('marketings.laporanperinstansi.data');
-    Route::get('marketings/laporanperinstansi/filter', [LaporanPerInstansiController::class, 'filterData'])
+    Route::get('laporanperinstansi/filter', [LaporanPerInstansiController::class, 'filterData'])
         ->name('marketings.laporanperinstansi.filter');
-    Route::delete('marketings/laporanperinstansi/destroy/{id}', [LaporanPerInstansiController::class, 'destroy'])
+    Route::delete('laporanperinstansi/destroy/{id}', [LaporanPerInstansiController::class, 'destroy'])
         ->name('marketings.laporanperinstansi.destroy');
 
-    //RUTE LAPORAN PENJUALAN PERUSAHAAN
-    Route::get('marketings/rekappenjualanperusahaan', [RekapPenjualanPerusahaanController::class, 'index'])
-    ->name('marketings/rekappenjualanperusahaan');
-Route::post('marketings/rekappenjualanperusahaan/store', [RekapPenjualanPerusahaanController::class, 'store'])
-    ->name('marketings/rekappenjualanperusahaan.store');
-Route::put('marketings/rekappenjualanperusahaan/update/{id}', [RekapPenjualanPerusahaanController::class, 'update'])
-    ->name('marketings/rekappenjualanperusahaan.update');
-Route::get('marketings/rekappenjualanperusahaan/data', [RekapPenjualanPerusahaanController::class, 'data'])
-    ->name('marketings/rekappenjualanperusahaan.data');
-Route::get('marketings/rekappenjualanperusahaan/filter', [RekapPenjualanPerusahaanController::class, 'filterData'])
-    ->name('marketings/rekappenjualanperusahaan.filter');
-Route::delete('marketings/rekappenjualanperusahaan/destroy/{id}', [RekapPenjualanPerusahaanController::class, 'destroy'])
-    ->name('marketings/rekappenjualanperusahaan.destroy');
-    //MARKETING  
+    // Rekap Penjualan Perusahaan
+    Route::get('rekappenjualanperusahaan', [RekapPenjualanPerusahaanController::class, 'index'])
+        ->name('marketings.rekappenjualanperusahaan');
+    Route::post('rekappenjualanperusahaan/store', [RekapPenjualanPerusahaanController::class, 'store'])
+        ->name('marketings.rekappenjualanperusahaan.store');
+    Route::put('rekappenjualanperusahaan/update/{id}', [RekapPenjualanPerusahaanController::class, 'update'])
+        ->name('marketings.rekappenjualanperusahaan.update');
+    Route::get('rekappenjualanperusahaan/data', [RekapPenjualanPerusahaanController::class, 'data'])
+        ->name('marketings.rekappenjualanperusahaan.data');
+    Route::get('rekappenjualanperusahaan/filter', [RekapPenjualanPerusahaanController::class, 'filterData'])
+        ->name('marketings.rekappenjualanperusahaan.filter');
+    Route::delete('rekappenjualanperusahaan/destroy/{id}', [RekapPenjualanPerusahaanController::class, 'destroy'])
+        ->name('marketings.rekappenjualanperusahaan.destroy');
+});
+
 
 
     //PROCUREMENT

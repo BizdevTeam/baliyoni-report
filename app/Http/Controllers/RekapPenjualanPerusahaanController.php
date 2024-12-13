@@ -47,7 +47,7 @@ class RekapPenjualanPerusahaanController extends Controller
         $validated = $request->validate([
             'bulan_tahun' => 'required|date_format:m/Y',
             'perusahaan' => 'required|array|min:1',
-            'perusahaan.*' => 'required|string|max:255',
+            'perusahaan.*' => 'required|string|ma x:255',
             'nilai_paket' => 'required|array|min:1',
             'nilai_paket.*' => 'required|numeric|min:0',
         ]);
