@@ -19,6 +19,8 @@
   @vite('resources/css/tailwind.css')
   @vite('resources/css/custom.css')
   @vite('resources/js/app.js')
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js CDN -->
+  <script src="https://cdn.tailwindcss.com"></script> <!-- Tailwind CDN -->
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
   <div class="wrapper">

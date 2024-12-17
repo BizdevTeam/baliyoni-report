@@ -25,7 +25,6 @@
     @vite('resources/css/tailwind.css')
     @vite('resources/css/custom.css')
     @vite('resources/js/app.js')
-
 </head>
 
 <body class="bg-gray-100 hold-transition sidebar-mini layout-fixed">

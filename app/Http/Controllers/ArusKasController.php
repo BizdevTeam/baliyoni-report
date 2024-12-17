@@ -9,7 +9,7 @@ class ArusKasController extends Controller
 {
     public function index()
     {
-        return view('accountings.aruskas');
+        return view('accounting.aruskas');
     }
 
     public function data(Request $request)

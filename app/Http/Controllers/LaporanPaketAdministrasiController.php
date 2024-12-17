@@ -125,6 +125,25 @@ class LaporanPaketAdministrasiController extends Controller
         }
     }
 
+    public function getChartData()
+    {
+        try {
+            $data = LaporanPaketAdministrasi::select('website', 'paket_rp', 'bulan_tahun')
+                ->orderBy('website', 'asc')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $data,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil data: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
     private function validateData(Request $request)
     {
         return $request->validate([

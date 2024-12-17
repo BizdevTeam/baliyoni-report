@@ -172,14 +172,14 @@
                         </a>
                     </li>
                     <li>
-                        <a href="accountings/kashutangpiutangstok"
+                        <a href="{{ route("accounting.kashutangpiutangstok") }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/kashutangpiutang.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Kas, Hutang, Piutang, Stok</span>
                         </a>
                     </li>
                     <li>
-                        <a href="accountings/aruskas"
+                    <a href="{{ route("accounting.aruskas") }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/aruskas.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Arus Kas</span>
@@ -213,42 +213,42 @@
                 </button>
                 <ul id="dropdown-hrga" class="hidden py-2 pl-8 space-y-2">
                     <li>
-                        <a href="hrga/laporanptbos"
+                        <a href="{{ route("hrga.laporanptbos") }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
                             <img src="{{ asset("icon/ptbos.svg") }}" class="w-5 h-5">
                             <span class="ml-2">PT.BOS</span>
                         </a>
                     </li>
                     <li>
-                        <a href="hrga/laporanijasa"
+                        <a href="{{ route("hrga.laporanijasa") }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/ijasa.svg") }}" class="w-5 h-5">
                             <span class="ml-2">iJASA</span>
                         </a>
                     </li>
                     <li>
-                        <a href="hrga/laporansakit"
+                        <a href="{{ route("hrga.laporansakit") }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/laporansakit.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Sakit</span>
                         </a>
                     </li>
                     <li>
-                        <a href="hrga/laporanizin"
+                        <a href="{{ route("hrga.laporanizin") }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/laporanizin.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Izin</span>
                         </a>
                     </li>
                     <li>
-                        <a href="hrga/laporancuti"
+                        <a href="{{ route("hrga.laporancuti") }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/laporancuti.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Cuti</span>
                         </a>
                     </li>
                     <li>
-                        <a href="hrga/laporanterlambat"
+                        <a href="{{ route("hrga.laporanterlambat") }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/laporanterlambat.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Terlambat</span>
@@ -294,44 +294,43 @@
                 </button>
                 <ul id="dropdown-support" class="hidden py-2 pl-8 space-y-2">
                     <li>
-                        <a href="supports/rekappendapatanservisasp"
+                        <a href="{{ route("supports.rekappendapatanservisasp") }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
                             <img src="{{ asset("icon/RekapPenjualan.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Rekap Pendapatan Servis ASP</span>
                         </a>
                     </li>
-                        <a href="supports/rekappiutangservisasp"
+                        <a href="{{ route("supports.rekappiutangservisasp") }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/RekapPenjualanPerusahaan.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Rekap Piutang Servis ASP</span>
                         </a>
                     </li>
                     <li>
-                        <a href="supports/laporansamitra"
+                        <a href="{{ route("supports.laporansamitra") }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
                             <img src="{{ asset("icon/RekapPenjualan.svg") }}" class="w-5 h-5">
                             <span class="ml-2">PT. Saguna Mitra Transindo</span>
                         </a>
                     </li>
-                        <a href="supports/laporandetrans"
+                        <a href="{{ route("supports.laporandetrans") }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/RekapPenjualanPerusahaan.svg") }}" class="w-5 h-5">
                             <span class="ml-2">PT. Detran Jelajah Nusantara</span>
                         </a>
                     </li>
                 </ul>
-
-
-        <li class="relative">
-            <button type="button"
-                class="flex items-center w-full px-4 py-2 text-gray-700 rounded-md . . transition"
-                aria-controls="dropdown-logout" aria-expanded="false">
-                <img src="{{ asset("images/logout.svg") }}" class="w-5 h-5">
-                <span class="menu-label flex-1 ml-3 text-left">Logout</span>
-               
-            </button>
-        </li>
+            <li class="relative">
+                <button type="button"
+                    class="flex items-center w-full px-4 py-2 text-gray-700 rounded-md . . transition"
+                    aria-controls="dropdown-logout" aria-expanded="false">
+                    <img src="{{ asset("images/logout.svg") }}" class="w-5 h-5">
+                    <span class="menu-label flex-1 ml-3 text-left">Logout</span>
+                </button>
+                    </li>
+           
         <!-- Tambahkan menu lainnya di sini -->
         </ul>
     </nav>
 </aside>
+

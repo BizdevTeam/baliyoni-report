@@ -9,20 +9,39 @@
     @vite('resources/css/app.css')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
-
-
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
+    <!-- Tempusdominus Bootstrap 4 -->
+    <link rel="stylesheet"
+        href="{{ asset('templates/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
+    <!-- Theme style -->
+    <!-- overlayScrollbars -->
+    <link rel="stylesheet" href="{{ asset('templates/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    @vite('resources/css/tailwind.css')
+    @vite('resources/css/custom.css')
+    @vite('resources/js/app.js')
 </head>
 
-<body class="bg-gray-100 p-6">
-    <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow">
-        <h1 class="text-2xl font-bold mb-4">Kas Hutang Piutang Stok</h1>
+<body class="bg-gray-100 hold-transition sidebar-mini layout-fixed">
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <x-adminside class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
 
-        <!-- Button Tambah Data -->
-        <div class="flex gap-4 mb-4">
-            <a href="/admin" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Kembali</a>
-            <button id="open-modal" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Tambah
-                Data</button>
-        </div>
+        <!-- Navbar -->
+        <x-adminnav class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
+
+        <!-- Main Content -->
+        <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100">
+            <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow">
+                <h1 class="text-2xl font-bold mb-4">Kas Hutang Piutang Stok</h1>
+                    <!-- Button Tambah Data -->
+                    <button id="open-modal" class="bg-red-600 text-white px-4 py-2 rounded mb-4">Tambah Data</button>
+
 
         <!-- Modal -->
         <div id="modal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
@@ -130,8 +149,8 @@
                 stok: Number(document.getElementById('modal-stok').value),
             };
 
-            const url = editMode ? `/accountings/kashutangpiutangstok/update/${editId}` :
-                '/accountings/kashutangpiutangstok/store';
+            const url = editMode ? `/accounting/kashutangpiutangstok/update/${editId}` :
+                '/accounting/kashutangpiutangstok/store';
             const method = editMode ? 'PUT' : 'POST';
 
             try {
@@ -162,7 +181,7 @@
             if (!confirm('Apakah Anda yakin ingin menghapus data ini?')) return;
 
             try {
-                const response = await fetch(`/accountings/kashutangpiutangstok/destroy/${id}`, {
+                const response = await fetch(`/accounting/kashutangpiutangstok/destroy/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -185,7 +204,7 @@
         // Update Data By Year
         async function updateDataByYear(year) {
             try {
-                const response = await fetch(`/accountings/kashutangpiutangstok/filter?tahun=${year}`, {
+                const response = await fetch(`/accounting/kashutangpiutangstok/filter?tahun=${year}`, {
                     method: 'GET',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -221,8 +240,8 @@
 
         // Update Data
         async function updateData(filter = '') {
-            const url = filter ? `/accountings/kashutangpiutangstok/filter?tahun=${filter}` :
-                '/accountings/kashutangpiutangstok/data';
+            const url = filter ? `/accounting/kashutangpiutangstok/filter?tahun=${filter}` :
+                '/accounting/kashutangpiutangstok/data';
             try {
                 const response = await fetch(url);
                 const result = await response.json();

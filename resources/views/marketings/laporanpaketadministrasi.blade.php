@@ -250,45 +250,51 @@
 
         // Update Chart
         function updateChart(items) {
-            const labels = items.map((item) => item.website);
-            const dataValues = items.map((item) => item.paket_rp);
-            const backgroundColors = items.map(() =>
-                `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.7)`);
+    const labels = items.map((item) => `${item.website} (${item.bulan_tahun})`);
+    const dataValues = items.map((item) => item.paket_rp);
+    const backgroundColors = items.map(() =>
+        `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.7)`);
 
-            const ctx = chartCanvas.getContext('2d');
-            if (window.myChart) {
-                window.myChart.destroy();
-            }
-            window.myChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels,
-                    datasets: [{
-                        label: 'Paket (RP)',
-                        data: dataValues,
-                        backgroundColor: backgroundColors,
-                        borderWidth: 1,
-                    }],
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return `Rp ${context.raw.toLocaleString()}`;
-                                },
-                            },
-                        },
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
+    const ctx = chartCanvas.getContext('2d');
+    if (window.myChart) {
+        window.myChart.destroy();
+    }
+    window.myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels, // Menggunakan label dengan bulan dan tahun
+            datasets: [{
+                label: 'Paket (RP)',
+                data: dataValues,
+                backgroundColor: backgroundColors,
+                borderWidth: 1,
+            }],
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `Rp ${context.raw.toLocaleString()}`;
                         },
                     },
                 },
-            });
-        }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return `Rp ${value.toLocaleString()}`;
+                        },
+                    },
+                },
+            },
+        },
+    });
+}
+
 
         // Edit Data
         function editData(id, data) {

@@ -11,7 +11,7 @@ class KasHutangPiutangStokController extends Controller
     // Show the view
     public function index()
     {
-        return view('accountings.kashutangpiutangstok');
+        return view('accounting.kashutangpiutangstok');
     }
 
     public function filterByYear(Request $request)
