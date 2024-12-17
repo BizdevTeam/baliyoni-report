@@ -17,8 +17,6 @@ class LaporanPaketAdministrasi extends Model
     // Kolom yang dapat diisi menggunakan metode mass assignment
     protected $fillable = [
         'bulan_tahun',      // Format bulan dan tahun (contoh: '11/2024')
-        'total_paket',      // Total paket dalam nilai integer
-        'keterangan',       // Keterangan tambahan (nullable)
         'website',          // Nama website (string)
         'paket_rp',         // Nilai paket dalam rupiah (integer)
     ];

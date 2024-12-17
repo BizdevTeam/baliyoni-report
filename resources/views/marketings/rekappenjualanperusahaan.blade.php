@@ -108,7 +108,7 @@
                 </tr>
             </thead>
             <tbody id="data-table"></tbody>
-        </table>
+        </table>    
 
         <!-- Chart -->
         <div class="mt-6 items-center text-center mx-auto">
@@ -152,7 +152,7 @@
             paketInput.type = 'text';
             paketInput.name = 'nilai_paket[]';
             paketInput.className = 'w-full border-gray-300 rounded p-2';
-            paketInput.placeholder = 'Nilai paket';
+            paketInput.placeholder = 'Nilai Paket';
             paketInput.required = true;
 
             const removeButton = document.createElement('button');
