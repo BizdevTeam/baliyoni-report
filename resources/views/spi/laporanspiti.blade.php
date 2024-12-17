@@ -148,6 +148,7 @@
             </table>
         </div>
     </div>
+    </div>
     <!-- Modal untuk Add Data -->
 <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">
     <div class="bg-white w-1/2 p-6 rounded shadow-lg">
