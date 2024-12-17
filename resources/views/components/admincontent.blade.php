@@ -1,12 +1,12 @@
 <div id="admincontent" class="content-wrapper ml-72 p-4 transition-all duration-300">
     <p class="text-lg font-bold text-gray-800">WEB REPORT FOR BALIYONI</p>
 
-    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-4xl mt-4">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl mt-4">
         <h1 class="text-2xl font-semibold mb-4 text-gray-700">Laporan Paket Administrasi</h1>
         <canvas id="myChart1" class="w-full"></canvas>
     </div>
     
-    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-4xl mt-4">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl mt-4">
         <h1 class="text-2xl font-semibold mb-4 text-gray-700">Laporan Paket Administrasi</h1>
         <canvas id="myChart1" class="w-full"></canvas>
     </div>
