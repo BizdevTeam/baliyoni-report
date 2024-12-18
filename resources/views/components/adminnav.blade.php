@@ -1,4 +1,4 @@
-<nav id="navbar" class="main-header navbar bg-[#2c2e3e] text-white border-b border-gray-800 shadow-md  w-full z-10 transition-all duration-300 h-14">
+<nav id="navbar" class="main-header navbar bg-[#2c2e3e] text-white border-b border-gray-800 shadow-md  w-300 z-10 transition-all duration-300 h-14">
     <div class="container px-4 flex items-center justify-between h-full">
         <!-- Left: Sidebar Toggle and Home Link -->
         <div clas rs="flex items-center space-x-2">
