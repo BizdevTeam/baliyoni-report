@@ -36,7 +36,7 @@
         <x-adminnav class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
 
         <!-- Main Content -->
-        <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100">
+        <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
             <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow">
                 <h1 class="text-2xl font-bold mb-4">Laporan Detrans</h1>
 

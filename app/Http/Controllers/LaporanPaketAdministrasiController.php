@@ -2,155 +2,150 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\LaporanPaketAdministrasi;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class LaporanPaketAdministrasiController extends Controller
 {
+    // Menampilkan halaman utama
     public function index()
     {
         return view('marketings.laporanpaketadministrasi');
     }
 
+    // Fetch data dengan filter
     public function data(Request $request)
     {
         try {
             $bulanTahun = $request->query('bulan_tahun');
-            $query = LaporanPaketAdministrasi::query();
 
+            $query = LaporanPaketAdministrasi::query();
             if ($bulanTahun) {
                 $query->where('bulan_tahun', $bulanTahun);
             }
 
-            $pakets = $query->orderBy('created_at', 'desc')->get();
+            $data = $query->orderBy('created_at', 'desc')->get();
 
-            return response()->json([
-                'success' => true,
-                'data' => $pakets,
-            ], 200);
+            return response()->json(['success' => true, 'data' => $data], 200);
         } catch (\Exception $e) {
-            Log::error('Error fetching data: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat mengambil data.',
-            ], 500);
+            Log::error("Error fetching data: {$e->getMessage()}");
+            return response()->json(['success' => false, 'message' => 'Gagal mengambil data.'], 500);
         }
     }
 
+    // Simpan data baru
     public function store(Request $request)
     {
-        $validatedData = $this->validateData($request);
-
-        try {
-            // Check if data already exists for the same bulan_tahun and website
-            $existingEntry = LaporanPaketAdministrasi::where('bulan_tahun', $validatedData['bulan_tahun'])
-                ->where('website', $validatedData['website'])
-                ->first();
-
-            if ($existingEntry) {
-                return response()->json([
-                    'success' => false,
-                    'message' => "Website {$validatedData['website']} sudah dipilih untuk bulan {$validatedData['bulan_tahun']}.",
-                ], 400);
-            }
-
-            LaporanPaketAdministrasi::create($validatedData);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Data berhasil disimpan.',
-            ], 201);
-        } catch (\Exception $e) {
-            Log::error('Error saving data: ' . $e->getMessage(), ['data' => $validatedData]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan data.',
-            ], 500);
-        }
+        return $this->saveData($request);
     }
 
+    // Perbarui data
     public function update(Request $request, $id)
     {
-        $validatedData = $this->validateData($request);
+        return $this->saveData($request, $id);
+    }
+
+    // Fungsi umum untuk save/update data
+    private function saveData(Request $request, $id = null)
+    {
+        $validated = $request->validate([
+            'bulan_tahun' => 'required|date_format:m/Y',
+            'website' => 'required|array|min:1',
+            'website.*' => 'required|string|max:255',
+            'paket_rp' => 'required|array|min:1',
+            'paket_rp.*' => 'required|numeric|min:0',
+        ]);
 
         try {
-            $paket = LaporanPaketAdministrasi::findOrFail($id);
+            foreach ($validated['website'] as $index => $website) {
+                $query = LaporanPaketAdministrasi::where('website', $website)
+                    ->where('bulan_tahun', $validated['bulan_tahun']);
 
-            // Cek duplikasi data
-            $existingEntry = LaporanPaketAdministrasi::where('bulan_tahun', $validatedData['bulan_tahun'])
-                ->where('website', $validatedData['website'])
-                ->where('id', '!=', $id) // Abaikan data dengan ID yang sama
-                ->first();
+                if ($id) {
+                    $query->where('id', '!=', $id); // Abaikan ID yang sedang diupdate
+                }
 
-            if ($existingEntry) {
-                return response()->json([
-                    'success' => false,
-                    'message' => "Website {$validatedData['website']} sudah dipilih untuk bulan {$validatedData['bulan_tahun']}.",
-                ], 400);
+                if ($query->exists()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Website '$website' sudah ada untuk bulan {$validated['bulan_tahun']}.",
+                    ], 400);
+                }
             }
 
-            // Perbarui data
-            $paket->update($validatedData);
+            // Jika ID ada, hapus data lama (update)
+            if ($id) {
+                LaporanPaketAdministrasi::where('id', $id)->delete();
+            }
+
+            $dataToInsert = $this->prepareDataForInsert($validated);
+            LaporanPaketAdministrasi::insert($dataToInsert);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data berhasil diperbarui.',
-            ], 200);
+                'message' => $id ? 'Data berhasil diperbarui.' : 'Data berhasil disimpan.',
+            ], $id ? 200 : 201);
         } catch (\Exception $e) {
-            Log::error('Error updating data: ' . $e->getMessage(), ['id' => $id, 'data' => $validatedData]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat memperbarui data.',
-            ], 500);
+            Log::error("Error saving data: {$e->getMessage()}");
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat menyimpan data.'], 500);
         }
     }
 
+    // Hapus data
     public function destroy($id)
     {
         try {
             $paket = LaporanPaketAdministrasi::findOrFail($id);
             $paket->delete();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Data berhasil dihapus.',
-            ], 200);
+            return response()->json(['success' => true, 'message' => 'Data berhasil dihapus.'], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            Log::error("Data not found: {$e->getMessage()}");
+            return response()->json(['success' => false, 'message' => 'Data tidak ditemukan.'], 404);
         } catch (\Exception $e) {
-            Log::error('Error deleting data: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat menghapus data.',
-            ], 500);
+            Log::error("Error deleting data: {$e->getMessage()}");
+            return response()->json(['success' => false, 'message' => 'Gagal menghapus data.'], 500);
         }
     }
 
+    // Ambil data untuk Chart
     public function getChartData()
     {
         try {
-            $data = LaporanPaketAdministrasi::select('website', 'paket_rp', 'bulan_tahun')
-                ->orderBy('website', 'asc')
+            $data = LaporanPaketAdministrasi::select(
+                    'website',
+                    'bulan_tahun',
+                    DB::raw('SUM(paket_rp) as total_rp')
+                )
+                ->groupBy('website', 'bulan_tahun')
+                ->orderBy('bulan_tahun', 'asc')
                 ->get();
 
-            return response()->json([
-                'success' => true,
-                'data' => $data,
-            ], 200);
+            return response()->json(['success' => true, 'data' => $data], 200);
         } catch (\Exception $e) {
+            Log::error("Error fetching chart data: {$e->getMessage()}");
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal mengambil data: ' . $e->getMessage(),
+                'message' => 'Gagal memuat data chart.',
             ], 500);
         }
     }
 
-    private function validateData(Request $request)
+    // Persiapkan data untuk di-insert ke database
+    private function prepareDataForInsert($validated)
     {
-        return $request->validate([
-            'bulan_tahun' => ['required', 'regex:/^(0[1-9]|1[0-2])\/\d{4}$/'],  // Ensure month/year format
-            'website' => 'required|string|max:255',
-            'paket_rp' => 'required|integer|min:0',
-            'keterangan' => 'nullable|string|max:255',
-        ]);
+        $dataToInsert = [];
+        foreach ($validated['website'] as $index => $website) {
+            $dataToInsert[] = [
+                'bulan_tahun' => $validated['bulan_tahun'],
+                'website' => $website,
+                'paket_rp' => $validated['paket_rp'][$index],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+        return $dataToInsert;
     }
 }
