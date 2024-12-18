@@ -408,5 +408,5 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/procurement', [AdminController::class, 'procurement'])->middleware('UserAccess:procurement');
     Route::get('/admin/hrga', [AdminController::class, 'hrga'])->middleware('UserAccess:hrga');
     Route::get('/admin/spi', [AdminController::class, 'spi'])->middleware('UserAccess:spi');
-    Route::get('/logout', [SessionController::class, 'logout']);
+    Route::post('/logout', [SessionController::class, 'logout'])->name('logout');
 });

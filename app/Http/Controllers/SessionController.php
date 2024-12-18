@@ -54,9 +54,11 @@ class SessionController extends Controller
         }
     }
 
-    function logout()
+    function logout(Request $request)
     {
         Auth::logout();
-        return redirect('');
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/');
     }
 }

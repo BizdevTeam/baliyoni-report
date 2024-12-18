@@ -321,13 +321,16 @@
                     </li>
                 </ul>
             <li class="relative">
-                <button type="button"
-                    class="flex items-center w-full px-4 py-2 text-gray-700 rounded-md . . transition"
-                    aria-controls="dropdown-logout" aria-expanded="false">
-                    <img src="{{ asset("images/logout.svg") }}" class="w-5 h-5">
-                    <span class="menu-label flex-1 ml-3 text-left">Logout</span>
-                </button>
-                    </li>
+                <form method="post" action="{{ route('logout') }}">
+                @csrf
+                    <button type="submit"
+                        class="flex items-center w-full px-4 py-2 text-gray-700 rounded-md . . transition"
+                        aria-controls="dropdown-logout" aria-expanded="false">
+                        <img src="{{ asset("images/logout.svg") }}" class="w-5 h-5">
+                        <span class="menu-label flex-1 ml-3 text-left">Logout</span>
+                    </button>
+                </form>
+            </li>
            
         <!-- Tambahkan menu lainnya di sini -->
         </ul>

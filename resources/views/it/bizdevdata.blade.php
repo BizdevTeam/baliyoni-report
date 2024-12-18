@@ -6,31 +6,50 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Bizdev - {{ $bizdevbulanan->bulan }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    @vite('resources/css/app.css')
+    <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
+    <!-- Tempusdominus Bootstrap 4 -->
+    <link rel="stylesheet"
+        href="{{ asset('templates/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
+    <!-- Theme style -->
+    <!-- overlayScrollbars -->
+    <link rel="stylesheet" href="{{ asset('templates/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    @vite('resources/css/tailwind.css')
+    @vite('resources/css/custom.css')
+    @vite('resources/js/app.js')
 </head>
 
-<body class="bg-gray-100 p-6">
+<body class="bg-gray-100 hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+    <!-- Sidebar -->
+    <x-adminside class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
 
-    <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow">
+    <!-- Navbar -->
+    <x-adminnav class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
+
+    <!-- Main Content -->
+    <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
+    <div class="mx-auto bg-white p-6 rounded-lg shadow">
         <!-- Page Header -->
-        <h1 class="text-3xl font-bold mb-5">Data Bizdev untuk Bulan {{ $bizdevbulanan->bulan }}</h1>
+        <h1 class="text-4xl font-bold mb-5">Laporan Data Bizdev</h1>
+        <h1 class="text-2xl font-bold">Judul</h1>
+        <h2 class="text-2xl font-bold mb-5">{{ $bizdevbulanan->judul }}</h2>
 
         <!-- Action Buttons -->
-        <div class="flex justify-between items-center mb-4">
-            <button class="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600 flex items-center gap-2" onclick="location.reload();">
-                <i class="bi bi-arrow-repeat"></i>
-                Refresh
+        <div class="flex items-center mb-4">
+            <button class="bg-red-600 text-white px-4 py-2 mr-2 rounded shadow float-left flex items-center gap-2">
+                <a href="{{ route('bizdevbulanan.index') }}">Back</a>
             </button>
-            <div>
-                <button class="bg-gray-500 text-white px-4 py-2 mr-4 rounded shadow hover:bg-gray-600 float-left flex items-center gap-2">
-                    <a href="{{ route('bizdevbulanan.index') }}"><i class="fa fa-plus"></i>
-                    Back
-                    </a>
-                </button>
-                <button class="bg-gray-500 text-white px-4 py-2 rounded shadow hover:bg-gray-600 flex items-center gap-2" data-modal-target="#addEventModal">
-                    <i class="fa fa-plus"></i>
-                    Add
-                </button>
-            </div>
+            <button class="bg-red-600 text-white px-4 py-2 rounded shadow flex items-center gap-2" data-modal-target="#addEventModal">
+                Add New
+            </button>
         </div>
 
         <!-- Success or Error Messages -->
@@ -63,14 +82,14 @@
                     @foreach ($itbizdevdatas as $itbizdevdata)
                         <tr class="hover:bg-gray-100">
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $itbizdevdata->aplikasi }}</td>
-                            <td class="border border-gray-300 px-4 py-2">{{ $itbizdevdata->kondisi_bulanlalu }}</td>
-                            <td class="border border-gray-300 px-4 py-2">{{ $itbizdevdata->kondisi_bulanini }}</td>
-                            <td class="border border-gray-300 px-4 py-2">{{ $itbizdevdata->update }}</td>
-                            <td class="border border-gray-300 px-4 py-2">{{ $itbizdevdata->rencana_implementasi }}</td>
-                            <td class="border border-gray-300 px-4 py-2">{{ $itbizdevdata->keterangan }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $itbizdevdata->kondisi_bulanlalu }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $itbizdevdata->kondisi_bulanini }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $itbizdevdata->update }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $itbizdevdata->rencana_implementasi }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $itbizdevdata->keterangan }}</td>
                             <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
                                 <!-- Edit Button -->
-                                <button class="bg-yellow-500 text-white px-3 py-2 rounded hover:bg-yellow-600" data-modal-target="#editEventModal{{ $itbizdevdata->id_bizdevdata }}">
+                                <button class="bg-red-600 text-white px-3 py-2 rounded" data-modal-target="#editEventModal{{ $itbizdevdata->id_bizdevdata }}">
                                     <i class="fa fa-pen"></i>
                                     Edit
                                 </button>
@@ -78,7 +97,7 @@
                                 <form method="POST" action="{{ route('bizdevdata.destroy', [$bizdevbulanan->id_bizdevbulanan, $itbizdevdata->id_bizdevdata]) }}">
                                     @csrf
                                     @method('DELETE')
-                                    <button class="bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600" onclick="return confirm('Are you sure to delete?')">
+                                    <button class="bg-red-600 text-white px-3 py-2 rounded" onclick="return confirm('Are you sure to delete?')">
                                         <i class="fa fa-trash"></i>
                                         Delete
                                     </button>
@@ -124,8 +143,8 @@
                                         <textarea name="keterangan" class="mt-1 block w-full px-3 py-2 border rounded">{{ old('keterangan', $itbizdevdata->keterangan) }}</textarea>
                                     </div>
 
-                                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Update Data</button>
-                                    <button type="button" class="ml-3 bg-gray-500 text-white px-4 py-2 rounded close-modal" data-modal-target="#editEventModal{{ $itbizdevdata->id_bizdevdata }}">Close</button>
+                                    <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Update Data</button>
+                                    <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
                                 </form>
                             </div>
                         </div>
@@ -134,6 +153,8 @@
             </table>
         </div>
     </div>
+    </div>
+</div>
     <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">
         <div class="bg-white w-1/2 p-6 rounded shadow-lg">
             <h3 class="text-xl font-semibold mb-4">Add New Data</h3>
@@ -166,8 +187,8 @@
                     </div>
                 </div>
                 <div class="mt-4 flex justify-end gap-2">
-                    <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600" data-modal-close>Close</button>
-                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add</button>
+                    <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
+                    <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Add</button>
                 </div>
             </form>
         </div>
