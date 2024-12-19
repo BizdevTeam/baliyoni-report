@@ -338,7 +338,7 @@
 
             // Update Chart
             function updateChart(items) {
-                const labels = data.map(item => `${item.website} (${item.bulan_tahun})`);
+                const labels = items.map(item => `${item.website} (${item.bulan_tahun})`);
                 const dataValues = items.map((item) => item.paket_rp); // Nilai paket
                 const backgroundColors = items.map(() =>
                     `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.7)`); // Warna acak

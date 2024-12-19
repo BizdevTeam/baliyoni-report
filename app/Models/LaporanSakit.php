@@ -17,7 +17,11 @@ class LaporanSakit extends Model
     // Kolom yang dapat diisi menggunakan metode mass assignment
     protected $fillable = [
         'bulan_tahun',      // Format bulan dan tahun (contoh: '11/2024')
+        'nama',  
         'total_sakit',      // Total paket dalam nilai integer
-        'nama',       // Keterangan tambahan (nullable)
+
+    ];
+    protected $casts = [
+        'total_sakit' => 'integer',
     ];
 }

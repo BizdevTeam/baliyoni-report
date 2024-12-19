@@ -15,8 +15,11 @@ return new class extends Migration
             $table->id();   
             $table->string('bulan_tahun'); // Pastikan tidak ada duplikasi
             $table->integer('total_sakit')->default(0); // Default value untuk menghindari nilai null
-            $table->string('nama')->nullable();
+            $table->string('nama');
             $table->timestamps();
+
+            $table->unique(['nama']);
+
         });
     }
 

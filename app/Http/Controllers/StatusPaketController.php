@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\StatusPaket;
-
-use Illuminate\Support\Facades\Log;
-
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class StatusPaketController extends Controller
 {
@@ -18,126 +17,176 @@ class StatusPaketController extends Controller
     public function data(Request $request)
     {
         try {
-            $bulanTahun = $request->query('bulan_tahun'); 
+            $bulanTahun = $request->query('bulan_tahun');
             $query = StatusPaket::query();
 
             if ($bulanTahun) {
                 $query->where('bulan_tahun', $bulanTahun);
             }
 
-            $pakets = $query->orderBy('created_at', 'desc')->get();
+            $data = $query->orderBy('created_at', 'desc')->get();
+            $totalPaket = $data->sum('paket');
 
-            // Perbaiki logika totalPaket
-            $totalPaket = $pakets->sum('paket'); // Pakai tanda kutip tunggal (')
 
             return response()->json([
                 'success' => true,
-                'data' => $pakets,
-                'total_paket' => $totalPaket,
-            ], 200);
+                 'data' => $data,
+                 'total_paket' => $totalPaket,
+                ], 200);
         } catch (\Exception $e) {
-            Log::error('Error fetching data: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat mengambil data.',
-            ], 500);
+            Log::error("Error fetching data: {$e->getMessage()}");
+            return response()->json(['success' => false, 'message' => 'Gagal mengambil data.'], 500);
         }
     }
 
+    // Simpan data baru
     public function store(Request $request)
     {
-        $validatedData = $this->validateData($request);
+        $validated = $request->validate([
+            'bulan_tahun' => 'required|date_format:m/Y',
+            'status' => 'required|array|min:1',
+            'status.*' => 'required|string|max:255',
+            'paket' => 'required|array|min:1',
+            'paket.*' => 'required|numeric|min:0',
+        ]);
 
         try {
-            // Check if data already exists for the same bulan_tahun and status
-            $existingEntry = StatusPaket::where('bulan_tahun', $validatedData['bulan_tahun'])
-                ->where('status', $validatedData['status'])
-                ->first();
+            $dataToInsert = $this->prepareDataForInsert($validated);
 
-            if ($existingEntry) {
-                return response()->json([
-                    'success' => false,
-                    'message' => "status {$validatedData['status']} sudah dipilih untuk bulan {$validatedData['bulan_tahun']}.",
-                ], 400);
-            }
+            StatusPaket::insert($dataToInsert);
 
-            StatusPaket::create($validatedData);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Data berhasil disimpan.',
-            ], 201);
+            return response()->json(['success' => true, 'message' => 'Data berhasil disimpan.']);
         } catch (\Exception $e) {
-            Log::error('Error saving data: ' . $e->getMessage(), ['data' => $validatedData]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan data.',
-            ], 500);
+            Log::error('Error saving data: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat menyimpan data.'], 500);
         }
     }
+
+    // Perbarui data
 
     public function update(Request $request, $id)
     {
-        $validatedData = $this->validateData($request);
+        $validated = $request->validate([
+            'bulan_tahun' => 'required|date_format:m/Y',
+            'status' => 'required|array|min:1',
+            'status.*' => 'required|string|max:255',
+            'paket' => 'required|array|min:1',
+            'paket.*' => 'required|numeric|min:0',
+        ]);
 
         try {
-            $paket = StatusPaket::findOrFail($id);
+            // Hapus data lama untuk status terkait
+            StatusPaket::where('id', $id)->delete();
 
-            // Cek duplikasi data
-            $existingEntry = StatusPaket::where('bulan_tahun', $validatedData['bulan_tahun'])
-                ->where('status', $validatedData['status'])
-                ->where('id', '!=', $id) // Abaikan data dengan ID yang sama
-                ->first();
+            $dataToInsert = $this->prepareDataForInsert($validated);
+            StatusPaket::insert($dataToInsert);
 
-            if ($existingEntry) {
-                return response()->json([
-                    'success' => false,
-                    'message' => "status {$validatedData['status']} sudah dipilih untuk bulan {$validatedData['bulan_tahun']}.",
-                ], 400);
-            }
-
-            // Perbarui data
-            $paket->update($validatedData);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Data berhasil diperbarui.',
-            ], 200);
+            return response()->json(['success' => true, 'message' => 'Data berhasil diperbarui.']);
         } catch (\Exception $e) {
-            Log::error('Error updating data: ' . $e->getMessage(), ['id' => $id, 'data' => $validatedData]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat memperbarui data.',
-            ], 500);
+            Log::error('Error updating data: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat memperbarui data.'], 500);
         }
     }
 
+    // Fungsi umum untuk save/update data
+    private function saveData(Request $request, $id = null)
+    {
+        $validated = $request->validate([
+            'bulan_tahun' => 'required|date_format:m/Y',
+            'status' => 'required|array|min:1',
+            'status.*' => 'required|string|max:255',
+            'paket' => 'required|array|min:1',
+            'paket.*' => 'required|numeric|min:0',
+        ]);
+
+        try {
+            foreach ($validated['status'] as $index => $status) {
+                $query = StatusPaket::where('status', $status)
+                    ->where('bulan_tahun', $validated['bulan_tahun']);
+
+                if ($id) {
+                    $query->where('id', '!=', $id); // Abaikan ID yang sedang diupdate
+                }
+
+                if ($query->exists()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "status '$status' sudah ada untuk bulan {$validated['bulan_tahun']}.",
+                    ], 400);
+                }
+            }
+
+            // Jika ID ada, hapus data lama (update)
+            if ($id) {
+                StatusPaket::where('id', $id)->delete();
+            }
+
+            $dataToInsert = $this->prepareDataForInsert($validated);
+            StatusPaket::insert($dataToInsert);
+
+            return response()->json([
+                'success' => true,
+                'message' => $id ? 'Data berhasil diperbarui.' : 'Data berhasil disimpan.',
+            ], $id ? 200 : 201);
+        } catch (\Exception $e) {
+            Log::error("Error saving data: {$e->getMessage()}");
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat menyimpan data.'], 500);
+        }
+    }
+
+    // Hapus data
     public function destroy($id)
     {
         try {
             $paket = StatusPaket::findOrFail($id);
             $paket->delete();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Data berhasil dihapus.',
-            ], 200);
+            return response()->json(['success' => true, 'message' => 'Data berhasil dihapus.'], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            Log::error("Data not found: {$e->getMessage()}");
+            return response()->json(['success' => false, 'message' => 'Data tidak ditemukan.'], 404);
         } catch (\Exception $e) {
-            Log::error('Error deleting data: ' . $e->getMessage());
+            Log::error("Error deleting data: {$e->getMessage()}");
+            return response()->json(['success' => false, 'message' => 'Gagal menghapus data.'], 500);
+        }
+    }
+
+    // Ambil data untuk Chart
+    public function getChartData()
+    {
+        try {
+            $data = StatusPaket::select(
+                    'status',
+                    'bulan_tahun',
+                    DB::raw('SUM(paket) as total_rp')
+                )
+                ->groupBy('status', 'bulan_tahun')
+                ->orderBy('bulan_tahun', 'asc')
+                ->get();
+
+            return response()->json(['success' => true, 'data' => $data], 200);
+        } catch (\Exception $e) {
+            Log::error("Error fetching chart data: {$e->getMessage()}");
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menghapus data.',
+                'message' => 'Gagal memuat data chart.',
             ], 500);
         }
     }
 
-    private function validateData(Request $request)
+    // Persiapkan data untuk di-insert ke database
+    private function prepareDataForInsert($validated)
     {
-        return $request->validate([
-            'bulan_tahun' => ['required', 'regex:/^(0[1-9]|1[0-2])\/\d{4}$/'],  // Ensure month/year format
-            'status' => 'required|string|max:255',
-            'paket' => 'required|integer|min:0',
-            'keterangan' => 'nullable|string|max:255',
-        ]);
+        $dataToInsert = [];
+        foreach ($validated['status'] as $index => $status) {
+            $dataToInsert[] = [
+                'bulan_tahun' => $validated['bulan_tahun'],
+                'status' => $status,
+                'paket' => $validated['paket'][$index],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+        return $dataToInsert;
     }
 }

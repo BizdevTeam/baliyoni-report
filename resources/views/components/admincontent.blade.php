@@ -1,99 +1,206 @@
 <div id="admincontent" class="content-wrapper ml-72 p-4 transition-all duration-300">
     <p class="text-lg font-bold text-gray-800">WEB REPORT FOR BALIYONI</p>
 
-    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-4xl mt-4">
-        <h1 class="text-2xl font-semibold mb-4 text-gray-700">Laporan Paket Administrasi</h1>
-        <canvas id="myChart1" class="w-full"></canvas>
-    </div>
-    
-    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-4xl mt-4">
-        <h1 class="text-2xl font-semibold mb-4 text-gray-700">Laporan Paket Administrasi</h1>
-        <canvas id="myChart1" class="w-full"></canvas>
+    <!-- Container untuk Laporan -->
+    <div class="flex flex-wrap justify-between gap-4 mt-6">
+        <!-- Laporan Paket Administrasi -->
+        <div class="bg-white rounded-lg shadow-lg p-6 flex-1 md:max-w-[49%]">
+            <h1 class="text-2xl font-semibold text-gray-700 mb-4">Laporan Paket Administrasi</h1>
+            <canvas id="chartPaketAdministrasi" class="w-full h-64"></canvas>
+        </div>
+
+        <!-- Laporan Stok -->
+        <div class="bg-white rounded-lg shadow-lg p-6 flex-1 md:max-w-[49%]">
+            <h1 class="text-2xl font-semibold text-gray-700 mb-4">Laporan Stok</h1>
+            <canvas id="chartStok" class="w-full h-64"></canvas>
+        </div>
     </div>
 
+    <div class="flex flex-wrap justify-between gap-4 mt-6">
+        <!-- Pie Chart -->
+        <div class="bg-white rounded-lg shadow-lg p-6 flex-1 md:max-w-[49%]">
+            <h1 class="text-2xl font-semibold text-gray-700 mb-4">Kas, Hutang, Piutang, Stok</h1>
+            <div class="flex justify-center items-center">
+                <canvas id="chartPie" class=" h-[250px]"></canvas>
+            </div>
+        </div>
+
+        <!-- Laporan Sakit -->
+        <div class="bg-white rounded-lg shadow-lg p-6 flex-1 md:max-w-[49%]">
+            <h1 class="text-2xl font-semibold text-gray-700 mb-4">Laporan Sakit</h1>
+            <canvas id="chartSakit" class="w-full h-64"></canvas>
+        </div>
+    </div>
 </div>
+
 
 <!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    // Fetch data and create chart
-    async function fetchChartData() {
-        try {
-            const response = await fetch('{{ route("marketings.laporanpaketadministrasi.chartdata") }}'); // Route Laravel
-            const result = await response.json();
+    // Utility function to fetch chart data
+    async function fetchChartData(url) {
+    try {
+        const response = await fetch(url);
+        const result = await response.json();
 
-            if (result.success) {
-                renderChart(result.data);
-            } else {
-                alert('Gagal memuat data: ' + result.message);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Terjadi kesalahan saat memuat data.');
+        if (result.success) {
+            return result.data;
+        } else {
+            console.error('Failed to fetch data:', result.message);
+            alert('Gagal memuat data: ' + result.message);
+            return null;
         }
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        alert('Terjadi kesalahan saat memuat data.');
+        return null;
     }
+}
 
-    function renderChart(data) {
-        // Mapping data untuk label dengan bulan dan tahun
-        const labels = data.map(item => `${item.website} (${item.bulan_tahun})`);
-        const values = data.map(item => Number(item.total_rp));
-
-        // Generate warna acak untuk setiap bar
-        const backgroundColors = data.map(() =>
-            `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.7)`
-        );
-
-        // Buat chart menggunakan Chart.js
-        const ctx = document.getElementById('myChart1').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Total Paket Administrasi (Rp)',
-                    data: values,
-                    backgroundColor: backgroundColors,
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return `Rp ${context.raw.toLocaleString()}`; // Format tooltip angka
-                            }
-                        }
+    // Utility function to render chart
+    function renderBarChart(ctxId, labels, data, title, datasetLabel) {
+    const ctx = document.getElementById(ctxId).getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: datasetLabel,
+                data: data,
+                backgroundColor: data.map(() =>
+                    `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.7)`
+                ),
+                borderWidth: 1,
+            }],
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            return `${context.raw.toLocaleString()}`; // Format tooltip angka
+                        },
                     },
-                    title: {
-                        display: true,
-                        text: 'Grafik Laporan Paket Administrasi',
-                        font: { size: 16, weight: 'bold' }
-                    }
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return `Rp ${value.toLocaleString()}`; // Format angka pada sumbu Y
-                            }
-                        }
+                title: {
+                    display: true,
+                    text: title,
+                },
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function (value) {
+                            return `Rp ${value.toLocaleString()}`;
+                        },
                     },
-                    x: {
-                        ticks: {
-                            autoSkip: false, // Pastikan label tidak dipotong
-                            maxRotation: 45, // Rotasi jika label panjang
-                            minRotation: 0
-                        }
-                    }
-                }
-            }
-        });
-    }
+                },
+                x: {
+                    ticks: {
+                        autoSkip: false,
+                        maxRotation: 45,
+                        minRotation: 0,
+                    },
+                },
+            },
+        },
+    });
+}
+function renderPieChart(ctxId, labels, data, title) {
+    const ctx = document.getElementById(ctxId).getContext('2d');
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.7)', // Kas
+                    'rgba(255, 99, 132, 0.7)', // Hutang
+                    'rgba(54, 162, 235, 0.7)', // Piutang
+                    'rgba(255, 206, 86, 0.7)', // Stok
+                ],
+                borderWidth: 1,
+            }],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false, 
+            aspectRatio: 1.5,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            const total = context.dataset.data.reduce((sum, val) => sum + val, 0);
+                            const value = context.raw;
+                            const percentage = ((value / total) * 100).toFixed(2);
+                            return `Rp ${value.toLocaleString()} (${percentage}%)`;
+                        },
+                    },
+                },
+                title: {
+                    display: true,
+                    text: title,
+                },
+            },
+        },
+    });
+}
 
-    // Panggil fungsi fetch data chart
-    fetchChartData();
+(async function loadCharts() {
+    try {
+        // Paket Administrasi
+        const paketData = await fetchChartData('{{ route("marketings.laporanpaketadministrasi.chartdata") }}');
+        if (paketData) {
+            const labels = paketData.map(item => `${item.website} (${item.bulan_tahun})`);
+            const values = paketData.map(item => Number(item.total_rp));
+            renderBarChart(
+                'chartPaketAdministrasi',
+                labels,
+                values,
+                'Grafik Laporan Paket Administrasi',
+                'Total Paket Administrasi (Rp)'
+            );
+        }
+
+        // Stok
+        const stokData = await fetchChartData('{{ route("procurements.laporanstok.data") }}');
+        if (stokData) {
+            const labels = stokData.map(item => item.bulan_tahun);
+            const values = stokData.map(item => Number(item.stok));
+            renderBarChart('chartStok', labels, values, 'Grafik Laporan Stok', 'Total Stok');
+        }
+
+        // Kas, Hutang, Piutang, Stok
+        const kashutangpiutangstokData = await fetchChartData('{{ route("accounting.kashutangpiutangstok.data") }}');
+        if (kashutangpiutangstokData) {
+            const totalData = {
+                kas: kashutangpiutangstokData.reduce((sum, item) => sum + item.kas, 0),
+                hutang: kashutangpiutangstokData.reduce((sum, item) => sum + item.hutang, 0),
+                piutang: kashutangpiutangstokData.reduce((sum, item) => sum + item.piutang, 0),
+                stok: kashutangpiutangstokData.reduce((sum, item) => sum + item.stok, 0),
+            };
+            renderPieChart(
+                'chartPie',
+                ['Kas', 'Hutang', 'Piutang', 'Stok'],
+                [totalData.kas, totalData.hutang, totalData.piutang, totalData.stok],
+                'Distribusi Kas, Hutang, Piutang, dan Stok'
+            );
+        }
+
+        // Laporan Sakit
+        const sakitData = await fetchChartData('{{ route("hrga.laporansakit.data") }}');
+        if (sakitData) {
+            const labels = sakitData.map(item => item.bulan_tahun);
+            const values = sakitData.map(item => Number(item.total_sakit));
+            renderBarChart('chartSakit', labels, values, 'Grafik Laporan Sakit', 'Total Sakit');
+        }
+    } catch (error) {
+        console.error('Error loading charts:', error);
+    }
+})();
 </script>

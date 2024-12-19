@@ -182,7 +182,7 @@
         // Fetch Existing Data
         async function fetchData() {
             try {
-                const response = await fetch('/hrga/laporansakit/data');
+                const response = await fetch('/hrga/sakit/data');
                 const result = await response.json();
                 return result.success ? result.data : [];
             } catch (error) {
@@ -212,8 +212,8 @@
                 total_sakit: sakitList
             };
 
-            const url = editMode ? `/hrga/laporansakit/update/${editId}` :
-                '/hrga/laporansakit/store';
+            const url = editMode ? `/hrga/sakit/update/${editId}` :
+                '/hrga/sakit/store';
 
             try {
                 const response = await fetch(url, {
@@ -244,7 +244,7 @@
             if (!confirm('Apakah Anda yakin ingin menghapus data ini?')) return;
 
             try {
-                const response = await fetch(`/hrga/laporansakit/destroy/${id}`, {
+                const response = await fetch(`/hrga/sakit/destroy/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -271,8 +271,8 @@
 
         // Update Data
         async function updateData(filter = '') {
-            const url = filter ? `/hrga/laporansakit/data?bulan_tahun=${filter}` :
-                '/hrga/laporansakit/data';
+            const url = filter ? `/hrga/sakit/data?bulan_tahun=${filter}` :
+                '/hrga/sakit/data';
 
             try {
                 const response = await fetch(url);

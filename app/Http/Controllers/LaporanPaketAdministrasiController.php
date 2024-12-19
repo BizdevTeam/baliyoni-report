@@ -38,13 +38,50 @@ class LaporanPaketAdministrasiController extends Controller
     // Simpan data baru
     public function store(Request $request)
     {
-        return $this->saveData($request);
+        $validated = $request->validate([
+            'bulan_tahun' => 'required|date_format:m/Y',
+            'website' => 'required|array|min:1',
+            'website.*' => 'required|string|max:255',
+            'paket_rp' => 'required|array|min:1',
+            'paket_rp.*' => 'required|numeric|min:0',
+        ]);
+
+        try {
+            $dataToInsert = $this->prepareDataForInsert($validated);
+
+            LaporanPaketAdministrasi::insert($dataToInsert);
+
+            return response()->json(['success' => true, 'message' => 'Data berhasil disimpan.']);
+        } catch (\Exception $e) {
+            Log::error('Error saving data: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat menyimpan data.'], 500);
+        }
     }
 
     // Perbarui data
+
     public function update(Request $request, $id)
     {
-        return $this->saveData($request, $id);
+        $validated = $request->validate([
+            'bulan_tahun' => 'required|date_format:m/Y',
+            'website' => 'required|array|min:1',
+            'website.*' => 'required|string|max:255',
+            'paket_rp' => 'required|array|min:1',
+            'paket_rp.*' => 'required|numeric|min:0',
+        ]);
+
+        try {
+            // Hapus data lama untuk website terkait
+            LaporanPaketAdministrasi::where('id', $id)->delete();
+
+            $dataToInsert = $this->prepareDataForInsert($validated);
+            LaporanPaketAdministrasi::insert($dataToInsert);
+
+            return response()->json(['success' => true, 'message' => 'Data berhasil diperbarui.']);
+        } catch (\Exception $e) {
+            Log::error('Error updating data: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat memperbarui data.'], 500);
+        }
     }
 
     // Fungsi umum untuk save/update data
