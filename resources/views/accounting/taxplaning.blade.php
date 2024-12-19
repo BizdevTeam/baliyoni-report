@@ -36,19 +36,17 @@
         <x-adminnav class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
 
         <!-- Main Content -->
-        <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100">
-            <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow">
+        <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
+            <div class="mx-auto bg-white p-6 rounded-lg shadow">
                 <h1 class="text-2xl font-bold mb-4">Laporan Tax Planing</h1>
 
         <!-- Action Buttons -->
-        <div class="flex justify-between items-center mb-4">
-            <button class="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600 flex items-center gap-2" onclick="location.reload();">
-                <i class="bi bi-arrow-repeat"></i>
-                Refresh
+        <div class="flex items-center mb-4">
+            <button class="bg-red-600 text-white px-4 py-2 rounded shadow flex text-center items-center gap-2 mr-2">
+                <a href="/admin">Back</a>
             </button>
-            <button class="bg-gray-500 text-white px-4 py-2 rounded shadow hover:bg-gray-600 flex items-center gap-2" data-modal-target="#addEventModal">
-                <i class="fa fa-plus"></i>
-                Add
+            <button class="bg-red-600 text-white px-4 py-2 rounded shadow flex items-center gap-2" data-modal-target="#addEventModal">
+                Add New
             </button>
         </div>
 
@@ -99,7 +97,7 @@
                             <td class="border border-gray-300 px-4 py-2">{{ $laporantaxplaning->keterangan }}</td>
                             <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
                                 <!-- Edit Button -->
-                                <button class="bg-yellow-500 text-white px-3 py-2 rounded hover:bg-yellow-600" data-modal-target="#editEventModal{{ $laporantaxplaning->id_taxplaning }}">
+                                <button class="bg-red-600 text-white px-3 py-2 rounded" data-modal-target="#editEventModal{{ $laporantaxplaning->id_taxplaning }}">
                                     <i class="fa fa-pen"></i>
                                     Edit
                                 </button>
@@ -107,7 +105,7 @@
                                 <form method="POST" action="{{ route('taxplaning.destroy', $laporantaxplaning->id_taxplaning) }}">
                                     @csrf
                                     @method('DELETE')
-                                    <button class="bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600" onclick="return confirm('Are you sure to delete?')">
+                                    <button class="bg-red-600 text-white px-3 py-2 rounded" onclick="return confirm('Are you sure to delete?')">
                                         <i class="fa fa-trash"></i>
                                         Delete
                                     </button>
@@ -150,8 +148,8 @@
                                         </div>
                                     </div>
                                     <div class="mt-4 flex justify-end gap-2">
-                                        <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600" data-modal-close>Close</button>
-                                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Update</button>
+                                        <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
+                                        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Update</button>
                                     </div>
                                 </form>
                             </div>

@@ -36,21 +36,17 @@
         <x-adminnav class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
 
         <!-- Main Content -->
-        <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100">
-            <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow">
+        <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
+            <div class="mx-auto bg-white p-6 rounded-lg shadow">
                 <h1 class="text-2xl font-bold mb-4">Laporan SPI</h1>
 
-    <!-- Content Wrapper -->
-    <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 transition-all duration-300">
-        <div class="container mx-auto p-5">
-            <!-- Page Header -->
-            <h1 class="text-3xl font-bold mb-5">Laporan SPI</h1>
-
             <!-- Action Buttons -->
-            <div class="flex justify-between items-center mb-4">
-                <button class="bg-gray-500 text-white px-4 py-2 rounded shadow hover:bg-gray-600 flex items-center gap-2" data-modal-target="#addEventModal">
-                    <i class="fa fa-plus"></i>
-                    Add
+            <div class="flex items-center mb-4">
+                <button class="bg-red-600 text-white px-4 py-2 rounded shadow flex text-center items-center gap-2 mr-2">
+                    <a href="/admin">Back</a>
+                </button>
+                <button class="bg-red-600 text-white px-4 py-2 rounded shadow flex items-center gap-2" data-modal-target="#addEventModal">
+                    Add New
                 </button>
             </div>
 
@@ -92,7 +88,7 @@
 
                                 <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
                                     <!-- Edit Button -->
-                                    <button class="bg-yellow-500 text-white px-3 py-2 rounded hover:bg-yellow-600" data-modal-target="#editEventModal{{ $laporan->id_spi }}">
+                                    <button class="bg-red-600 text-white px-3 py-2 rounded" data-modal-target="#editEventModal{{ $laporan->id_spi }}">
                                         <i class="fa fa-pen"></i>
                                         Edit
                                     </button>
@@ -100,7 +96,7 @@
                                     <form method="POST" action="{{ route('laporanspi.destroy', $laporan->id_spi) }}">
                                         @csrf
                                         @method('DELETE')
-                                        <button class="bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600" onclick="return confirm('Are you sure to delete?')">
+                                        <button class="bg-red-600 text-white px-3 py-2 rounded" onclick="return confirm('Are you sure to delete?')">
                                             <i class="fa fa-trash"></i>
                                             Delete
                                         </button>
@@ -142,8 +138,8 @@
                                             </div>
                                         </div>
                                         <div class="mt-4 flex justify-end gap-2">
-                                            <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600" data-modal-close>Close</button>
-                                            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Update</button>
+                                            <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
+                                            <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Update</button>
                                         </div>
                                     </form>
                                 </div>
@@ -154,6 +150,46 @@
             </div>
         </div>
     </div>
+</div>
+<!-- Modal untuk Add Data -->
+<div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">
+    <div class="bg-white w-1/2 p-6 rounded shadow-lg">
+        <h3 class="text-xl font-semibold mb-4">Add New Data</h3>
+        <form method="POST" action="{{ route('laporanspi.store') }}">
+            @csrf
+            <div class="space-y-4">
+                <div>
+                    <label for="bulan_tahun" class="block text-sm font-medium">Bulan & Tahun</label>
+                    <input type="month" name="bulan_tahun" class="w-full p-2 border rounded" required>
+                </div>
+                <div>
+                    <label for="judul" class="block text-sm font-medium">Judul</label>
+                    <input type="text" name="judul" class="w-full p-2 border rounded">
+                </div>
+                <div>
+                    <label for="aspek" class="block text-sm font-medium">Aspek</label>
+                    <input type="text" name="aspek" class="w-full p-2 border rounded">
+                </div>
+                <div>
+                    <label for="masalah" class="block text-sm font-medium">Masalah</label>
+                    <textarea name="masalah" class="w-full p-2 border rounded"></textarea>
+                </div>
+                <div>
+                    <label for="solusi" class="block text-sm font-medium">Solusi</label>
+                    <textarea name="solusi" class="w-full p-2 border rounded" rows="3" required></textarea>
+                </div>
+                <div>
+                    <label for="implementasi" class="block text-sm font-medium">Implementasi</label>
+                    <input type="text" name="implementasi" class="w-full p-2 border rounded">
+                </div>
+            </div>
+            <div class="mt-4 flex justify-end gap-2">
+                <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
+                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Add</button>
+            </div>
+        </form>
+    </div>
+</div>
 </body>
 
 <script>

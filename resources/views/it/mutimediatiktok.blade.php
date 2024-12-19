@@ -7,23 +7,46 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Multimedia Tiktok</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    @vite('resources/css/app.css')
+    <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
+    <!-- Tempusdominus Bootstrap 4 -->
+    <link rel="stylesheet"
+        href="{{ asset('templates/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
+    <!-- Theme style -->
+    <!-- overlayScrollbars -->
+    <link rel="stylesheet" href="{{ asset('templates/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    @vite('resources/css/tailwind.css')
+    @vite('resources/css/custom.css')
+    @vite('resources/js/app.js')
 </head>
 
-<body class="bg-gray-100 p-6">
+<body class="bg-gray-100 hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+    <!-- Sidebar -->
+    <x-adminside class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
 
-    <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow">
-        <!-- Page Header -->
-        <h1 class="text-3xl font-bold mb-5">Multimedia Tiktok</h1>
+    <!-- Navbar -->
+    <x-adminnav class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
+
+    <!-- Main Content -->
+    <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
+        <div class="mx-auto bg-white p-6 rounded-lg shadow">
+            <h1 class="text-2xl font-bold mb-4">Laporan Multimedia Tiktok</h1>
 
         <!-- Action Buttons -->
-        <div class="flex justify-between items-center mb-4">
-            <button class="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600 flex items-center gap-2" onclick="location.reload();">
-                <i class="bi bi-arrow-repeat"></i>
-                Refresh
+        <div class="flex items-center mb-4">
+            <button class="bg-red-600 text-white px-4 py-2 rounded shadow flex text-center items-center gap-2 mr-2">
+                <a href="/admin">Back</a>
             </button>
-            <button class="bg-gray-500 text-white px-4 py-2 rounded shadow hover:bg-gray-600 flex items-center gap-2" data-modal-target="#addEventModal">
-                <i class="fa fa-plus"></i>
-                Add
+            <button class="bg-red-600 text-white px-4 py-2 rounded shadow flex items-center gap-2" data-modal-target="#addEventModal">
+                Add New
             </button>
         </div>
 
@@ -64,7 +87,7 @@
                             <td class="border border-gray-300 px-4 py-2">{{ $itmultimediatiktok->keterangan }}</td>
                             <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
                                 <!-- Edit Button -->
-                                <button class="bg-yellow-500 text-white px-3 py-2 rounded hover:bg-yellow-600" data-modal-target="#editEventModal{{ $itmultimediatiktok->id_tiktok }}">
+                                <button class="bg-red-600 text-white px-3 py-2 rounded" data-modal-target="#editEventModal{{ $itmultimediatiktok->id_tiktok }}">
                                     <i class="fa fa-pen"></i>
                                     Edit
                                 </button>
@@ -72,7 +95,7 @@
                                 <form method="POST" action="{{ route('tiktok.destroy', $itmultimediatiktok->id_tiktok) }}">
                                     @csrf
                                     @method('DELETE')
-                                    <button class="bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600" onclick="return confirm('Are you sure to delete?')">
+                                    <button class="bg-red-600 text-white px-3 py-2 rounded" onclick="return confirm('Are you sure to delete?')">
                                         <i class="fa fa-trash"></i>
                                         Delete
                                     </button>
@@ -105,8 +128,8 @@
                                         </div>
                                     </div>
                                     <div class="mt-4 flex justify-end gap-2">
-                                        <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600" data-modal-close>Close</button>
-                                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Update</button>
+                                        <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
+                                        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Update</button>
                                     </div>
                                 </form>
                             </div>
@@ -116,6 +139,8 @@
             </table>
         </div>
     </div>
+    </div>
+</div>
     <!-- Modal untuk Add Event -->
 <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">
     <div class="bg-white w-1/2 p-6 rounded shadow-lg">
@@ -137,8 +162,8 @@
                 </div>
             </div>
             <div class="mt-4 flex justify-end gap-2">
-                <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600" data-modal-close>Close</button>
-                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add</button>
+                <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
+                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Add</button>
             </div>
         </form>
     </div>
