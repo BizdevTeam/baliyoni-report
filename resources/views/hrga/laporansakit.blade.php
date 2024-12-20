@@ -304,7 +304,7 @@
                 <tr class="border-b">
                     <td class="border px-4 py-2">${item.bulan_tahun}</td>
                     <td class="border px-4 py-2">${item.nama}</td>
-                    <td class="border px-4 py-2">Rp ${item.total_sakit.toLocaleString()}</td>
+                    <td class="border px-4 py-2">${item.total_sakit.toLocaleString()} Kali</td>
                     <td class="border px-4 py-2 flex items-center justify-center space-x-2">
                         <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
                                 class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">
@@ -324,10 +324,6 @@
         // Update Chart
         function updateChart(items) {
                 const canvas = document.getElementById('chart');
-                if (!canvas) {
-                    console.error('Canvas element with ID "chartCanvas" not found.');
-                    return;
-                }
                 const ctx = canvas.getContext('2d');
 
                 if (window.myChart) {
@@ -363,7 +359,7 @@
                             },
                             tooltip: {
                                 callbacks: {
-                                    label: context => `Rp ${context.raw.toLocaleString()}`,
+                                    label: context => `Total Sakit Sebanyak : ${context.raw.toLocaleString()} Kali`,
                                 },
                             },
                         },

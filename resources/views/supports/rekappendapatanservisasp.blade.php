@@ -75,7 +75,7 @@
                                 class="remove-pelaksana bg-red-500 text-white px-2 py-1 rounded">Hapus</button>
                         </div>
                     </div>
-                    <button type="button" id="add-pelaksana" class="bg-green-500 text-white px-4 py-2 rounded">Tambah
+                    <button type="button" id="add-pelaksana" class="bg-red-500 text-white px-4 py-2 rounded">Tambah
                         pelaksana</button>
                     <div class="flex justify-end space-x-2 mt-4">
                         <button type="button" id="close-modal"
@@ -107,7 +107,7 @@
         </table>
 
         <!-- Chart -->
-        <div class="mt-6 items-center text-center mx-auto">
+        <div class="mt-6 items-center text-center mx-auto w-[600px]">
             <canvas id="chart"></canvas>
         </div>
 
@@ -339,44 +339,50 @@
 
         // Update Chart
         function updateChart(items) {
-            const labels = items.map(item => item.pelaksana);
-            const dataValues = items.map(item => item.nilai_pendapatan);
-            const colors = ['#4bc0c0', '#ff6384', '#ffce56', '#36a2eb', '#9966ff'];
+    const labels = items.map(item => item.pelaksana);
+    const dataValues = items.map(item => item.nilai_pendapatan);
+    const colors = ['#4bc0c0', '#ff6384', '#ffce56', '#36a2eb', '#9966ff'];
 
-            const ctx = chartCanvas.getContext('2d');
-            if (window.myChart) window.myChart.destroy();
+    const ctx = chartCanvas.getContext('2d');
+    if (window.myChart) window.myChart.destroy();
 
-            window.myChart = new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels,
-                    datasets: [{
-                        label: 'Pendapatan pelaksana',
-                        data: dataValues,
-                        backgroundColor: colors,
-                        borderWidth: 1,
-                    }],
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'pelaksana'
-                            }
+    window.myChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels,
+            datasets: [{
+                label: 'Pendapatan pelaksana',
+                data: dataValues,
+                backgroundColor: colors,
+                borderWidth: 0, // Hilangkan border di sekitar potongan pie
+            }],
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top', // Posisi legenda di atas
+                    labels: {
+                        font: {
+                            size: 14, // Ukuran font untuk label legenda
                         },
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Pendapatan (Rp)'
-                            }
+                        color: '#333', // Warna teks legenda
+                    },
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            let label = context.label || '';
+                            let value = context.raw || 0;
+                            return `${label}: Rp ${value.toLocaleString()}`;
                         },
                     },
                 },
-            });
-        }
+            },
+        },
+    });
+}
+
 
         // Edit Data
         function editData(id, data) {

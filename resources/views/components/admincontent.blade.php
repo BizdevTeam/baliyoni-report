@@ -21,7 +21,7 @@
         <div class="bg-white rounded-lg shadow-lg p-6 flex-1 md:max-w-[49%]">
             <h1 class="text-2xl font-semibold text-gray-700 mb-4">Kas, Hutang, Piutang, Stok</h1>
             <div class="flex justify-center items-center">
-                <canvas id="chartPie" class=" h-[250px]"></canvas>
+                <canvas id="chartPie1" class=" h-[250px]"></canvas>
             </div>
         </div>
 
@@ -29,6 +29,21 @@
         <div class="bg-white rounded-lg shadow-lg p-6 flex-1 md:max-w-[49%]">
             <h1 class="text-2xl font-semibold text-gray-700 mb-4">Laporan Sakit</h1>
             <canvas id="chartSakit" class="w-full h-64"></canvas>
+        </div>
+    </div>
+    <div class="flex flex-wrap justify-between gap-4 mt-6">
+        <!-- Pie Chart -->
+        <div class="bg-white rounded-lg shadow-lg p-6 flex-1 md:max-w-[49%]">
+            <h1 class="text-2xl font-semibold text-gray-700 mb-4">Arus Kas</h1>
+            <div class="flex justify-center items-center">
+                <canvas id="chartPie2" class=" h-[250px]"></canvas>
+            </div>
+        </div>
+
+        <!-- Laporan Sakit -->
+        <div class="bg-white rounded-lg shadow-lg p-6 flex-1 md:max-w-[49%]">
+            <h1 class="text-2xl font-semibold text-gray-700 mb-4">Rekap Penjualan Perusahaan</h1>
+            <canvas id="chartPenjualanPerusahaan" class="w-full h-64"></canvas>
         </div>
     </div>
 </div>
@@ -81,7 +96,7 @@
                 tooltip: {
                     callbacks: {
                         label: function (context) {
-                            return `${context.raw.toLocaleString()}`; // Format tooltip angka
+                            return `Rp ${context.raw.toLocaleString()}`; // Format tooltip angka
                         },
                     },
                 },
@@ -110,6 +125,50 @@
         },
     });
 }
+
+function renderBarChart2(ctxId, labels, data, title, datasetLabel) {
+    const ctx = document.getElementById(ctxId).getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: datasetLabel,
+                data: data,
+                backgroundColor: data.map(() =>
+                    `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.7)`
+                ),
+                borderWidth: 1,
+            }],
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            return `Total : ${context.raw.toLocaleString()} Kali`; // Format tooltip angka
+                        },
+                    },
+                },
+                title: {
+                    display: true,
+                    text: title,
+                },
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        autoSkip: false,
+                        maxRotation: 45,
+                        minRotation: 0,
+                    },
+                },
+            },
+        },
+    });
+}
+
 function renderPieChart(ctxId, labels, data, title) {
     const ctx = document.getElementById(ctxId).getContext('2d');
     new Chart(ctx, {
@@ -184,21 +243,45 @@ function renderPieChart(ctxId, labels, data, title) {
                 piutang: kashutangpiutangstokData.reduce((sum, item) => sum + item.piutang, 0),
                 stok: kashutangpiutangstokData.reduce((sum, item) => sum + item.stok, 0),
             };
+        
             renderPieChart(
-                'chartPie',
+                'chartPie1',
                 ['Kas', 'Hutang', 'Piutang', 'Stok'],
                 [totalData.kas, totalData.hutang, totalData.piutang, totalData.stok],
                 'Distribusi Kas, Hutang, Piutang, dan Stok'
+            );
+        }
+        const aruskasData = await fetchChartData('{{ route("accounting.aruskas.data") }}');
+        if (aruskasData) {
+            const totalData = {
+                kas_masuk: aruskasData.reduce((sum, item) => sum + item.kas_masuk, 0),
+                kas_keluar: aruskasData.reduce((sum, item) => sum + item.kas_keluar, 0),
+
+            };
+        
+            renderPieChart(
+                'chartPie2',
+                ['Kas Masuk', 'Kas Keluar'],
+                [totalData.kas_masuk, totalData.kas_keluar],
+                'Arus Kas'
             );
         }
 
         // Laporan Sakit
         const sakitData = await fetchChartData('{{ route("hrga.laporansakit.data") }}');
         if (sakitData) {
-            const labels = sakitData.map(item => item.bulan_tahun);
+            const labels = sakitData.map(item => item.nama);
             const values = sakitData.map(item => Number(item.total_sakit));
-            renderBarChart('chartSakit', labels, values, 'Grafik Laporan Sakit', 'Total Sakit');
+            renderBarChart2('chartSakit', labels, values, 'Grafik Laporan Sakit', 'Total Sakit');
         }
+
+        const ppData = await fetchChartData('{{ route("marketings.rekappenjualanperusahaan.data") }}');
+        if (ppData) {
+            const labels = ppData.map(item => `${item.perusahaan} (${item.bulan_tahun})`);
+            const values = ppData.map(item => Number(item.nilai_paket));
+            renderBarChart('chartPenjualanPerusahaan', labels, values, 'Grafik Rekap Penjualan Perusahaan','Rekap Penjualan Perusahaan');
+        }
+
     } catch (error) {
         console.error('Error loading charts:', error);
     }
