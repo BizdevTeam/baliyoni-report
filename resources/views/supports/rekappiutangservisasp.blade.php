@@ -75,7 +75,7 @@
                                 class="remove-pelaksana bg-red-500 text-white px-2 py-1 rounded">Hapus</button>
                         </div>
                     </div>
-                    <button type="button" id="add-pelaksana" class="bg-green-500 text-white px-4 py-2 rounded">Tambah
+                    <button type="button" id="add-pelaksana" class="bg-red-500 text-white px-4 py-2 rounded">Tambah
                         pelaksana</button>
                     <div class="flex justify-end space-x-2 mt-4">
                         <button type="button" id="close-modal"
