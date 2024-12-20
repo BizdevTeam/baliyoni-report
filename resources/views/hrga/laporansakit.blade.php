@@ -168,7 +168,7 @@
             modal.classList.add('hidden');
         });
 
-        // Validate Duplicate Entries
+        // Validate Duplicate Entries 
         function isDuplicateEntry(bulanTahun, namaList, items) {
             const hasDuplicate = new Set(namaList).size !== namaList.length;
             if (hasDuplicate) {

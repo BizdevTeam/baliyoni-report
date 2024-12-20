@@ -17,4 +17,7 @@ class LaporanCuti extends Model
         'total_cuti',      // Total paket dalam nilai integer
         'nama',       // Keterangan tambahan (nullable)
     ];
+    protected $casts = [
+        'total_cuti' => 'integer',
+    ];
 }
