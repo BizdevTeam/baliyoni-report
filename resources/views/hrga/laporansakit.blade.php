@@ -324,10 +324,6 @@
         // Update Chart
         function updateChart(items) {
                 const canvas = document.getElementById('chart');
-                if (!canvas) {
-                    console.error('Canvas element with ID "chartCanvas" not found.');
-                    return;
-                }
                 const ctx = canvas.getContext('2d');
 
                 if (window.myChart) {
