@@ -9,6 +9,48 @@
             <img src="{{ asset("images/BYS_LOGO.png") }}" class="w-full" alt="Logo Full">
         </div>
     </div>
+
+    @if(Auth::check())
+                    <span class="text-white font-medium">{{ Auth::user()->name }}</span>
+            
+                    <!-- Conditionally render the role-specific navbar items -->
+                    @if(Auth::user()->role == 'superadmin')
+                        <!-- SuperAdmin navbar content -->
+                        <span class="text-white"></span>
+                        <!-- Add other items specific to superadmin -->
+                    @elseif(Auth::user()->role == 'marketing')
+                        <!-- Marketing navbar content -->
+                        <span class="text-white"></span>
+                        <!-- Add other items specific to marketing -->
+                    @elseif(Auth::user()->role == 'it')
+                        <!-- IT navbar content -->
+                        <span class="text-white"></span>
+                        <!-- Add other items specific to IT -->
+                    @elseif(Auth::user()->role == 'procurement')
+                        <!-- Procurement navbar content -->
+                        <span class="text-white"></span>
+                        <!-- Add other items specific to procurement -->
+                    @elseif(Auth::user()->role == 'accounting')
+                        <!-- Accounting navbar content -->
+                        <span class="text-white"></span>
+                        <!-- Add other items specific to accounting -->
+                    @elseif(Auth::user()->role == 'support')
+                        <!-- Support navbar content -->
+                        <span class="text-white"></span>
+                        <!-- Add other items specific to support -->
+                    @elseif(Auth::user()->role == 'hrga')
+                        <!-- HRGA navbar content -->
+                        <span class="text-white"></span>
+                        <!-- Add other items specific to HRGA -->
+                    @elseif(Auth::user()->role == 'spi')
+                        <!-- SPI navbar content -->
+                        <span class="text-white"></span>
+                        <!-- Add other items specific to SPI -->
+                    @endif
+                @else
+                    <span class="text-white font-medium">Guest</span>
+                @endif
+                
     <nav class="mt-4">
         <ul class="flex flex-col space-y-3">
             <div class="home">

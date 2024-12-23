@@ -9,15 +9,54 @@
                 Home
             </a>
         </div>
-
-        <!-- Right: User Info -->
-        <div id="navbar-right" class="flex items-center space-x-4 mr-4 absolute right-2">
-            <!-- User Info -->
-            <i class="fas fa-user text-gray-300 text-lg"></i>
-            <span class="text-white font-medium">SuperAdmin</span>
-
+        
             <!-- Search Bar -->
-          
+            <div id="navbar-right" class="flex items-center space-x-4 mr-4 absolute right-2">
+                <!-- User Info -->
+                <i class="fas fa-user text-gray-300 text-lg"></i>
+                
+                @if(Auth::check())
+                    <span class="text-white font-medium">{{ Auth::user()->name }}</span>
+            
+                    <!-- Conditionally render the role-specific navbar items -->
+                    @if(Auth::user()->role == 'superadmin')
+                        <!-- SuperAdmin navbar content -->
+                        <span class="text-white"></span>
+                        <!-- Add other items specific to superadmin -->
+                    @elseif(Auth::user()->role == 'marketing')
+                        <!-- Marketing navbar content -->
+                        <span class="text-white"></span>
+                        <!-- Add other items specific to marketing -->
+                    @elseif(Auth::user()->role == 'it')
+                        <!-- IT navbar content -->
+                        <span class="text-white"></span>
+                        <!-- Add other items specific to IT -->
+                    @elseif(Auth::user()->role == 'procurement')
+                        <!-- Procurement navbar content -->
+                        <span class="text-white"></span>
+                        <!-- Add other items specific to procurement -->
+                    @elseif(Auth::user()->role == 'accounting')
+                        <!-- Accounting navbar content -->
+                        <span class="text-white"></span>
+                        <!-- Add other items specific to accounting -->
+                    @elseif(Auth::user()->role == 'support')
+                        <!-- Support navbar content -->
+                        <span class="text-white"></span>
+                        <!-- Add other items specific to support -->
+                    @elseif(Auth::user()->role == 'hrga')
+                        <!-- HRGA navbar content -->
+                        <span class="text-white"></span>
+                        <!-- Add other items specific to HRGA -->
+                    @elseif(Auth::user()->role == 'spi')
+                        <!-- SPI navbar content -->
+                        <span class="text-white"></span>
+                        <!-- Add other items specific to SPI -->
+                    @endif
+                @else
+                    <span class="text-white font-medium">Guest</span>
+                @endif
+            </div>
+            
         </div>
     </div>
 </nav>

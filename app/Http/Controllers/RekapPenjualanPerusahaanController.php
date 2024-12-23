@@ -47,18 +47,10 @@ class RekapPenjualanPerusahaanController extends Controller
         $validated = $request->validate([
             'bulan_tahun' => 'required|date_format:m/Y',
             'perusahaan' => 'required|array|min:1',
-            'perusahaan.*' => 'required|string|ma x:255',
+            'perusahaan.*' => 'required|string|max:255',
             'nilai_paket' => 'required|array|min:1',
             'nilai_paket.*' => 'required|numeric|min:0',
         ]);
-
-        foreach ($validated['perusahaan'] as $index => $perusahaan) {
-            RekapPenjualanPerusahaan::create([
-                'bulan_tahun' => $validated['bulan_tahun'],
-                'perusahaan' => $perusahaan,
-                'nilai_paket' => $validated['nilai_paket'][$index],
-            ]);
-        }
 
         try {
             $dataToInsert = $this->prepareDataForInsert($validated);
