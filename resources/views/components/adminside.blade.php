@@ -105,7 +105,6 @@
                         </a>
                     </li>
                 </ul>
-
             </li>
 
             <li class="relative">
@@ -199,10 +198,9 @@
                             <span class="ml-2">Tax Planning vs Penjualan</span>
                         </a>
                     </li>
-
                 </ul>
-
             </li>
+
             <li class="relative">
                 <button type="button"
                     class="flex items-center w-full px-4 py-2 text-gray-700 rounded-md . . transition"
@@ -254,10 +252,9 @@
                             <span class="ml-2">Laporan Terlambat</span>
                         </a>
                     </li>
-
                 </ul>
-
             </li>
+            
             <li class="relative">
                 <button type="button"
                     class="flex items-center w-full px-4 py-2 text-gray-700 rounded-md . . transition"

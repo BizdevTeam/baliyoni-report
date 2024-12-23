@@ -31,10 +31,10 @@
 <body class="bg-gray-100 hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
         <!-- Sidebar -->
-        <x-adminside class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
+        <x-marketingside class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
 
         <!-- Navbar -->
-        <x-adminnav class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
+        <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
 
         <!-- Main Content -->
         <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
@@ -336,14 +336,14 @@
                     <td class="border px-4 py-2">${item.perusahaan}</td>
                     <td class="border px-4 py-2">Rp ${item.nilai_paket.toLocaleString()}</td>
                     <td class="border px-4 py-2 flex items-center justify-center space-x-2">
-                        <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
-                                class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">
-                            Edit
-                        </button>
-                        <button onclick="deleteData(${item.id})"
-                                class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700">
-                            Delete
-                        </button>
+                      <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
+                            class="bg-red-500 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
+                        <i class="fas fa-edit mr-2"></i> Edit
+                    </button>
+                    <button onclick="deleteData(${item.id})" 
+                            class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
+                        <i class="fas fa-trash mr-2"></i> Delete
+                    </button>
                     </td>
                 </tr>`;
                     tableBody.insertAdjacentHTML('beforeend', row);

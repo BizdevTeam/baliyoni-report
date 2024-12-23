@@ -32,19 +32,19 @@ class SessionController extends Controller
                 case 'superadmin':
                     return redirect('admin');
                 case 'marketing':
-                    return redirect('marketing');
+                    return redirect('admin/marketing');
                 case 'it':
-                    return redirect('it');
+                    return redirect('admin/it');
                 case 'procurement':
-                    return redirect('procurement');
+                    return redirect('admin/procurement');
                 case 'accounting':
-                    return redirect('accounting');
+                    return redirect('admin/accounting');
                 case 'support':
-                    return redirect('support');
+                    return redirect('admin/support');
                 case 'hrga':
-                    return redirect('hrga');
+                    return redirect('admin/hrga');
                 case 'spi':
-                    return redirect('spi');
+                    return redirect('admin/spi');
                 default:
                     Auth::logout();
                     return redirect('/')->withErrors('Invalid role');
