@@ -2,136 +2,122 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\LaporanCuti;
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class LaporanCutiController extends Controller
 {
+    // Menampilkan halaman utama
     public function index()
     {
         return view('hrga.laporancuti');
     }
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'bulan_tahun' => 'required|date_format:m/Y',
-            'total_cuti' => 'required|numeric|min:0',
-            'nama' => 'nullable|string|max:255',
-        ]);
-
-        try {
-            // Cek duplikasi nama pada bulan dan tahun yang sama
-            $existingRecord = LaporanCuti::where('nama', $validated['nama'])
-                ->where('bulan_tahun', $validated['bulan_tahun'])
-                ->first();
-
-            if ($existingRecord) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Nama sudah terdaftar pada bulan dan tahun yang sama.',
-                ]);
-            }
-
-            $laporanCuti = new LaporanCuti();
-            $laporanCuti->bulan_tahun = $validated['bulan_tahun'];
-            $laporanCuti->total_cuti = $validated['total_cuti'];
-            $laporanCuti->nama = $validated['nama'] ?? null;
-            $laporanCuti->save();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Data berhasil disimpan.',
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal menyimpan data. Error: ' . $e->getMessage(),
-            ]);
-        }
-    }
-
-    public function update($id, Request $request)
-    {
-        $validated = $request->validate([
-            'bulan_tahun' => 'required|date_format:m/Y',
-            'total_cuti' => 'required|numeric|min:0',
-            'nama' => 'nullable|string|max:255',
-        ]);
-
-        try {
-            $laporanCuti = LaporanCuti::findOrFail($id);
-
-            // Cek duplikasi nama pada bulan dan tahun yang sama, kecuali untuk record yang sedang diupdate
-            $existingRecord = LaporanCuti::where('nama', $validated['nama'])
-                ->where('bulan_tahun', $validated['bulan_tahun'])
-                ->where('id', '!=', $id)
-                ->first();
-
-            if ($existingRecord) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Nama sudah terdaftar pada bulan dan tahun yang sama.',
-                ]);
-            }
-
-            $laporanCuti->bulan_tahun = $validated['bulan_tahun'];
-            $laporanCuti->total_cuti = $validated['total_cuti'];
-            $laporanCuti->nama = $validated['nama'] ?? null;
-            $laporanCuti->save();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Data berhasil diupdate.',
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal mengupdate data. Error: ' . $e->getMessage(),
-            ]);
-        }
-    }
-
-    public function destroy($id)
+    // Fetch data dengan filter
+    public function data(Request $request)
     {
         try {
-            $laporanCuti = LaporanCuti::findOrFail($id);
-            $laporanCuti->delete();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Data berhasil dihapus.',
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal menghapus data. Error: ' . $e->getMessage(),
-            ]);
-        }
-    }
-
-    public function getData(Request $request)
-    {
-        try {
-            $filter = $request->input('bulan_tahun', '');
+            $bulanTahun = $request->query('bulan_tahun');
             $query = LaporanCuti::query();
 
-            if ($filter) {
-                $query->where('bulan_tahun', $filter);
+            if ($bulanTahun) {
+                $query->where('bulan_tahun', $bulanTahun);
             }
 
-            $data = $query->get();
+            $data = $query->orderBy('created_at', 'desc')->get();
 
             return response()->json([
                 'success' => true,
                 'data' => $data,
-            ]);
+            ], 200);
         } catch (\Exception $e) {
+            Log::error('Error fetching data: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal memuat data. Error: ' . $e->getMessage(),
-            ]);
+                'message' => 'Terjadi kesalahan saat mengambil data.',
+            ], 500);
         }
+    }
+
+    // Simpan data baru
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'bulan_tahun' => 'required|date_format:m/Y',
+            'nama' => 'required|array|min:1',
+            'nama.*' => 'required|string|max:255',
+            'total_cuti' => 'required|array|min:1',
+            'total_cuti.*' => 'required|numeric|min:0',
+        ]);
+
+        try {
+            $dataToInsert = $this->prepareDataForInsert($validated);
+
+            LaporanCuti::insert($dataToInsert);
+
+            return response()->json(['success' => true, 'message' => 'Data berhasil disimpan.']);
+        } catch (\Exception $e) {
+            Log::error('Error saving data: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat menyimpan data.'], 500);
+        }
+    }
+
+    // Perbarui data
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'bulan_tahun' => 'required|date_format:m/Y',
+            'nama' => 'required|array|min:1',
+            'nama.*' => 'required|string|max:255',
+            'total_cuti' => 'required|array|min:1',
+            'total_cuti.*' => 'required|numeric|min:0',
+        ]);
+
+        try {
+            // Hapus data lama untuk nama terkait
+            LaporanCuti::where('id', $id)->delete();
+
+            $dataToInsert = $this->prepareDataForInsert($validated);
+            LaporanCuti::insert($dataToInsert);
+
+            return response()->json(['success' => true, 'message' => 'Data berhasil diperbarui.']);
+        } catch (\Exception $e) {
+            Log::error('Error updating data: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat memperbarui data.'], 500);
+        }
+    }
+
+    // Hapus data
+    public function destroy($id)
+    {
+        try {
+            $paket = LaporanCuti::findOrFail($id);
+            $paket->delete();
+
+            return response()->json(['success' => true, 'message' => 'Data berhasil dihapus.'], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            Log::error('Data not found: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Data tidak ditemukan.'], 404);
+        } catch (\Exception $e) {
+            Log::error('Error deleting data: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat menghapus data.'], 500);
+        }
+    }
+
+    // Persiapkan data untuk di-insert ke database
+    private function prepareDataForInsert($validated)
+    {
+        $dataToInsert = [];
+        foreach ($validated['nama'] as $index => $nama) {
+            $dataToInsert[] = [
+                'bulan_tahun' => $validated['bulan_tahun'],
+                'nama' => $nama,
+                'total_cuti' => $validated['total_cuti'][$index],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+        return $dataToInsert;
     }
 }

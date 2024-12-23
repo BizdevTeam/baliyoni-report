@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('laporan_izins', function (Blueprint $table) {
             $table->id();   
-            $table->string('bulan_tahun')->unique(); 
+            $table->string('bulan_tahun'); 
             $table->integer('total_izin')->default(0); 
-            $table->string('nama')->nullable();
+            $table->string('nama');
             $table->timestamps();
         });
     }
