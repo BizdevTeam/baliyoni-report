@@ -52,7 +52,7 @@ class RekapPenjualanPerusahaanController extends Controller
             'nilai_paket.*' => 'required|numeric|min:0',
         ]);
 
-        try {
+        try {   
             $dataToInsert = $this->prepareDataForInsert($validated);
 
             RekapPenjualanPerusahaan::insert($dataToInsert);
