@@ -89,6 +89,41 @@ nav ul li ul.visible {
     margin-right: 18px; /* Sesuaikan jaraknya */
 }
 
+@keyframes slide-down {
+    from {
+      opacity: 0;
+      transform: translateY(-100px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .animate-slide-down {
+    animation: slide-down 0.3s ease-out;
+  }
+
+
+  /* Animasi saat modal ditutup */
+.fixed.closing {
+    animation: slideUp 0.5s ease-in-out forwards; /* Durasi animasi 0.5 detik */
+}
+
+/* Animasi slide-up */
+@keyframes slideUp {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+}
+
+  
+
 
 
 

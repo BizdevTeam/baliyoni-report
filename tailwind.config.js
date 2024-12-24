@@ -15,6 +15,16 @@ export default {
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans2: ['Roboto', 'sans-serif'],
+                serif: ['Georgia', 'serif'],
+                inter: ['Inter', 'sans-serif'],
+                lato: ['Lato', 'sans-serif'],
+                montserrat: ['Montserrat', 'sans-serif'],
+                playfair: ['Playfair Display', 'serif'],
+                pacifico: ['Pacifico', 'cursive'],
+                lobster: ['Lobster', 'cursive'],
+                greatVibes: ['Great Vibes', 'cursive'],
+                archivoBlack: ['Archivo Black', 'sans-serif'],
             },
         },
     },
