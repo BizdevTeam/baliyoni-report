@@ -25,7 +25,7 @@
 <body class="hold-transition sidebar-mini layout-fixed overflow-x-hidden w-300">
   <div class="wrapper">
     <x-adminside />
-    <x-adminnav />
+    <x-navbar />
     <x-admincontent>
         @yield('content')
     </x-admincontent>

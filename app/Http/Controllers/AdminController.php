@@ -9,43 +9,31 @@ use Illuminate\Support\Facades\Auth;
 class AdminController extends Controller
 {
     // 
-    function index(){
+    function index()
+    {
         return view('layouts.admin');
     }
-    function marketing(){
-        echo "Hello Welcome Back Marketing!";
-        echo "<h1>" . Auth::user()->name . "</h1>" ;
-        echo "<a href='/logout' >Logout</a>";
+    function marketing()
+    {
+        return view('layouts.marketing');
     }
     function it()
     {
-        echo "Hello Welcome Back IT!";
-        echo "<h1>" . Auth::user()->name . "</h1>" ;
-        echo "<a href='/logout' >Logout</a>";
+        return view('layouts.it');
     }
     function procurement(){
-        echo "Hello Welcome Back Procurement!";
-        echo "<h1>" . Auth::user()->name . "</h1>" ;
-        echo "<a href='/logout' >Logout</a>";
+        return view('layouts.procurement');
     }
     function accounting(){
-        echo "Hello Welcome Back Accounting!";
-        echo "<h1>" . Auth::user()->name . "</h1>" ;
-        echo "<a href='/logout' >Logout</a>";
+        return view('layouts.accounting');
     }
     function support(){
-        echo "Hello Welcome Back Support!";
-        echo "<h1>" . Auth::user()->name . "</h1>" ;
-        echo "<a href='/logout' >Logout</a>";
+        return view('layouts.support');
     }
     function hrga(){
-        echo "Hello Welcome Back HRGA!";
-        echo "<h1>" . Auth::user()->name . "</h1>" ;
-        echo "<a href='/logout' >Logout</a>";
+        return view('layouts.hrga');
     }
     function spi(){
-        echo "Hello Welcome Back SPI!";
-        echo "<h1>" . Auth::user()->name . "</h1>" ;
-        echo "<a href='/logout' >Logout</a>";
+        return view('layouts.spi');
     }
 }

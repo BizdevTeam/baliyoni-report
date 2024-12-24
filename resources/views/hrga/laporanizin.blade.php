@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Laporan HRD (Izin)</title>
+    <title>Laporan HRD (IZIN)</title>
     @vite('resources/css/app.css')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
@@ -23,51 +23,56 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
     @vite('resources/css/tailwind.css')
-    @vite('resources/css/custom.css')
     @vite('resources/js/app.js')
 </head>
 
 <body class="bg-gray-100 hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
         <!-- Sidebar -->
-        <x-adminside class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
+        <x-hrgaside class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
 
         <!-- Navbar -->
-        <x-adminnav class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
+        <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
 
         <!-- Main Content -->
         <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
             <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow">
-                <h1 class="text-2xl font-bold mb-4">Lapiran HRD (Izin)</h1>
-                    <!-- Button Tambah Data -->
-                    <button id="open-modal" class="bg-red-600 text-white px-4 py-2 rounded mb-4">Tambah Data</button>
+                <h1 class="text-2xl font-bold mb-4">Laporan HRD (IZIN)</h1>
+
+        <!-- Button Tambah Data -->
+        <div class="flex gap-4 mb-4">
+            <a href="/admin" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Kembali</a>
+            <button id="open-modal" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Tambah
+                Data</button>
+        </div>
 
         <!-- Modal -->
         <div id="modal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
             <div class="bg-white p-6 rounded shadow w-full max-w-md">
                 <h2 class="text-xl font-bold mb-4" id="modal-title">Tambah Data</h2>
-                <form id="modal-form" class="space-y-4">
+                <form id="modal-form" class="space-y-4" method="POST">
+                    @csrf <!-- Token CSRF untuk Laravel -->
                     <div>
                         <label for="modal-bulan_tahun" class="block text-sm font-medium">Bulan/Tahun</label>
                         <input type="text" id="modal-bulan_tahun" name="bulan_tahun"
                             class="w-full border-gray-300 rounded p-2" placeholder="mm/yyyy" required>
                     </div>
-                    <div>
-                        <label for="modal-nama" class="block text-sm font-medium">Nama Karyawan</label>
-                        <input type="text" id="modal-nama" name="nama" class="w-full border-gray-300 rounded p-2"
-                            placeholder="Masukkan Nama">
+                    <div id="nama-container">
+                        <div class="nama-item flex items-center space-x-2 mb-2">
+                            <input type="text" name="nama[]" class="w-full border-gray-300 rounded p-2"
+                                placeholder="Nama Karyawan" required>
+                            <input type="text" name="total_izin[]" class="w-full border-gray-300 rounded p-2"
+                                placeholder="Total Izin" required>
+                            <button type="button"
+                                class="remove-nama bg-red-500 text-white px-2 py-1 rounded">Hapus</button>
+                        </div>
                     </div>
-
-                    <div>
-                        <label for="modal-total_izin" class="block text-sm font-medium">Total Izin</label>
-                        <input type="text" id="modal-total_izin" name="total_izin"
-                            class="w-full border-gray-300 rounded p-2" placeholder="0" min="0" required>
-                    </div>
-                    <div class="flex justify-end space-x-2">
+                    <button type="button" id="add-nama" class="bg-red-500 text-white px-4 py-2 rounded">Tambah
+                        nama</button>
+                    <div class="flex justify-end space-x-2 mt-4">
                         <button type="button" id="close-modal"
                             class="bg-gray-500 text-white px-4 py-2 rounded">Batal</button>
-                        <button type="submit" id="save-data"
-                            class="bg-blue-500 text-white px-4 py-2 rounded">Simpan</button>
+                        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Simpan</button>
                     </div>
                 </form>
             </div>
@@ -85,8 +90,8 @@
             <thead class="bg-gray-200">
                 <tr>
                     <th class="border border-gray-300 px-4 py-2">Bulan/Tahun</th>
-                    <th class="border border-gray-300 px-4 py-2">Total Izin</th>
                     <th class="border border-gray-300 px-4 py-2">Nama Karyawan</th>
+                    <th class="border border-gray-300 px-4 py-2">Total izin</th>
                     <th class="border border-gray-300 px-4 py-2">Aksi</th>
                 </tr>
             </thead>
@@ -94,172 +99,247 @@
         </table>
 
         <!-- Chart -->
-        <div class="mt-6">
+        <div class="mt-6 items-center text-center mx-auto">
             <canvas id="chart"></canvas>
         </div>
 
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const modal = document.getElementById('modal');
-            const openModalButton = document.getElementById('open-modal');
-            const closeModalButton = document.getElementById('close-modal');
-            const modalForm = document.getElementById('modal-form');
-            const modalTitle = document.getElementById('modal-title');
-            const chartCanvas = document.getElementById('chart');
+        document.getElementById('add-nama').addEventListener('click', () => {
+            const namaContainer = document.getElementById('nama-container');
+
+            // Membuat elemen nama dan nilai pendapatan
+            const newnamaItem = document.createElement('div');
+            newnamaItem.className = 'nama-item flex items-center space-x-2 mb-2';
             
-            let editMode = false;
-            let editId = null;
+            const namaInput = document.createElement('input');
+            namaInput.type = 'text';
+            namaInput.name = 'nama[]';
+            namaInput.className = 'w-full border-gray-300 rounded p-2';
+            namaInput.placeholder = 'Nama Karyawan';
+            namaInput.required = true;
 
-            // Open Modal
-            openModalButton.addEventListener('click', () => {
-                modalForm.reset();
-                modalTitle.textContent = 'Tambah Data';
-                editMode = false;
-                modal.classList.remove('hidden');
+            const izinInput = document.createElement('input');
+            izinInput.type = 'text';
+            izinInput.name = 'total_izin[]';
+            izinInput.className = 'w-full border-gray-300 rounded p-2';
+            izinInput.placeholder = 'Total Izin';
+            izinInput.required = true;
+
+            const removeButton = document.createElement('button');
+            removeButton.type = 'button';
+            removeButton.className = 'remove-nama bg-red-500 text-white px-2 py-1 rounded';
+            removeButton.textContent = 'Hapus';
+
+            // Menambahkan logika hapus
+            removeButton.addEventListener('click', () => {
+                newnamaItem.remove();
             });
 
-            // Close Modal
-            closeModalButton.addEventListener('click', () => {
-                modal.classList.add('hidden');
-            });
+            // Menambahkan elemen ke container
+            newnamaItem.appendChild(namaInput);
+            newnamaItem.appendChild(izinInput);
+            newnamaItem.appendChild(removeButton);
 
-            // Submit Form
-            modalForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
+            namaContainer.appendChild(newnamaItem);
+        });
 
-                // Validasi input
-                const bulanTahun = document.getElementById('modal-bulan_tahun').value.trim();
-                const totalIzin = Number(document.getElementById('modal-total_izin').value);
-                const nama = document.getElementById('modal-nama').value.trim();
+        const modal = document.getElementById('modal');
+        const openModalButton = document.getElementById('open-modal');
+        const closeModalButton = document.getElementById('close-modal');
+        const modalForm = document.getElementById('modal-form');
+        const modalTitle = document.getElementById('modal-title');
+        const chartCanvas = document.getElementById('chart');
 
-                if (!bulanTahun || isNaN(totalIzin) || totalIzin < 0) {
-                    alert('Harap isi semua data dengan benar.');
-                    return;
-                }
+        let editMode = false;
+        let editId = null;
 
-                const data = {
-                    bulan_tahun: bulanTahun,
-                    total_izin: totalIzin,
-                    nama: nama || null
-                };
+        // Open Modal
+        openModalButton.addEventListener('click', () => {
+            modalForm.reset();
+            modalTitle.textContent = 'Tambah Data';
+            editMode = false;
+            modal.classList.remove('hidden');
+        });
 
-                // Tentukan URL dan metode
-                const url = editMode ? `/hrga/laporanizin/update/${editId}` :
-                    '/hrga/laporanizin/store';
-                const method = editMode ? 'PUT' : 'POST';
+        // Close Modal
+        closeModalButton.addEventListener('click', () => {
+            modal.classList.add('hidden');
+        });
 
-                try {
-                    const response = await fetch(url, {
-                        method,
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                .content,
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(data),
-                    });
-
-                    const result = await response.json();
-                    if (response.ok && result.success) {
-                        alert(result.message || 'Data berhasil disimpan.');
-                        updateData(); // Refresh data
-                        modal.classList.add('hidden'); // Tutup modal
-                    } else {
-                        alert(result.message || 'Gagal menyimpan data.');
-                    }
-                } catch (error) {
-                    console.error('Network Error:', error);
-                    alert('Terjadi kesalahan saat menyimpan data.');
-                }
-            });
-            // Delete Data
-            window.deleteData = async function deleteData(id) {
-                if (!confirm('Apakah Anda yakin ingin menghapus data ini?')) return;
-
-                try {
-                    const response = await fetch(`/hrga/laporanizin/destroy/${id}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        },
-                    });
-
-                    const result = await response.json();
-                    if (response.ok && result.success) {
-                        alert(result.message || 'Data berhasil dihapus.');
-                        updateData();
-                    } else {
-                        alert(result.message || 'Gagal menghapus data.');
-                    }
-                } catch (error) {
-                    console.error('Error deleting data:', error);
-                    alert('Terjadi kesalahan saat menghapus data.');
-                }
+        // Validate Duplicate Entries
+        function isDuplicateEntry(bulanTahun, namaList, items) {
+            const hasDuplicate = new Set(namaList).size !== namaList.length;
+            if (hasDuplicate) {
+                alert('Nama yang sama tidak boleh ditambahkan dalam bulan/tahun yang sama.');
+                return true;
             }
 
-            // Apply Filter
-            document.getElementById('apply-filter').addEventListener('click', () => {
-                const filterValue = document.getElementById('filter-bulan-tahun').value;
-                updateData(filterValue);
-            });
+            return items.some(item => item.bulan_tahun === bulanTahun && namaList.includes(item.nama));
+        }
 
-            // Fetch and Update Data
-            async function updateData(filter = '') {
-                const url = filter ? `/hrga/laporanizin/data?bulan_tahun=${filter}` :
+        // Fetch Existing Data
+        async function fetchData() {
+            try {
+                const response = await fetch('/hrga/laporanizin/data');
+                const result = await response.json();
+                return result.success ? result.data : [];
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                return [];
+            }
+        }
+
+        modalForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const bulanTahun = document.getElementById('modal-bulan_tahun').value.trim();
+            const namaList = [...document.querySelectorAll('input[name="nama[]"]')].map(
+                input => input.value.trim());
+            const izinList = [...document.querySelectorAll('input[name="total_izin[]"]')].map(
+                input => parseFloat(input.value.trim()));
+
+            if (!bulanTahun || namaList.some(p => !p) || izinList.some(isNaN)) {
+                alert('Semua kolom harus diisi dengan benar.');
+                return;
+            }
+
+            const payload = {
+                id: editId,
+                bulan_tahun: bulanTahun,
+                nama: namaList,
+                total_izin: izinList
+            };
+
+            const url = editMode ? `/hrga/laporanizin/update/${editId}` :
+                '/hrga/laporanizin/store';
+
+            try {
+                const response = await fetch(url, {
+                    method: editMode ? 'PUT' : 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload),
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('Data berhasil disimpan.');
+                    modal.classList.add('hidden');
+                    updateData();
+                } else {
+                    alert(result.message || 'Gagal menyimpan data.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat menyimpan data.');
+            }
+        });
+
+        // Delete Data
+        async function deleteData(id) {
+            if (!confirm('Apakah Anda yakin ingin menghapus data ini?')) return;
+
+            try {
+                const response = await fetch(`/hrga/laporanizin/destroy/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                });
+
+                const result = await response.json();
+                if (response.ok && result.success) {
+                    updateData();
+                } else {
+                    alert(result.message || 'Gagal menghapus data.');
+                }
+            } catch (error) {
+                console.error('Error deleting data:', error);
+                alert('Terjadi kesalahan saat menghapus data.');
+            }
+        }
+
+        // Filter Data
+        document.getElementById('apply-filter').addEventListener('click', () => {
+            const filterValue = document.getElementById('filter-bulan-tahun').value;
+            updateData(filterValue);
+        });
+
+        // Update Data
+        async function updateData(filter = '') {
+            const url = filter ? `/hrga/laporanizin/data?bulan_tahun=${filter}` :
                 '/hrga/laporanizin/data';
-                try {
-                    const response = await fetch(url);
-                    const data = await response.json();
-                    if (response.ok && data.success) {
-                        updateTable(data.data);
-                        updateChart(data.data);
-                    } else {
-                        alert(data.message || 'Gagal memuat data.');
-                    }
-                } catch (error) {
-                    console.error('Error fetching data:', error);
-                }   
+
+            try {
+                const response = await fetch(url);
+                const result = await response.json();
+
+                if (result.success) {
+                    const items = result.data;
+                    updateTable(items); // Ensure this updates the table correctly
+                    updateChart(items); // Ensure this updates the chart correctly
+                } else {
+                    alert('Gagal memuat data.');
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                alert('Terjadi kesalahan saat memuat data.');
             }
+        }
 
-            // Update Table
-            function updateTable(items) {
-                const tableBody = document.getElementById('data-table');
-                tableBody.innerHTML = ''; // Clear table before populating
+        // Update Table
+        function updateTable(items) {
+            const tableBody = document.getElementById('data-table');
+            tableBody.innerHTML = ''; // Clear the table before rendering new data
 
+            if (items.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="4">No data available</td></tr>';
+            } else {
                 items.forEach((item) => {
-                    const encodedData = encodeURIComponent(JSON.stringify(item));
-
                     const row = `
-            <tr class="border-b">
-                <td class="border px-4 py-2">${item.bulan_tahun}</td>
-                <td class="border px-4 py-2">${item.total_izin}</td>
-                <td class="border px-4 py-2">${item.nama || '-'}</td>
-                <td class="border px-4 py-2 flex items-center justify-center space-x-2">
-                    <button onclick="editData(${item.id}, decodeURIComponent('${encodedData}'))" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
-                        <i class="fas fa-edit mr-2"></i> Edit
-                    </button>
-                    <button onclick="deleteData(${item.id})" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
-                        <i class="fas fa-trash mr-2"></i> Delete
-                    </button>
-                </td>
-            </tr>`;
+                <tr class="border-b">
+                    <td class="border px-4 py-2">${item.bulan_tahun}</td>
+                    <td class="border px-4 py-2">${item.nama}</td>
+                    <td class="border px-4 py-2">${item.total_izin.toLocaleString()}</td>
+                    <td class="border px-4 py-2 flex items-center justify-center space-x-2">
+                        <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
+                                class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">
+                            Edit
+                        </button>
+                        <button onclick="deleteData(${item.id})"
+                                class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700">
+                            Delete
+                        </button>
+                    </td>
+                </tr>`;
                     tableBody.insertAdjacentHTML('beforeend', row);
                 });
             }
+        }
 
-            // Update Chart
-            function updateChart(items) {
-                const labels = items.map((item) => item.bulan_tahun);
-                const dataValues = items.map((item) => item.total_izin);
-                const backgroundColors = items.map(() =>
-                    `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.7)`);
+        // Update Chart
+        function updateChart(items) {
+                const canvas = document.getElementById('chart');
+                if (!canvas) {
+                    console.error('Canvas element with ID "chartCanvas" not found.');
+                    return;
+                }
+                const ctx = canvas.getContext('2d');
 
-                const ctx = chartCanvas.getContext('2d');
                 if (window.myChart) {
                     window.myChart.destroy();
                 }
+
+                const labels = items.map(item => item.nama);
+                const dataValues = items.map(item => item.total_izin);
+                const backgroundColors = items.map(() =>
+                    `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.7)`
+                );
+
                 window.myChart = new Chart(ctx, {
                     type: 'bar',
                     data: {
@@ -273,6 +353,20 @@
                     },
                     options: {
                         responsive: true,
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    font: {
+                                        size: 14,
+                                    },
+                                },
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: context => `Total Izin : ${context.raw.toLocaleString()} Kali`,
+                                },
+                            },
+                        },
                         scales: {
                             y: {
                                 beginAtZero: true,
@@ -282,23 +376,75 @@
                 });
             }
 
-            // Edit Data
-            window.editData = function(id, data) {
-                const parsedData = JSON.parse(data);
+        // Edit Data
+        function editData(id, data) {
+            const parsedData = JSON.parse(decodeURIComponent(data)); // Parse data dari string ke objek
+            console.log(parsedData); // Debugging: cek struktur data
 
-                editMode = true;
-                editId = id;
-                modalTitle.textContent = 'Edit Data';
-                
-                document.getElementById('modal-bulan_tahun').value = parsedData.bulan_tahun;
-                document.getElementById('modal-total_izin').value = parsedData.total_izin;
-                document.getElementById('modal-nama').value = parsedData.nama || '';
+            // Pastikan `nama` adalah array
+            parsedData.nama = Array.isArray(parsedData.nama) ?
+                parsedData.nama :
+                (typeof parsedData.nama === 'string' ? parsedData.nama.split(',') : []);
 
-                modal.classList.remove('hidden');
-            }
+            // Pastikan `total_izin` adalah array
+            parsedData.total_izin = Array.isArray(parsedData.total_izin) ?
+                parsedData.total_izin :
+                (typeof parsedData.total_izin === 'string' ? parsedData.total_izin.split(',').map(Number) : []);
 
-            updateData();
-        });
+            editMode = true; // Aktifkan mode edit
+            editId = id; // Simpan ID data yang sedang diedit
+
+            // Set judul modal
+            modalTitle.textContent = 'Edit Data';
+            document.getElementById('modal-bulan_tahun').value = parsedData.bulan_tahun;
+
+            // Bersihkan container nama
+            const namaContainer = document.getElementById('nama-container');
+            namaContainer.innerHTML = '';
+
+            // Tambahkan elemen nama dan nilai pendapatan
+            parsedData.nama.forEach((nama, index) => {
+                const newnamaItem = document.createElement('div');
+                newnamaItem.className = 'nama-item flex items-center space-x-2 mb-2';
+
+                const namaInput = document.createElement('input');
+                namaInput.type = 'text';
+                namaInput.name = 'nama[]';
+                namaInput.className = 'w-full border-gray-300 rounded p-2';
+                namaInput.placeholder = 'Nama Karyawan';
+                namaInput.value = parsedData.nama[index] || ''; // Set nilai pendapatan
+                namaInput.required = true;
+
+                const izinInput = document.createElement('input');
+                izinInput.type = 'text';
+                izinInput.name = 'total_izin[]';
+                izinInput.className = 'w-full border-gray-300 rounded p-2';
+                izinInput.placeholder = 'Total Izin';
+                izinInput.value = parsedData.total_izin[index] || ''; // Set nilai pendapatan
+                izinInput.required = true;
+
+                const removeButton = document.createElement('button');
+                removeButton.type = 'button';
+                removeButton.className = 'remove-nama bg-red-500 text-white px-2 py-1 rounded';
+                removeButton.textContent = 'Hapus';
+
+                removeButton.addEventListener('click', () => {
+                    newnamaItem.remove();
+                });
+
+                newnamaItem.appendChild(namaInput);
+                newnamaItem.appendChild(izinInput);
+                newnamaItem.appendChild(removeButton);
+
+                namaContainer.appendChild(newnamaItem);
+            });
+
+            // Tampilkan modal
+            modal.classList.remove('hidden');
+        }
+
+        // Initial Load
+        updateData();
     </script>
 
 </body>

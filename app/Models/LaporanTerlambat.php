@@ -20,4 +20,7 @@ class LaporanTerlambat extends Model
         'total_terlambat',      // Total paket dalam nilai integer
         'nama',       // Keterangan tambahan (nullable)
     ];
+    protected $casts = [
+        'total_terlambat' => 'integer',
+    ];
 }

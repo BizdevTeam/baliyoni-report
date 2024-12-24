@@ -9,6 +9,48 @@
             <img src="{{ asset("images/BYS_LOGO.png") }}" class="w-full" alt="Logo Full">
         </div>
     </div>
+
+    @if(Auth::check())
+                    <span class="text-white font-medium">{{ Auth::user()->name }}</span>
+            
+                    <!-- Conditionally render the role-specific navbar items -->
+                    @if(Auth::user()->role == 'superadmin')
+                        <!-- SuperAdmin navbar content -->
+                        <span class="text-white"></span>
+                        <!-- Add other items specific to superadmin -->
+                    @elseif(Auth::user()->role == 'marketing')
+                        <!-- Marketing navbar content -->
+                        <span class="text-white"></span>
+                        <!-- Add other items specific to marketing -->
+                    @elseif(Auth::user()->role == 'it')
+                        <!-- IT navbar content -->
+                        <span class="text-white"></span>
+                        <!-- Add other items specific to IT -->
+                    @elseif(Auth::user()->role == 'procurement')
+                        <!-- Procurement navbar content -->
+                        <span class="text-white"></span>
+                        <!-- Add other items specific to procurement -->
+                    @elseif(Auth::user()->role == 'accounting')
+                        <!-- Accounting navbar content -->
+                        <span class="text-white"></span>
+                        <!-- Add other items specific to accounting -->
+                    @elseif(Auth::user()->role == 'support')
+                        <!-- Support navbar content -->
+                        <span class="text-white"></span>
+                        <!-- Add other items specific to support -->
+                    @elseif(Auth::user()->role == 'hrga')
+                        <!-- HRGA navbar content -->
+                        <span class="text-white"></span>
+                        <!-- Add other items specific to HRGA -->
+                    @elseif(Auth::user()->role == 'spi')
+                        <!-- SPI navbar content -->
+                        <span class="text-white"></span>
+                        <!-- Add other items specific to SPI -->
+                    @endif
+                @else
+                    <span class="text-white font-medium">Guest</span>
+                @endif
+                
     <nav class="mt-4">
         <ul class="flex flex-col space-y-3">
             <div class="home">
@@ -31,7 +73,7 @@
                 <ul id="dropdown-marketing" class="hidden py-2 pl-8 space-y-2">
                     <li>
                         <a href="{{ route("marketings.rekappenjualan") }}"
-                            class="flex items-center block px-3 py-2 text-gray-700  transition">
+                            class="flex items-center px-3 py-2 text-gray-700  transition">
                             <img src="{{ asset("icon/RekapPenjualan.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Rekap Penjualan</span>
                         </a>
@@ -105,7 +147,6 @@
                         </a>
                     </li>
                 </ul>
-
             </li>
 
             <li class="relative">
@@ -199,10 +240,9 @@
                             <span class="ml-2">Tax Planning vs Penjualan</span>
                         </a>
                     </li>
-
                 </ul>
-
             </li>
+
             <li class="relative">
                 <button type="button"
                     class="flex items-center w-full px-4 py-2 text-gray-700 rounded-md . . transition"
@@ -254,10 +294,9 @@
                             <span class="ml-2">Laporan Terlambat</span>
                         </a>
                     </li>
-
                 </ul>
-
             </li>
+            
             <li class="relative">
                 <button type="button"
                     class="flex items-center w-full px-4 py-2 text-gray-700 rounded-md . . transition"

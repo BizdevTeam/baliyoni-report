@@ -20,4 +20,9 @@ class LaporanIzin extends Model
         'total_izin',      // Total paket dalam nilai integer
         'nama',       // Keterangan tambahan (nullable)
     ];
+    protected $casts = [
+        'total_sakit' => 'integer',
+    ];
 }
+
+
