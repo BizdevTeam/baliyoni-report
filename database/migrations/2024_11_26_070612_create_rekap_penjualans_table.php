@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('rekap_penjualans', function (Blueprint $table) {
             $table->id();
-            $table->string('bulan_tahun')->unique(); // Pastikan tidak ada duplikasi
-            $table->integer('total_penjualan')->default(0); // Default value untuk menghindari nilai null
+            $table->string('bulan_tahun')->unique();
+            $table->bigInteger('total_penjualan')->default(0);
             $table->timestamps();
         });
     }

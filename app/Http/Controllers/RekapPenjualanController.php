@@ -187,7 +187,7 @@ class RekapPenjualanController extends Controller
     private function validateData(Request $request)
     {
         return $request->validate([
-            'bulan_tahun' => ['required', 'regex:/^(0[1-9]|1[0-2])\/\d{4}$/'],  // Format YYYY-MM
+            'bulan_tahun' => ['required', 'regex:/^(0[1-9]|1[0-2])\/\d{4}$/'],
             'total_penjualan' => 'required|integer|min:0',
         ]);
     }
