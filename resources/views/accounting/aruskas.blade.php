@@ -247,7 +247,7 @@
 
                 // Update Chart
                 function updateChart(items) {
-                    const labels = ['Kas Nasuk', 'Kas Keluar'];
+                    const labels = ['Kas Masuk', 'Kas Keluar'];
                     const dataValues = [
                         items.reduce((total, item) => total + item.kas_masuk, 0),
                         items.reduce((total, item) => total + item.kas_keluar, 0),
