@@ -41,8 +41,6 @@
                 <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Laporan Samitra</h1>
 
         <!-- Button Tambah Data -->
-        <a href="/admin">
-        <button class="bg-red-600 text-white px-4 py-2 rounded mb-4">Kembali</button></a>
         <button id="open-modal" class="bg-red-600 text-white px-4 py-2 rounded mb-4">Tambah Data</button>
 
         <!-- Modal -->
@@ -63,9 +61,9 @@
                     </div>
                     <div class="flex justify-end space-x-2">
                         <button type="button" id="close-modal"
-                            class="bg-gray-500 text-white px-4 py-2 rounded">Batal</button>
+                            class="bg-red-500 text-white px-4 py-2 rounded">Batal</button>
                         <button type="submit" id="save-data"
-                            class="bg-blue-500 text-white px-4 py-2 rounded">Simpan</button>
+                            class="bg-red-500 text-white px-4 py-2 rounded">Simpan</button>
                     </div>
                 </form>
             </div>
@@ -267,7 +265,7 @@
                 <td class="border px-4 py-2">Rp ${item.total_pengiriman.toLocaleString()}</td>
                 <td class="border px-4 py-2 flex items-center justify-center space-x-2">
                     <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
-                            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
+                            class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
                         <i class="fas fa-edit mr-2"></i> Edit
                     </button>
                     <button onclick="deleteData(${item.id})" 
