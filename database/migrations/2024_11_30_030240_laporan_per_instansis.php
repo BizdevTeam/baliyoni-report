@@ -14,10 +14,12 @@ return new class extends Migration
         Schema::create('laporan_per_instansis', function (Blueprint $table) {
             $table->id();
                 $table->string('bulan_tahun');
-                $table->string('keterangan')->nullable();
                 $table->string('instansi');
                 $table->bigInteger('nilai');
                 $table->timestamps();
+
+                $table->unique(['bulan_tahun', 'instansi']);
+
             });
     }
 

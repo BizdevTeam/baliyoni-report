@@ -77,7 +77,7 @@
                                     <input type="text" name="nilai_paket[]"
                                         class="w-full border-gray-300 rounded p-2" placeholder="Nilai Paket" required>
                                     <button type="button"
-                                        class="remove-perusahaan bg-red-500 text-white px-2 py-1 rounded">Hapus</button>
+                                        class="remove-perusahaan bg-red-600 text-white px-2 py-1 rounded">Hapus</button>
                                 </div>
                             </div>
                             <button type="button" id="add-perusahaan"
@@ -85,7 +85,7 @@
                                 perusahaan</button>
                             <div class="flex justify-end space-x-2 mt-4">
                                 <button type="button" id="close-modal"
-                                    class="bg-gray-500 text-white px-4 py-2 rounded">Batal</button>
+                                    class="bg-red-600 text-white px-4 py-2 rounded">Batal</button>
                                 <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Simpan</button>
                             </div>
                         </form>
@@ -158,7 +158,7 @@
 
                 const removeButton = document.createElement('button');
                 removeButton.type = 'button';
-                removeButton.className = 'remove-perusahaan bg-red-500 text-white px-2 py-1 rounded';
+                removeButton.className = 'remove-perusahaan bg-red-600 text-white px-2 py-1 rounded';
                 removeButton.textContent = 'Hapus';
 
                 // Menambahkan logika hapus
@@ -338,11 +338,11 @@
                     <td class="border px-4 py-2">Rp ${item.nilai_paket.toLocaleString()}</td>
                     <td class="border px-4 py-2 flex items-center justify-center space-x-2">
                       <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
-                            class="bg-red-500 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
+                            class="bg-red-600 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
                         <i class="fas fa-edit mr-2"></i> Edit
                     </button>
                     <button onclick="deleteData(${item.id})" 
-                            class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
+                            class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
                         <i class="fas fa-trash mr-2"></i> Delete
                     </button>
                     </td>
@@ -469,7 +469,7 @@
 
                     const removeButton = document.createElement('button');
                     removeButton.type = 'button';
-                    removeButton.className = 'remove-perusahaan bg-red-500 text-white px-2 py-1 rounded';
+                    removeButton.className = 'remove-perusahaan bg-red-600 text-white px-2 py-1 rounded';
                     removeButton.textContent = 'Hapus';
 
                     removeButton.addEventListener('click', () => {

@@ -44,9 +44,8 @@
             <div class="mx-auto bg-white/70  p-6 rounded-lg shadow-lg ">
                 <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Laporan SPI</h1>
 
-                <h1 class="text-sm   mb-4 text-black font-lato">Laporan perBulan</h1>
+                <h1 class="text-sm mb-4 text-black font-lato">Laporan per Bulan</h1>
 
-                <!-- Action Buttons -->
                 <div class="flex justify-end gap-2 mb-4"  data-aos="fade-left" data-aos-anchor-placement="center-center">
                     <!-- Tombol Back -->
                     <button
