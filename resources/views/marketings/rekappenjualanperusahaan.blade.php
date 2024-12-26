@@ -497,25 +497,25 @@
                     perusahaanSelect.required = true;
 
                     perusahaanSelect.innerHTML = `
-            <option value="" disabled>Pilih perusahaan</option>
-            <option value="CV. BUANA KOSA">CV. BUANA KOSA</option>
-            <option value="PT. BALI UNGGUL SEJAHTERA">PT. BALI UNGGUL SEJAHTERA</option>
-            <option value="CV. DANA RASA">CV. DANA RASA</option>
-            <option value="CV. LAGAAN SAKETI">CV. LAGAAN SAKETI</option>
-            <option value="CV. BALI JAKTI INFORMATIK">CV. BALI JAKTI INFORMATIK</option>
-            <option value="CV. BALI LINGGA KOMPUTER">CV. BALI LINGGA KOMPUTER</option>
-            <option value="CV. ARTSOLUTION">CV. ARTSOLUTION</option>
-            <option value="PT. BALI LINGGA SAKA GUMI">PT. BALI LINGGA SAKA GUMI</option>
-            <option value="CV. SAHABAT UTAMA">CV. SAHABAT UTAMA</option>
-            <option value="CV. N & b NET ACCESS">CV. N & b NET ACCESS</option>
-            <option value="PT. ELKA SOLUTION NUSANTARA">PT. ELKA SOLUTION NUSANTARA</option>
-            <option value="CV. ARINDAH">CV. ARINDAH</option>
-            <option value="ARFALINDO">ARFALINDO</option>`;
+                        <option value="" disabled>Pilih perusahaan</option>
+                        <option value="CV. BUANA KOSA">CV. BUANA KOSA</option>
+                        <option value="PT. BALI UNGGUL SEJAHTERA">PT. BALI UNGGUL SEJAHTERA</option>
+                        <option value="CV. DANA RASA">CV. DANA RASA</option>
+                        <option value="CV. LAGAAN SAKETI">CV. LAGAAN SAKETI</option>
+                        <option value="CV. BALI JAKTI INFORMATIK">CV. BALI JAKTI INFORMATIK</option>
+                        <option value="CV. BALI LINGGA KOMPUTER">CV. BALI LINGGA KOMPUTER</option>
+                        <option value="CV. ARTSOLUTION">CV. ARTSOLUTION</option>
+                        <option value="PT. BALI LINGGA SAKA GUMI">PT. BALI LINGGA SAKA GUMI</option>
+                        <option value="CV. SAHABAT UTAMA">CV. SAHABAT UTAMA</option>
+                        <option value="CV. N & b NET ACCESS">CV. N & b NET ACCESS</option>
+                        <option value="PT. ELKA SOLUTION NUSANTARA">PT. ELKA SOLUTION NUSANTARA</option>
+                        <option value="CV. ARINDAH">CV. ARINDAH</option>
+                        <option value="ARFALINDO">ARFALINDO</option>`;
                     perusahaanSelect.value = perusahaan || ''; // Set nilai perusahaan
 
                     // Input untuk nilai paket
                     const nilaiPaketInput = document.createElement('input');
-                    nilaiPaketInput.type = 'number';
+                    nilaiPaketInput.type = 'text';
                     nilaiPaketInput.name = 'nilai_paket[]';
                     nilaiPaketInput.className = 'w-full border-gray-300 rounded p-2';
                     nilaiPaketInput.placeholder = 'Nilai Paket';

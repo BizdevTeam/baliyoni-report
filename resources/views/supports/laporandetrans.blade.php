@@ -40,8 +40,11 @@
             <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow">
                 <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Laporan Detrans</h1>
 
+<<<<<<< HEAD
         <!-- Button Tambah Data -->
         <a href="/admin">
+=======
+>>>>>>> 7b312b5ae6bd4eab4284aa255993e815f479f8b5
         <button id="open-modal" class="bg-red-600 text-white px-4 py-2 rounded mb-4">Tambah Data</button>
 
         <!-- Modal -->
@@ -62,9 +65,15 @@
                     </div>
                     <div class="flex justify-end space-x-2">
                         <button type="button" id="close-modal"
+<<<<<<< HEAD
                             class="bg-red-600 text-white px-4 py-2 rounded">Batal</button>
                         <button type="submit" id="save-data"
                             class="bg-red-600 text-white px-4 py-2 rounded">Simpan</button>
+=======
+                            class="bg-red-500 text-white px-4 py-2 rounded">Batal</button>
+                        <button type="submit" id="save-data"
+                            class="bg-red-500 text-white px-4 py-2 rounded">Simpan</button>
+>>>>>>> 7b312b5ae6bd4eab4284aa255993e815f479f8b5
                     </div>
                 </form>
             </div>

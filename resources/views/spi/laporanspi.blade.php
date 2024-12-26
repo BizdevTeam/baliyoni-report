@@ -202,8 +202,8 @@
                         <textarea name="masalah" class="w-full p-2 border rounded" rows="1"></textarea>
                     </div>
                     <div>
-                        <label for="masalah" class="block text-sm font-medium">Solusi</label>
-                        <textarea name="masalah" class="w-full p-2 border rounded" rows="1" required></textarea>
+                        <label for="solusi" class="block text-sm font-medium">Solusi</label>
+                        <textarea name="solusi" class="w-full p-2 border rounded" rows="1" required></textarea>
                     </div>
                     <div>
                         <label for="implementasi" class="block text-sm font-medium">Implementasi</label>

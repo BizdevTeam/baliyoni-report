@@ -322,6 +322,7 @@
                     <td class="border px-4 py-2">${item.pelaksana}</td>
                     <td class="border px-4 py-2">Rp ${item.nilai_piutang.toLocaleString()}</td>
                     <td class="border px-4 py-2 flex items-center justify-center space-x-2">
+<<<<<<< HEAD
                         <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
                                 class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700">
                             Edit
@@ -330,6 +331,16 @@
                                 class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700">
                             Delete
                         </button>
+=======
+                                  <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
+                        class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
+                    <i class="fas fa-edit mr-2"></i> Edit
+                </button>
+                <button onclick="deleteData(${item.id})" 
+                        class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
+                    <i class="fas fa-trash mr-2"></i> Delete
+                </button>
+>>>>>>> 7b312b5ae6bd4eab4284aa255993e815f479f8b5
                     </td>
                 </tr>`;
                     tableBody.insertAdjacentHTML('beforeend', row);
@@ -389,14 +400,12 @@
             console.log(parsedData); // Debugging: cek struktur data
 
             // Pastikan `pelaksana` adalah array
-            parsedData.pelaksana = Array.isArray(parsedData.pelaksana) ?
-                parsedData.pelaksana :
-                (typeof parsedData.pelaksana === 'string' ? parsedData.pelaksana.split(',') : []);
+            const pelaksanaArray = Array.isArray(parsedData.pelaksana) ?
+                    parsedData.pelaksana : [parsedData.pelaksana]; // Ubah menjadi array jika hanya satu pelaksana
 
-            // Pastikan `nilai_piutang` adalah array
-            parsedData.nilai_piutang = Array.isArray(parsedData.nilai_piutang) ?
-                parsedData.nilai_piutang :
-                (typeof parsedData.nilai_piutang === 'string' ? parsedData.nilai_piutang.split(',').map(Number) : []);
+                // Pastikan `nilai_piutang` adalah array
+                const nilaiPaketArray = Array.isArray(parsedData.nilai_piutang) ?
+                    parsedData.nilai_piutang : [parsedData.nilai_piutang]; // Ubah menjadi array jika hanya satu nilai
 
             editMode = true; // Aktifkan mode edit
             editId = id; // Simpan ID data yang sedang diedit
@@ -410,7 +419,7 @@
             pelaksanaContainer.innerHTML = '';
 
             // Tambahkan elemen pelaksana dan nilai pendapatan
-            parsedData.pelaksana.forEach((pelaksana, index) => {
+            pelaksanaArray.forEach((pelaksana, index) => {
                 const newPelaksanaItem = document.createElement('div');
                 newPelaksanaItem.className = 'pelaksana-item flex items-center space-x-2 mb-2';
 
@@ -434,7 +443,7 @@
                 nilaiPiutangInput.name = 'nilai_piutang[]';
                 nilaiPiutangInput.className = 'w-full border-gray-300 rounded p-2';
                 nilaiPiutangInput.placeholder = 'Nilai Pendapatan';
-                nilaiPiutangInput.value = parsedData.nilai_piutang[index] || ''; // Set nilai pendapatan
+                nilaiPiutangInput.value = nilaiPaketArray[index] || ''; // Set nilai pendapatan
                 nilaiPiutangInput.required = true;
 
                 const removeButton = document.createElement('button');
