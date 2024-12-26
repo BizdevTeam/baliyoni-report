@@ -112,7 +112,7 @@
                     </thead>
                     <tbody id="data-table"></tbody>
                 </table>
-
+                <div id="pagination-container" class="flex justify-center mt-4"></div>
                 <!-- Chart -->
                 <div class="mt-6 items-center text-center mx-auto">
                     <canvas id="chart"></canvas>
@@ -323,34 +323,87 @@
             }
 
             // Update Table
-            function updateTable(items) {
-                const tableBody = document.getElementById('data-table');
-                tableBody.innerHTML = ''; // Clear the table before rendering new data
+            let currentPage = 1;
+            let itemsPerPage = 1; // Maksimal 12 item per halaman
+            let filteredItems = []; // Data yang difilter berdasarkan bulan dan tahun
 
-                if (items.length === 0) {
+            function updateTable(items, bulanTahun = null) {
+                const tableBody = document.getElementById('data-table');
+                const paginationContainer = document.getElementById('pagination-container');
+
+                // Filter data berdasarkan bulan dan tahun jika parameter `bulanTahun` diberikan
+                if (bulanTahun) {
+                    filteredItems = items.filter(item => item.bulan_tahun === bulanTahun);
+                } else {
+                    filteredItems = items; // Semua data jika tidak ada filter bulan/tahun
+                }
+
+                const totalItems = filteredItems.length;
+                const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+                // Pastikan halaman tetap dalam rentang yang valid
+                if (currentPage > totalPages) {
+                    currentPage = totalPages;
+                }
+                if (currentPage < 1) {
+                    currentPage = 1;
+                }
+
+                // Hitung data yang akan ditampilkan berdasarkan halaman
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+                const paginatedItems = filteredItems.slice(startIndex, endIndex);
+
+                // Bersihkan tabel sebelum mengisi data baru
+                tableBody.innerHTML = '';
+
+                // Jika tidak ada data yang sesuai
+                if (paginatedItems.length === 0) {
                     tableBody.innerHTML = '<tr><td colspan="4">No data available</td></tr>';
                 } else {
-                    items.forEach((item) => {
+                    paginatedItems.forEach((item) => {
                         const row = `
-                <tr class="border-b">
-                    <td class="border px-4 py-2">${item.bulan_tahun}</td>
-                    <td class="border px-4 py-2">${item.perusahaan}</td>
-                    <td class="border px-4 py-2">Rp ${item.nilai_paket.toLocaleString()}</td>
-                    <td class="border px-4 py-2 flex items-center justify-center space-x-2">
-                      <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
-                            class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
-                        <i class="fas fa-edit mr-2"></i> Edit
-                    </button>
-                    <button onclick="deleteData(${item.id})" 
-                            class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
-                        <i class="fas fa-trash mr-2"></i> Delete
-                    </button>
-                    </td>
-                </tr>`;
+            <tr class="border-b">
+                <td class="border px-4 py-2">${item.bulan_tahun}</td>
+                <td class="border px-4 py-2">${item.perusahaan}</td>
+                <td class="border px-4 py-2">Rp ${item.nilai_paket.toLocaleString()}</td>
+                <td class="border px-4 py-2 flex items-center justify-center space-x-2">
+                  <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
+                        class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
+                    <i class="fas fa-edit mr-2"></i> Edit
+                </button>
+                <button onclick="deleteData(${item.id})" 
+                        class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
+                    <i class="fas fa-trash mr-2"></i> Delete
+                </button>
+                </td>
+            </tr>`;
                         tableBody.insertAdjacentHTML('beforeend', row);
                     });
                 }
+
+                // Buat tombol pagination
+                paginationContainer.innerHTML = `
+        <button ${currentPage === 1 ? 'disabled' : ''} onclick="changePage('prev')" 
+                class="bg-red-600 px-4 py-2 rounded hover:bg-red-700 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}">
+            Previous
+        </button>
+        <span class="px-4">Page ${currentPage} of ${totalPages}</span>
+        <button ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage('next')" 
+                class="bg-red-600 px-4 py-2 rounded hover:bg-red-700 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}">
+            Next
+        </button>`;
             }
+
+            function changePage(direction) {
+                if (direction === 'prev' && currentPage > 1) {
+                    currentPage--;
+                } else if (direction === 'next' && currentPage * itemsPerPage < filteredItems.length) {
+                    currentPage++;
+                }
+                updateTable(filteredItems);
+            }
+
 
             // Update Chart
             function updateChart(items) {
@@ -413,13 +466,11 @@
 
                 // Pastikan `perusahaan` adalah array
                 const perusahaanArray = Array.isArray(parsedData.perusahaan) ?
-                    parsedData.perusahaan :
-                    [parsedData.perusahaan]; // Ubah menjadi array jika hanya satu perusahaan
+                    parsedData.perusahaan : [parsedData.perusahaan]; // Ubah menjadi array jika hanya satu perusahaan
 
                 // Pastikan `nilai_paket` adalah array
                 const nilaiPaketArray = Array.isArray(parsedData.nilai_paket) ?
-                    parsedData.nilai_paket :
-                    [parsedData.nilai_paket]; // Ubah menjadi array jika hanya satu nilai
+                    parsedData.nilai_paket : [parsedData.nilai_paket]; // Ubah menjadi array jika hanya satu nilai
 
                 editMode = true; // Aktifkan mode edit
                 editId = id; // Simpan ID data yang sedang diedit
