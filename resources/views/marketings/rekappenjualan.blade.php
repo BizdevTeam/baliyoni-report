@@ -63,9 +63,9 @@
                             </div>
                             <div class="flex justify-end space-x-2">
                                 <button type="button" id="close-modal"
-                                    class="bg-gray-500 text-white px-4 py-2 rounded">Batal</button>
+                                    class="bg-red-600 text-white px-4 py-2 rounded">Batal</button>
                                 <button type="submit" id="save-data"
-                                    class="bg-blue-500 text-white px-4 py-2 rounded">Simpan</button>
+                                    class="bg-red-600 text-white px-4 py-2 rounded">Simpan</button>
                             </div>
                         </form>
                     </div>
@@ -269,7 +269,7 @@
                 <td class="border px-4 py-2">Rp ${item.total_penjualan.toLocaleString()}</td>
                 <td class="border px-4 py-2 flex items-center justify-center space-x-2">
                     <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
-                            class="bg-red-500 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
+                            class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 flex items-center">
                         <i class="fas fa-edit mr-2"></i> Edit
                     </button>
                     <button onclick="deleteData(${item.id})" 
@@ -288,7 +288,7 @@
             </tr>`;
             tableBody.insertAdjacentHTML('beforeend', totalRow);
         }
-
+        //update chart
         function updateChart(items) {
             // Sort items by bulan_tahun in ascending order
             items.sort((a, b) => {

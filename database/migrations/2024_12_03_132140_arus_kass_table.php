@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('arus_kass', function (Blueprint $table) {
             $table->id();
                 $table->string('bulan_tahun');
-                $table->integer('kas_masuk');
-                $table->integer('kas_keluar');
+                $table->bigInteger('kas_masuk');
+                $table->bigInteger('kas_keluar');
                 $table->timestamps();
             });
     }

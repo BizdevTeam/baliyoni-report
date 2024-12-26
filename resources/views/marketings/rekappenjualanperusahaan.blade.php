@@ -67,7 +67,7 @@
                                         <option value="CV. BALI JAKTI INFORMATIK">CV. BALI JAKTI INFORMATIK</option>
                                         <option value="CV. BALI LINGGA KOMPUTER">CV. BALI LINGGA KOMPUTER</option>
                                         <option value="CV. ARTSOLUTION">CV. ARTSOLUTION</option>
-                                        <option value="PT. BALI LINGGA SAKA BUMI">PT. BALI LINGGA SAKA GUMI</option>
+                                        <option value="PT. BALI LINGGA SAKA GUMI">PT. BALI LINGGA SAKA GUMI</option>
                                         <option value="CV. SAHABAT UTAMA">CV. SAHABAT UTAMA</option>
                                         <option value="CV. N & b NET ACCESS">CV. N & b NET ACCESS</option>
                                         <option value="PT. ELKA SOLUTION NUSANTARA">PT. ELKA SOLUTION NUSANTARA</option>
@@ -143,7 +143,7 @@
                     <option value="CV. BALI JAKTI INFORMATIK">CV. BALI JAKTI INFORMATIK</option>
                     <option value="CV. BALI LINGGA KOMPUTER">CV. BALI LINGGA KOMPUTER</option>
                     <option value="CV. ARTSOLUTION">CV. ARTSOLUTION</option>
-                    <option value="PT. BALI LINGGA SAKA BUMI">PT. BALI LINGGA SAKA GUMI</option>
+                    <option value="PT. BALI LINGGA SAKA GUMI">PT. BALI LINGGA SAKA GUMI</option>
                     <option value="CV. SAHABAT UTAMA">CV. SAHABAT UTAMA</option>
                     <option value="CV. N & b NET ACCESS">CV. N & b NET ACCESS</option>
                     <option value="PT. ELKA SOLUTION NUSANTARA">PT. ELKA SOLUTION NUSANTARA</option>
@@ -324,7 +324,7 @@
 
             // Update Table
             let currentPage = 1;
-            let itemsPerPage = 1; // Maksimal 12 item per halaman
+            let itemsPerPage = 12; // Maksimal 12 item per halaman
             let filteredItems = []; // Data yang difilter berdasarkan bulan dan tahun
 
             function updateTable(items, bulanTahun = null) {
@@ -345,7 +345,7 @@
                 if (currentPage > totalPages) {
                     currentPage = totalPages;
                 }
-                if (currentPage < 1) {
+                if (currentPage < 1 ) {
                     currentPage = 1;
                 }
 
@@ -385,12 +385,12 @@
                 // Buat tombol pagination
                 paginationContainer.innerHTML = `
         <button ${currentPage === 1 ? 'disabled' : ''} onclick="changePage('prev')" 
-                class="bg-red-600 px-4 py-2 rounded hover:bg-red-700 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}">
+                class="text-white bg-red-600 px-4 py-2 rounded hover:bg-red-700 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}">
             Previous
         </button>
         <span class="px-4">Page ${currentPage} of ${totalPages}</span>
         <button ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage('next')" 
-                class="bg-red-600 px-4 py-2 rounded hover:bg-red-700 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}">
+                class="text-white bg-red-600 px-4 py-2 rounded hover:bg-red-700 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}">
             Next
         </button>`;
             }
@@ -503,7 +503,7 @@
             <option value="CV. BALI JAKTI INFORMATIK">CV. BALI JAKTI INFORMATIK</option>
             <option value="CV. BALI LINGGA KOMPUTER">CV. BALI LINGGA KOMPUTER</option>
             <option value="CV. ARTSOLUTION">CV. ARTSOLUTION</option>
-            <option value="PT. BALI LINGGA SAKA BUMI">PT. BALI LINGGA SAKA GUMI</option>
+            <option value="PT. BALI LINGGA SAKA GUMI">PT. BALI LINGGA SAKA GUMI</option>
             <option value="CV. SAHABAT UTAMA">CV. SAHABAT UTAMA</option>
             <option value="CV. N & b NET ACCESS">CV. N & b NET ACCESS</option>
             <option value="PT. ELKA SOLUTION NUSANTARA">PT. ELKA SOLUTION NUSANTARA</option>

@@ -266,15 +266,55 @@
     
         // Update Chart
         function updateChart(items) {
+            // Sort items by bulan_tahun in ascending order
+            items.sort((a, b) => {
+                const [monthA, yearA] = a.bulan_tahun.split('/').map(Number);
+                const [monthB, yearB] = b.bulan_tahun.split('/').map(Number);
+
+                if (yearA === yearB) {
+                    return monthA - monthB; // Sort by month if years are the same
+                }
+                return yearA - yearB; // Sort by year
+            });
+
+            // Extract sorted data
             const labels = items.map((item) => item.bulan_tahun);
             const dataValues = items.map((item) => item.total_pembelian);
             const backgroundColors = items.map(() =>
-                `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.7)`
-            );
-    
+                `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.7)`);
+
             const ctx = chartCanvas.getContext('2d');
-            if (window.myChart) window.myChart.destroy();
-    
+
+            // Destroy existing chart instance if any
+            if (window.myChart) {
+                window.myChart.destroy();
+            }
+
+            // If no data, show placeholder chart
+            if (items.length === 0) {
+                window.myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Tidak ada data'],
+                        datasets: [{
+                            label: 'Total Pembelian Outlet',
+                            data: [0],
+                            backgroundColor: backgroundColors,
+                        }],
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                            },
+                        },
+                    },
+                });
+                return;
+            }
+
+            // Create new chart with sorted data
             window.myChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -289,24 +329,18 @@
                 options: {
                     responsive: true,
                     plugins: {
-                        legend: {
-                            labels: {
-                                font: {
-                                    size: 20, // Ukuran font label
-                                    weight: 'bold', // Tebal tulisan
-                                },
-                            },
-                        },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return `${context.raw.toLocaleString()}`;
+                                    return `Rp ${context.raw.toLocaleString()}`;
                                 },
                             },
                         },
                     },
                     scales: {
-                        y: { beginAtZero: true },
+                        y: {
+                            beginAtZero: true,
+                        },
                     },
                 },
             });
