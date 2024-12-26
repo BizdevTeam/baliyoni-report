@@ -42,7 +42,6 @@
 
         <!-- Button Tambah Data -->
         <div class="flex gap-4 mb-4">
-            <a href="/admin" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Kembali</a>
             <button id="open-modal" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Tambah
                 Data</button>
         </div>
@@ -322,6 +321,16 @@
                     <td class="border px-4 py-2">${item.pelaksana}</td>
                     <td class="border px-4 py-2">Rp ${item.nilai_pendapatan.toLocaleString()}</td>
                     <td class="border px-4 py-2 flex items-center justify-center space-x-2">
+<<<<<<< HEAD
+                        <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
+                                class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700">
+                            Edit
+                        </button>
+                        <button onclick="deleteData(${item.id})"
+                                class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700">
+                            Delete
+                        </button>
+=======
                             <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
                         class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
                     <i class="fas fa-edit mr-2"></i> Edit
@@ -330,6 +339,7 @@
                         class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
                     <i class="fas fa-trash mr-2"></i> Delete
                 </button>
+>>>>>>> 7b312b5ae6bd4eab4284aa255993e815f479f8b5
                     </td>
                 </tr>`;
                     tableBody.insertAdjacentHTML('beforeend', row);
