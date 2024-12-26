@@ -48,10 +48,7 @@
 
                 <div class="flex justify-end gap-2 mb-4"  data-aos="fade-left" data-aos-anchor-placement="center-center">
                     <!-- Tombol Back -->
-                    <button
-                        class="bg-gradient-to-r font-medium from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-1.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm">
-                        <a href="/admin" class="text-white" >Back</a>
-                    </button>
+                    
 
                     <!-- Tombol Add New -->
                     <button
