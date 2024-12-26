@@ -89,12 +89,12 @@
                             @foreach ($laporans as $laporan)
 
                             <tr class="even:bg-gray-50 odd:bg-white hover:bg-gray-100 transition duration-300 ">
-                                <td class="px-6 py-4 text-center border-b" data-aos="fade-right"  data-aos-easing="ease-in-out"  data-aos-duration="400">{{ $laporan->bulan_tahun }}</td>
-                                <td class="px-6 py-4 text-center border-b" data-aos="fade-right"  data-aos-easing="ease-in-out"  data-aos-duration="400">{{ $laporan->judul }}</td>
-                                <td class="px-6 py-4 text-center border-b" data-aos="fade-right"  data-aos-easing="ease-in-out"  data-aos-duration="400">{{ $laporan->aspek }}</td>
-                                <td class="px-6 py-4 text-center border-b" data-aos="fade-right"  data-aos-easing="ease-in-out"  data-aos-duration="400">{{ $laporan->masalah }}</td>
-                                <td class="px-6 py-4 text-center border-b" data-aos="fade-right"  data-aos-easing="ease-in-out"  data-aos-duration="400">{{ $laporan->solusi }}</td>
-                                <td class="px-6 py-4 text-center border-b" data-aos="fade-right"  data-aos-easing="ease-in-out"  data-aos-duration="400">{{ $laporan->implementasi }}</td>
+                                <td class="px-6 py-4 text-pretty border-b" data-aos="fade-right"  data-aos-easing="ease-in-out"  data-aos-duration="400">{{ $laporan->bulan_tahun }}</td>
+                                <td class="px-6 py-4 text-pretty border-b" data-aos="fade-right"  data-aos-easing="ease-in-out"  data-aos-duration="400">{{ $laporan->judul }}</td>
+                                <td class="px-6 py-4 text-pretty border-b" data-aos="fade-right"  data-aos-easing="ease-in-out"  data-aos-duration="400">{{ $laporan->aspek }}</td>
+                                <td class="px-6 py-4 text-pretty border-b" data-aos="fade-right"  data-aos-easing="ease-in-out"  data-aos-duration="400">{{ $laporan->masalah }}</td>
+                                <td class="px-6 py-4 text-pretty border-b" data-aos="fade-right"  data-aos-easing="ease-in-out"  data-aos-duration="400">{{ $laporan->solusi }}</td>
+                                <td class="px-6 py-4 text-pretty border-b" data-aos="fade-right"  data-aos-easing="ease-in-out"  data-aos-duration="400">{{ $laporan->implementasi }}</td>
 
                                 <td class="px-6 py-4 text-center border-b flex justify-center gap-2">
                                     <!-- Edit Button -->
