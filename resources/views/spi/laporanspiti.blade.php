@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Laporan SPI IT</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     @vite('resources/css/app.css')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
@@ -23,6 +24,7 @@
     <link rel="stylesheet" href="{{ asset('templates/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     @vite('resources/css/tailwind.css')
     @vite('resources/css/custom.css')
     @vite('resources/js/app.js')
@@ -76,29 +78,29 @@
                     <table class="table-auto w-full border-collapse text-gray-700 text-sm">
                         <thead class="bg-gradient-to-r from-gray-200 to-gray-300 text-gray-900 font-semibold">
                             <tr class="font-sans">
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-in-out">Bulan & Tahun</th>
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-in-out">Judul</th>
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-in-out">Aspek</th>
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-in-out">Masalah</th>
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-in-out">Solusi</th>
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-in-out">Implementasi</th>
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-in-out">Action</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out">Bulan & Tahun</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out">Judul</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out">Aspek</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out">Masalah</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out">Solusi</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out">Implementasi</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($laporanspitis as $laporanspiti)
                             <tr class="even:bg-gray-50 odd:bg-white hover:bg-gray-100 transition duration-300">
-                                <td class="px-6 py-4 text-center border-b" data-aos="fade-right" data-aos-easing="ease-in-out" data-aos-duration="400"">{{ $laporanspiti->bulan_tahun }}</td>
-                                <td class=" px-6 py-4 text-center border-b" data-aos="fade-right" data-aos-easing="ease-in-out" data-aos-duration="400"">{{ $laporanspiti->judul }}</td>
-                                <td class=" px-6 py-4 text-center border-b" data-aos="fade-right" data-aos-easing="ease-in-out" data-aos-duration="400"">{{ $laporanspiti->aspek }}</td>
-                                <td class=" px-6 py-4 text-center border-b" data-aos="fade-right" data-aos-easing="ease-in-out" data-aos-duration="400"">{{ $laporanspiti->masalah }}</td>
-                                <td class=" px-6 py-4 text-center border-b" data-aos="fade-right" data-aos-easing="ease-in-out" data-aos-duration="400"">{{ $laporanspiti->solusi }}</td>
-                                <td class=" px-6 py-4 text-center border-b" data-aos="fade-right" data-aos-easing="ease-in-out" data-aos-duration="400"">{{ $laporanspiti->implementasi }}</td>
+                                <td class="px-6 py-4 text-center border-b" data-aos="fade-right" data-aos-easing="ease-in-out" data-aos-duration="600">{{ $laporanspiti->bulan_tahun }}</td>
+                                <td class=" px-6 py-4 text-center border-b" data-aos="fade-right" data-aos-easing="ease-in-out" data-aos-duration="600">{{ $laporanspiti->judul }}</td>
+                                <td class=" px-6 py-4 text-center border-b" data-aos="fade-right" data-aos-easing="ease-in-out" data-aos-duration="600">{{ $laporanspiti->aspek }}</td>
+                                <td class=" px-6 py-4 text-center border-b" data-aos="fade-right" data-aos-easing="ease-in-out" data-aos-duration="600">{{ $laporanspiti->masalah }}</td>
+                                <td class=" px-6 py-4 text-center border-b" data-aos="fade-right" data-aos-easing="ease-in-out" data-aos-duration="600">{{ $laporanspiti->solusi }}</td>
+                                <td class=" px-6 py-4 text-center border-b" data-aos="fade-right" data-aos-easing="ease-in-out" data-aos-duration="600">{{ $laporanspiti->implementasi }}</td>
 
                                 <td class=" px-6 py-4 text-center border-b flex justify-center gap-2">
                                     <!-- Edit Button -->
                                     <button class="transition duration-300 ease-in-out transform hover:scale-125 flex items-center gap-2 p-2" data-modal-target="#editEventModal{{ $laporanspiti->id_spiti }}">
-                                        <i class="fa fa-pen text-red-600" data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-in-out"></i>
+                                        <i class="fa fa-pen text-red-600" data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out"></i>
 
                                     </button>
                                     <!-- Delete Form -->
@@ -106,7 +108,7 @@
                                         @csrf
                                         @method('DELETE')
                                         <button class="transition duration-300 ease-in-out transform hover:scale-125 flex items-center gap-2 p-2" onclick="return confirm('Are you sure to delete?')">
-                                            <i class="fa fa-trash text-red-600" data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-in-out"></i>
+                                            <i class="fa fa-trash text-red-600" data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out"></i>
 
                                         </button>
                                     </form>
