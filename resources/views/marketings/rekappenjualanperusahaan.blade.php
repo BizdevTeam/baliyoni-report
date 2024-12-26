@@ -39,7 +39,7 @@
         <!-- Main Content -->
         <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
             <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow">
-                <h1 class="text-2xl font-bold mb-4">Rekap Penjualan Perusahaan</h1>
+                <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Rekap Penjualan Perusahaan</h1>
                 <!-- Button Tambah Data -->
                 <button id="open-modal" class="bg-red-600 text-white px-4 py-2 rounded mb-4">Tambah Data</button>
 
@@ -67,7 +67,7 @@
                                         <option value="CV. BALI JAKTI INFORMATIK">CV. BALI JAKTI INFORMATIK</option>
                                         <option value="CV. BALI LINGGA KOMPUTER">CV. BALI LINGGA KOMPUTER</option>
                                         <option value="CV. ARTSOLUTION">CV. ARTSOLUTION</option>
-                                        <option value="PT. BALI LINGGA SAKA BUMI">PT. BALI LINGGA SAKA BUMI</option>
+                                        <option value="PT. BALI LINGGA SAKA BUMI">PT. BALI LINGGA SAKA GUMI</option>
                                         <option value="CV. SAHABAT UTAMA">CV. SAHABAT UTAMA</option>
                                         <option value="CV. N & b NET ACCESS">CV. N & b NET ACCESS</option>
                                         <option value="PT. ELKA SOLUTION NUSANTARA">PT. ELKA SOLUTION NUSANTARA</option>
@@ -143,7 +143,7 @@
                     <option value="CV. BALI JAKTI INFORMATIK">CV. BALI JAKTI INFORMATIK</option>
                     <option value="CV. BALI LINGGA KOMPUTER">CV. BALI LINGGA KOMPUTER</option>
                     <option value="CV. ARTSOLUTION">CV. ARTSOLUTION</option>
-                    <option value="PT. BALI LINGGA SAKA BUMI">PT. BALI LINGGA SAKA BUMI</option>
+                    <option value="PT. BALI LINGGA SAKA BUMI">PT. BALI LINGGA SAKA GUMI</option>
                     <option value="CV. SAHABAT UTAMA">CV. SAHABAT UTAMA</option>
                     <option value="CV. N & b NET ACCESS">CV. N & b NET ACCESS</option>
                     <option value="PT. ELKA SOLUTION NUSANTARA">PT. ELKA SOLUTION NUSANTARA</option>
@@ -503,7 +503,7 @@
             <option value="CV. BALI JAKTI INFORMATIK">CV. BALI JAKTI INFORMATIK</option>
             <option value="CV. BALI LINGGA KOMPUTER">CV. BALI LINGGA KOMPUTER</option>
             <option value="CV. ARTSOLUTION">CV. ARTSOLUTION</option>
-            <option value="PT. BALI LINGGA SAKA BUMI">PT. BALI LINGGA SAKA BUMI</option>
+            <option value="PT. BALI LINGGA SAKA BUMI">PT. BALI LINGGA SAKA GUMI</option>
             <option value="CV. SAHABAT UTAMA">CV. SAHABAT UTAMA</option>
             <option value="CV. N & b NET ACCESS">CV. N & b NET ACCESS</option>
             <option value="PT. ELKA SOLUTION NUSANTARA">PT. ELKA SOLUTION NUSANTARA</option>

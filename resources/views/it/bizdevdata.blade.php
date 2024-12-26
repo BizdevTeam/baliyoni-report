@@ -38,7 +38,7 @@
     <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
     <div class="mx-auto bg-white p-6 rounded-lg shadow">
         <!-- Page Header -->
-        <h1 class="text-4xl font-bold mb-5">Laporan Data Bizdev</h1>
+        <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Laporan Data Bizdev</h1>
         <h1 class="text-2xl font-bold">Judul</h1>
         <h2 class="text-2xl font-bold mb-5">{{ $bizdevbulanan->judul }}</h2>
 
