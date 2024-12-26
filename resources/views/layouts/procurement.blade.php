@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SUPERADMIN</title>
+  <title>PROCUREMENT</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -24,11 +24,11 @@
 </head>
 <body class="hold-transition sidebar-mini layout-fixed overflow-x-hidden w-300">
   <div class="wrapper">
-    <x-procurementside />
+    <x-sidebar />
     <x-navbar />
-    <x-procurementcontent>
+    <x-admincontent>
         @yield('content')
-    </x-procurementcontent>
+    </x-admincontent>
   
 
 <!-- Scripts -->

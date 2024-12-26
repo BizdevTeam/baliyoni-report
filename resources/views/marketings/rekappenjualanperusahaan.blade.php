@@ -31,22 +31,24 @@
 <body class="bg-gray-100 hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
         <!-- Sidebar -->
-        <x-marketingside class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
+        <x-sidebar class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
 
         <!-- Navbar -->
         <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
 
         <!-- Main Content -->
-        <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
+        <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300 z-50">
             <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow">
-                <h1 class="text-2xl font-bold mb-4">Rekap Penjualan Perusahaan</h1>
+                <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Rekap Penjualan Perusahaan</h1>
                 <!-- Button Tambah Data -->
                 <button id="open-modal" class="bg-red-600 text-white px-4 py-2 rounded mb-4">Tambah Data</button>
 
                 <!-- Modal -->
                 <div id="modal"
-                    class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
-                    <div class="bg-white p-6 rounded shadow w-full max-w-md">
+                    class="hidden fixed inset-0 bg-gray-800 bg-opacity-70 flex justify-center items-center"
+                    style="z-index: 9999;"> <!-- Set z-index tinggi -->
+                    <div class="bg-white p-6 rounded shadow w-full max-w-md" style="z-index: 10000;">
+                        <!-- Pastikan ini lebih tinggi -->
                         <h2 class="text-xl font-bold mb-4" id="modal-title">Tambah Data</h2>
                         <form id="modal-form" class="space-y-4" method="POST">
                             @csrf <!-- Token CSRF untuk Laravel -->
@@ -67,7 +69,7 @@
                                         <option value="CV. BALI JAKTI INFORMATIK">CV. BALI JAKTI INFORMATIK</option>
                                         <option value="CV. BALI LINGGA KOMPUTER">CV. BALI LINGGA KOMPUTER</option>
                                         <option value="CV. ARTSOLUTION">CV. ARTSOLUTION</option>
-                                        <option value="PT. BALI LINGGA KOMPUTER">PT. BALI LINGGA KOMPUTER</option>
+                                        <option value="PT. BALI LINGGA SAKA GUMI">PT. BALI LINGGA SAKA GUMI</option>
                                         <option value="CV. SAHABAT UTAMA">CV. SAHABAT UTAMA</option>
                                         <option value="CV. N & b NET ACCESS">CV. N & b NET ACCESS</option>
                                         <option value="PT. ELKA SOLUTION NUSANTARA">PT. ELKA SOLUTION NUSANTARA</option>
@@ -77,7 +79,7 @@
                                     <input type="text" name="nilai_paket[]"
                                         class="w-full border-gray-300 rounded p-2" placeholder="Nilai Paket" required>
                                     <button type="button"
-                                        class="remove-perusahaan bg-red-500 text-white px-2 py-1 rounded">Hapus</button>
+                                        class="remove-perusahaan bg-red-600 text-white px-2 py-1 rounded">Hapus</button>
                                 </div>
                             </div>
                             <button type="button" id="add-perusahaan"
@@ -85,7 +87,7 @@
                                 perusahaan</button>
                             <div class="flex justify-end space-x-2 mt-4">
                                 <button type="button" id="close-modal"
-                                    class="bg-gray-500 text-white px-4 py-2 rounded">Batal</button>
+                                    class="bg-red-600 text-white px-4 py-2 rounded">Batal</button>
                                 <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Simpan</button>
                             </div>
                         </form>
@@ -112,7 +114,7 @@
                     </thead>
                     <tbody id="data-table"></tbody>
                 </table>
-
+                <div id="pagination-container" class="flex justify-center mt-4"></div>
                 <!-- Chart -->
                 <div class="mt-6 items-center text-center mx-auto">
                     <canvas id="chart"></canvas>
@@ -136,21 +138,19 @@
                 // Menambahkan opsi default dan perusahaan
                 perusahaanSelect.innerHTML = `
                 <option value="" disabled selected>Pilih Perusahaan</option>
-                  <option value="CV. ARI DISTRIBUTION CENTER">CV. ARI DISTRIBUTION CENTER</option>
-                <option value="CV. BUANA KOSA">CV. BUANA KOSA</option>
-                                <option value="PT. BALI UNGGUL SEJAHTERA">PT. BALI UNGGUL SEJAHTERA</option>
-                                <option value="CV. DANA RASA">CV. DANA RASA</option>
-                                <option value="CV. LAGAAN SAKETI">CV. LAGAAN SAKETI</option>
-                                <option value="CV. BALI JAKTI INFORMATIK">CV. BALI JAKTI INFORMATIK</option>
-                                <option value="CV. BALI LINGGA KOMPUTER">CV. BALI LINGGA KOMPUTER</option>
-                                <option value="CV. ARTSOLUTION">CV. ARTSOLUTION</option>
-                                <option value="PT. BALI LINGGA KOMPUTER">PT. BALI LINGGA KOMPUTER</option>
-                                <option value="CV. SAHABAT UTAMA">CV. SAHABAT UTAMA</option>
-                                <option value="CV. N & b NET ACCESS">CV. N & b NET ACCESS</option>
-                                <option value="PT. ELKA SOLUTION NUSANTARA">PT. ELKA SOLUTION NUSANTARA</option>
-                                <option value="CV. ARINDAH">CV. ARINDAH</option>
-                                <option value="ARFALINDO">ARFALINDO</option>            `;
-
+                    <option value="CV. BUANA KOSA">CV. BUANA KOSA</option>
+                    <option value="PT. BALI UNGGUL SEJAHTERA">PT. BALI UNGGUL SEJAHTERA</option>                        
+                    <option value="CV. DANA RASA">CV. DANA RASA</option>
+                    <option value="CV. LAGAAN SAKETI">CV. LAGAAN SAKETI</option>
+                    <option value="CV. BALI JAKTI INFORMATIK">CV. BALI JAKTI INFORMATIK</option>
+                    <option value="CV. BALI LINGGA KOMPUTER">CV. BALI LINGGA KOMPUTER</option>
+                    <option value="CV. ARTSOLUTION">CV. ARTSOLUTION</option>
+                    <option value="PT. BALI LINGGA SAKA GUMI">PT. BALI LINGGA SAKA GUMI</option>
+                    <option value="CV. SAHABAT UTAMA">CV. SAHABAT UTAMA</option>
+                    <option value="CV. N & b NET ACCESS">CV. N & b NET ACCESS</option>
+                    <option value="PT. ELKA SOLUTION NUSANTARA">PT. ELKA SOLUTION NUSANTARA</option>
+                    <option value="CV. ARINDAH">CV. ARINDAH</option>
+                    <option value="ARFALINDO">ARFALINDO</option>            `;
                 const paketInput = document.createElement('input');
                 paketInput.type = 'text';
                 paketInput.name = 'nilai_paket[]';
@@ -160,7 +160,7 @@
 
                 const removeButton = document.createElement('button');
                 removeButton.type = 'button';
-                removeButton.className = 'remove-perusahaan bg-red-500 text-white px-2 py-1 rounded';
+                removeButton.className = 'remove-perusahaan bg-red-600 text-white px-2 py-1 rounded';
                 removeButton.textContent = 'Hapus';
 
                 // Menambahkan logika hapus
@@ -247,7 +247,7 @@
 
                 const url = editMode ? `/marketings/rekappenjualanperusahaan/update/${editId}` :
                     '/marketings/rekappenjualanperusahaan/store';
-                    
+
                 try {
                     const response = await fetch(url, {
                         method: editMode ? 'PUT' : 'POST',
@@ -256,7 +256,7 @@
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify(payload),
-               
+
                     });
                     const result = await response.json();
                     if (result.success) {
@@ -325,34 +325,87 @@
             }
 
             // Update Table
-            function updateTable(items) {
-                const tableBody = document.getElementById('data-table');
-                tableBody.innerHTML = ''; // Clear the table before rendering new data
+            let currentPage = 1;
+            let itemsPerPage = 12; // Maksimal 12 item per halaman
+            let filteredItems = []; // Data yang difilter berdasarkan bulan dan tahun
 
-                if (items.length === 0) {
+            function updateTable(items, bulanTahun = null) {
+                const tableBody = document.getElementById('data-table');
+                const paginationContainer = document.getElementById('pagination-container');
+
+                // Filter data berdasarkan bulan dan tahun jika parameter `bulanTahun` diberikan
+                if (bulanTahun) {
+                    filteredItems = items.filter(item => item.bulan_tahun === bulanTahun);
+                } else {
+                    filteredItems = items; // Semua data jika tidak ada filter bulan/tahun
+                }
+
+                const totalItems = filteredItems.length;
+                const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+                // Pastikan halaman tetap dalam rentang yang valid
+                if (currentPage > totalPages) {
+                    currentPage = totalPages;
+                }
+                if (currentPage < 1 ) {
+                    currentPage = 1;
+                }
+
+                // Hitung data yang akan ditampilkan berdasarkan halaman
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+                const paginatedItems = filteredItems.slice(startIndex, endIndex);
+
+                // Bersihkan tabel sebelum mengisi data baru
+                tableBody.innerHTML = '';
+
+                // Jika tidak ada data yang sesuai
+                if (paginatedItems.length === 0) {
                     tableBody.innerHTML = '<tr><td colspan="4">No data available</td></tr>';
                 } else {
-                    items.forEach((item) => {
+                    paginatedItems.forEach((item) => {
                         const row = `
-                <tr class="border-b">
-                    <td class="border px-4 py-2">${item.bulan_tahun}</td>
-                    <td class="border px-4 py-2">${item.perusahaan}</td>
-                    <td class="border px-4 py-2">Rp ${item.nilai_paket.toLocaleString()}</td>
-                    <td class="border px-4 py-2 flex items-center justify-center space-x-2">
-                      <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
-                            class="bg-red-500 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
-                        <i class="fas fa-edit mr-2"></i> Edit
-                    </button>
-                    <button onclick="deleteData(${item.id})" 
-                            class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
-                        <i class="fas fa-trash mr-2"></i> Delete
-                    </button>
-                    </td>
-                </tr>`;
+            <tr class="border-b">
+                <td class="border px-4 py-2">${item.bulan_tahun}</td>
+                <td class="border px-4 py-2">${item.perusahaan}</td>
+                <td class="border px-4 py-2">Rp ${item.nilai_paket.toLocaleString()}</td>
+                <td class="border px-4 py-2 flex items-center justify-center space-x-2">
+                  <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
+                        class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
+                    <i class="fas fa-edit mr-2"></i> Edit
+                </button>
+                <button onclick="deleteData(${item.id})" 
+                        class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
+                    <i class="fas fa-trash mr-2"></i> Delete
+                </button>
+                </td>
+            </tr>`;
                         tableBody.insertAdjacentHTML('beforeend', row);
                     });
                 }
+
+                // Buat tombol pagination
+                paginationContainer.innerHTML = `
+        <button ${currentPage === 1 ? 'disabled' : ''} onclick="changePage('prev')" 
+                class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}">
+            Previous
+        </button>
+        <span class="px-4">Page ${currentPage} of ${totalPages}</span>
+        <button ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage('next')" 
+                class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}">
+            Next
+        </button>`;
             }
+
+            function changePage(direction) {
+                if (direction === 'prev' && currentPage > 1) {
+                    currentPage--;
+                } else if (direction === 'next' && currentPage * itemsPerPage < filteredItems.length) {
+                    currentPage++;
+                }
+                updateTable(filteredItems);
+            }
+
 
             // Update Chart
             function updateChart(items) {
@@ -414,14 +467,12 @@
                 console.log(parsedData); // Debugging: cek struktur data
 
                 // Pastikan `perusahaan` adalah array
-                parsedData.perusahaan = Array.isArray(parsedData.perusahaan) ?
-                    parsedData.perusahaan :
-                    (typeof parsedData.perusahaan === 'string' ? parsedData.perusahaan.split(',') : []);
+                const perusahaanArray = Array.isArray(parsedData.perusahaan) ?
+                    parsedData.perusahaan : [parsedData.perusahaan]; // Ubah menjadi array jika hanya satu perusahaan
 
                 // Pastikan `nilai_paket` adalah array
-                parsedData.nilai_paket = Array.isArray(parsedData.nilai_paket) ?
-                    parsedData.nilai_paket :
-                    (typeof parsedData.nilai_paket === 'string' ? parsedData.nilai_paket.split(',').map(Number) : []);
+                const nilaiPaketArray = Array.isArray(parsedData.nilai_paket) ?
+                    parsedData.nilai_paket : [parsedData.nilai_paket]; // Ubah menjadi array jika hanya satu nilai
 
                 editMode = true; // Aktifkan mode edit
                 editId = id; // Simpan ID data yang sedang diedit
@@ -435,49 +486,53 @@
                 perusahaanContainer.innerHTML = '';
 
                 // Tambahkan elemen perusahaan dan nilai paket
-                parsedData.perusahaan.forEach((perusahaan, index) => {
+                perusahaanArray.forEach((perusahaan, index) => {
                     const newperusahaanItem = document.createElement('div');
                     newperusahaanItem.className = 'perusahaan-item flex items-center space-x-2 mb-2';
 
+                    // Dropdown untuk perusahaan
                     const perusahaanSelect = document.createElement('select');
                     perusahaanSelect.name = 'perusahaan[]';
                     perusahaanSelect.className = 'w-full border-gray-300 rounded p-2 perusahaan-select';
                     perusahaanSelect.required = true;
 
                     perusahaanSelect.innerHTML = `
-            <option value="" disabled>Pilih perusahaan</option>
-     <option value="CV. BUANA KOSA">CV. BUANA KOSA</option>
-                                <option value="PT. BALI UNGGUL SEJAHTERA">PT. BALI UNGGUL SEJAHTERA</option>
-                                <option value="CV. DANA RASA">CV. DANA RASA</option>
-                                <option value="CV. LAGAAN SAKETI">CV. LAGAAN SAKETI</option>
-                                <option value="CV. BALI JAKTI INFORMATIK">CV. BALI JAKTI INFORMATIK</option>
-                                <option value="CV. BALI LINGGA KOMPUTER">CV. BALI LINGGA KOMPUTER</option>
-                                <option value="CV. ARTSOLUTION">CV. ARTSOLUTION</option>
-                                <option value="PT. BALI LINGGA KOMPUTER">PT. BALI LINGGA KOMPUTER</option>
-                                <option value="CV. SAHABAT UTAMA">CV. SAHABAT UTAMA</option>
-                                <option value="CV. N & b NET ACCESS">CV. N & b NET ACCESS</option>
-                                <option value="PT. ELKA SOLUTION NUSANTARA">PT. ELKA SOLUTION NUSANTARA</option>
-                                <option value="CV. ARINDAH">CV. ARINDAH</option>
-                                <option value="ARFALINDO">ARFALINDO</option>        `;
-                    perusahaanSelect.value = perusahaan; // Set nilai perusahaan
+                        <option value="" disabled>Pilih perusahaan</option>
+                        <option value="CV. BUANA KOSA">CV. BUANA KOSA</option>
+                        <option value="PT. BALI UNGGUL SEJAHTERA">PT. BALI UNGGUL SEJAHTERA</option>
+                        <option value="CV. DANA RASA">CV. DANA RASA</option>
+                        <option value="CV. LAGAAN SAKETI">CV. LAGAAN SAKETI</option>
+                        <option value="CV. BALI JAKTI INFORMATIK">CV. BALI JAKTI INFORMATIK</option>
+                        <option value="CV. BALI LINGGA KOMPUTER">CV. BALI LINGGA KOMPUTER</option>
+                        <option value="CV. ARTSOLUTION">CV. ARTSOLUTION</option>
+                        <option value="PT. BALI LINGGA SAKA GUMI">PT. BALI LINGGA SAKA GUMI</option>
+                        <option value="CV. SAHABAT UTAMA">CV. SAHABAT UTAMA</option>
+                        <option value="CV. N & b NET ACCESS">CV. N & b NET ACCESS</option>
+                        <option value="PT. ELKA SOLUTION NUSANTARA">PT. ELKA SOLUTION NUSANTARA</option>
+                        <option value="CV. ARINDAH">CV. ARINDAH</option>
+                        <option value="ARFALINDO">ARFALINDO</option>`;
+                    perusahaanSelect.value = perusahaan || ''; // Set nilai perusahaan
 
+                    // Input untuk nilai paket
                     const nilaiPaketInput = document.createElement('input');
                     nilaiPaketInput.type = 'text';
                     nilaiPaketInput.name = 'nilai_paket[]';
                     nilaiPaketInput.className = 'w-full border-gray-300 rounded p-2';
                     nilaiPaketInput.placeholder = 'Nilai Paket';
-                    nilaiPaketInput.value = parsedData.nilai_paket[index] || ''; // Set nilai paket
+                    nilaiPaketInput.value = nilaiPaketArray[index] || ''; // Set nilai paket berdasarkan index
                     nilaiPaketInput.required = true;
 
+                    // Tombol hapus
                     const removeButton = document.createElement('button');
                     removeButton.type = 'button';
-                    removeButton.className = 'remove-perusahaan bg-red-500 text-white px-2 py-1 rounded';
+                    removeButton.className = 'remove-perusahaan bg-red-600 text-white px-2 py-1 rounded';
                     removeButton.textContent = 'Hapus';
 
                     removeButton.addEventListener('click', () => {
                         newperusahaanItem.remove();
                     });
 
+                    // Susun elemen dalam container
                     newperusahaanItem.appendChild(perusahaanSelect);
                     newperusahaanItem.appendChild(nilaiPaketInput);
                     newperusahaanItem.appendChild(removeButton);
@@ -488,7 +543,6 @@
                 // Tampilkan modal
                 modal.classList.remove('hidden');
             }
-
             // Initial Load
             updateData();
         </script>

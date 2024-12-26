@@ -30,7 +30,7 @@
 <body class="bg-gray-100 hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
         <!-- Sidebar -->
-        <x-supportside class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
+        <x-sidebar class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
 
         <!-- Navbar -->
         <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
@@ -38,11 +38,13 @@
         <!-- Main Content -->
         <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
             <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow">
-                <h1 class="text-2xl font-bold mb-4">Laporan Detrans</h1>
+                <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Laporan Detrans</h1>
 
+<<<<<<< HEAD
         <!-- Button Tambah Data -->
         <a href="/admin">
-        <button class="bg-red-600 text-white px-4 py-2 rounded mb-4">Kembali</button></a>
+=======
+>>>>>>> 7b312b5ae6bd4eab4284aa255993e815f479f8b5
         <button id="open-modal" class="bg-red-600 text-white px-4 py-2 rounded mb-4">Tambah Data</button>
 
         <!-- Modal -->
@@ -63,9 +65,15 @@
                     </div>
                     <div class="flex justify-end space-x-2">
                         <button type="button" id="close-modal"
-                            class="bg-gray-500 text-white px-4 py-2 rounded">Batal</button>
+<<<<<<< HEAD
+                            class="bg-red-600 text-white px-4 py-2 rounded">Batal</button>
                         <button type="submit" id="save-data"
-                            class="bg-blue-500 text-white px-4 py-2 rounded">Simpan</button>
+                            class="bg-red-600 text-white px-4 py-2 rounded">Simpan</button>
+=======
+                            class="bg-red-500 text-white px-4 py-2 rounded">Batal</button>
+                        <button type="submit" id="save-data"
+                            class="bg-red-500 text-white px-4 py-2 rounded">Simpan</button>
+>>>>>>> 7b312b5ae6bd4eab4284aa255993e815f479f8b5
                     </div>
                 </form>
             </div>
@@ -267,7 +275,7 @@
                 <td class="border px-4 py-2">Rp ${item.total_pengiriman.toLocaleString()}</td>
                 <td class="border px-4 py-2 flex items-center justify-center space-x-2">
                     <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
-                            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
+                            class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
                         <i class="fas fa-edit mr-2"></i> Edit
                     </button>
                     <button onclick="deleteData(${item.id})" 

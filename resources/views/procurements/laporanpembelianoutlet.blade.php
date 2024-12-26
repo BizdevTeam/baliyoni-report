@@ -31,7 +31,7 @@
 <body class="bg-gray-100 hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
         <!-- Sidebar -->
-        <x-procurementside class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
+        <x-sidebar class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
 
         <!-- Navbar -->
         <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
@@ -39,7 +39,7 @@
         <!-- Main Content -->
         <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100">
             <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow">
-                <h1 class="text-2xl font-bold mb-4">Laporan Pembelian Outlet</h1>
+                <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Laporan Pembelian Outlet</h1>
                     <!-- Button Tambah Data -->
                     <button id="open-modal" class="bg-red-600 text-white px-4 py-2 rounded mb-4">Tambah Data</button>
 
@@ -62,9 +62,15 @@
                     </div>
                     <div class="flex justify-end space-x-2">
                         <button type="button" id="close-modal"
-                            class="bg-gray-500 text-white px-4 py-2 rounded">Batal</button>
+<<<<<<< HEAD
+                            class="bg-red-600 text-white px-4 py-2 rounded">Batal</button>
                         <button type="submit" id="save-data"
-                            class="bg-blue-500 text-white px-4 py-2 rounded">Simpan</button>
+                            class="bg-red-600 text-white px-4 py-2 rounded">Simpan</button>
+=======
+                            class="bg-red-500 text-white px-4 py-2 rounded">Batal</button>
+                        <button type="submit" id="save-data"
+                            class="bg-red-500 text-white px-4 py-2 rounded">Simpan</button>
+>>>>>>> 7b312b5ae6bd4eab4284aa255993e815f479f8b5
                     </div>
                 </form>
             </div>
@@ -252,7 +258,7 @@
                         <td class="border px-4 py-2">${item.bulan_tahun}</td>
                         <td class="border px-4 py-2">Rp ${item.total_pembelian.toLocaleString()}</td>
                         <td class="border px-4 py-2 flex items-center justify-center space-x-2">
-                            <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
+                            <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
                                 <i class="fas fa-edit mr-2"></i> Edit
                             </button>
                             <button onclick="deleteData(${item.id})" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
@@ -266,15 +272,55 @@
     
         // Update Chart
         function updateChart(items) {
+            // Sort items by bulan_tahun in ascending order
+            items.sort((a, b) => {
+                const [monthA, yearA] = a.bulan_tahun.split('/').map(Number);
+                const [monthB, yearB] = b.bulan_tahun.split('/').map(Number);
+
+                if (yearA === yearB) {
+                    return monthA - monthB; // Sort by month if years are the same
+                }
+                return yearA - yearB; // Sort by year
+            });
+
+            // Extract sorted data
             const labels = items.map((item) => item.bulan_tahun);
             const dataValues = items.map((item) => item.total_pembelian);
             const backgroundColors = items.map(() =>
-                `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.7)`
-            );
-    
+                `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.7)`);
+
             const ctx = chartCanvas.getContext('2d');
-            if (window.myChart) window.myChart.destroy();
-    
+
+            // Destroy existing chart instance if any
+            if (window.myChart) {
+                window.myChart.destroy();
+            }
+
+            // If no data, show placeholder chart
+            if (items.length === 0) {
+                window.myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Tidak ada data'],
+                        datasets: [{
+                            label: 'Total Pembelian Outlet',
+                            data: [0],
+                            backgroundColor: backgroundColors,
+                        }],
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                            },
+                        },
+                    },
+                });
+                return;
+            }
+
+            // Create new chart with sorted data
             window.myChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -289,24 +335,18 @@
                 options: {
                     responsive: true,
                     plugins: {
-                        legend: {
-                            labels: {
-                                font: {
-                                    size: 20, // Ukuran font label
-                                    weight: 'bold', // Tebal tulisan
-                                },
-                            },
-                        },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return `${context.raw.toLocaleString()}`;
+                                    return `Rp ${context.raw.toLocaleString()}`;
                                 },
                             },
                         },
                     },
                     scales: {
-                        y: { beginAtZero: true },
+                        y: {
+                            beginAtZero: true,
+                        },
                     },
                 },
             });

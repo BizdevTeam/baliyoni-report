@@ -31,7 +31,7 @@
 <body class="bg-gray-100 hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
         <!-- Sidebar -->
-        <x-accountingside class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
+        <x-sidebar class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
 
         <!-- Navbar -->
         <x-navbar
@@ -40,7 +40,7 @@
         <!-- Main Content -->
         <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100">
             <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow">
-                <h1 class="text-2xl font-bold mb-4">Laporan Arus Kas</h1>
+                <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Laporan Arus Kas</h1>
                 <!-- Button Tambah Data -->
                 <button id="open-modal" class="bg-red-600 text-white px-4 py-2 rounded mb-4">Tambah Data</button>
 
@@ -67,7 +67,7 @@
                             </div>
                             <div class="flex justify-end space-x-2">
                                 <button type="button" id="close-modal"
-                                    class="bg-gray-500 text-white px-4 py-2 rounded">Batal</button>
+                                    class="bg-red-600 text-white px-4 py-2 rounded">Batal</button>
                                 <button type="submit" id="save-data"
                                     class="bg-red-600 text-white px-4 py-2 rounded">Simpan</button>
                             </div>
@@ -231,7 +231,7 @@
             <td class="border px-4 py-2">Rp ${item.kas_keluar.toLocaleString()}</td>
             <td class="border px-4 py-2 flex items-center justify-center space-x-2">
                 <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
-                        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
+                        class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
                     <i class="fas fa-edit mr-2"></i> Edit
                 </button>
                 <button onclick="deleteData(${item.id})" 
@@ -247,7 +247,7 @@
 
                 // Update Chart
                 function updateChart(items) {
-                    const labels = ['Kas Nasuk', 'Kas Keluar'];
+                    const labels = ['Kas Masuk', 'Kas Keluar'];
                     const dataValues = [
                         items.reduce((total, item) => total + item.kas_masuk, 0),
                         items.reduce((total, item) => total + item.kas_keluar, 0),

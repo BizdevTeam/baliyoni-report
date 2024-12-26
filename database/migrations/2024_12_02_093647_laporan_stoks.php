@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('laporan_stoks', function (Blueprint $table) {
             $table->id();
                 $table->string('bulan_tahun');
-                $table->integer('stok');
+                $table->bigInteger('stok');
                 $table->timestamps();
             });
     }

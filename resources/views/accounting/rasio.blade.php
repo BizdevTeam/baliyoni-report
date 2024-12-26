@@ -27,11 +27,10 @@
     @vite('resources/js/app.js')
 </head>
 
-
 <body class="bg-gray-100 hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
         <!-- Sidebar -->
-        <x-accountingside class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
+        <x-sidebar class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
 
         <!-- Navbar -->
         <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
@@ -39,13 +38,11 @@
         <!-- Main Content -->
         <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
             <div class="mx-auto bg-white p-6 rounded-lg shadow">
-                <h1 class="text-2xl font-bold mb-4">Laporan Rasio</h1>
+                <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Laporan Rasio</h1>
 
         <!-- Action Buttons -->
         <div class="flex items-center mb-4">
-            <button class="bg-red-600 text-white px-4 py-2 rounded shadow flex text-center items-center gap-2 mr-2">
-                <a href="/admin">Back</a>
-            </button>
+            
             <button class="bg-red-600 text-white px-4 py-2 rounded shadow flex items-center gap-2" data-modal-target="#addEventModal">
                 Add New
             </button>

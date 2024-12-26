@@ -21,7 +21,8 @@ class AdminController extends Controller
     {
         return view('layouts.it');
     }
-    function procurement(){
+    function procurement()
+    {
         return view('layouts.procurement');
     }
     function accounting(){

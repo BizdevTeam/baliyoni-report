@@ -24,11 +24,11 @@
 </head>
 <body class="hold-transition sidebar-mini layout-fixed overflow-x-hidden w-300">
   <div class="wrapper">
-    <x-spiside />
+    <x-sidebar />
     <x-navbar />
-    <x-spicontent>
+    <x-admincontent>
         @yield('content')
-    </x-spicontent>
+    </x-admincontent>
   
 
 <!-- Scripts -->

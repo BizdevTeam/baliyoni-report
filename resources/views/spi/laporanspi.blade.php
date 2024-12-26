@@ -33,7 +33,7 @@
 <body class="bg-gray-100 hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
         <!-- Sidebar -->
-        <x-spiside class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
+        <x-sidebar class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
 
         <!-- Navbar -->
         <x-navbar
@@ -44,16 +44,15 @@
             <div class="mx-auto bg-white/70  p-6 rounded-lg shadow-lg ">
                 <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Laporan SPI</h1>
 
-                <h1 class="text-sm   mb-4 text-black font-lato">Laporan perBulan</h1>
+                <h1 class="text-sm mb-4 text-black font-lato">Laporan per Bulan</h1>
 
-                <!-- Action Buttons -->
                 <div class="flex justify-end gap-2 mb-4"  data-aos="fade-left" data-aos-anchor-placement="center-center">
                     <!-- Tombol Back -->
+                    
                     <button
                         class="bg-gradient-to-r font-medium from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-1.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm">
-                        <a href="/admin" class="text-white" >Back</a>
+                        <a href="/admin" class="text-white">Back</a>
                     </button>
-
                     <!-- Tombol Add New -->
                     <button
                         class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-1.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm"
@@ -80,32 +79,32 @@
                     <table class="table-auto w-full border-collapse text-gray-700 text-sm">
                         <thead class="bg-gradient-to-r from-gray-200 to-gray-300 text-gray-900 font-semibold">
                             <tr class="font-sans">
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-in-out" data-aos-anchor-placement="center-center">Bulan & Tahun</th>
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-in-out" data-aos-anchor-placement="center-center">Judul</th>
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-in-out" data-aos-anchor-placement="center-center">Aspek</th>
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-in-out" data-aos-anchor-placement="center-center">Masalah</th>
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-in-out" data-aos-anchor-placement="center-center">Solusi</th>
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-in-out" data-aos-anchor-placement="center-center">Implementasi</th>
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-in-out" data-aos-anchor-placement="center-center">Action</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out" data-aos-anchor-placement="center-center">Bulan & Tahun</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out" data-aos-anchor-placement="center-center">Judul</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out" data-aos-anchor-placement="center-center">Aspek</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out" data-aos-anchor-placement="center-center">Masalah</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out" data-aos-anchor-placement="center-center">Solusi</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out" data-aos-anchor-placement="center-center">Implementasi</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out" data-aos-anchor-placement="center-center">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($laporans as $laporan)
 
-                            <tr class="even:bg-gray-50 odd:bg-white hover:bg-gray-100 transition duration-300 ">
-                                <td class="px-6 py-4 text-center border-b" data-aos="fade-right"  data-aos-easing="ease-in-out"  data-aos-duration="400">{{ $laporan->bulan_tahun }}</td>
-                                <td class="px-6 py-4 text-center border-b" data-aos="fade-right"  data-aos-easing="ease-in-out"  data-aos-duration="400">{{ $laporan->judul }}</td>
-                                <td class="px-6 py-4 text-center border-b" data-aos="fade-right"  data-aos-easing="ease-in-out"  data-aos-duration="400">{{ $laporan->aspek }}</td>
-                                <td class="px-6 py-4 text-center border-b" data-aos="fade-right"  data-aos-easing="ease-in-out"  data-aos-duration="400">{{ $laporan->masalah }}</td>
-                                <td class="px-6 py-4 text-center border-b" data-aos="fade-right"  data-aos-easing="ease-in-out"  data-aos-duration="400">{{ $laporan->solusi }}</td>
-                                <td class="px-6 py-4 text-center border-b" data-aos="fade-right"  data-aos-easing="ease-in-out"  data-aos-duration="400">{{ $laporan->implementasi }}</td>
+                            <tr class=" even:bg-gray-50 odd:bg-white hover:bg-gray-100 transition duration-300  ">
+                                <td class="px-6 py-4 text-center text-pretty border-b" data-aos="fade-right"  data-aos-easing="ease-in-out"  data-aos-duration="600">{{ $laporan->bulan_tahun }}</td>
+                                <td class="px-6 py-4 text-center text-pretty border-b " data-aos="fade-right"  data-aos-easing="ease-in-out"  data-aos-duration="600">{{ $laporan->judul }}</td>
+                                <td class="px-6 py-4 text-center text-pretty border-b" data-aos="fade-right"  data-aos-easing="ease-in-out"  data-aos-duration="600">{{ $laporan->aspek }}</td>
+                                <td class="px-6 py-4 text-center text-pretty border-b" data-aos="fade-right"  data-aos-easing="ease-in-out"  data-aos-duration="600">{{ $laporan->masalah }}</td>
+                                <td class="px-6 py-4 text-center text-pretty border-b" data-aos="fade-right"  data-aos-easing="ease-in-out"  data-aos-duration="600">{{ $laporan->solusi }}</td>
+                                <td class="px-6 py-4 text-center text-pretty border-b" data-aos="fade-right"  data-aos-easing="ease-in-out"  data-aos-duration="600">{{ $laporan->implementasi }}</td>
 
                                 <td class="px-6 py-4 text-center border-b flex justify-center gap-2">
                                     <!-- Edit Button -->
                                     <button
                                         class="  transition duration-300 ease-in-out transform hover:scale-125 flex items-center gap-2 p-2"
                                         data-modal-target="#editEventModal{{ $laporan->id_spi }}" >
-                                        <i class="fa fa-pen text-red-600" data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-in-out"></i>
+                                        <i class="fa fa-pen text-red-600" data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out"></i>
 
                                     </button>
                                     <!-- Delete Form -->
@@ -115,7 +114,7 @@
                                         <button
                                             class="  transition duration-300 ease-in-out transform hover:scale-125  flex items-center p-2"
                                             onclick="return confirm('Are you sure to delete?')" >
-                                            <i class="fa fa-trash text-red-600" data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-in-out"></i>
+                                            <i class="fa fa-trash text-red-600" data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out"></i>
 
                                         </button>
                                     </form>
@@ -206,7 +205,7 @@
                         <textarea name="masalah" class="w-full p-2 border rounded" rows="1"></textarea>
                     </div>
                     <div>
-                        <label for="masalah" class="block text-sm font-medium">Solusi</label>
+                        <label for="solusi" class="block text-sm font-medium">Solusi</label>
                         <textarea name="solusi" class="w-full p-2 border rounded" rows="1" required></textarea>
                     </div>
                     <div>

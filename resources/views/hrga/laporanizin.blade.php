@@ -23,13 +23,14 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
     @vite('resources/css/tailwind.css')
+    @vite('resources/css/custom.css')
     @vite('resources/js/app.js')
 </head>
 
 <body class="bg-gray-100 hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
         <!-- Sidebar -->
-        <x-hrgaside class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
+        <x-sidebar class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
 
         <!-- Navbar -->
         <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
@@ -37,11 +38,10 @@
         <!-- Main Content -->
         <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
             <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow">
-                <h1 class="text-2xl font-bold mb-4">Laporan HRD (IZIN)</h1>
+                <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Laporan HRD (IZIN)</h1>
 
         <!-- Button Tambah Data -->
         <div class="flex gap-4 mb-4">
-            <a href="/admin" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Kembali</a>
             <button id="open-modal" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Tambah
                 Data</button>
         </div>
@@ -71,7 +71,7 @@
                         nama</button>
                     <div class="flex justify-end space-x-2 mt-4">
                         <button type="button" id="close-modal"
-                            class="bg-gray-500 text-white px-4 py-2 rounded">Batal</button>
+                            class="bg-red-600 text-white px-4 py-2 rounded">Batal</button>
                         <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Simpan</button>
                     </div>
                 </form>
@@ -307,7 +307,7 @@
                     <td class="border px-4 py-2">${item.total_izin.toLocaleString()}</td>
                     <td class="border px-4 py-2 flex items-center justify-center space-x-2">
                         <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
-                                class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700">
                             Edit
                         </button>
                         <button onclick="deleteData(${item.id})"

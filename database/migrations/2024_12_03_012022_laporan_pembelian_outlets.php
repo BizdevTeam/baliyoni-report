@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('laporan_pembelian_outlets', function (Blueprint $table) {
             $table->id();
                 $table->string('bulan_tahun');
-                $table->integer('total_pembelian');
+                $table->bigInteger('total_pembelian');
                 $table->timestamps();
             });
     }

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('laporan_negosiasis', function (Blueprint $table) {
             $table->id();
                 $table->string('bulan_tahun');
-                $table->integer('total_negosiasi');
+                $table->bigInteger('total_negosiasi');
                 $table->timestamps();
             });
     }

@@ -15,7 +15,7 @@ return new class extends Migration
         $table->id();
             $table->string('bulan_tahun');
             $table->string('status');
-            $table->integer('paket');
+            $table->bigInteger('paket');
             $table->timestamps();
         });
     }

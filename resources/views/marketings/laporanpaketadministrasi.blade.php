@@ -30,7 +30,7 @@
 <body class="bg-gray-100 hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
         <!-- Sidebar -->
-        <x-marketingside class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
+        <x-sidebar class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
 
         <!-- Navbar -->
         <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
@@ -38,7 +38,7 @@
         <!-- Main Content -->
         <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
             <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow">
-                <h1 class="text-2xl font-bold mb-4">Laporan Paket Administrasi</h1>
+                <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Laporan Paket Administrasi</h1>
                 <!-- Button Tambah Data -->
                 <button id="open-modal" class="bg-red-600 text-white px-4 py-2 rounded mb-4">Tambah Data</button>
 
@@ -67,7 +67,7 @@
                                     <input type="text" name="paket_rp[]" class="w-full border-gray-300 rounded p-2"
                                         placeholder="Nilai Paket" required>
                                     <button type="button"
-                                        class="remove-website bg-red-500 text-white px-2 py-1 rounded">Hapus</button>
+                                        class="remove-website bg-red-600 text-white px-2 py-1 rounded">Hapus</button>
                                 </div>
                             </div>
                             <button type="button" id="add-website"
@@ -75,7 +75,7 @@
                                 Website</button>
                             <div class="flex justify-end space-x-2 mt-4">
                                 <button type="button" id="close-modal"
-                                    class="bg-gray-500 text-white px-4 py-2 rounded">Batal</button>
+                                    class="bg-red-600 text-white px-4 py-2 rounded">Batal</button>
                                 <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Simpan</button>
                             </div>
                         </form>
@@ -140,7 +140,7 @@
 
                 const removeButton = document.createElement('button');
                 removeButton.type = 'button';
-                removeButton.className = 'remove-website bg-red-500 text-white px-2 py-1 rounded';
+                removeButton.className = 'remove-website bg-red-600 text-white px-2 py-1 rounded';
                 removeButton.textContent = 'Hapus';
 
                 // Menambahkan logika hapus
@@ -314,17 +314,17 @@
                 } else {
                     items.forEach((item) => {
                         const row = `
-                <tr class="border-b">
+                <tr class="border-b items-center text-center">
                     <td class="border px-4 py-2">${item.bulan_tahun}</td>
                     <td class="border px-4 py-2">${item.website}</td>
-                    <td class="border px-4 py-2">Rp ${item.paket_rp.toLocaleString()}</td>
+                    <td class="border px-4 py-2">${item.paket_rp.toLocaleString()}</td>
                     <td class="border px-4 py-2 flex items-center justify-center space-x-2">
                        <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
-                            class="bg-red-500 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
+                            class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
                         <i class="fas fa-edit mr-2"></i> Edit
                     </button>
                     <button onclick="deleteData(${item.id})" 
-                            class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
+                            class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
                         <i class="fas fa-trash mr-2"></i> Delete
                     </button>
                     </td>
@@ -374,7 +374,7 @@
                             tooltip: {
                                 callbacks: {
                                     label: function(context) {
-                                        return `Rp ${context.raw.toLocaleString()}`;
+                                        return `Nilai Paket : ${context.raw.toLocaleString()}`;
                                     },
                                 },
                             },
@@ -444,7 +444,7 @@
 
                     const removeButton = document.createElement('button');
                     removeButton.type = 'button';
-                    removeButton.className = 'remove-website bg-red-500 text-white px-2 py-1 rounded';
+                    removeButton.className = 'remove-website bg-red-600 text-white px-2 py-1 rounded';
                     removeButton.textContent = 'Hapus';
 
                     removeButton.addEventListener('click', () => {

@@ -403,5 +403,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/procurement', [AdminController::class, 'procurement'])->name('layouts.procurement')->middleware('UserAccess:procurement');
     Route::get('/admin/hrga', [AdminController::class, 'hrga'])->name('layouts.hrga')->middleware('UserAccess:hrga');
     Route::get('/admin/spi', [AdminController::class, 'spi'])->name('layouts.spi')->middleware('UserAccess:spi');
-    Route::post('/logout', [SessionController::class, 'logout'])->name('logout');
+    Route::get('/admin/support', [AdminController::class, 'support'])->name('layouts.support')->middleware('UserAccess:support');
+    Route::get('/logout', [SessionController::class, 'logout'])->name('logout');
 });

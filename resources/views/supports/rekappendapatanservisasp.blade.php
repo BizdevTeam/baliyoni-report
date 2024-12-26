@@ -30,7 +30,7 @@
 <body class="bg-gray-100 hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
         <!-- Sidebar -->
-        <x-supportside class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
+        <x-sidebar class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
 
         <!-- Navbar -->
         <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
@@ -38,11 +38,10 @@
         <!-- Main Content -->
         <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
             <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow">
-                <h1 class="text-2xl font-bold mb-4">Rekap Pendapatan Servis ASP</h1>
+                <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Rekap Pendapatan Servis ASP</h1>
 
         <!-- Button Tambah Data -->
         <div class="flex gap-4 mb-4">
-            <a href="/admin" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Kembali</a>
             <button id="open-modal" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Tambah
                 Data</button>
         </div>
@@ -79,7 +78,7 @@
                         pelaksana</button>
                     <div class="flex justify-end space-x-2 mt-4">
                         <button type="button" id="close-modal"
-                            class="bg-gray-500 text-white px-4 py-2 rounded">Batal</button>
+                            class="bg-red-600 text-white px-4 py-2 rounded">Batal</button>
                         <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Simpan</button>
                     </div>
                 </form>
@@ -322,14 +321,25 @@
                     <td class="border px-4 py-2">${item.pelaksana}</td>
                     <td class="border px-4 py-2">Rp ${item.nilai_pendapatan.toLocaleString()}</td>
                     <td class="border px-4 py-2 flex items-center justify-center space-x-2">
+<<<<<<< HEAD
                         <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
-                                class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700">
                             Edit
                         </button>
                         <button onclick="deleteData(${item.id})"
                                 class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700">
                             Delete
                         </button>
+=======
+                            <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
+                        class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
+                    <i class="fas fa-edit mr-2"></i> Edit
+                </button>
+                <button onclick="deleteData(${item.id})" 
+                        class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
+                    <i class="fas fa-trash mr-2"></i> Delete
+                </button>
+>>>>>>> 7b312b5ae6bd4eab4284aa255993e815f479f8b5
                     </td>
                 </tr>`;
                     tableBody.insertAdjacentHTML('beforeend', row);
@@ -390,14 +400,12 @@
             console.log(parsedData); // Debugging: cek struktur data
 
             // Pastikan `pelaksana` adalah array
-            parsedData.pelaksana = Array.isArray(parsedData.pelaksana) ?
-                parsedData.pelaksana :
-                (typeof parsedData.pelaksana === 'string' ? parsedData.pelaksana.split(',') : []);
+            const pelaksanaArray = Array.isArray(parsedData.pelaksana) ?
+                    parsedData.pelaksana : [parsedData.pelaksana]; // Ubah menjadi array jika hanya satu pelaksana
 
-            // Pastikan `nilai_pendapatan` adalah array
-            parsedData.nilai_pendapatan = Array.isArray(parsedData.nilai_pendapatan) ?
-                parsedData.nilai_pendapatan :
-                (typeof parsedData.nilai_pendapatan === 'string' ? parsedData.nilai_pendapatan.split(',').map(Number) : []);
+                // Pastikan `nilai_pendapatan` adalah array
+                const nilaiPaketArray = Array.isArray(parsedData.nilai_pendapatan) ?
+                    parsedData.nilai_pendapatan : [parsedData.nilai_pendapatan]; // Ubah menjadi array jika hanya satu nilai
 
             editMode = true; // Aktifkan mode edit
             editId = id; // Simpan ID data yang sedang diedit
@@ -411,7 +419,7 @@
             pelaksanaContainer.innerHTML = '';
 
             // Tambahkan elemen pelaksana dan nilai pendapatan
-            parsedData.pelaksana.forEach((pelaksana, index) => {
+            pelaksanaArray.forEach((pelaksana, index) => {
                 const newPelaksanaItem = document.createElement('div');
                 newPelaksanaItem.className = 'pelaksana-item flex items-center space-x-2 mb-2';
 
@@ -421,21 +429,21 @@
                 pelaksanaSelect.required = true;
 
                 pelaksanaSelect.innerHTML = `
-            <option value="" disabled>Pilih Pelaksana</option>
-            <option value="CV. ARI DISTRIBUTION CENTER">CV. ARI DISTRIBUTION CENTER</option>
-            <option value="CV. BALIYONI COMPUTER">CV. BALIYONI COMPUTER</option>
-            <option value="PT. NABA TECHNOLOGY SOLUTIONS">PT. NABA TECHNOLOGY SOLUTIONS</option>
-            <option value="CV. ELKA MANDIRI (50%)-SAMITRA">CV. ELKA MANDIRI (50%)-SAMITRA</option>
-            <option value="CV. ELKA MANDIRI (50%)-DETRAN">CV. ELKA MANDIRI (50%)-DETRAN</option>
-        `;
-                pelaksanaSelect.value = pelaksana; // Set nilai pelaksana
+                    <option value="" disabled>Pilih Pelaksana</option>
+                    <option value="CV. ARI DISTRIBUTION CENTER">CV. ARI DISTRIBUTION CENTER</option>
+                    <option value="CV. BALIYONI COMPUTER">CV. BALIYONI COMPUTER</option>
+                    <option value="PT. NABA TECHNOLOGY SOLUTIONS">PT. NABA TECHNOLOGY SOLUTIONS</option>
+                    <option value="CV. ELKA MANDIRI (50%)-SAMITRA">CV. ELKA MANDIRI (50%)-SAMITRA</option>
+                    <option value="CV. ELKA MANDIRI (50%)-DETRAN">CV. ELKA MANDIRI (50%)-DETRAN</option>
+                 `;
+                pelaksanaSelect.value = pelaksana || ""; // Set nilai pelaksana
 
                 const nilaiPendapatanInput = document.createElement('input');
                 nilaiPendapatanInput.type = 'text';
                 nilaiPendapatanInput.name = 'nilai_pendapatan[]';
                 nilaiPendapatanInput.className = 'w-full border-gray-300 rounded p-2';
                 nilaiPendapatanInput.placeholder = 'Nilai Pendapatan';
-                nilaiPendapatanInput.value = parsedData.nilai_pendapatan[index] || ''; // Set nilai pendapatan
+                nilaiPendapatanInput.value = nilaiPaketArray[index] || ''; // Set nilai pendapatan
                 nilaiPendapatanInput.required = true;
 
                 const removeButton = document.createElement('button');

@@ -30,7 +30,7 @@
 <body class="bg-gray-100 hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
         <!-- Sidebar -->
-        <x-supportside class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
+        <x-sidebar class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
 
         <!-- Navbar -->
         <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
@@ -38,11 +38,13 @@
         <!-- Main Content -->
         <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
             <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow">
-                <h1 class="text-2xl font-bold mb-4">Laporan Samitra</h1>
+                <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Laporan Samitra</h1>
 
         <!-- Button Tambah Data -->
+<<<<<<< HEAD
         <a href="/admin">
-        <button class="bg-red-600 text-white px-4 py-2 rounded mb-4">Kembali</button></a>
+=======
+>>>>>>> 7b312b5ae6bd4eab4284aa255993e815f479f8b5
         <button id="open-modal" class="bg-red-600 text-white px-4 py-2 rounded mb-4">Tambah Data</button>
 
         <!-- Modal -->
@@ -63,9 +65,15 @@
                     </div>
                     <div class="flex justify-end space-x-2">
                         <button type="button" id="close-modal"
-                            class="bg-gray-500 text-white px-4 py-2 rounded">Batal</button>
+<<<<<<< HEAD
+                            class="bg-red-600 text-white px-4 py-2 rounded">Batal</button>
                         <button type="submit" id="save-data"
-                            class="bg-blue-500 text-white px-4 py-2 rounded">Simpan</button>
+                            class="bg-red-600 text-white px-4 py-2 rounded">Simpan</button>
+=======
+                            class="bg-red-500 text-white px-4 py-2 rounded">Batal</button>
+                        <button type="submit" id="save-data"
+                            class="bg-red-500 text-white px-4 py-2 rounded">Simpan</button>
+>>>>>>> 7b312b5ae6bd4eab4284aa255993e815f479f8b5
                     </div>
                 </form>
             </div>
@@ -130,8 +138,8 @@
                 total_pengiriman: Number(document.getElementById('modal-total_pengiriman').value),
             };
 
-            const url = editMode ? `/supports/laporandetrans/update/${editId}` :
-                '/supports/laporandetrans/store';
+            const url = editMode ? `/supports/laporansamitra/update/${editId}` :
+                '/supports/laporansamitra/store';
             const method = editMode ? 'PUT' : 'POST';
 
             try {
@@ -160,7 +168,7 @@
         // Delete Data
         async function deleteData(id) {
             try {
-                const response = await fetch(`/supports/laporandetrans/destroy/${id}`, {
+                const response = await fetch(`/supports/laporansamitra/destroy/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -182,7 +190,7 @@
 
         //filter tahun
         async function updateDataByYear(year) {
-            const url = `/supports/laporandetrans/filter?tahun=${year}`;
+            const url = `/supports/laporansamitra/filter?tahun=${year}`;
             try {
                 const response = await fetch(url, {
                     method: 'GET',
@@ -226,8 +234,8 @@
         });
 
         async function updateData(filter = '') {                                                                        
-            const url = filter ? `/supports/laporandetrans/filter?tahun=${filter}` :
-                '/supports/laporandetrans/data';
+            const url = filter ? `/supports/laporansamitra/filter?tahun=${filter}` :
+                '/supports/laporansamitra/data';
                 try {
                 const response = await fetch(url);
                 const result = await response.json();
@@ -267,7 +275,7 @@
                 <td class="border px-4 py-2">Rp ${item.total_pengiriman.toLocaleString()}</td>
                 <td class="border px-4 py-2 flex items-center justify-center space-x-2">
                     <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
-                            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
+                            class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
                         <i class="fas fa-edit mr-2"></i> Edit
                     </button>
                     <button onclick="deleteData(${item.id})" 
@@ -286,18 +294,34 @@
             </tr>`;
             tableBody.insertAdjacentHTML('beforeend', totalRow);
         }
+        //update chart
 
         function updateChart(items) {
+            // Sort items by bulan_tahun in ascending order
+            items.sort((a, b) => {
+                const [monthA, yearA] = a.bulan_tahun.split('/').map(Number);
+                const [monthB, yearB] = b.bulan_tahun.split('/').map(Number);
+
+                if (yearA === yearB) {
+                    return monthA - monthB; // Sort by month if years are the same
+                }
+                return yearA - yearB; // Sort by year
+            });
+
+            // Extract sorted data
             const labels = items.map((item) => item.bulan_tahun);
             const dataValues = items.map((item) => item.total_pengiriman);
             const backgroundColors = items.map(() =>
                 `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.7)`);
 
             const ctx = chartCanvas.getContext('2d');
+
+            // Destroy existing chart instance if any
             if (window.myChart) {
                 window.myChart.destroy();
             }
 
+            // If no data, show placeholder chart
             if (items.length === 0) {
                 window.myChart = new Chart(ctx, {
                     type: 'bar',
@@ -321,6 +345,7 @@
                 return;
             }
 
+            // Create new chart with sorted data
             window.myChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -335,14 +360,6 @@
                 options: {
                     responsive: true,
                     plugins: {
-                        legend: {
-                            labels: {
-                                font: {
-                                    size: 20, // Ukuran font label
-                                    weight: 'bold', // Tebal tulisan
-                                },
-                            },
-                        },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
@@ -359,7 +376,6 @@
                 },
             });
         }
-
         // Edit Data
         async function editData(id, data) {
             const parsedData = JSON.parse(decodeURIComponent(data));
