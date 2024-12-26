@@ -23,6 +23,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
     @vite('resources/css/tailwind.css')
+    @vite('resources/css/custom.css')
     @vite('resources/js/app.js')
 </head>
 
