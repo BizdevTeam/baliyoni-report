@@ -38,7 +38,7 @@
         <!-- Main Content -->
         <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100">
             <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow">
-                <h1 class="text-2xl font-bold mb-4">Kas Hutang Piutang Stok</h1>
+                <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Kas Hutang Piutang Stok</h1>
                     <!-- Button Tambah Data -->
                     <button id="open-modal" class="bg-red-600 text-white px-4 py-2 rounded mb-4">Tambah Data</button>
 

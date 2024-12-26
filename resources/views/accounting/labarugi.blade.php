@@ -38,7 +38,7 @@
         <!-- Main Content -->
         <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
             <div class="mx-auto bg-white p-6 rounded-lg shadow">
-                <h1 class="text-2xl font-bold mb-4">Laba Rugi</h1>
+                <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Laba Rugi</h1>
         <!-- Action Buttons -->
         <div class="flex items-center mb-4">
             <button class="bg-red-600 text-white px-4 py-2 rounded shadow flex text-center items-center gap-2 mr-2">
