@@ -30,7 +30,7 @@
 <body class="bg-gray-100 hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
         <!-- Sidebar -->
-        <x-accountingside class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
+        <x-sidebar class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
 
         <!-- Navbar -->
         <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
