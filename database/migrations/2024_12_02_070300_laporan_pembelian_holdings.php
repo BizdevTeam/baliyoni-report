@@ -17,6 +17,9 @@ return new class extends Migration
                 $table->string('perusahaan');
                 $table->bigInteger('nilai');
                 $table->timestamps();
+
+                $table->unique(['bulan_tahun', 'perusahaan']);
+
             });
     }
 

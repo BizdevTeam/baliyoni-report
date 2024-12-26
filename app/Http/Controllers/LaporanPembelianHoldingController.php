@@ -1,17 +1,21 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\LaporanPembelianHolding;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class LaporanPembelianHoldingController extends Controller
 {
+    // Menampilkan halaman utama
     public function index()
     {
         return view('procurements.laporanpembelianholding');
     }
 
+    // Fetch data dengan filter
     public function data(Request $request)
     {
         try {
@@ -22,15 +26,11 @@ class LaporanPembelianHoldingController extends Controller
                 $query->where('bulan_tahun', $bulanTahun);
             }
 
-            $pakets = $query->orderBy('created_at', 'desc')->get();
-
-            // Perbaiki logika totalPaket
-            $totalPaket = $pakets->sum('nilai'); // Pakai tanda kutip tunggal (')
+            $data = $query->orderBy('created_at', 'desc')->get();
 
             return response()->json([
                 'success' => true,
-                'data' => $pakets,
-                'total_paket' => $totalPaket,
+                'data' => $data,
             ], 200);
         } catch (\Exception $e) {
             Log::error('Error fetching data: ' . $e->getMessage());
@@ -39,101 +39,86 @@ class LaporanPembelianHoldingController extends Controller
                 'message' => 'Terjadi kesalahan saat mengambil data.',
             ], 500);
         }
-    }   
+    }
 
+    // Simpan data baru
     public function store(Request $request)
     {
-        $validatedData = $this->validateData($request);
+        $validated = $request->validate([
+            'bulan_tahun' => 'required|date_format:m/Y',
+            'perusahaan' => 'required|array|min:1',
+            'perusahaan.*' => 'required|string|max:255',
+            'nilai' => 'required|array|min:1',
+            'nilai.*' => 'required|numeric|min:0',
+        ]);
 
-        try {
-            // Check if data already exists for the same bulan_tahun and perusahaan
-            $existingEntry = LaporanPembelianHolding::where('bulan_tahun', $validatedData['bulan_tahun'])
-                ->where('perusahaan', $validatedData['perusahaan'])
-                ->first();
+        try {   
+            $dataToInsert = $this->prepareDataForInsert($validated);
 
-            if ($existingEntry) {
-                return response()->json([
-                    'success' => false,
-                    'message' => "perusahaan {$validatedData['perusahaan']} sudah dipilih untuk bulan {$validatedData['bulan_tahun']}.",
-                ], 400);
-            }
+            LaporanPembelianHolding::insert($dataToInsert);
 
-            LaporanPembelianHolding::create($validatedData);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Data berhasil disimpan.',
-            ], 201);
+            return response()->json(['success' => true, 'message' => 'Data berhasil disimpan.']);
         } catch (\Exception $e) {
-            Log::error('Error saving data: ' . $e->getMessage(), ['data' => $validatedData]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan data.',
-            ], 500);
+            Log::error('Error saving data: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat menyimpan data.'], 500);
         }
     }
 
+    // Perbarui data
     public function update(Request $request, $id)
     {
-        $validatedData = $this->validateData($request);
+        $validated = $request->validate([
+            'bulan_tahun' => 'required|date_format:m/Y',
+            'perusahaan' => 'required|array|min:1',
+            'perusahaan.*' => 'required|string|max:255',
+            'nilai' => 'required|array|min:1',
+            'nilai.*' => 'required|numeric|min:0',
+        ]);
 
         try {
-            $paket = LaporanPembelianHolding::findOrFail($id);
+            // Hapus data lama untuk perusahaan terkait
+            LaporanPembelianHolding::where('id', $id)->delete();
 
-            // Cek duplikasi data
-            $existingEntry = LaporanPembelianHolding::where('bulan_tahun', $validatedData['bulan_tahun'])
-                ->where('perusahaan', $validatedData['perusahaan'])
-                ->where('id', '!=', $id) // Abaikan data dengan ID yang sama
-                ->first();
+            $dataToInsert = $this->prepareDataForInsert($validated);
+            LaporanPembelianHolding::insert($dataToInsert);
 
-            if ($existingEntry) {
-                return response()->json([
-                    'success' => false,
-                    'message' => "perusahaan {$validatedData['perusahaan']} sudah dipilih untuk bulan {$validatedData['bulan_tahun']}.",
-                ], 400);
-            }
-
-            // Perbarui data
-            $paket->update($validatedData);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Data berhasil diperbarui.',
-            ], 200);
+            return response()->json(['success' => true, 'message' => 'Data berhasil diperbarui.']);
         } catch (\Exception $e) {
-            Log::error('Error updating data: ' . $e->getMessage(), ['id' => $id, 'data' => $validatedData]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat memperbarui data.',
-            ], 500);
+            Log::error('Error updating data: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat memperbarui data.'], 500);
         }
     }
 
+    // Hapus data
     public function destroy($id)
     {
         try {
             $paket = LaporanPembelianHolding::findOrFail($id);
             $paket->delete();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Data berhasil dihapus.',
-            ], 200);
+            return response()->json(['success' => true, 'message' => 'Data berhasil dihapus.'], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            Log::error('Data not found: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Data tidak ditemukan.'], 404);
         } catch (\Exception $e) {
             Log::error('Error deleting data: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat menghapus data.',
-            ], 500);
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat menghapus data.'], 500);
         }
     }
 
-    private function validateData(Request $request)
+    // Persiapkan data untuk di-insert ke database
+    private function prepareDataForInsert($validated)
     {
-        return $request->validate([
-            'bulan_tahun' => ['required', 'regex:/^(0[1-9]|1[0-2])\/\d{4}$/'],  // Ensure month/year format
-            'perusahaan' => 'required|string|max:255',
-            'nilai' => 'required|integer|min:0',
-        ]);
+        $dataToInsert = [];
+        foreach ($validated['perusahaan'] as $index => $perusahaan) {
+            $dataToInsert[] = [
+                'bulan_tahun' => $validated['bulan_tahun'],
+                'perusahaan' => $perusahaan,
+                'nilai' => $validated['nilai'][$index],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+        return $dataToInsert;
     }
 }

@@ -37,7 +37,7 @@
         <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
 
         <!-- Main Content -->
-        <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
+        <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300 z-50">
             <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow">
                 <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Rekap Penjualan Perusahaan</h1>
                 <!-- Button Tambah Data -->
@@ -45,8 +45,10 @@
 
                 <!-- Modal -->
                 <div id="modal"
-                    class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
-                    <div class="bg-white p-6 rounded shadow w-full max-w-md">
+                    class="hidden fixed inset-0 bg-gray-800 bg-opacity-70 flex justify-center items-center"
+                    style="z-index: 9999;"> <!-- Set z-index tinggi -->
+                    <div class="bg-white p-6 rounded shadow w-full max-w-md" style="z-index: 10000;">
+                        <!-- Pastikan ini lebih tinggi -->
                         <h2 class="text-xl font-bold mb-4" id="modal-title">Tambah Data</h2>
                         <form id="modal-form" class="space-y-4" method="POST">
                             @csrf <!-- Token CSRF untuk Laravel -->
@@ -385,12 +387,12 @@
                 // Buat tombol pagination
                 paginationContainer.innerHTML = `
         <button ${currentPage === 1 ? 'disabled' : ''} onclick="changePage('prev')" 
-                class="bg-red-600 px-4 py-2 rounded hover:bg-red-700 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}">
+                class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}">
             Previous
         </button>
         <span class="px-4">Page ${currentPage} of ${totalPages}</span>
         <button ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage('next')" 
-                class="bg-red-600 px-4 py-2 rounded hover:bg-red-700 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}">
+                class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}">
             Next
         </button>`;
             }
