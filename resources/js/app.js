@@ -1,3 +1,6 @@
+import AOS from 'aos';
+import 'aos/dist/aos.css';  // Mengimpor file CSS AOS
+
 document.addEventListener('DOMContentLoaded', () => {
     const sidebar = document.getElementById('sidebar');
     const toggleSidebar = document.getElementById('toggle-sidebar');
@@ -109,3 +112,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 });
+AOS.init();
+
