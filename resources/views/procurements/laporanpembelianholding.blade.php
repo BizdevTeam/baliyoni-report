@@ -61,7 +61,7 @@
                             <option value="CV. ELKA MANDIRI">CV. ELKA MANDIRI</option>
                             <option value="PT. NABA TECHNOLOGY SOLUTIONS">PT. NABA TECHNOLOGY SOLUTIONS</option>
                             <option value="PT. DWI SRIKANDI INDONESIA">PT. DWI SRIKANDI INDONESIA</option>
-                            <option value="CV. BHIMA TEKNIK">CV. BHIMA TEKNIK</option>
+                            <option value="CV. BHIRMA TEKNIK">CV. BHIMA TEKNIK</option>
                             <option value="PT. DWI SRIKANDI NUSANTARA">PT. DWI SRIKANDI NUSANTARA</option>
                         </select>
                     </div>

@@ -61,18 +61,18 @@
                                         class="w-full border-gray-300 rounded p-2 perusahaan-select" required>
                                         <option value="" disabled selected>Pilih Perusahaan</option>
                                         <option value="CV. BUANA KOSA">CV. BUANA KOSA</option>
-                                        <option value="PT. BALI UNGGUL SEJAHTERA">PT. BALI UNGGUL SEJAHTERA</option>
+                                        <option value="PT. BALI UNGGUL SEJAHTERA">PT. BALI UNGGUL SEJAHTERA</option>                        
                                         <option value="CV. DANA RASA">CV. DANA RASA</option>
                                         <option value="CV. LAGAAN SAKETI">CV. LAGAAN SAKETI</option>
                                         <option value="CV. BALI JAKTI INFORMATIK">CV. BALI JAKTI INFORMATIK</option>
                                         <option value="CV. BALI LINGGA KOMPUTER">CV. BALI LINGGA KOMPUTER</option>
                                         <option value="CV. ARTSOLUTION">CV. ARTSOLUTION</option>
-                                        <option value="PT. BALI LINGGA KOMPUTER">PT. BALI LINGGA KOMPUTER</option>
+                                        <option value="PT. BALI LINGGA SAKA BUMI">PT. BALI LINGGA SAKA BUMI</option>
                                         <option value="CV. SAHABAT UTAMA">CV. SAHABAT UTAMA</option>
                                         <option value="CV. N & b NET ACCESS">CV. N & b NET ACCESS</option>
                                         <option value="PT. ELKA SOLUTION NUSANTARA">PT. ELKA SOLUTION NUSANTARA</option>
                                         <option value="CV. ARINDAH">CV. ARINDAH</option>
-                                        <option value="ARFALINDO">ARFALINDO</option>
+                                        <option value="ARFALINDO">ARFALINDO</option>      
                                     </select>
                                     <input type="text" name="nilai_paket[]"
                                         class="w-full border-gray-300 rounded p-2" placeholder="Nilai Paket" required>
@@ -136,21 +136,19 @@
                 // Menambahkan opsi default dan perusahaan
                 perusahaanSelect.innerHTML = `
                 <option value="" disabled selected>Pilih Perusahaan</option>
-                  <option value="CV. ARI DISTRIBUTION CENTER">CV. ARI DISTRIBUTION CENTER</option>
-                <option value="CV. BUANA KOSA">CV. BUANA KOSA</option>
-                                <option value="PT. BALI UNGGUL SEJAHTERA">PT. BALI UNGGUL SEJAHTERA</option>
-                                <option value="CV. DANA RASA">CV. DANA RASA</option>
-                                <option value="CV. LAGAAN SAKETI">CV. LAGAAN SAKETI</option>
-                                <option value="CV. BALI JAKTI INFORMATIK">CV. BALI JAKTI INFORMATIK</option>
-                                <option value="CV. BALI LINGGA KOMPUTER">CV. BALI LINGGA KOMPUTER</option>
-                                <option value="CV. ARTSOLUTION">CV. ARTSOLUTION</option>
-                                <option value="PT. BALI LINGGA KOMPUTER">PT. BALI LINGGA KOMPUTER</option>
-                                <option value="CV. SAHABAT UTAMA">CV. SAHABAT UTAMA</option>
-                                <option value="CV. N & b NET ACCESS">CV. N & b NET ACCESS</option>
-                                <option value="PT. ELKA SOLUTION NUSANTARA">PT. ELKA SOLUTION NUSANTARA</option>
-                                <option value="CV. ARINDAH">CV. ARINDAH</option>
-                                <option value="ARFALINDO">ARFALINDO</option>            `;
-
+                    <option value="CV. BUANA KOSA">CV. BUANA KOSA</option>
+                    <option value="PT. BALI UNGGUL SEJAHTERA">PT. BALI UNGGUL SEJAHTERA</option>                        
+                    <option value="CV. DANA RASA">CV. DANA RASA</option>
+                    <option value="CV. LAGAAN SAKETI">CV. LAGAAN SAKETI</option>
+                    <option value="CV. BALI JAKTI INFORMATIK">CV. BALI JAKTI INFORMATIK</option>
+                    <option value="CV. BALI LINGGA KOMPUTER">CV. BALI LINGGA KOMPUTER</option>
+                    <option value="CV. ARTSOLUTION">CV. ARTSOLUTION</option>
+                    <option value="PT. BALI LINGGA SAKA BUMI">PT. BALI LINGGA SAKA BUMI</option>
+                    <option value="CV. SAHABAT UTAMA">CV. SAHABAT UTAMA</option>
+                    <option value="CV. N & b NET ACCESS">CV. N & b NET ACCESS</option>
+                    <option value="PT. ELKA SOLUTION NUSANTARA">PT. ELKA SOLUTION NUSANTARA</option>
+                    <option value="CV. ARINDAH">CV. ARINDAH</option>
+                    <option value="ARFALINDO">ARFALINDO</option>            `;
                 const paketInput = document.createElement('input');
                 paketInput.type = 'text';
                 paketInput.name = 'nilai_paket[]';
@@ -247,7 +245,7 @@
 
                 const url = editMode ? `/marketings/rekappenjualanperusahaan/update/${editId}` :
                     '/marketings/rekappenjualanperusahaan/store';
-                    
+
                 try {
                     const response = await fetch(url, {
                         method: editMode ? 'PUT' : 'POST',
@@ -256,7 +254,7 @@
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify(payload),
-               
+
                     });
                     const result = await response.json();
                     if (result.success) {
