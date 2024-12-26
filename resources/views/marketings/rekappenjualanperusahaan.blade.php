@@ -452,7 +452,7 @@
             <option value="CV. BALI JAKTI INFORMATIK">CV. BALI JAKTI INFORMATIK</option>
             <option value="CV. BALI LINGGA KOMPUTER">CV. BALI LINGGA KOMPUTER</option>
             <option value="CV. ARTSOLUTION">CV. ARTSOLUTION</option>
-            <option value="PT. BALI LINGGA SAKA BUMI">PT. BALI LINGGA SAKA BUMI</option>
+            <option value="PT. BALI LINGGA SAKA BUMI">PT. BALI LINGGA SAKA GUMI</option>
             <option value="CV. SAHABAT UTAMA">CV. SAHABAT UTAMA</option>
             <option value="CV. N & b NET ACCESS">CV. N & b NET ACCESS</option>
             <option value="PT. ELKA SOLUTION NUSANTARA">PT. ELKA SOLUTION NUSANTARA</option>
