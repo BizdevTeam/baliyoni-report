@@ -27,7 +27,6 @@
     @vite('resources/js/app.js')
 </head>
 
-
 <body class="bg-gray-100 hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
         <!-- Sidebar -->
@@ -43,9 +42,7 @@
 
         <!-- Action Buttons -->
         <div class="flex items-center mb-4">
-            <button class="bg-red-600 text-white px-4 py-2 rounded shadow flex text-center items-center gap-2 mr-2">
-                <a href="/admin">Back</a>
-            </button>
+            
             <button class="bg-red-600 text-white px-4 py-2 rounded shadow flex items-center gap-2" data-modal-target="#addEventModal">
                 Add New
             </button>

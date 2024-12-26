@@ -41,9 +41,7 @@
                 <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Laba Rugi</h1>
         <!-- Action Buttons -->
         <div class="flex items-center mb-4">
-            <button class="bg-red-600 text-white px-4 py-2 rounded shadow flex text-center items-center gap-2 mr-2">
-                <a href="/admin">Back</a>
-            </button>
+            
             <button class="bg-red-600 text-white px-4 py-2 rounded shadow flex items-center gap-2" data-modal-target="#addEventModal">
                 Add New
             </button>
