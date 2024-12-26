@@ -75,8 +75,8 @@
                     </div>
                     <div class="flex justify-end space-x-2">
                         <button type="button" id="close-modal"
-                            class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700">Batal</button>
-                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">
+                            class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-560">Batal</button>
+                        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-600">
                             Simpan
                         </button>
                     </div>
@@ -282,7 +282,7 @@
                         <td class="border px-4 py-2">Rp ${item.piutang.toLocaleString()}</td>
                         <td class="border px-4 py-2">Rp ${item.stok.toLocaleString()}</td>
                         <td class="border px-4 py-2 flex items-center justify-center space-x-2">
-                            <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
+                            <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
                                 <i class="fas fa-edit mr-2"></i> Edit
                             </button>
                             <button onclick="deleteData(${item.id})" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">

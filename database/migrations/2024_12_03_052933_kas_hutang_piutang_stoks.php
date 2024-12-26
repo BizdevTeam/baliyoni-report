@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('kas_hutang_piutang_stoks', function (Blueprint $table) {
             $table->id();
                 $table->string('bulan_tahun');
-                $table->integer('kas');
-                $table->integer('hutang');
-                $table->integer('piutang');
-                $table->integer('stok');
+                $table->bigInteger('kas');
+                $table->bigInteger('hutang');
+                $table->bigInteger('piutang');
+                $table->bigInteger('stok');
                 $table->timestamps();
             });
     }

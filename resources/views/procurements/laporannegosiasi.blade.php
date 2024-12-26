@@ -62,9 +62,9 @@
                     </div>
                     <div class="flex justify-end space-x-2">
                         <button type="button" id="close-modal"
-                            class="bg-gray-500 text-white px-4 py-2 rounded">Batal</button>
+                            class="bg-red-600 text-white px-4 py-2 rounded">Batal</button>
                         <button type="submit" id="save-data"
-                            class="bg-blue-500 text-white px-4 py-2 rounded">Simpan</button>
+                            class="bg-red-600 text-white px-4 py-2 rounded">Simpan</button>
                     </div>
                 </form>
             </div>
@@ -252,7 +252,7 @@
                         <td class="border px-4 py-2">${item.bulan_tahun}</td>
                         <td class="border px-4 py-2">Rp ${item.total_negosiasi.toLocaleString()}</td>
                         <td class="border px-4 py-2 flex items-center justify-center space-x-2">
-                            <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
+                            <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
                                 <i class="fas fa-edit mr-2"></i> Edit
                             </button>
                             <button onclick="deleteData(${item.id})" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
@@ -266,21 +266,61 @@
     
         // Update Chart
         function updateChart(items) {
+            // Sort items by bulan_tahun in ascending order
+            items.sort((a, b) => {
+                const [monthA, yearA] = a.bulan_tahun.split('/').map(Number);
+                const [monthB, yearB] = b.bulan_tahun.split('/').map(Number);
+
+                if (yearA === yearB) {
+                    return monthA - monthB; // Sort by month if years are the same
+                }
+                return yearA - yearB; // Sort by year
+            });
+
+            // Extract sorted data
             const labels = items.map((item) => item.bulan_tahun);
             const dataValues = items.map((item) => item.total_negosiasi);
             const backgroundColors = items.map(() =>
-                `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.7)`
-            );
-    
+                `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.7)`);
+
             const ctx = chartCanvas.getContext('2d');
-            if (window.myChart) window.myChart.destroy();
-    
+
+            // Destroy existing chart instance if any
+            if (window.myChart) {
+                window.myChart.destroy();
+            }
+
+            // If no data, show placeholder chart
+            if (items.length === 0) {
+                window.myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Tidak ada data'],
+                        datasets: [{
+                            label: 'Total Negosiasi (RP)',
+                            data: [0],
+                            backgroundColor: backgroundColors,
+                        }],
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                            },
+                        },
+                    },
+                });
+                return;
+            }
+
+            // Create new chart with sorted data
             window.myChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels,
                     datasets: [{
-                        label: 'Total Negosiasi (Rp)',
+                        label: 'Total Negosiasi (RP)',
                         data: dataValues,
                         backgroundColor: backgroundColors,
                         borderWidth: 1,
@@ -289,14 +329,6 @@
                 options: {
                     responsive: true,
                     plugins: {
-                        legend: {
-                            labels: {
-                                font: {
-                                    size: 20, // Ukuran font label
-                                    weight: 'bold', // Tebal tulisan
-                                },
-                            },
-                        },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
