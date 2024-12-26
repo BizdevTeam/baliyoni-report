@@ -36,7 +36,7 @@
         <x-spiside class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
 
         <!-- Navbar -->
-        <x-adminnav
+        <x-navbar
             class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
 
         <!-- Main Content -->
@@ -76,9 +76,9 @@
                 @endif
 
                 <!-- Data Table -->
-                <div class="overflow-x-auto border-l-4 border-red-600 shadow-md rounded-sm"  >
+                <div class="overflow-x-auto border-l-4 border-red-600 shadow-md rounded-sm">
                     <table class="table-auto w-full border-collapse text-gray-700 text-sm">
-                        <thead class="bg-gradient-to-r from-gray-200 to-gray-300 text-gray-900 font-semibold ">
+                        <thead class="bg-gradient-to-r from-gray-200 to-gray-300 text-gray-900 font-semibold">
                             <tr class="font-sans">
                                 <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-in-out" data-aos-anchor-placement="center-center">Bulan & Tahun</th>
                                 <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-in-out" data-aos-anchor-placement="center-center">Judul</th>
@@ -207,7 +207,7 @@
                     </div>
                     <div>
                         <label for="masalah" class="block text-sm font-medium">Solusi</label>
-                        <textarea name="masalah" class="w-full p-2 border rounded" rows="1" required></textarea>
+                        <textarea name="solusi" class="w-full p-2 border rounded" rows="1" required></textarea>
                     </div>
                     <div>
                         <label for="implementasi" class="block text-sm font-medium">Implementasi</label>
@@ -215,9 +215,9 @@
                     </div>
                 </div>
                 <div class="mt-2 flex justify-end gap-2">
-                    <button type="button" class="bg-red-600 text-white px-3 py-1 rounded"
+                    <button type="button" class="bg-red-600 text-white px-3 py-1 rounded text-sm"
                         data-modal-close>Close</button>
-                    <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded">Add</button>
+                    <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded text-sm">Add</button>
                 </div>
             </form>
         </div>

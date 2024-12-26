@@ -38,158 +38,166 @@
 
         <!-- Main Content -->
         <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
-            <div class="mx-auto bg-white p-6 rounded-lg shadow">
-                <h1 class="text-2xl font-bold mb-4">Laporan SPI IT</h1>
+            <div class="mx-auto bg-white/70  p-6 rounded-lg shadow-lg">
+                <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Laporan SPI IT</h1>
 
-        <!-- Action Buttons -->
-        <div class="flex items-center mb-4">
-            <button class="bg-red-600 text-white px-4 py-2 rounded shadow flex text-center items-center gap-2 mr-2">
-                <a href="/admin">Back</a>
-            </button>
-            <button class="bg-red-600 text-white px-4 py-2 rounded shadow flex items-center gap-2" data-modal-target="#addEventModal">
-                Add New
-            </button>
-        </div>
+                <h1 class="text-sm   mb-4 text-black font-lato">Laporan perBulan</h1>
 
-        <!-- Success Message -->
-        @if (session('success'))
-            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">
-                {{ session('success') }}
-            </div>
-        @endif
-        @if (session('error'))
-            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
-                {{ session('error') }}
-            </div>
-        @endif
+                <!-- Action Buttons -->
+                <div class="flex justify-end gap-2 mb-4" data-aos="fade-left" data-aos-anchor-placement="center-center">
+                    <!-- Tombol Back -->
+                    <button
+                        class="bg-gradient-to-r font-medium from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-1.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm">
+                        <a href="/admin" class="text-white">Back</a>
+                    </button>
 
-        <!-- Data Table -->
-        <div class="overflow-x-auto bg-white shadow-md rounded-lg">
-            <table class="table-auto w-full border-collapse border border-gray-300">
-                <thead class="bg-gray-200">
-                    <tr>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Bulan & Tahun</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Judul</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Aspek</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Masalah</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Solusi</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Implementasi</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($laporanspitis as $laporanspiti)
-                        <tr class="hover:bg-gray-100">
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanspiti->bulan_tahun }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanspiti->judul }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanspiti->aspek }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanspiti->masalah }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanspiti->solusi }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanspiti->implementasi }}</td>
+                    <!-- Tombol Add New -->
+                    <button
+                        class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-1.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm"
+                        data-modal-target="#addEventModal">
+                        Add New
+                    </button>
+                </div>
 
-                            <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
-                                <!-- Edit Button -->
-                                <button class="bg-red-600 text-white px-3 py-2 rounded" data-modal-target="#editEventModal{{ $laporanspiti->id_spiti }}">
-                                    <i class="fa fa-pen"></i>
-                                    Edit
-                                </button>
-                                <!-- Delete Form -->
-                                <form method="POST" action="{{ route('laporanspiti.destroy', $laporanspiti->id_spiti) }}">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="bg-red-600 text-white px-3 py-2 rounded" onclick="return confirm('Are you sure to delete?')">
-                                        <i class="fa fa-trash"></i>
-                                        Delete
+                <!-- Success Message -->
+                @if (session('success'))
+                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">
+                    {{ session('success') }}
+                </div>
+                @endif
+                @if (session('error'))
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
+                    {{ session('error') }}
+                </div>
+                @endif
+
+                <!-- Data Table -->
+                <div class="overflow-x-auto border-l-4 border-red-600 shadow-md rounded-sm">
+                    <table class="table-auto w-full border-collapse text-gray-700 text-sm">
+                        <thead class="bg-gradient-to-r from-gray-200 to-gray-300 text-gray-900 font-semibold">
+                            <tr class="font-sans">
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-in-out">Bulan & Tahun</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-in-out">Judul</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-in-out">Aspek</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-in-out">Masalah</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-in-out">Solusi</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-in-out">Implementasi</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-in-out">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($laporanspitis as $laporanspiti)
+                            <tr class="even:bg-gray-50 odd:bg-white hover:bg-gray-100 transition duration-300">
+                                <td class="px-6 py-4 text-center border-b" data-aos="fade-right" data-aos-easing="ease-in-out" data-aos-duration="400"">{{ $laporanspiti->bulan_tahun }}</td>
+                                <td class=" px-6 py-4 text-center border-b" data-aos="fade-right" data-aos-easing="ease-in-out" data-aos-duration="400"">{{ $laporanspiti->judul }}</td>
+                                <td class=" px-6 py-4 text-center border-b" data-aos="fade-right" data-aos-easing="ease-in-out" data-aos-duration="400"">{{ $laporanspiti->aspek }}</td>
+                                <td class=" px-6 py-4 text-center border-b" data-aos="fade-right" data-aos-easing="ease-in-out" data-aos-duration="400"">{{ $laporanspiti->masalah }}</td>
+                                <td class=" px-6 py-4 text-center border-b" data-aos="fade-right" data-aos-easing="ease-in-out" data-aos-duration="400"">{{ $laporanspiti->solusi }}</td>
+                                <td class=" px-6 py-4 text-center border-b" data-aos="fade-right" data-aos-easing="ease-in-out" data-aos-duration="400"">{{ $laporanspiti->implementasi }}</td>
+
+                                <td class=" px-6 py-4 text-center border-b flex justify-center gap-2">
+                                    <!-- Edit Button -->
+                                    <button class="transition duration-300 ease-in-out transform hover:scale-125 flex items-center gap-2 p-2" data-modal-target="#editEventModal{{ $laporanspiti->id_spiti }}">
+                                        <i class="fa fa-pen text-red-600" data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-in-out"></i>
+
                                     </button>
-                                </form>
-                            </td>
-                        </tr>
+                                    <!-- Delete Form -->
+                                    <form method="POST" action="{{ route('laporanspiti.destroy', $laporanspiti->id_spiti) }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="transition duration-300 ease-in-out transform hover:scale-125 flex items-center gap-2 p-2" onclick="return confirm('Are you sure to delete?')">
+                                            <i class="fa fa-trash text-red-600" data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-in-out"></i>
 
-                        <!-- Modal for Edit Data -->
-                        <div class="fixed z-50 overflow-y-auto inset-0 bg-black bg-opacity-50  w-full flex items-center justify-center hidden" id="editEventModal{{ $laporanspiti->id_spiti }}">
-                            <div class="bg-white w-[50%] h-[100%] p-6 rounded shadow-lg">
-                                <h3 class="text-xl font-semibold mb-4">Edit Data</h3>
-                                <form method="POST" action="{{ route('laporanspiti.update', $laporanspiti->id_spiti) }}">
-                                    @csrf
-                                    @method('PUT')
-                                    <div class="space-y-4">
-                                        <div>
-                                            <label for="bulan_tahun" class="block text-sm font-medium">Bulan & Tahun</label>
-                                            <input type="month" name="bulan_tahun" class="w-full p-2 border rounded" value="{{ $laporanspiti->bulan_tahun }}" required>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+
+                            <!-- Modal for Edit Data -->
+                            <div class="fixed z-50 overflow-y-auto inset-0 backdrop-blur-sm bg-black bg-opacity-70 w-full flex items-center justify-center hidden" id="editEventModal{{ $laporanspiti->id_spiti }}">
+                                <div class="bg-white w-[30%] h-[90%] p-6 rounded shadow-lg animate-slide-down transform transition-transform duration-500 ease-out">
+                                    <h3 class="text-lg font-semibold mb-3">Edit Data</h3>
+                                    <form method="POST" action="{{ route('laporanspiti.update', $laporanspiti->id_spiti) }}">
+                                        @csrf
+                                        @method('PUT')
+                                        <div class="space-y-3">
+                                            <div>
+                                                <label for="bulan_tahun" class="block text-sm font-medium">Bulan & Tahun</label>
+                                                <input type="month" name="bulan_tahun" class="w-full p-2 border rounded" value="{{ $laporanspiti->bulan_tahun }}" required>
+                                            </div>
+                                            <div>
+                                                <label for="judul" class="block text-sm font-medium">Judul</label>
+                                                <textarea name="judul" class="w-full p-2 border rounded" rows="1" required>{{ $laporanspiti->judul }}</textarea>
+                                            </div>
+                                            <div>
+                                                <label for="aspek" class="block text-sm font-medium">Aspek</label>
+                                                <textarea name="aspek" class="w-full p-2 border rounded" rows="1" required>{{ $laporanspiti->aspek }}</textarea>
+                                            </div>
+                                            <div>
+                                                <label for="masalah" class="block text-sm font-medium">Masalah</label>
+                                                <textarea name="masalah" class="w-full p-2 border rounded" rows="1" required>{{ $laporanspiti->masalah }}</textarea>
+                                            </div>
+                                            <div>
+                                                <label for="solusi" class="block text-sm font-medium">Solusi</label>
+                                                <textarea name="solusi" class="w-full p-2 border rounded" rows="1" required>{{ $laporanspiti->solusi }}</textarea>
+                                            </div>
+                                            <div>
+                                                <label for="implementasi" class="block text-sm font-medium">Implementasi</label>
+                                                <textarea name="implementasi" class="w-full p-2 border rounded" rows="1" required>{{ $laporanspiti->implementasi }}</textarea>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <label for="judul" class="block text-sm font-medium">Judul</label>
-                                            <textarea name="judul" class="w-full p-2 border rounded" rows="1" required>{{ $laporanspiti->judul }}</textarea>
+                                        <div class="mt-2 flex justify-end gap-2">
+                                            <button type="button" class="bg-red-600 text-white px-3 py-1 rounded text-sm" data-modal-close>Close</button>
+                                            <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded text-sm">Update</button>
                                         </div>
-                                        <div>
-                                            <label for="aspek" class="block text-sm font-medium">Aspek</label>
-                                            <textarea name="aspek" class="w-full p-2 border rounded" rows="1" required>{{ $laporanspiti->aspek }}</textarea>
-                                        </div>
-                                        <div>
-                                            <label for="masalah" class="block text-sm font-medium">Masalah</label>
-                                            <textarea name="masalah" class="w-full p-2 border rounded" rows="1" required>{{ $laporanspiti->masalah }}</textarea>
-                                        </div>
-                                        <div>
-                                            <label for="solusi" class="block text-sm font-medium">Solusi</label>
-                                            <textarea name="solusi" class="w-full p-2 border rounded" rows="1" required>{{ $laporanspiti->solusi }}</textarea>
-                                        </div>
-                                        <div>
-                                            <label for="implementasi" class="block text-sm font-medium">Implementasi</label>
-                                            <textarea name="implementasi" class="w-full p-2 border rounded" rows="1" required>{{ $laporanspiti->implementasi }}</textarea>
-                                        </div>
-                                    </div>
-                                    <div class="mt-4 flex justify-end gap-2">
-                                        <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600" data-modal-close>Close</button>
-                                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Update</button>
-                                    </div>
-                                </form>
+                                    </form>
+                                </div>
                             </div>
-                        </div>
-                    @endforeach
-                </tbody>
-            </table>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-    </div>
-    </div>
-    <!-- Modal untuk Add Data -->
-<div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">
-    <div class="bg-white w-1/2 p-6 rounded shadow-lg">
-        <h3 class="text-xl font-semibold mb-4">Add New Data</h3>
-        <form method="POST" action="{{ route('laporanspiti.store') }}">
-            @csrf
-            <div class="space-y-4">
-                <div>
-                    <label for="bulan_tahun" class="block text-sm font-medium">Bulan & Tahun</label>
-                    <input type="month" name="bulan_tahun" class="w-full p-2 border rounded" required>
-                </div>
-                <div>
-                    <label for="judul" class="block text-sm font-medium">Judul</label>
-                    <input type="text" name="judul" class="w-full p-2 border rounded">
-                </div>
-                <div>
-                    <label for="aspek" class="block text-sm font-medium">Aspek</label>
-                    <input type="text" name="aspek" class="w-full p-2 border rounded">
-                </div>
-                <div>
-                    <label for="masalah" class="block text-sm font-medium">Masalah</label>
-                    <textarea name="masalah" class="w-full p-2 border rounded"></textarea>
-                </div>
-                <div>
-                    <label for="solusi" class="block text-sm font-medium">Solusi</label>
-                    <textarea name="solusi" class="w-full p-2 border rounded" rows="3" required></textarea>
-                </div>
-                <div>
-                    <label for="implementasi" class="block text-sm font-medium">Implementasi</label>
-                    <input type="text" name="implementasi" class="w-full p-2 border rounded">
-                </div>
+        <!-- Modal untuk Add Data -->
+        <div class="fixed z-50 overflow-y-auto inset-0 backdrop-blur-sm bg-black bg-opacity-70 w-full flex items-center justify-center hidden" id="addEventModal">
+            <div class="bg-white w-[30%] h-[92%] p-6 rounded shadow-lg animate-slide-down transform transition-transform duration-500 ease-out">
+                <h3 class="text-lg font-semibold mb-3">Add New Data</h3>
+                <form method="POST" action="{{ route('laporanspiti.store') }}">
+                    @csrf
+                    <div class="space-y-4">
+                        <div>
+                            <label for="bulan_tahun" class="block text-sm font-medium">Bulan & Tahun</label>
+                            <input type="month" name="bulan_tahun" class="w-full p-2 border rounded" required>
+                        </div>
+                        <div>
+                            <label for="judul" class="block text-sm font-medium">Judul</label>
+                            <input type="text" name="judul" class="w-full p-2 border rounded">
+                        </div>
+                        <div>
+                            <label for="aspek" class="block text-sm font-medium">Aspek</label>
+                            <input type="text" name="aspek" class="w-full p-2 border rounded">
+                        </div>
+                        <div>
+                            <label for="masalah" class="block text-sm font-medium">Masalah</label>
+                            <textarea name="masalah" class="w-full p-2 border rounded" rows="1"></textarea>
+                        </div>
+                        <div>
+                            <label for="solusi" class="block text-sm font-medium">Solusi</label>
+                            <textarea name="solusi" class="w-full p-2 border rounded" rows="1" required></textarea>
+                        </div>
+                        <div>
+                            <label for="implementasi" class="block text-sm font-medium">Implementasi</label>
+                            <input type="text" name="implementasi" class="w-full p-2 border rounded">
+                        </div>
+                    </div>
+                    <div class="mt-2 flex justify-end gap-2">
+                        <button type="button" class="bg-red-600 text-white px-3 py-1 rounded text-sm" data-modal-close>Close</button>
+                        <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded text-sm">Add</button>
+                    </div>
+                </form>
             </div>
-            <div class="mt-4 flex justify-end gap-2">
-                <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
-                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Add</button>
-            </div>
-        </form>
-    </div>
-</div>
+        </div>
 
 </body>
 <script>
@@ -211,10 +219,18 @@
     });
     // Menutup modal ketika tombol Close ditekan
     document.querySelectorAll('[data-modal-close]').forEach(button => {
-        button.addEventListener('click', function() {
-            const modal = this.closest('.fixed');
+    button.addEventListener('click', function() {
+        const modal = this.closest('.fixed');
+        // Tambahkan kelas animasi sebelum menyembunyikan modal
+        modal.classList.add('closing');
+        
+        // Tunggu hingga animasi selesai, kemudian sembunyikan modal
+        setTimeout(() => {
             modal.classList.add('hidden'); // Menyembunyikan modal
-        });
+            modal.classList.remove('closing'); // Menghapus kelas animasi
+        }, 500); // Durasi animasi (sesuaikan dengan durasi animasi CSS)
     });
+});
 </script>
+
 </html>
