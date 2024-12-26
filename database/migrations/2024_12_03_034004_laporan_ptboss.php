@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('laporan_ptboss', function (Blueprint $table) {
             $table->id();   
-            $table->string('bulan_tahun'); // Pastikan tidak ada duplikasi
-            $table->string('pekerjaan'); // Pastikan tidak ada duplikasi
-            $table->string('kondisi_bulan_lalu'); // Pastikan tidak ada duplikasi
-            $table->string('kondisi_bulan_ini'); // Pastikan tidak ada duplikasi
-            $table->string('update'); // Pastikan tidak ada duplikasi
-            $table->string('rencana_implementasi'); // Pastikan tidak ada duplikasi
-            $table->string('keterangan'); // Pastikan tidak ada duplikasi
+            $table->string('bulan_tahun');
+            $table->string('pekerjaan'); 
+            $table->string('kondisi_bulan_lalu');
+            $table->string('kondisi_bulan_ini'); 
+            $table->string('update'); 
+            $table->string('rencana_implementasi');
+            $table->string('keterangan');
             $table->timestamps();
         });
     }

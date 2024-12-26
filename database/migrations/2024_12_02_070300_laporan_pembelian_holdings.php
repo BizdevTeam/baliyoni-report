@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
                 $table->string('bulan_tahun');
                 $table->string('perusahaan');
-                $table->integer('nilai');
+                $table->bigInteger('nilai');
                 $table->timestamps();
             });
     }

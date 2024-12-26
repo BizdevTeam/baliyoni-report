@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('bulan_tahun');
             $table->string('website');
-            $table->integer('paket_rp');
+            $table->bigInteger('paket_rp');
             $table->timestamps();
         });
     }

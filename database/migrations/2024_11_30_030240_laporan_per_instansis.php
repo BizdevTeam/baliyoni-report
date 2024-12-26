@@ -16,7 +16,7 @@ return new class extends Migration
                 $table->string('bulan_tahun');
                 $table->string('keterangan')->nullable();
                 $table->string('instansi');
-                $table->integer('nilai');
+                $table->bigInteger('nilai');
                 $table->timestamps();
             });
     }
