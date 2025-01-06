@@ -185,17 +185,24 @@ class RekapPenjualanController extends Controller
     }
 
     public function exportPDF(Request $request)
-    {
-        try {
-            $data = $request->all();
-            $tableHTML = $data['table'];
-            $chartBase64 = $data['chart'];
+{
+    try {
+        $data = $request->all();
+        $tableHTML = $data['table'];
+        $chartBase64 = $data['chart'];
 
-            // Create mPDF instance with landscape orientation and margins
-            $mpdf = new Mpdf(['orientation' => 'L', 'margin_left' => 10, 'margin_right' => 10, 'margin_top' => 10, 'margin_bottom' => 10]);
+        // Create mPDF instance with landscape orientation and margins
+        $mpdf = new Mpdf([
+            'orientation' => 'L',
+            'margin_left' => 10,
+            'margin_right' => 10,
+            'margin_top' => 10,
+            'margin_bottom' => 10,
+            'format' => 'A4', // Set paper size to A4
+        ]);
 
-            // Prepare HTML for PDF
-            $html = "
+        // Prepare HTML for table
+        $tableHTMLContent = "
             <h1 style='text-align:center;'>Rekap Penjualan</h1>
             <h2>Data Tabel</h2>
             <table style='border-collapse: collapse; width: 100%;' border='1'>
@@ -209,23 +216,36 @@ class RekapPenjualanController extends Controller
                     {$tableHTML}
                 </tbody>    
             </table>
+        ";
+
+        // Prepare HTML for chart
+        $chartHTMLContent = "
+            <h1 style='text-align:center;'>Rekap Penjualan</h1>
             <h2>Grafik Penjualan</h2>
             <div style='text-align: center;'>
-                <img src='{$chartBase64}' alt='Chart' style='width: 100%; max-width: 500px;' />
+                <img src='{$chartBase64}' alt='Chart' style='width: 100%; max-width: 100%; height: auto;' />
             </div>
         ";
 
-            // Write HTML to PDF
-            $mpdf->WriteHTML($html);
+        // Write table content to the first page
+        $mpdf->WriteHTML($tableHTMLContent);
 
-            // Output as downloadable PDF
-            return response($mpdf->Output('', 'S'), 200)
-                ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'attachment; filename="data_penjualan.pdf"');
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Gagal mengekspor PDF.']);
-        }
+        // Add a new page for the chart
+        $mpdf->AddPage();
+
+        // Write chart content to the second page
+        $mpdf->WriteHTML($chartHTMLContent);
+
+        // Output as downloadable PDF
+        return response($mpdf->Output('', 'S'), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename="data_penjualan.pdf"');
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'message' => 'Gagal mengekspor PDF.']);
     }
+}
+
+
 
     // Validate input data
     private function validateData(Request $request)
