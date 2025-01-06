@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\RekapPenjualan;
 use Illuminate\Support\Facades\Log;
+use Mpdf\Mpdf;
 
 class RekapPenjualanController extends Controller
 {
@@ -180,6 +181,49 @@ class RekapPenjualanController extends Controller
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat menghapus data.',
             ], 500);
+        }
+    }
+
+    public function exportPDF(Request $request)
+    {
+        try {
+            $data = $request->all();
+            $tableHTML = $data['table'];
+            $chartBase64 = $data['chart'];
+
+            // Create mPDF instance with landscape orientation and margins
+            $mpdf = new Mpdf(['orientation' => 'L', 'margin_left' => 10, 'margin_right' => 10, 'margin_top' => 10, 'margin_bottom' => 10]);
+
+            // Prepare HTML for PDF
+            $html = "
+            <h1 style='text-align:center;'>Rekap Penjualan</h1>
+            <h2>Data Tabel</h2>
+            <table style='border-collapse: collapse; width: 100%;' border='1'>
+                <thead>
+                    <tr>
+                        <th style='border: 1px solid #000; padding: 8px;'>Bulan/Tahun</th>
+                        <th style='border: 1px solid #000; padding: 8px;'>Total Penjualan (RP)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {$tableHTML}
+                </tbody>    
+            </table>
+            <h2>Grafik Penjualan</h2>
+            <div style='text-align: center;'>
+                <img src='{$chartBase64}' alt='Chart' style='width: 100%; max-width: 500px;' />
+            </div>
+        ";
+
+            // Write HTML to PDF
+            $mpdf->WriteHTML($html);
+
+            // Output as downloadable PDF
+            return response($mpdf->Output('', 'S'), 200)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename="data_penjualan.pdf"');
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Gagal mengekspor PDF.']);
         }
     }
 

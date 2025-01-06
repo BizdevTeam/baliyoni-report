@@ -124,6 +124,9 @@ Route::middleware(['web'])->group(function () {
             ->name('marketings.rekappenjualan.filterByYear');
         Route::delete('rekappenjualan/destroy/{id}', [RekapPenjualanController::class, 'destroy'])
             ->name('marketings.rekappenjualan.destroy');
+        Route::post('rekappenjualan/export-pdf', [RekapPenjualanController::class, 'exportPDF'])
+            ->name('marketings.rekappenjualan.exportPDF');
+
 
         // Status Paket
         Route::get('statuspaket', [StatusPaketController::class, 'index'])

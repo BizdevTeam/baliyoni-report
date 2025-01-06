@@ -10,13 +10,11 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
     <!-- Google Font: Source Sans Pro -->
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
     <!-- Tempusdominus Bootstrap 4 -->
-    <link rel="stylesheet"
-        href="{{ asset('templates/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('templates/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
     <!-- Theme style -->
     <!-- overlayScrollbars -->
     <link rel="stylesheet" href="{{ asset('templates/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
@@ -41,31 +39,26 @@
                 <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Rekap Penjualan</h1>
 
                 <h1 class="text-sm mb-4 text-black font-lato">Laporan per Bulan</h1>
-                
+
                 <button id="open-modal" class="bg-red-600 text-white px-4 py-2 rounded mb-4">Tambah Data</button>
 
                 <!-- Modal -->
-                <div id="modal"
-                    class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+                <div id="modal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
                     <div class="bg-white p-6 rounded shadow w-full max-w-md">
                         <h2 class="text-xl font-bold mb-4" id="modal-title">Tambah Data</h2>
                         <form id="modal-form" class="space-y-4">
                             <div>
                                 <label for="modal-bulan_tahun" class="block text-sm font-medium">Bulan/Tahun</label>
-                                <input type="text" id="modal-bulan_tahun" name="bulan_tahun"
-                                    class="w-full border-gray-300 rounded p-2" placeholder="mm/yyyy" required>
+                                <input type="text" id="modal-bulan_tahun" name="bulan_tahun" class="w-full border-gray-300 rounded p-2" placeholder="mm/yyyy" required>
                             </div>
                             <div>
                                 <label for="modal-total_penjualan" class="block text-sm font-medium">Total Penjualan
                                     (RP)</label>
-                                <input type="text" id="modal-total_penjualan" name="total_penjualan"
-                                    class="w-full border-gray-300 rounded p-2" placeholder="0" min="0" required>
+                                <input type="text" id="modal-total_penjualan" name="total_penjualan" class="w-full border-gray-300 rounded p-2" placeholder="0" min="0" required>
                             </div>
                             <div class="flex justify-end space-x-2">
-                                <button type="button" id="close-modal"
-                                    class="bg-red-600 text-white px-4 py-2 rounded">Batal</button>
-                                <button type="submit" id="save-data"
-                                    class="bg-red-600 text-white px-4 py-2 rounded">Simpan</button>
+                                <button type="button" id="close-modal" class="bg-red-600 text-white px-4 py-2 rounded">Batal</button>
+                                <button type="submit" id="save-data" class="bg-red-600 text-white px-4 py-2 rounded">Simpan</button>
                             </div>
                         </form>
                     </div>
@@ -94,6 +87,11 @@
                 <div class="mt-6">
                     <canvas id="chart"></canvas>
                 </div>
+
+                <button onclick="exportToPDF()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                    Ekspor ke PDF
+                </button>
+
             </div>
         </div>
     </div>
@@ -127,9 +125,9 @@
             e.preventDefault();
 
             const data = {
-                bulan_tahun: document.getElementById('modal-bulan_tahun').value,
-                total_penjualan: Number(document.getElementById('modal-total_penjualan').value),
-            };
+                bulan_tahun: document.getElementById('modal-bulan_tahun').value
+                , total_penjualan: Number(document.getElementById('modal-total_penjualan').value)
+            , };
 
             const url = editMode ? `/marketings/rekappenjualan/update/${editId}` :
                 '/marketings/rekappenjualan/store';
@@ -137,13 +135,13 @@
 
             try {
                 const response = await fetch(url, {
-                    method,
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data),
-                });
+                    method
+                    , headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        , 'Content-Type': 'application/json'
+                    , }
+                    , body: JSON.stringify(data)
+                , });
 
                 const result = await response.json();
                 if (response.ok && result.success) {
@@ -162,12 +160,12 @@
         async function deleteData(id) {
             try {
                 const response = await fetch(`/marketings/rekappenjualan/destroy/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        'Content-Type': 'application/json',
-                    },
-                });
+                    method: 'DELETE'
+                    , headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        , 'Content-Type': 'application/json'
+                    , }
+                , });
 
                 const result = await response.json();
                 if (result.success) {
@@ -186,11 +184,11 @@
             const url = `/marketings/rekappenjualan/filter?tahun=${year}`;
             try {
                 const response = await fetch(url, {
-                    method: 'GET',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    },
-                });
+                    method: 'GET'
+                    , headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    , }
+                , });
 
                 if (!response.ok) {
                     console.error(`HTTP Error: ${response.status}`);
@@ -235,8 +233,8 @@
 
                 if (result.success) {
                     const items = result.data; // Data untuk tabel dan grafik
-                    const totalPaket = items.reduce((sum, item) => sum + item.total_penjualan,
-                        0); // Total Paket dari API
+                    const totalPaket = items.reduce((sum, item) => sum + item.total_penjualan
+                        , 0); // Total Paket dari API
 
                     updateTable(items, totalPaket); // Perbarui tabel
                     updateChart(items); // Perbarui chart
@@ -317,58 +315,117 @@
             // If no data, show placeholder chart
             if (items.length === 0) {
                 window.myChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Tidak ada data'],
-                        datasets: [{
-                            label: 'Total Penjualan (RP)',
-                            data: [0],
-                            backgroundColor: backgroundColors,
-                        }],
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
+                    type: 'bar'
+                    , data: {
+                        labels: ['Tidak ada data']
+                        , datasets: [{
+                            label: 'Total Penjualan (RP)'
+                            , data: [0]
+                            , backgroundColor: backgroundColors
+                        , }]
+                    , }
+                    , options: {
+                        responsive: true
+                        , scales: {
                             y: {
-                                beginAtZero: true,
-                            },
-                        },
-                    },
-                });
+                                beginAtZero: true
+                            , }
+                        , }
+                    , }
+                , });
                 return;
             }
 
             // Create new chart with sorted data
             window.myChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels,
-                    datasets: [{
-                        label: 'Total Penjualan (RP)',
-                        data: dataValues,
-                        backgroundColor: backgroundColors,
-                        borderWidth: 1,
-                    }],
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
+                type: 'bar'
+                , data: {
+                    labels
+                    , datasets: [{
+                        label: 'Total Penjualan (RP)'
+                        , data: dataValues
+                        , backgroundColor: backgroundColors
+                        , borderWidth: 1
+                    , }]
+                , }
+                , options: {
+                    responsive: true
+                    , plugins: {
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
                                     return `Rp ${context.raw.toLocaleString()}`;
-                                },
-                            },
-                        },
-                    },
-                    scales: {
+                                }
+                            , }
+                        , }
+                    , }
+                    , scales: {
                         y: {
-                            beginAtZero: true,
-                        },
-                    },
-                },
-            });
+                            beginAtZero: true
+                        , }
+                    , }
+                , }
+            , });
         }
+        async function exportToPDF() {
+    // Ambil data dari tabel
+    const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
+        const cells = row.querySelectorAll('td');
+        return {
+            bulan_tahun: cells[0]?.innerText.trim() || '',
+            total_penjualan: cells[1]?.innerText.trim() || '',
+        };
+    });
+
+    // Buat konten tabel hanya untuk baris yang memiliki data
+    const tableContent = items
+        .filter(item => item.bulan_tahun && item.total_penjualan)
+        .map(item => `
+            <tr>
+                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.bulan_tahun}</td>
+                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${item.total_penjualan}</td>
+            </tr>
+        `).join('');
+
+    // Simpan hanya konten tabel untuk dikirim ke server
+    const pdfTable = tableContent;
+
+    // Konversi chart menjadi base64
+    const chartBase64 = chartCanvas.toDataURL();
+
+    // Kirim data tabel dan chart ke server untuk diekspor ke PDF
+    try {
+        const response = await fetch('/marketings/rekappenjualan/export-pdf', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                table: pdfTable,
+                chart: chartBase64,
+            }),
+        });
+
+        // Proses hasil ekspor
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'data_penjualan.pdf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        } else {
+            alert('Gagal mengekspor PDF.');
+        }
+    } catch (error) {
+        console.error('Error exporting to PDF:', error);
+        alert('Terjadi kesalahan saat mengekspor PDF.');
+    }
+}
+
 
 
         // Edit Data
@@ -388,7 +445,9 @@
 
         // Initial Load
         updateData();
+
     </script>
 </body>
 
 </html>
+
