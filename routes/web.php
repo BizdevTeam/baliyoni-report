@@ -110,6 +110,9 @@ Route::middleware(['web'])->group(function () {
             ->name('marketings.laporanpaketadministrasi.destroy');
         Route::get('marketings/laporanpaketadministrasi/chart-data',[LaporanPaketAdministrasiController::class, 'getChartData'])
             ->name('marketings.laporanpaketadministrasi.chartdata');
+        Route::post('laporanpaketadministrasi/export-pdf', [LaporanPaketAdministrasiController::class, 'exportPDF'])
+            ->name('marketings.laporanpaketadministrasi.exportPDF');
+        
 
         // Rekap Penjualan
         Route::get('rekappenjualan', [RekapPenjualanController::class, 'index'])
@@ -141,6 +144,8 @@ Route::middleware(['web'])->group(function () {
             ->name('marketings.laporanstatuspaket.filter');
         Route::delete('statuspaket/destroy/{id}', [StatusPaketController::class, 'destroy'])
             ->name('marketings.laporanstatuspaket.destroy');
+            Route::post('statuspaket/export-pdf', [StatusPaketController::class, 'exportPDF'])
+            ->name('marketings.statuspaket.exportPDF');
 
         // Laporan Per Instansi
         Route::get('laporanperinstansi', [LaporanPerInstansiController::class, 'index'])
@@ -155,6 +160,8 @@ Route::middleware(['web'])->group(function () {
             ->name('marketings.laporanperinstansi.filter');
         Route::delete('laporanperinstansi/destroy/{id}', [LaporanPerInstansiController::class, 'destroy'])
             ->name('marketings.laporanperinstansi.destroy');
+        Route::post('laporanperinstansi/export-pdf', [LaporanPerInstansiController::class, 'exportPDF'])
+            ->name('marketings.laporanperinstansi.exportPDF');
 
         // Rekap Penjualan Perusahaan
         Route::get('rekappenjualanperusahaan', [RekapPenjualanPerusahaanController::class, 'index'])
@@ -169,6 +176,9 @@ Route::middleware(['web'])->group(function () {
             ->name('marketings.rekappenjualanperusahaan.filter');
         Route::delete('rekappenjualanperusahaan/destroy/{id}', [RekapPenjualanPerusahaanController::class, 'destroy'])
             ->name('marketings.rekappenjualanperusahaan.destroy');
+        Route::post('rekappenjualanperusahaan/export-pdf', [RekapPenjualanPerusahaanController::class, 'exportPDF'])
+            ->name('marketings.rekappenjualanperusahaan.exportPDF');
+
     });
 
 

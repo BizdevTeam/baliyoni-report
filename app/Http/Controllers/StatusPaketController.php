@@ -6,6 +6,7 @@ use App\Models\StatusPaket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Mpdf\Mpdf;
 
 class StatusPaketController extends Controller
 {
@@ -173,6 +174,67 @@ class StatusPaketController extends Controller
             ], 500);
         }
     }
+
+    public function exportPDF(Request $request)
+    {
+        try {
+            $data = $request->all();
+            $tableHTML = $data['table'];
+            $chartBase64 = $data['chart'];
+    
+            // Create mPDF instance with landscape orientation and margins
+            $mpdf = new Mpdf([
+                'orientation' => 'L',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+                'margin_bottom' => 10,
+                'format' => 'A4', // Set paper size to A4
+            ]);
+    
+            // Prepare HTML for table
+            $tableHTMLContent = "
+                <h1 style='text-align:center;'>Laporan Status Paket</h1>
+                <h2>Data Tabel</h2>
+                <table style='border-collapse: collapse; width: 100%;' border='1'>
+                    <thead>
+                        <tr>
+                            <th style='border: 1px solid #000; padding: 8px;'>Bulan/Tahun</th>
+                            <th style='border: 1px solid #000; padding: 8px;'>Status</th>
+                                <th style='border: 1px solid #000; padding: 8px;'>Nilai Paket</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {$tableHTML}
+                    </tbody>    
+                </table>
+            ";
+    
+            // Prepare HTML for chart
+            $chartHTMLContent = "
+                <h1 style='text-align:center;'>Grafik Laporan Status Paket</h1>
+                <h2>Grafik Penjualan</h2>
+                <div style='text-align: center;'>
+                    <img src='{$chartBase64}' alt='Chart' style='width: 100%; max-width: 100%; height: auto;' />
+                </div>
+            ";
+                   // Write table content to the first page
+        $mpdf->WriteHTML($tableHTMLContent);
+
+        // Add a new page for the chart
+        $mpdf->AddPage();
+
+        // Write chart content to the second page
+        $mpdf->WriteHTML($chartHTMLContent);
+
+        // Output as downloadable PDF
+        return response($mpdf->Output('', 'S'), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename=laporan_status_paket.pdf"');
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'message' => 'Gagal mengekspor PDF.']);
+    }
+}
 
     // Persiapkan data untuk di-insert ke database
     private function prepareDataForInsert($validated)
