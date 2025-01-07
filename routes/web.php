@@ -50,6 +50,9 @@ Route::middleware(['web'])->group(function () {
     Route::resource('taxplaning', LaporanTaxPlaningController::class);
     Route::resource('laporanppn', LaporanPpnController::class);
     Route::resource('khps', KHPSController::class);
+    Route::post('khps/export-pdf', [KHPSController::class, 'exportPDF'])
+    ->name('accounting.khps.exportPDF');
+
 
     // KAS, HUTANG, PIUTANG, STOK
     Route::get('kashutangpiutangstok', [KasHutangPiutangStokController::class, 'index'])

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Kas Hutang Piutang Stok</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -69,7 +70,7 @@
 
         <!-- Event Table -->
         <div class="overflow-x-auto bg-white shadow-md">
-            <table class="table-auto w-full border-collapse border border-gray-300">
+            <table class="table-auto w-full border-collapse border border-gray-300" id="data-table">
                 <thead class="bg-gray-200">
                     <tr>
                         <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
@@ -105,6 +106,7 @@
                                 </form>
                             </td>
                         </tr>
+                        
                         <!-- Modal for Edit Event -->
                         <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="editEventModal{{ $kashutangpiutangstok->id_khps }}">
                             <div class="bg-white w-1/2 p-6 rounded shadow-lg">
@@ -152,8 +154,11 @@
         <div class="mx-auto bg-white p-6 mt-3 rounded-lg shadow">
             <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Diagram</h1>
             <div class="mt-6 items-center text-center mx-auto w-[600px]">
-                <canvas id="pieChart"></canvas>
+                <canvas id="chart"></canvas>
             </div>
+            <button onclick="exportToPDF()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                Ekspor ke PDF
+            </button>
         </div>
     </div>
 
@@ -195,6 +200,7 @@
 
 </body>
 <script>
+    const chartCanvas = document.getElementById('chart');
     // Mengatur tombol untuk membuka modal add
     document.querySelector('[data-modal-target="#addEventModal"]').addEventListener('click', function() {
         const modal = document.querySelector('#addEventModal');
@@ -223,7 +229,7 @@
     var chartData = @json($chartData);
         
         // Membuat diagram lingkaran
-        var ctx = document.getElementById('pieChart').getContext('2d');
+        var ctx = document.getElementById('chart').getContext('2d');
         var pieChart = new Chart(ctx, {
             type: 'pie', // Jenis chart: pie
             data: chartData, // Data dari controller
@@ -243,5 +249,80 @@
                 }
             }
         });
+
+        async function exportToPDF() {
+    // Ambil CSRF Token
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    if (!csrfToken) {
+        alert('CSRF token tidak ditemukan. Pastikan meta tag CSRF disertakan.');
+        return;
+    }
+
+    // Ambil data dari tabel
+    const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
+        const cells = row.querySelectorAll('td');
+        return {
+            bulan: cells[0]?.innerText.trim() || '',
+            kas: cells[1]?.innerText.trim() || '',
+            hutang: cells[2]?.innerText.trim() || '',
+            piutang: cells[3]?.innerText.trim() || '',
+            stok: cells[4]?.innerText.trim() || '',
+        };
+    });
+
+    const tableContent = items
+        .filter(item => item.bulan && item.kas && item.hutang && item.piutang && item.stok)
+        .map(item => `
+            <tr>
+                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.bulan}</td>
+                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${item.kas}</td>
+                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${item.hutang}</td>
+                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${item.piutang}</td>
+                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${item.stok}</td>
+            </tr>
+        `).join('');
+
+    const pdfTable = tableContent;
+
+    const chartCanvas = document.querySelector('#chart');
+    if (!chartCanvas) {
+        alert('Elemen canvas grafik tidak ditemukan.');
+        return;
+    }
+
+    const chartBase64 = chartCanvas.toDataURL();
+
+    // Kirim data tabel dan grafik ke server
+    try {
+        const response = await fetch('/accounting/khps/export-pdf', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                table: pdfTable,
+                chart: chartBase64,
+            }),
+        });
+
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Laporan_kas_hutang_piutang_stok.pdf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        } else {
+            alert('Gagal mengekspor PDF.');
+        }
+    } catch (error) {
+        console.error('Error exporting to PDF:', error);
+        alert('Terjadi kesalahan saat mengekspor PDF.');
+    }
+}
+
 </script>
 </html>

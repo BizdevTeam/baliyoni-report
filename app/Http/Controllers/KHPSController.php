@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\KasHutangPiutang;
 use Illuminate\Support\Facades\Log;
+use Mpdf\Mpdf;
 
 class KHPSController extends Controller
 {
@@ -82,6 +83,83 @@ class KHPSController extends Controller
             return redirect()->route('khps.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
     }
+
+    public function exportPDF(Request $request)
+{
+    try {
+        // Validasi input
+        $data = $request->validate([
+            'table' => 'required|string',
+            'chart' => 'required|string',
+        ]);
+
+        // Ambil data dari request
+        $tableHTML = $data['table'];
+        $chartBase64 = $data['chart'];
+
+        // Buat instance mPDF dengan konfigurasi
+        $mpdf = new Mpdf([
+            'orientation' => 'L', // Landscape orientation
+            'margin_left' => 10,
+            'margin_right' => 10,
+            'margin_top' => 15,
+            'margin_bottom' => 15,
+            'format' => 'A4', // Ukuran kertas A4
+        ]);
+
+        // Tambahkan header ke PDF
+        $mpdf->SetHeader('Laporan Kas Hutang Piutang Stok||{PAGENO}');
+
+        // Tambahkan footer ke PDF
+        $mpdf->SetFooter('{DATE j-m-Y}|Laporan Kas Hutang Piutang Stok|Halaman {PAGENO}');
+
+        // Buat konten tabel
+        $tableHTMLContent = "
+            <h1 style='text-align:center; font-size: 18px;'>Laporan Kas Hutang Piutang Stok</h1>
+            <h2 style='text-align:center; font-size: 14px;'>Data Rekapitulasi</h2>
+            <table style='border-collapse: collapse; width: 100%;' border='1'>
+                <thead>
+                    <tr style='background-color: #f2f2f2;'>
+                        <th style='border: 1px solid #000; padding: 8px;'>Bulan/Tahun</th>
+                        <th style='border: 1px solid #000; padding: 8px;'>Kas (Rp)</th>
+                        <th style='border: 1px solid #000; padding: 8px;'>Hutang (Rp)</th>
+                        <th style='border: 1px solid #000; padding: 8px;'>Piutang (Rp)</th>
+                        <th style='border: 1px solid #000; padding: 8px;'>Stok (Rp)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {$tableHTML}
+                </tbody>
+            </table>
+        ";
+
+        // Tambahkan konten tabel ke PDF
+        $mpdf->WriteHTML($tableHTMLContent);
+
+        // Tambahkan halaman baru untuk chart
+        $mpdf->AddPage();
+
+        // Buat konten chart
+        $chartHTMLContent = "
+            <h1 style='text-align:center; font-size: 18px;'>Grafik Kas Hutang Piutang Stok</h1>
+            <div style='text-align: center; margin-top: 20px;'>
+                <img src='{$chartBase64}' alt='Chart' style='max-width: 100%; height: auto;' />
+            </div>
+        ";
+
+        // Tambahkan konten chart ke PDF
+        $mpdf->WriteHTML($chartHTMLContent);
+
+        // Return PDF sebagai respon download
+        return response($mpdf->Output('', 'S'), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename="laporan_kas_hutang_piutang_stok.pdf"');
+    } catch (\Exception $e) {
+        // Log error jika terjadi masalah
+        Log::error('Error exporting PDF: ' . $e->getMessage());
+        return response()->json(['success' => false, 'message' => 'Gagal mengekspor PDF.'], 500);
+    }
+}
 
     public function destroy(KasHutangPiutang $khp)
     {
