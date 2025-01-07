@@ -46,17 +46,14 @@
 
                 <h1 class="text-sm mb-4 text-black font-lato">Laporan per Bulan</h1>
 
-                <div class="flex justify-end gap-2 mb-4"  data-aos="fade-left" data-aos-anchor-placement="center-center">
+                <div class="flex justify-end gap-2 mb-4" data-aos="fade-left" data-aos-anchor-placement="center-center">
                     <!-- Tombol Back -->
+
                     
-                    <button
-                        class="bg-gradient-to-r font-medium from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-1.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm">
-                        <a href="/admin" class="text-white">Back</a>
-                    </button>
                     <!-- Tombol Add New -->
                     <button
                         class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-1.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm"
-                        data-modal-target="#addEventModal" >
+                        data-modal-target="#addEventModal">
                         Add New
                     </button>
                 </div>
@@ -79,31 +76,57 @@
                     <table class="table-auto w-full border-collapse text-gray-700 text-sm">
                         <thead class="bg-gradient-to-r from-gray-200 to-gray-300 text-gray-900 font-semibold">
                             <tr class="font-sans">
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out" data-aos-anchor-placement="center-center">Bulan & Tahun</th>
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out" data-aos-anchor-placement="center-center">Judul</th>
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out" data-aos-anchor-placement="center-center">Aspek</th>
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out" data-aos-anchor-placement="center-center">Masalah</th>
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out" data-aos-anchor-placement="center-center">Solusi</th>
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out" data-aos-anchor-placement="center-center">Implementasi</th>
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out" data-aos-anchor-placement="center-center">Action</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">Bulan & Tahun</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">Judul</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">Aspek</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">Masalah</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">Solusi</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">Implementasi</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($laporans as $laporan)
 
                             <tr class=" even:bg-gray-50 odd:bg-white hover:bg-gray-100 transition duration-300  ">
-                                <td class="px-6 py-4 text-center text-pretty border-b" data-aos="fade-right"  data-aos-easing="ease-in-out"  data-aos-duration="600">{{ $laporan->bulan_tahun }}</td>
-                                <td class="px-6 py-4 text-center text-pretty border-b " data-aos="fade-right"  data-aos-easing="ease-in-out"  data-aos-duration="600">{{ $laporan->judul }}</td>
-                                <td class="px-6 py-4 text-center text-pretty border-b" data-aos="fade-right"  data-aos-easing="ease-in-out"  data-aos-duration="600">{{ $laporan->aspek }}</td>
-                                <td class="px-6 py-4 text-center text-pretty border-b" data-aos="fade-right"  data-aos-easing="ease-in-out"  data-aos-duration="600">{{ $laporan->masalah }}</td>
-                                <td class="px-6 py-4 text-center text-pretty border-b" data-aos="fade-right"  data-aos-easing="ease-in-out"  data-aos-duration="600">{{ $laporan->solusi }}</td>
-                                <td class="px-6 py-4 text-center text-pretty border-b" data-aos="fade-right"  data-aos-easing="ease-in-out"  data-aos-duration="600">{{ $laporan->implementasi }}</td>
+                                <td class="px-6 py-4 text-center text-pretty border-b" data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">{{ $laporan->bulan_tahun }}</td>
+                                <td class="px-6 py-4 text-center text-pretty border-b " data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">{{ $laporan->judul }}</td>
+                                <td class="px-6 py-4 text-center text-pre   tty border-b" data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">{{ $laporan->aspek }}</td>
+                                <td class="px-6 py-4 text-center text-pretty border-b" data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">{{ $laporan->masalah }}</td>
+                                <td class="px-6 py-4 text-center text-pretty border-b" data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">{{ $laporan->solusi }}</td>
+                                <td class="px-6 py-4 text-center text-pretty border-b" data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">{{ $laporan->implementasi }}</td>
 
                                 <td class="px-6 py-4 text-center border-b flex justify-center gap-2">
                                     <!-- Edit Button -->
                                     <button
                                         class="  transition duration-300 ease-in-out transform hover:scale-125 flex items-center gap-2 p-2"
-                                        data-modal-target="#editEventModal{{ $laporan->id_spi }}" >
+                                        data-modal-target="#editEventModal{{ $laporan->id_spi }}">
                                         <i class="fa fa-pen text-red-600" data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out"></i>
 
                                     </button>
@@ -113,7 +136,7 @@
                                         @method('DELETE')
                                         <button
                                             class="  transition duration-300 ease-in-out transform hover:scale-125  flex items-center p-2"
-                                            onclick="return confirm('Are you sure to delete?')" >
+                                            onclick="return confirm('Are you sure to delete?')">
                                             <i class="fa fa-trash text-red-600" data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out"></i>
 
                                         </button>
@@ -122,9 +145,9 @@
                             </tr>
 
                             <!-- Modal for Edit Data -->
-                            <div class="fixed z-50 overflow-y-auto inset-0 backdrop-blur-sm bg-black bg-opacity-70 w-full flex items-center justify-center hidden" 
+                            <div class="fixed z-50 overflow-y-auto inset-0 backdrop-blur-sm bg-black bg-opacity-70 w-full flex items-center justify-center hidden"
                                 id="editEventModal{{ $laporan->id_spi }}">
-                                <div class="bg-white w-[30%] h-[90%] p-6 rounded shadow-lg animate-slide-down transform transition-transform duration-500 ease-out" >
+                                <div class="bg-white w-[30%] h-[90%] p-6 rounded shadow-lg animate-slide-down transform transition-transform duration-500 ease-out">
                                     <h3 class="text-lg font-semibold mb-3">Edit Data</h3>
                                     <form method="POST" action="{{ route('laporanspi.update', $laporan->id_spi) }}">
                                         @csrf
@@ -165,10 +188,10 @@
                                         </div>
                                         <div class="mt-2 flex justify-end gap-2">
                                             <button type="button"
-                                                class="bg-red-600 text-white px-3 py-1 rounded text-sm "
+                                                class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-1.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm "
                                                 data-modal-close>Close</button>
                                             <button type="submit"
-                                                class="bg-red-600 text-white px-3 py-1 rounded text-sm">Update</button>
+                                                class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-1.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm">Update</button>
                                         </div>
                                     </form>
                                 </div>
@@ -214,16 +237,16 @@
                     </div>
                 </div>
                 <div class="mt-2 flex justify-end gap-2">
-                    <button type="button" class="bg-red-600 text-white px-3 py-1 rounded text-sm"
+                    <button type="button" class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-1.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm"
                         data-modal-close>Close</button>
-                    <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded text-sm">Add</button>
+                    <button type="submit" class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-1.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm">Add</button>
                 </div>
             </form>
         </div>
     </div>
-  
 
-  
+
+
 </body>
 
 <script>
@@ -245,19 +268,18 @@
     });
     // Menutup modal ketika tombol Close ditekan
     document.querySelectorAll('[data-modal-close]').forEach(button => {
-    button.addEventListener('click', function() {
-        const modal = this.closest('.fixed');
-        // Tambahkan kelas animasi sebelum menyembunyikan modal
-        modal.classList.add('closing');
-        
-        // Tunggu hingga animasi selesai, kemudian sembunyikan modal
-        setTimeout(() => {
-            modal.classList.add('hidden'); // Menyembunyikan modal
-            modal.classList.remove('closing'); // Menghapus kelas animasi
-        }, 500); // Durasi animasi (sesuaikan dengan durasi animasi CSS)
-    });
-});
+        button.addEventListener('click', function() {
+            const modal = this.closest('.fixed');
+            // Tambahkan kelas animasi sebelum menyembunyikan modal
+            modal.classList.add('closing');
 
+            // Tunggu hingga animasi selesai, kemudian sembunyikan modal
+            setTimeout(() => {
+                modal.classList.add('hidden'); // Menyembunyikan modal
+                modal.classList.remove('closing'); // Menghapus kelas animasi
+            }, 500); // Durasi animasi (sesuaikan dengan durasi animasi CSS)
+        });
+    });
 </script>
 
 </html>
