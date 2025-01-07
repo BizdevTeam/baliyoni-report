@@ -45,7 +45,7 @@
 
                 <!-- Modal -->
                 <div id="modal"
-                    class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+                    class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
                     <div class="bg-white p-6 rounded shadow w-full max-w-md">
                         <h2 class="text-xl font-bold mb-4" id="modal-title">Tambah Data</h2>
                         <form id="modal-form" class="space-y-4" method="POST">
@@ -98,18 +98,23 @@
                     <thead class="bg-gray-200">
                         <tr>
                             <th class="border border-gray-300 px-4 py-2">Bulan/Tahun</th>
-                            <th class="border border-gray-300 px-4 py-2">status</th>
+                            <th class="border border-gray-300 px-4 py-2">Status</th>
                             <th class="border border-gray-300 px-4 py-2">Nilai Paket</th>
                             <th class="border border-gray-300 px-4 py-2">Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="data-table"></tbody>
                 </table>
+                <div id="pagination-container" class="flex justify-center mt-4"></div>
 
                 <!-- Chart -->
                 <div class="mt-6 items-center text-center mx-auto">
                     <canvas id="chart"></canvas>
                 </div>
+                <button onclick="exportToPDF()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                    Ekspor ke PDF
+                </button>
+
             </div>
         </div>
 
@@ -309,42 +314,85 @@
             }
 
             // Update Table
-            function updateTable(items) {
+            let currentPage = 1;
+            let itemsPerPage = 12; // Maksimal 12 item per halaman
+            let filteredItems = []; // Data yang difilter berdasarkan bulan dan tahun
+
+            function updateTable(items, bulanTahun = null) {
                 const tableBody = document.getElementById('data-table');
-                tableBody.innerHTML = ''; // Clear the table before rendering new data
+                const paginationContainer = document.getElementById('pagination-container');
 
-                if (items.length === 0) {
-                    tableBody.innerHTML = '<tr><td colspan="4">No data available</td></tr>';
+                // Filter data berdasarkan bulan dan tahun jika parameter `bulanTahun` diberikan
+                if (bulanTahun) {
+                    filteredItems = items.filter(item => item.bulan_tahun === bulanTahun);
                 } else {
-                    let totalPaket = 0;
+                    filteredItems = items; // Semua data jika tidak ada filter bulan/tahun
+                }
 
-                    items.forEach((item) => {
-                        totalPaket += item.paket; // Sum up the totalPaket value
+                const totalItems = filteredItems.length;
+                const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+                // Pastikan halaman tetap dalam rentang yang valid
+                if (currentPage > totalPages) {
+                    currentPage = totalPages;
+                }
+                if (currentPage < 1 ) {
+                    currentPage = 1;
+                }
+
+                // Hitung data yang akan ditampilkan berdasarkan halaman
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+                const paginatedItems = filteredItems.slice(startIndex, endIndex);
+
+                // Bersihkan tabel sebelum mengisi data baru
+                tableBody.innerHTML = '';
+
+                // Jika tidak ada data yang sesuai
+                if (paginatedItems.length === 0) {
+                    tableBody.innerHTML = '<tr><td class="text-center" colspan="4">Tidak ada daya yang bisa ditampilkan</td></tr>';
+                } else {
+                    paginatedItems.forEach((item) => {
                         const row = `
-                <tr class="border-b items-center text-center"> 
-                    <td class="border px-4 py-2">${item.bulan_tahun}</td>
-                    <td class="border px-4 py-2">${item.status}</td>
-                    <td class="border px-4 py-2">${item.paket.toLocaleString()}</td>
-                    <td class="border px-4 py-2 flex items-center justify-center space-x-2">
-                        <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
-                                class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
-                            Edit
-                        </button>
-                        <button onclick="deleteData(${item.id})"
-                                class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
-                            Delete
-                        </button>
-                    </td>
-                </tr>`;
+            <tr class="border-b">
+                <td class="border px-4 py-2">${item.bulan_tahun}</td>
+                <td class="border px-4 py-2">${item.status}</td>
+                <td class="border px-4 py-2">${item.paket.toLocaleString()}</td>
+                <td class="border px-4 py-2 flex items-center justify-center space-x-2">
+                  <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
+                        class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
+                    <i class="fas fa-edit mr-2"></i> Edit
+                </button>
+                <button onclick="deleteData(${item.id})" 
+                        class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
+                    <i class="fas fa-trash mr-2"></i> Delete
+                </button>
+                </td>
+            </tr>`;
                         tableBody.insertAdjacentHTML('beforeend', row);
                     });
-                    const totalRow = `
-            <tr class="border-t bg-gray-100">
-                <td colspan="3" class="text-center font-bold px-4 py-2">Total Paket</td>
-                <td class="border px-4 py-2 font-bold text-center">${totalPaket.toLocaleString()} Paket</td>
-            </tr>`;
-                    tableBody.insertAdjacentHTML('beforeend', totalRow);
                 }
+
+                // Buat tombol pagination
+                paginationContainer.innerHTML = `
+        <button ${currentPage === 1 ? 'disabled' : ''} onclick="changePage('prev')" 
+                class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}">
+            Previous
+        </button>
+        <span class="px-4">Page ${currentPage} of ${totalPages}</span>
+        <button ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage('next')" 
+                class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}">
+            Next
+        </button>`;
+            }
+
+            function changePage(direction) {
+                if (direction === 'prev' && currentPage > 1) {
+                    currentPage--;
+                } else if (direction === 'next' && currentPage * itemsPerPage < filteredItems.length) {
+                    currentPage++;
+                }
+                updateTable(filteredItems);
             }
 
             // Update Chart
@@ -401,22 +449,81 @@
                 });
             }
 
+            
+            async function exportToPDF() {
+                // Ambil data dari tabel
+                const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
+                    const cells = row.querySelectorAll('td');
+                    return {
+                        bulan_tahun: cells[0]?.innerText.trim() || '',
+                        status: cells[1]?.innerText.trim() || '',
+                        paket: cells[2]?.innerText.trim() || '',
+                    };
+                });
+
+                // Buat konten tabel hanya untuk baris yang memiliki data
+                const tableContent = items
+                    .filter(item => item.bulan_tahun && item.status && item.paket)
+                    .map(item => `
+                        <tr>
+                            <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.bulan_tahun}</td>
+                            <td style="border: 1px solid #000; padding: 8px; text-align: left;">${item.status}</td>
+                            <td style="border: 1px solid #000; padding: 8px; text-align: left;">${item.paket}</td>
+                        </tr>
+                    `).join('');
+
+                // Simpan hanya konten tabel untuk dikirim ke server
+                const pdfTable = tableContent;
+
+                // Konversi chart menjadi base64
+                const chartBase64 = chartCanvas.toDataURL();
+
+                // Kirim data tabel dan chart ke server untuk diekspor ke PDF
+                try {
+                    const response = await fetch('/marketings/statuspaket/export-pdf', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            table: pdfTable,
+                            chart: chartBase64,
+                        }),
+                    });
+
+                    // Proses hasil ekspor
+                    if (response.ok) {
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'laporan_status_paket.pdf';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                    } else {
+                        alert('Gagal mengekspor PDF.');
+                    }
+                } catch (error) {
+                    console.error('Error exporting to PDF:', error);
+                    alert('Terjadi kesalahan saat mengekspor PDF.');
+                }
+            }
+
             // Edit Data
             function editData(id, data) {
                 const parsedData = JSON.parse(decodeURIComponent(data)); // Parse data dari string ke objek
                 console.log(parsedData); // Debugging: cek struktur data
 
                 // Pastikan `status` adalah array
-                parsedData.status = Array.isArray(parsedData.status) ?
-                    parsedData.status :
-                    (typeof parsedData.status === 'string' ? parsedData.status.split(',') : []);
+                const statusArray = Array.isArray(parsedData.status) ?
+                    parsedData.status : [parsedData.status];
+
+                const nilaiPaketArray = Array.isArray(parsedData.paket) ?
+                    parsedData.paket : [parsedData.paket];
 
                 // Pastikan `paket` adalah array
-                parsedData.paket = Array.isArray(parsedData.paket) ?
-                    parsedData.paket :
-                    (typeof parsedData.paket === 'string' ?
-                        parsedData.paket.split(',').map(value => parseFloat(value) || 0) : []);
-
                 editMode = true; // Aktifkan mode edit
                 editId = id; // Simpan ID data yang sedang diedit
 
@@ -429,7 +536,7 @@
                 statusContainer.innerHTML = '';
 
                 // Tambahkan elemen status dan nilai paket
-                parsedData.status.forEach((status, index) => {
+                statusArray.forEach((status, index) => {
                     const newstatusItem = document.createElement('div');
                     newstatusItem.className = 'status-item flex items-center space-x-2 mb-2';
 
@@ -445,14 +552,14 @@
                             <option value="Keuangan">Keuangan</option>
                             <option value="Dokumen Akhir">Dokumen Akhir</option>
                             <option value="Finish">Finish</option>       `;
-                    statusSelect.value = status; // Set nilai status
+                    statusSelect.value = status || ''; // Set nilai perusahaan
 
                     const nilaiPaketInput = document.createElement('input');
                     nilaiPaketInput.type = 'text';
                     nilaiPaketInput.name = 'paket[]';
                     nilaiPaketInput.className = 'w-full border-gray-300 rounded p-2';
                     nilaiPaketInput.placeholder = 'Nilai Paket';
-                    nilaiPaketInput.value = parsedData.paket[index] || ''; // Ambil nilai paket berdasarkan indeks
+                    nilaiPaketInput.value = nilaiPaketArray[index] || ''; // Ambil nilai paket berdasarkan indeks
                     nilaiPaketInput.required = true;
 
                     const removeButton = document.createElement('button');

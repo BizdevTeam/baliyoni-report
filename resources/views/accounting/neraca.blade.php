@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Laporan Neraca</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     @vite('resources/css/app.css')
     <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
     <!-- Google Font: Source Sans Pro -->
@@ -22,6 +23,7 @@
     <link rel="stylesheet" href="{{ asset('templates/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     @vite('resources/css/tailwind.css')
     @vite('resources/css/custom.css')
     @vite('resources/js/app.js')
@@ -37,157 +39,177 @@
 
         <!-- Main Content -->
         <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
-            <div class="mx-auto bg-white p-6 rounded-lg shadow">
-                <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Laba Neraca</h1>
+            <div class="mx-auto bg-white/70  p-6 rounded-lg shadow-lg">
+                <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Neraca</h1>
 
-        <!-- Action Buttons -->
-        <div class="flex items-center mb-4">
-            
-            <button class="bg-red-600 text-white px-4 py-2 rounded shadow flex items-center gap-2" data-modal-target="#addEventModal">
-                Add New
-            </button>
-        </div>
+                <h1 class="text-sm mb-4 text-black font-lato">Laporan per Bulan</h1>
 
-        <!-- Success Message -->
-        @if (session('success'))
-            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">
-                {{ session('success') }}
-            </div>
-        @endif
-        @if (session('error'))
-            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
-                {{ session('error') }}
-            </div>
-        @endif
+                <!-- Action Buttons -->
+                <div class="flex justify-end gap-2 mb-4" data-aos="fade-left" data-aos-anchor-placement="center-center">
 
-        <!-- Event Table -->
-        <div class="overflow-x-auto bg-white shadow-md rounded-lg">
-            <table class="table-auto w-full border-collapse border border-gray-300">
-                <thead class="bg-gray-200">
-                    <tr>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Thumbnail</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">File Excel</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($laporanneracas as $laporanneraca)
-                        <tr class="hover:bg-gray-100">
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanneraca->bulan_formatted }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">
-                                @if ($laporanneraca->gambar)
-                                    <img src="{{ asset('images/accounting/neraca/' . $laporanneraca->gambar) }}" alt="Eror Image" class="h-16 mx-auto">
-                                @else
-                                    <img src="{{ asset('images/no_image.png') }}" alt="Default Image" class="h-16 mx-auto">
-                                @endif
-                            </td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">
-                                @if ($laporanneraca->file_excel)
-                                    <a href="{{ asset('files/accounting/neraca/' . $laporanneraca->file_excel) }}" 
-                                       class="text-blue-600 underline hover:text-blue-800" 
-                                       download>
+                    <button class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-1.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm" data-modal-target="#addEventModal">
+                        Add New
+                    </button>
+                </div>
+
+                <!-- Success Message -->
+                @if (session('success'))
+                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">
+                    {{ session('success') }}
+                </div>
+                @endif
+                @if (session('error'))
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
+                    {{ session('error') }}
+                </div>
+                @endif
+
+                <!-- Event Table -->
+                <div class="overflow-x-auto border-l-4 border-red-600 shadow-md rounded-sm">
+                    <table class="table-auto w-full border-collapse text-gray-700 text-sm">
+                        <thead class="bg-gradient-to-r from-gray-200 to-gray-300 text-gray-900 font-semibold">
+                            <tr class="font-sans">
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">Bulan</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">Thumbnail</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">File Excel</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">Keterangan</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($laporanneracas as $laporanneraca)
+                            <tr class="even:bg-gray-50 odd:bg-white hover:bg-gray-100 transition duration-300">
+                                <td class="px-6 py-4 text-center text-pretty border-b" data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">{{ $laporanneraca->bulan_formatted }}</td>
+                                <td class="px-6 py-4 text-center text-pretty border-b" data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">
+                                    <div class="relative hover:scale-[1.5] transition-transform duration-300">
+                                    @if ($laporanneraca->gambar)
+                                    <img src="{{ asset('images/accounting/neraca/' . $laporanneraca->gambar) }}" alt="Eror Image" class="shadow-md hover:shadow-xl rounded-md transition-shadow duration-300 h-16 mx-auto object-cover">
+                                    @else
+                                    <img src="{{ asset('images/no_image.png') }}" alt="Default Image" class="shadow-md hover:shadow-xl rounded-md transition-shadow duration-300 h-16 mx-auto object-cover">
+                                    @endif
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-center text-pretty border-b" data-aos="fade-right">
+                                    @if ($laporanneraca->file_excel)
+                                    <a href="{{ asset('files/accounting/neraca/' . $laporanneraca->file_excel) }}"
+                                        class="text-blue-600 underline hover:text-blue-800"
+                                        download>
                                         Unduh File Excel
                                     </a>
-                                @endif
-                            </td>
-                            <td class="border border-gray-300 px-4 py-2">{{ $laporanneraca->keterangan }}</td>
-                            <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
-                                <!-- Edit Button -->
-                                <button class="bg-red-600 text-white px-3 py-2 rounded" data-modal-target="#editEventModal{{ $laporanneraca->id_neraca }}">
-                                    <i class="fa fa-pen"></i>
-                                    Edit
-                                </button>
-                                <!-- Delete Form -->
-                                <form method="POST" action="{{ route('neraca.destroy', $laporanneraca->id_neraca) }}">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="bg-red-600 text-white px-3 py-2 rounded" onclick="return confirm('Are you sure to delete?')">
-                                        <i class="fa fa-trash"></i>
-                                        Delete
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 text-center text-pretty border-b" data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">{{ $laporanneraca->keterangan }}</td>
+                                <td class="px-6 py-8 text-center flex justify-center gap-2">
+                                    <!-- Edit Button -->
+                                    <button class="transition duration-300 ease-in-out transform hover:scale-125 flex items-center gap-2 p-2" data-modal-target="#editEventModal{{ $laporanneraca->id_neraca }}">
+                                        <i class="fa fa-pen text-red-600" data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out"></i>
+                                       
                                     </button>
-                                </form>
-                            </td>
-                        </tr>
+                                    <!-- Delete Form -->
+                                    <form method="POST" action="{{ route('neraca.destroy', $laporanneraca->id_neraca) }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="transition duration-300 ease-in-out transform hover:scale-125 flex items-center gap-2 p-2" onclick="return confirm('Are you sure to delete?')">
+                                            <i class="fa fa-trash text-red-600" data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out"></i>
+                                           
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
 
-                        <!-- Modal for Edit Event -->
-                        <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="editEventModal{{ $laporanneraca->id_neraca }}">
-                            <div class="bg-white w-1/2 p-6 rounded shadow-lg">
-                                <h3 class="text-xl font-semibold mb-4">Edit Data</h3>
-                                <form method="POST" action="{{ route('neraca.update', $laporanneraca->id_neraca) }}" enctype="multipart/form-data">
-                                    @csrf
-                                    @method('PUT')
-                                    <div class="space-y-4">
-                                        <div>
-                                            <label for="bulan" class="block text-sm font-medium">Bulan</label>
-                                            <input type="month" name="bulan" class="w-full p-2 border rounded" value="{{ $laporanneraca->bulan }}" required>
-                                        </div>
-                                        <div>
-                                            <label for="gambar" class="block text-sm font-medium">Thumbnail</label>
-                                            <input type="file" name="gambar" class="w-full p-2 border rounded">
-                                            <div class="mt-2">
-                                                <img src="{{ asset('images/accounting/labarugi/' . $laporanneraca->gambar) }}" alt="Event Image" class="h-16">
+                            <!-- Modal for Edit Event -->
+                            <div class="fixed z-50 overflow-y-auto inset-0 backdrop-blur-sm bg-black bg-opacity-70 w-full flex items-center justify-center hidden" id="editEventModal{{ $laporanneraca->id_neraca }}">
+                                <div class="bg-white w-[30%] h-[90%] p-6 rounded shadow-lg animate-slide-down transform transition-transform duration-500 ease-out">
+                                    <h3 class="text-lg font-semibold mb-3">Edit Data</h3>
+                                    <form method="POST" action="{{ route('neraca.update', $laporanneraca->id_neraca) }}" enctype="multipart/form-data">
+                                        @csrf
+                                        @method('PUT')
+                                        <div class="space-y-3">
+                                            <div>
+                                                <label for="bulan" class="block text-sm font-medium">Bulan</label>
+                                                <input type="month" name="bulan" class="w-full p-2 border rounded" value="{{ $laporanneraca->bulan }}" required>
                                             </div>
-                                        </div>
-                                        <div>
-                                            <label for="file_excel" class="block text-sm font-medium">File Excel</label>
-                                            <input type="file" name="file_excel" class="w-full p-2 border rounded">
-                                            <div class="mt-2">
-                                                    <a href="{{ asset('files/accounting/labarugi/' . $laporanneraca->file_excel) }}" 
-                                                       class="text-blue-600 underline hover:text-blue-800">
+                                            <div>
+                                                <label for="gambar" class="block text-sm font-medium">Thumbnail</label>
+                                                <input type="file" name="gambar" class="w-full p-2 border rounded">
+                                                <div class="mt-2">
+                                                    <img src="{{ asset('images/accounting/labarugi/' . $laporanneraca->gambar) }}" alt="Event Image" class="h-16">
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label for="file_excel" class="block text-sm font-medium">File Excel</label>
+                                                <input type="file" name="file_excel" class="w-full p-2 border rounded">
+                                                <div class="mt-2">
+                                                    <a href="{{ asset('files/accounting/labarugi/' . $laporanneraca->file_excel) }}"
+                                                        class="text-blue-600 underline hover:text-blue-800">
                                                         Unduh File Excel
                                                     </a>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label for="keterangan" class="block text-sm font-medium">Keterangan</label>
+                                                <textarea name="keterangan" class="w-full p-2 border rounded" rows="3" required>{{ $laporanneraca->keterangan }}</textarea>
                                             </div>
                                         </div>
-                                        <div>
-                                            <label for="keterangan" class="block text-sm font-medium">Keterangan</label>
-                                            <textarea name="keterangan" class="w-full p-2 border rounded" rows="3" required>{{ $laporanneraca->keterangan }}</textarea>
+                                        <div class="mt-2 flex justify-end gap-2">
+                                            <button type="button" class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-1.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm" data-modal-close>Close</button>
+                                            <button type="submit" class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-1.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm">Update</button>
                                         </div>
-                                    </div>
-                                    <div class="mt-4 flex justify-end gap-2">
-                                        <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
-                                        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Update</button>
-                                    </div>
-                                </form>
+                                    </form>
+                                </div>
+                            </div>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Modal untuk Add Event -->
+            <div class="fixed z-50 overflow-y-auto inset-0 backdrop-blur-sm bg-black bg-opacity-70 w-full flex items-center justify-center hidden" id="addEventModal">
+                <div class="bg-white w-[30%] h-[80%] p-6 rounded shadow-lg animate-slide-down transform transition-transform duration-500 ease-out">
+                    <h3 class="text-lg font-semibold mb-3">Add New Data</h3>
+                    <form method="POST" action="{{ route('neraca.store') }}" enctype="multipart/form-data">
+                        @csrf
+                        <div class="space-y-3">
+                            <div>
+                                <label for="bulan" class="block text-sm font-medium">Bulan</label>
+                                <input type="month" name="bulan" class="w-full p-2 border rounded" required>
+                            </div>
+                            <div>
+                                <label for="gambar" class="block text-sm font-medium">Gambar</label>
+                                <input type="file" name="gambar" class="w-full p-2 border rounded">
+                            </div>
+                            <div>
+                                <label for="file_excel" class="block text-sm font-medium">File Excel</label>
+                                <input type="file" name="file_excel" class="w-full p-2 border rounded">
+                            </div>
+                            <div>
+                                <label for="keterangan" class="block text-sm font-medium">Keterangan</label>
+                                <textarea name="keterangan" class="w-full p-2 border rounded" rows="3" required></textarea>
                             </div>
                         </div>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <!-- Modal untuk Add Event -->
-<div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">
-    <div class="bg-white w-1/2 p-6 rounded shadow-lg">
-        <h3 class="text-xl font-semibold mb-4">Add New Data</h3>
-        <form method="POST" action="{{ route('neraca.store') }}" enctype="multipart/form-data">
-            @csrf
-            <div class="space-y-4">
-                <div>
-                    <label for="bulan" class="block text-sm font-medium">Bulan</label>
-                    <input type="month" name="bulan" class="w-full p-2 border rounded" required>
-                </div>
-                <div>
-                    <label for="gambar" class="block text-sm font-medium">Gambar</label>
-                    <input type="file" name="gambar" class="w-full p-2 border rounded">
-                </div>
-                <div>
-                    <label for="file_excel" class="block text-sm font-medium">File Excel</label>
-                    <input type="file" name="file_excel" class="w-full p-2 border rounded">
-                </div>
-                <div>
-                    <label for="keterangan" class="block text-sm font-medium">Keterangan</label>
-                    <textarea name="keterangan" class="w-full p-2 border rounded" rows="3" required></textarea>
+                        <div class="mt-2 flex justify-end gap-2">
+                            <button type="button" class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-1.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm" data-modal-close>Close</button>
+                            <button type="submit" class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-1.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm">Add</button>
+                        </div>
+                    </form>
                 </div>
             </div>
-            <div class="mt-4 flex justify-end gap-2">
-                <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
-                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Add</button>
-            </div>
-        </form>
-    </div>
-</div>
 
 </body>
 <script>
@@ -207,12 +229,20 @@
             }
         });
     });
-    // Menutup modal ketika tombol Close ditekan
-    document.querySelectorAll('[data-modal-close]').forEach(button => {
+   // Menutup modal ketika tombol Close ditekan
+   document.querySelectorAll('[data-modal-close]').forEach(button => {
         button.addEventListener('click', function() {
             const modal = this.closest('.fixed');
-            modal.classList.add('hidden'); // Menyembunyikan modal
+            // Tambahkan kelas animasi sebelum menyembunyikan modal
+            modal.classList.add('closing');
+
+            // Tunggu hingga animasi selesai, kemudian sembunyikan modal
+            setTimeout(() => {
+                modal.classList.add('hidden'); // Menyembunyikan modal
+                modal.classList.remove('closing'); // Menghapus kelas animasi
+            }, 500); // Durasi animasi (sesuaikan dengan durasi animasi CSS)
         });
-    });
+    }); 
 </script>
+
 </html>

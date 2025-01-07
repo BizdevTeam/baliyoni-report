@@ -48,10 +48,7 @@
                 <!-- Action Buttons -->
                 <div class="flex justify-end gap-2 mb-4" data-aos="fade-left" data-aos-anchor-placement="center-center">
                     <!-- Tombol Back -->
-                    <button
-                        class="bg-gradient-to-r font-medium from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-1.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm">
-                        <a href="/admin" class="text-white">Back</a>
-                    </button>
+                    
 
                     <!-- Tombol Add New -->
                     <button
@@ -78,24 +75,50 @@
                     <table class="table-auto w-full border-collapse text-gray-700 text-sm">
                         <thead class="bg-gradient-to-r from-gray-200 to-gray-300 text-gray-900 font-semibold">
                             <tr class="font-sans">
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out">Bulan & Tahun</th>
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out">Judul</th>
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out">Aspek</th>
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out">Masalah</th>
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out">Solusi</th>
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out">Implementasi</th>
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out">Action</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">Bulan & Tahun</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">Judul</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">Aspek</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">Masalah</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">Solusi</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">Implementasi</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($laporanspitis as $laporanspiti)
                             <tr class="even:bg-gray-50 odd:bg-white hover:bg-gray-100 transition duration-300">
-                                <td class="px-6 py-4 text-center border-b" data-aos="fade-right" data-aos-easing="ease-in-out" data-aos-duration="600">{{ $laporanspiti->bulan_tahun }}</td>
-                                <td class=" px-6 py-4 text-center border-b" data-aos="fade-right" data-aos-easing="ease-in-out" data-aos-duration="600">{{ $laporanspiti->judul }}</td>
-                                <td class=" px-6 py-4 text-center border-b" data-aos="fade-right" data-aos-easing="ease-in-out" data-aos-duration="600">{{ $laporanspiti->aspek }}</td>
-                                <td class=" px-6 py-4 text-center border-b" data-aos="fade-right" data-aos-easing="ease-in-out" data-aos-duration="600">{{ $laporanspiti->masalah }}</td>
-                                <td class=" px-6 py-4 text-center border-b" data-aos="fade-right" data-aos-easing="ease-in-out" data-aos-duration="600">{{ $laporanspiti->solusi }}</td>
-                                <td class=" px-6 py-4 text-center border-b" data-aos="fade-right" data-aos-easing="ease-in-out" data-aos-duration="600">{{ $laporanspiti->implementasi }}</td>
+                                <td class="px-6 py-4 text-center border-b" data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine" data-aos-duration="600">{{ $laporanspiti->bulan_tahun }}</td>
+                                <td class=" px-6 py-4 text-center border-b" data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine" data-aos-duration="600">{{ $laporanspiti->judul }}</td>
+                                <td class=" px-6 py-4 text-center border-b" data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine" data-aos-duration="600">{{ $laporanspiti->aspek }}</td>
+                                <td class=" px-6 py-4 text-center border-b" data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine" data-aos-duration="600">{{ $laporanspiti->masalah }}</td>
+                                <td class=" px-6 py-4 text-center border-b" data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine" data-aos-duration="600">{{ $laporanspiti->solusi }}</td>
+                                <td class=" px-6 py-4 text-center border-b" data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine" data-aos-duration="600">{{ $laporanspiti->implementasi }}</td>
 
                                 <td class=" px-6 py-4 text-center border-b flex justify-center gap-2">
                                     <!-- Edit Button -->
@@ -149,8 +172,8 @@
                                             </div>
                                         </div>
                                         <div class="mt-2 flex justify-end gap-2">
-                                            <button type="button" class="bg-red-600 text-white px-3 py-1 rounded text-sm" data-modal-close>Close</button>
-                                            <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded text-sm">Update</button>
+                                            <button type="button" class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-1.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm" data-modal-close>Close</button>
+                                            <button type="submit" class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-1.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm">Update</button>
                                         </div>
                                     </form>
                                 </div>
@@ -194,8 +217,8 @@
                         </div>
                     </div>
                     <div class="mt-2 flex justify-end gap-2">
-                        <button type="button" class="bg-red-600 text-white px-3 py-1 rounded text-sm" data-modal-close>Close</button>
-                        <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded text-sm">Add</button>
+                        <button type="button" class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-1.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm" data-modal-close>Close</button>
+                        <button type="submit" class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-1.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm">Add</button>
                     </div>
                 </form>
             </div>

@@ -107,7 +107,7 @@
                     <thead class="bg-gray-200">
                         <tr>
                             <th class="border border-gray-300 px-4 py-2">Bulan/Tahun</th>
-                            <th class="border border-gray-300 px-4 py-2">perusahaan</th>
+                            <th class="border border-gray-300 px-4 py-2">Perusahaan</th>
                             <th class="border border-gray-300 px-4 py-2">Nilai Paket</th>
                             <th class="border border-gray-300 px-4 py-2">Aksi</th>
                         </tr>
@@ -119,6 +119,11 @@
                 <div class="mt-6 items-center text-center mx-auto">
                     <canvas id="chart"></canvas>
                 </div>
+                <button onclick="exportToPDF()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                    Ekspor ke PDF
+                </button>
+
+
             </div>
         </div>
 
@@ -361,7 +366,7 @@
 
                 // Jika tidak ada data yang sesuai
                 if (paginatedItems.length === 0) {
-                    tableBody.innerHTML = '<tr><td colspan="4">No data available</td></tr>';
+                    tableBody.innerHTML = '<tr><td class="text-center" colspan="4">Tidak ada daya yang bisa ditampilkan</td></tr>';
                 } else {
                     paginatedItems.forEach((item) => {
                         const row = `
@@ -459,6 +464,67 @@
                         },
                     },
                 });
+            }
+
+            async function exportToPDF() {
+                // Ambil data dari tabel
+                const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
+                    const cells = row.querySelectorAll('td');
+                    return {
+                        bulan_tahun: cells[0]?.innerText.trim() || '',
+                        perusahaan: cells[1]?.innerText.trim() || '',
+                        nilai_paket: cells[2]?.innerText.trim() || '',
+                    };
+                });
+
+                // Buat konten tabel hanya untuk baris yang memiliki data
+                const tableContent = items
+                    .filter(item => item.bulan_tahun && item.perusahaan && item.nilai_paket)
+                    .map(item => `
+                        <tr>
+                            <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.bulan_tahun}</td>
+                            <td style="border: 1px solid #000; padding: 8px; text-align: left;">${item.perusahaan}</td>
+                            <td style="border: 1px solid #000; padding: 8px; text-align: left;">${item.nilai_paket}</td>
+                        </tr>
+                    `).join('');
+
+                // Simpan hanya konten tabel untuk dikirim ke server
+                const pdfTable = tableContent;
+
+                // Konversi chart menjadi base64
+                const chartBase64 = chartCanvas.toDataURL();
+
+                // Kirim data tabel dan chart ke server untuk diekspor ke PDF
+                try {
+                    const response = await fetch('/marketings/rekappenjualanperusahaan/export-pdf', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            table: pdfTable,
+                            chart: chartBase64,
+                        }),
+                    });
+
+                    // Proses hasil ekspor
+                    if (response.ok) {
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'rekap_penjualan_perusahaan.pdf';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                    } else {
+                        alert('Gagal mengekspor PDF.');
+                    }
+                } catch (error) {
+                    console.error('Error exporting to PDF:', error);
+                    alert('Terjadi kesalahan saat mengekspor PDF.');
+                }
             }
 
             // Edit Data
