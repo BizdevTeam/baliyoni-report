@@ -25,6 +25,7 @@ use App\Http\Controllers\ItMultimediaTiktokController;
 use App\Http\Controllers\LaporanPerInstansiController;
 use App\Http\Controllers\KasHutangPiutangStokController;
 use App\Http\Controllers\ItMultimediaInstagramController;
+use App\Http\Controllers\KHPSController;
 use App\Http\Controllers\LaporanPembelianOutletController;
 use App\Http\Controllers\LaporanPembelianHoldingController;
 use App\Http\Controllers\LaporanPaketAdministrasiController;
@@ -48,6 +49,7 @@ Route::middleware(['web'])->group(function () {
     Route::resource('rasio', LaporanRasioController::class);
     Route::resource('taxplaning', LaporanTaxPlaningController::class);
     Route::resource('laporanppn', LaporanPpnController::class);
+    Route::resource('khps', KHPSController::class);
 
     // KAS, HUTANG, PIUTANG, STOK
     Route::get('kashutangpiutangstok', [KasHutangPiutangStokController::class, 'index'])
