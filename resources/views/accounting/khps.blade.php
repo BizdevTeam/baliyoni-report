@@ -1,17 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Multimedia Instagram</title>
+    <title>Kas Hutang Piutang Stok</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @vite('resources/css/app.css')
     <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
     <!-- Google Font: Source Sans Pro -->
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
     <!-- Tempusdominus Bootstrap 4 -->
@@ -26,7 +25,6 @@
     @vite('resources/css/custom.css')
     @vite('resources/js/app.js')
 </head>
-
 <body class="bg-gray-100 hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
         <!-- Sidebar -->
@@ -38,13 +36,21 @@
         <!-- Main Content -->
         <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
             <div class="mx-auto bg-white p-6 rounded-lg shadow">
-                <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Multimedia Instagram</h1>
-
+                <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Kas Hutang Piutang Stok</h1>
         <!-- Action Buttons -->
         <div class="flex items-center mb-4">
+            <form method="GET" action="{{ route('khps.index') }}">
+                <div class="flex items-center border border-gray-700 rounded-lg p-2 mr-2 max-w-md">
+                    <input type="text" name="search" placeholder="Search" value="{{ request('search') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
+                    <button type="submit" class="text-gray-500 focus:outline-none" aria-label="Search">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m2.85-7.65a8.5 8.5 0 11-17 0 8.5 8.5 0 0117 0z" />
+                        </svg>
+                    </button>
+                </div>
+            </form>
             
-        
-            <button class="bg-red-600 text-white px-4 py-2 rounded shadow flex text-center items-center gap-2" data-modal-target="#addEventModal">
+            <button class="bg-red-600 text-white px-4 py-2 rounded shadow flex items-center gap-2" data-modal-target="#addEventModal">
                 Add New
             </button>
         </div>
@@ -67,63 +73,65 @@
                 <thead class="bg-gray-200">
                     <tr>
                         <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">File</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Kas</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Hutang</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Piutang</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Stok</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($itmultimediainstagrams as $key => $itmultimediainstagram)
+                    @foreach ($kashutangpiutangstoks as $kashutangpiutangstok)
                         <tr class="hover:bg-gray-100">
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $itmultimediainstagram->bulan_formatted }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">
-                                @if ($itmultimediainstagram->gambar)
-                                    <img src="{{ asset('images/it/multimediainstagram/' . $itmultimediainstagram->gambar) }}" alt="Eror Image" class="h-16 mx-auto">
-                                @else
-                                    <img src="{{ asset('images/no_image.png') }}" alt="Default Image" class="h-16 mx-auto">
-                                @endif
-                            </td>
-                            <td class="border border-gray-300 px-4 py-2">{{ $itmultimediainstagram->keterangan }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $kashutangpiutangstok->bulan_formatted }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $kashutangpiutangstok->kas_formatted }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $kashutangpiutangstok->hutang_formatted }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $kashutangpiutangstok->piutang_formatted }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $kashutangpiutangstok->stok_formatted }}</td>
                             <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
                                 <!-- Edit Button -->
-                                <button class="bg-red-600 text-white px-3 py-2 rounded" data-modal-target="#editEventModal{{ $itmultimediainstagram->id_instagram }}">
+                                <button class="bg-red-600 text-white px-3 py-2 rounded" data-modal-target="#editEventModal{{ $kashutangpiutangstok->id_khps }}">
                                     <i class="fa fa-pen"></i>
                                     Edit
                                 </button>
                                 <!-- Delete Form -->
-                                <form method="POST" action="{{ route('instagram.destroy', $itmultimediainstagram->id_instagram) }}">
+                                <form method="POST" action="{{ route('khps.destroy', $kashutangpiutangstok->id_khps) }}">
                                     @csrf
                                     @method('DELETE')
-                                    <button class="bg-red-600 text-white px-3 py-2 rounded hover:bg-red-600" onclick="return confirm('Are you sure to delete?')">
+                                    <button class="bg-red-600 text-white px-3 py-2 rounded" onclick="return confirm('Are you sure to delete?')">
                                         <i class="fa fa-trash"></i>
                                         Delete
                                     </button>
                                 </form>
                             </td>
                         </tr>
-
                         <!-- Modal for Edit Event -->
-                        <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="editEventModal{{ $itmultimediainstagram->id_instagram }}">
+                        <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="editEventModal{{ $kashutangpiutangstok->id_khps }}">
                             <div class="bg-white w-1/2 p-6 rounded shadow-lg">
                                 <h3 class="text-xl font-semibold mb-4">Edit Data</h3>
-                                <form method="POST" action="{{ route('instagram.update', $itmultimediainstagram->id_instagram) }}" enctype="multipart/form-data">
+                                <form method="POST" action="{{ route('khps.update', $kashutangpiutangstok->id_khps) }}" enctype="multipart/form-data">
                                     @csrf
                                     @method('PUT')
                                     <div class="space-y-4">
                                         <div>
                                             <label for="bulan" class="block text-sm font-medium">Bulan</label>
-                                            <input type="month" name="bulan" class="w-full p-2 border rounded" value="{{ $itmultimediainstagram->bulan }}" required>
+                                            <input type="month" name="bulan" class="w-full p-2 border rounded" value="{{ $kashutangpiutangstok->bulan }}" required>
                                         </div>
                                         <div>
-                                            <label for="gambar" class="block text-sm font-medium">Gambar</label>
-                                            <input type="file" name="gambar" class="w-full p-2 border rounded">
-                                            <div class="mt-2">
-                                                <img src="{{ asset('images/it/multimediainstagram/' . $itmultimediainstagram->gambar) }}" alt="Event Image" class="h-16">
-                                            </div>
+                                            <label for="kas" class="block text-sm font-medium">Kas</label>
+                                            <input type="number" name="kas" class="w-full p-2 border rounded" value="{{ $kashutangpiutangstok->kas }}" required>
                                         </div>
                                         <div>
-                                            <label for="keterangan" class="block text-sm font-medium">Keterangan</label>
-                                            <textarea name="keterangan" class="w-full p-2 border rounded" rows="3" required>{{ $itmultimediainstagram->keterangan }}</textarea>
+                                            <label for="hutang" class="block text-sm font-medium">Hutang</label>
+                                            <input type="number" name="hutang" class="w-full p-2 border rounded" value="{{ $kashutangpiutangstok->hutang }}" required>
+                                        </div>
+                                        <div>
+                                            <label for="piutang" class="block text-sm font-medium">Piutang</label>
+                                            <input type="number" name="piutang" class="w-full p-2 border rounded" value="{{ $kashutangpiutangstok->piutang }}" required>
+                                        </div>
+                                        <div>
+                                            <label for="stok" class="block text-sm font-medium">Stok</label>
+                                            <input type="number" name="stok" class="w-full p-2 border rounded" value="{{ $kashutangpiutangstok->stok }}" required>
                                         </div>
                                     </div>
                                     <div class="mt-4 flex justify-end gap-2">
@@ -136,15 +144,24 @@
                     @endforeach
                 </tbody>
             </table>
+        <div class="m-4">
+            {{ $kashutangpiutangstoks->links('pagination::tailwind') }}
+        </div>
+        </div>
+        </div>
+        <div class="mx-auto bg-white p-6 mt-3 rounded-lg shadow">
+            <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Diagram</h1>
+            <div class="mt-6 items-center text-center mx-auto w-[600px]">
+                <canvas id="pieChart"></canvas>
+            </div>
         </div>
     </div>
-    </div>
-</div>
+
     <!-- Modal untuk Add Event -->
 <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">
     <div class="bg-white w-1/2 p-6 rounded shadow-lg">
         <h3 class="text-xl font-semibold mb-4">Add New Data</h3>
-        <form method="POST" action="{{ route('instagram.store') }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('khps.store') }}" enctype="multipart/form-data">
             @csrf
             <div class="space-y-4">
                 <div>
@@ -152,12 +169,20 @@
                     <input type="month" name="bulan" class="w-full p-2 border rounded" required>
                 </div>
                 <div>
-                    <label for="gambar" class="block text-sm font-medium">Gambar</label>
-                    <input type="file" name="gambar" class="w-full p-2 border rounded">
+                    <label for="kas" class="block text-sm font-medium">Kas</label>
+                    <input type="number" name="kas" class="w-full p-2 border rounded" required>
                 </div>
                 <div>
-                    <label for="keterangan" class="block text-sm font-medium">Keterangan</label>
-                    <textarea name="keterangan" class="w-full p-2 border rounded" rows="3" required></textarea>
+                    <label for="hutang" class="block text-sm font-medium">Hutang</label>
+                    <input type="number" name="hutang" class="w-full p-2 border rounded" required>
+                </div>
+                <div>
+                    <label for="piutang" class="block text-sm font-medium">Piutang</label>
+                    <input type="number" name="piutang" class="w-full p-2 border rounded" required>
+                </div>
+                <div>
+                    <label for="stok" class="block text-sm font-medium">Stok</label>
+                    <input type="number" name="stok" class="w-full p-2 border rounded" required>
                 </div>
             </div>
             <div class="mt-4 flex justify-end gap-2">
@@ -193,5 +218,30 @@
             modal.classList.add('hidden'); // Menyembunyikan modal
         });
     });
+
+    // Ambil data dari controller
+    var chartData = @json($chartData);
+        
+        // Membuat diagram lingkaran
+        var ctx = document.getElementById('pieChart').getContext('2d');
+        var pieChart = new Chart(ctx, {
+            type: 'pie', // Jenis chart: pie
+            data: chartData, // Data dari controller
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return tooltipItem.label + ': ' + tooltipItem.raw.toLocaleString(); // Menampilkan data dengan format angka
+                            }
+                        }
+                    }
+                }
+            }
+        });
 </script>
 </html>
