@@ -110,6 +110,7 @@ nav ul li ul.visible {
     animation: slideUp 0.5s ease-in-out forwards; /* Durasi animasi 0.5 detik */
 }
 
+
 /* Animasi slide-up */
 @keyframes slideUp {
     from {

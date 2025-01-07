@@ -5,7 +5,7 @@ import laravel from 'laravel-vite-plugin';
 export default defineConfig({
     plugins: [
         laravel({
-            input: ['resources/css/app.css', 'resources/js/app.js', 'resources/css/tailwind.css',  'public/templates/dist/css/adminlte.css','resources/css/custom.css'],  
+            input: ['resources/css/app.css', 'resources/js/app.js', 'resources/css/tailwind.css',  'public/templates/dist/css/adminlte.css','resources/css/custom.css', 'resources/css/custom2.css'],  
             refresh: true,
         }),
     ],
