@@ -45,7 +45,7 @@
 
                 <!-- Modal -->
                 <div id="modal"
-                    class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+                    class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
                     <div class="bg-white p-6 rounded shadow w-full max-w-md">
                         <h2 class="text-xl font-bold mb-4" id="modal-title">Tambah Data</h2>
                         <form id="modal-form" class="space-y-4" method="POST">
@@ -104,11 +104,16 @@
                     </thead>
                     <tbody id="data-table"></tbody>
                 </table>
+                <div id="pagination-container" class="flex justify-center mt-4"></div>
 
                 <!-- Chart -->
                 <div class="mt-6 items-center text-center mx-auto">
                     <canvas id="chart"></canvas>
                 </div>
+                <button onclick="exportToPDF()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                    Ekspor ke PDF
+                </button>
+
             </div>
         </div>
 
@@ -196,7 +201,7 @@
             async function fetchData() {
                 try {
                     const response = await fetch('/marketings/laporanperinstansi/data');
-                    console.log('Response Status:', response.status);
+                    console.log('Response instansi:', response.instansi);
                     console.log('Response Content:', await response.text());
                     const result = await response.json();
                     return result.success ? result.data : [];
@@ -307,33 +312,85 @@
             }
 
             // Update Table
-            function updateTable(items) {
-                const tableBody = document.getElementById('data-table');
-                tableBody.innerHTML = ''; // Clear the table before rendering new data
+            let currentPage = 1;
+            let itemsPerPage = 12; // Maksimal 12 item per halaman
+            let filteredItems = []; // Data yang difilter berdasarkan bulan dan tahun
 
-                if (items.length === 0) {
-                    tableBody.innerHTML = '<tr><td colspan="4">No data available</td></tr>';
+            function updateTable(items, bulanTahun = null) {
+                const tableBody = document.getElementById('data-table');
+                const paginationContainer = document.getElementById('pagination-container');
+
+                // Filter data berdasarkan bulan dan tahun jika parameter `bulanTahun` diberikan
+                if (bulanTahun) {
+                    filteredItems = items.filter(item => item.bulan_tahun === bulanTahun);
                 } else {
-                    items.forEach((item) => {
+                    filteredItems = items; // Semua data jika tidak ada filter bulan/tahun
+                }
+
+                const totalItems = filteredItems.length;
+                const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+                // Pastikan halaman tetap dalam rentang yang valid
+                if (currentPage > totalPages) {
+                    currentPage = totalPages;
+                }
+                if (currentPage < 1 ) {
+                    currentPage = 1;
+                }
+
+                // Hitung data yang akan ditampilkan berdasarkan halaman
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+                const paginatedItems = filteredItems.slice(startIndex, endIndex);
+
+                // Bersihkan tabel sebelum mengisi data baru
+                tableBody.innerHTML = '';
+
+                // Jika tidak ada data yang sesuai
+                if (paginatedItems.length === 0) {
+                    tableBody.innerHTML = '<tr><td class="text-center" colspan="4">Tidak ada daya yang bisa ditampilkan</td></tr>';
+                } else {
+                    paginatedItems.forEach((item) => {
                         const row = `
-                <tr class="border-b">
-                    <td class="border px-4 py-2">${item.bulan_tahun}</td>
-                    <td class="border px-4 py-2">${item.instansi}</td>
-                    <td class="border px-4 py-2">Rp ${item.nilai.toLocaleString()}</td>
-                    <td class="border px-4 py-2 flex items-center justify-center space-x-2">
-                      <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
-                            class="bg-red-600 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center">
-                        <i class="fas fa-edit mr-2"></i> Edit
-                    </button>
-                    <button onclick="deleteData(${item.id})" 
-                            class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
-                        <i class="fas fa-trash mr-2"></i> Delete
-                    </button>
-                    </td>
-                </tr>`;
+            <tr class="border-b">
+                <td class="border px-4 py-2">${item.bulan_tahun}</td>
+                <td class="border px-4 py-2">${item.instansi}</td>
+                <td class="border px-4 py-2">Rp ${item.nilai.toLocaleString()}</td>
+                <td class="border px-4 py-2 flex items-center justify-center space-x-2">
+                  <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
+                        class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
+                    <i class="fas fa-edit mr-2"></i> Edit
+                </button>
+                <button onclick="deleteData(${item.id})" 
+                        class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
+                    <i class="fas fa-trash mr-2"></i> Delete
+                </button>
+                </td>
+            </tr>`;
                         tableBody.insertAdjacentHTML('beforeend', row);
                     });
                 }
+
+                // Buat tombol pagination
+                paginationContainer.innerHTML = `
+        <button ${currentPage === 1 ? 'disabled' : ''} onclick="changePage('prev')" 
+                class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}">
+            Previous
+        </button>
+        <span class="px-4">Page ${currentPage} of ${totalPages}</span>
+        <button ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage('next')" 
+                class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}">
+            Next
+        </button>`;
+            }
+
+            function changePage(direction) {
+                if (direction === 'prev' && currentPage > 1) {
+                    currentPage--;
+                } else if (direction === 'next' && currentPage * itemsPerPage < filteredItems.length) {
+                    currentPage++;
+                }
+                updateTable(filteredItems);
             }
 
             // Update Chart
@@ -388,6 +445,67 @@
                         },
                     },
                 });
+            }
+
+            async function exportToPDF() {
+                // Ambil data dari tabel
+                const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
+                    const cells = row.querySelectorAll('td');
+                    return {
+                        bulan_tahun: cells[0]?.innerText.trim() || '',
+                        instansi: cells[1]?.innerText.trim() || '',
+                        nilai: cells[2]?.innerText.trim() || '',
+                    };
+                });
+
+                // Buat konten tabel hanya untuk baris yang memiliki data
+                const tableContent = items
+                    .filter(item => item.bulan_tahun && item.instansi && item.nilai)
+                    .map(item => `
+                        <tr>
+                            <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.bulan_tahun}</td>
+                            <td style="border: 1px solid #000; padding: 8px; text-align: left;">${item.instansi}</td>
+                            <td style="border: 1px solid #000; padding: 8px; text-align: left;">${item.nilai}</td>
+                        </tr>
+                    `).join('');
+
+                // Simpan hanya konten tabel untuk dikirim ke server
+                const pdfTable = tableContent;
+
+                // Konversi chart menjadi base64
+                const chartBase64 = chartCanvas.toDataURL();
+
+                // Kirim data tabel dan chart ke server untuk diekspor ke PDF
+                try {
+                    const response = await fetch('/marketings/instansipaket/export-pdf', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            table: pdfTable,
+                            chart: chartBase64,
+                        }),
+                    });
+
+                    // Proses hasil ekspor
+                    if (response.ok) {
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'laporan_instansi_paket.pdf';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                    } else {
+                        alert('Gagal mengekspor PDF.');
+                    }
+                } catch (error) {
+                    console.error('Error exporting to PDF:', error);
+                    alert('Terjadi kesalahan saat mengekspor PDF.');
+                }
             }
 
             // Edit Data

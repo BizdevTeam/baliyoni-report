@@ -239,7 +239,7 @@ class RekapPenjualanController extends Controller
         // Output as downloadable PDF
         return response($mpdf->Output('', 'S'), 200)
             ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'attachment; filename="data_penjualan.pdf"');
+            ->header('Content-Disposition', 'attachment; filename="rekap_penjualan.pdf"');
     } catch (\Exception $e) {
         return response()->json(['success' => false, 'message' => 'Gagal mengekspor PDF.']);
     }
