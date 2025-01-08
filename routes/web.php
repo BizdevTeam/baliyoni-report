@@ -67,6 +67,14 @@ Route::middleware(['web'])->group(function () {
 
     // Menampilkan halaman laporan paket administrasi
     Route::prefix('marketings')->group(function () {
+        Route::resource('rekappenjualan', RekapPenjualanController::class);
+        Route::post('rekappenjualan/export-pdf', [RekapPenjualanController::class, 'exportPDF'])
+            ->name('marketings.rekappenjualan.exportPDF');
+        Route::get('rekappenjualan/data', [RekapPenjualanController::class, 'getRekapPenjualanData'])
+            ->name('marketings.rekappenjualan.data');
+        Route::delete('rekappenjualan/{rp}', [RekapPenjualanController::class, 'destroy']);
+
+
         // Laporan Paket Administrasi
         Route::get('laporanpaketadministrasi', [LaporanPaketAdministrasiController::class, 'index'])
             ->name('marketings.laporanpaketadministrasi');
@@ -84,24 +92,6 @@ Route::middleware(['web'])->group(function () {
             ->name('marketings.laporanpaketadministrasi.chartdata');
         Route::post('laporanpaketadministrasi/export-pdf', [LaporanPaketAdministrasiController::class, 'exportPDF'])
             ->name('marketings.laporanpaketadministrasi.exportPDF');
-        
-
-        // Rekap Penjualan
-        Route::get('rekappenjualan', [RekapPenjualanController::class, 'index'])
-            ->name('marketings.rekappenjualan');
-        Route::post('rekappenjualan/store', [RekapPenjualanController::class, 'store'])
-            ->name('marketings.rekappenjualan.store');
-        Route::put('rekappenjualan/update/{id}', [RekapPenjualanController::class, 'update'])
-            ->name('marketings.rekappenjualan.update');
-        Route::get('rekappenjualan/data', [RekapPenjualanController::class, 'data'])
-            ->name('marketings.rekappenjualan.data');
-        Route::get('rekappenjualan/filter', [RekapPenjualanController::class, 'filterData'])
-            ->name('marketings.rekappenjualan.filterByYear');
-        Route::delete('rekappenjualan/destroy/{id}', [RekapPenjualanController::class, 'destroy'])
-            ->name('marketings.rekappenjualan.destroy');
-        Route::post('rekappenjualan/export-pdf', [RekapPenjualanController::class, 'exportPDF'])
-            ->name('marketings.rekappenjualan.exportPDF');
-
 
         // Status Paket
         Route::get('statuspaket', [StatusPaketController::class, 'index'])

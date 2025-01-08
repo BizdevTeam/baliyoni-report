@@ -95,7 +95,7 @@
                                     <i class="fa fa-pen"></i>
                                     Edit
                                 </button>
-                                <!-- Delete Form -->
+                                <!-- Delete Form --> 
                                 <form method="POST" action="{{ route('khps.destroy', $kashutangpiutangstok->id_khps) }}">
                                     @csrf
                                     @method('DELETE')
@@ -200,6 +200,7 @@
 
 </body>
 <script>
+
     const chartCanvas = document.getElementById('chart');
     // Mengatur tombol untuk membuka modal add
     document.querySelector('[data-modal-target="#addEventModal"]').addEventListener('click', function() {
@@ -225,14 +226,12 @@
         });
     });
 
-    // Ambil data dari controller
     var chartData = @json($chartData);
         
-        // Membuat diagram lingkaran
         var ctx = document.getElementById('chart').getContext('2d');
         var pieChart = new Chart(ctx, {
-            type: 'pie', // Jenis chart: pie
-            data: chartData, // Data dari controller
+            type: 'pie', 
+            data: chartData, 
             options: {
                 responsive: true,
                 plugins: {
@@ -250,8 +249,8 @@
             }
         });
 
-        async function exportToPDF() {
-    // Ambil CSRF Token
+
+    async function exportToPDF() {
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
     if (!csrfToken) {
         alert('CSRF token tidak ditemukan. Pastikan meta tag CSRF disertakan.');
@@ -292,7 +291,6 @@
 
     const chartBase64 = chartCanvas.toDataURL();
 
-    // Kirim data tabel dan grafik ke server
     try {
         const response = await fetch('/accounting/khps/export-pdf', {
             method: 'POST',

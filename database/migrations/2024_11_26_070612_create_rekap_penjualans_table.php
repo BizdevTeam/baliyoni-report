@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('rekap_penjualans', function (Blueprint $table) {
-            $table->id();
-            $table->string('bulan_tahun')->unique();
-            $table->bigInteger('total_penjualan')->default(0);
+            $table->id('id_rp');
+            $table->string('bulan');
+            $table->bigInteger('total_penjualan');
             $table->timestamps();
         });
     }
