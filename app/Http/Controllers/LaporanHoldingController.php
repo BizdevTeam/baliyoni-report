@@ -46,7 +46,8 @@ class LaporanHoldingController extends Controller
     {
         $validatedata = $request->validate([
             'bulan' => 'required|date_format:Y-m',
-            'perusahaan' => 'required|in:PT. Baliyoni Saguna,
+            'perusahaan' => 'required|in:
+                            PT. Baliyoni Saguna,
                             CV. ELKA MANDIRI,
                             PT. NABA TECHNOLOGY SOLUTIONS,
                             CV. BHIRMA TEKNIK,

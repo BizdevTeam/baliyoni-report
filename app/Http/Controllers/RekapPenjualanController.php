@@ -14,7 +14,7 @@ class RekapPenjualanController extends Controller
     // Show the view
     public function index(Request $request)
     { 
-        $perPage = $request->input('per_page', 12);
+        $perekappenjualanage = $request->input('per_page', 12);
         $search = $request->input('search');
 
         #$query = KasHutangPiutang::query();
@@ -25,7 +25,7 @@ class RekapPenjualanController extends Controller
                 return $query->where('bulan', 'LIKE', "%$search%");
             })
             ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
-            ->paginate($perPage);
+            ->paginate($perekappenjualanage);
 
         // Hitung total untuk masing-masing kategori
         $totalPenjualan = $rekappenjualans->sum('total_penjualan');
@@ -74,7 +74,7 @@ class RekapPenjualanController extends Controller
         }
     }
 
-    public function update(Request $request, RekapPenjualan $rp)
+    public function update(Request $request, RekapPenjualan $rekappenjualan)
     {
         try {
             // Validasi input
@@ -84,7 +84,7 @@ class RekapPenjualanController extends Controller
             ]);
     
             // Update data
-            $rp->update($validatedData);
+            $rekappenjualan->update($validatedData);
     
             // Redirect dengan pesan sukses
             return redirect()
@@ -150,7 +150,7 @@ class RekapPenjualanController extends Controller
                 <thead>
                     <tr style='background-color: #f2f2f2;'>
                         <th style='border: 1px solid #000; padding: 5px;'>Bulan/Tahun</th>
-                        <th style='border: 1px solid #000; padding: 5px;'>Total Penjualan (Rp)</th>
+                        <th style='border: 1px solid #000; padding: 5px;'>Total Penjualan (rekappenjualan)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -185,10 +185,10 @@ class RekapPenjualanController extends Controller
 }
 
 
-    public function destroy(RekapPenjualan $rp)
+    public function destroy(RekapPenjualan $rekappenjualan)
     {
         try {
-            $rp->delete();
+            $rekappenjualan->delete();
             return redirect()->route('rekappenjualan.index')->with('success', 'Data Berhasil Dihapus');
         } catch (\Exception $e) {
             Log::error('Error Deleting Rekap Penjualan Data: ' . $e->getMessage());
