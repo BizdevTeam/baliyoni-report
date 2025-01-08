@@ -6,250 +6,201 @@ use Illuminate\Http\Request;
 use App\Models\RekapPenjualan;
 use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class RekapPenjualanController extends Controller
 {
     // Show the view
-    public function index()
-    {
-        return view('marketings.rekappenjualan');
-    }
+    public function index(Request $request)
+    { 
+        $perPage = $request->input('per_page', 12);
+        $search = $request->input('search');
 
-    public function filterByYear(Request $request)
-{
-    $tahun = $request->query('tahun');
+        #$query = KasHutangPiutang::query();
 
-    // Validasi tahun
-    if (!preg_match('/^\d{4}$/', $tahun)) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Format tahun tidak valid.',
-        ], 400);
-    }
+        // Query untuk mencari berdasarkan tahun dan bulan
+        $rekappenjualans = RekapPenjualan::query()
+            ->when($search, function ($query, $search) {
+                return $query->where('bulan', 'LIKE', "%$search%");
+            })
+            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
+            ->paginate($perPage);
 
-    // Filter data berdasarkan tahun
-    $data = RekapPenjualan::whereYear('bulan_tahun', $tahun)->get();
+        // Hitung total untuk masing-masing kategori
+        $totalPenjualan = $rekappenjualans->sum('total_penjualan');
 
-    return response()->json([
-        'success' => true,
-        'data' => $data,
-    ]);
-}
-    // Fetch all or filtered data
-    public function filterData(Request $request)
+        // Siapkan data untuk chart
+        function getRandomRGBA($opacity = 0.7) {
+            return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
+        }
+        
+        $labels = $rekappenjualans->pluck('bulan')->toArray();
+        $data = $rekappenjualans->pluck('total_penjualan')->toArray();
+        
+        // Generate random colors for each data item
+        $backgroundColors = array_map(fn() => getRandomRGBA(), $data);
+        $borderColors = array_map(fn() => getRandomRGBA(1.0), $data);
+        
+        $chartData = [
+            'labels' => $labels, // Labels untuk chart
+            'datasets' => [
+                [
+                    'label' => 'Grafik Total Penjualan', // Nama dataset
+                    'data' => $data, // Data untuk chart
+                    'backgroundColor' => $backgroundColors, // Warna batang random
+                    'borderColor' => $borderColors,        // Warna border random
+                    'borderWidth' => 1,                    // Ketebalan border
+                ],
+            ],
+        ];
+        
+        return view('marketings.rekappenjualan', compact('rekappenjualans', 'chartData'));    }
+
+    public function store(Request $request)
     {
         try {
-            $tahun = $request->input('tahun');
-            $data = RekapPenjualan::whereRaw("RIGHT(bulan_tahun, 4) = ?", [$tahun])->get();
-
-            // Validasi input tahun
-            if (!$tahun || !is_numeric($tahun) || strlen($tahun) !== 4) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Tahun tidak valid. Masukkan format tahun yang benar (YYYY).',
-                ], 400);
-            }
-
-            $data = RekapPenjualan::whereRaw("RIGHT(bulan_tahun, 4) = ?", [$tahun])->get();
-
-            return response()->json([
-                'success' => true,
-                'data' => $data,
-            ], 200);
+            $validatedata = $request->validate([
+                'bulan' => 'required|date_format:Y-m',
+                'total_penjualan' => 'required|integer|min:0',
+            ]);
+    
+            RekapPenjualan::create($validatedata);
+    
+            return redirect()->route('rekappenjualan.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
-            Log::error('Error filtering data: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat memfilter data.',
-            ], 500);
+            Log::error('Error Storing Rekap Penjualan Data: ' . $e->getMessage());
+            return redirect()->route('rekappenjualan.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
+        }
+    }
+
+    public function update(Request $request, RekapPenjualan $rp)
+    {
+        try {
+            // Validasi input
+            $validatedData = $request->validate([
+                'bulan' => 'required|date_format:Y-m',
+                'total_penjualan' => 'required|integer|min:0',
+            ]);
+    
+            // Update data
+            $rp->update($validatedData);
+    
+            // Redirect dengan pesan sukses
+            return redirect()
+                ->route('rekappenjualan.index')
+                ->with('success', 'Data berhasil diperbarui.');
+        } catch (ValidationException $e) {
+            // Tangani error validasi
+            return redirect()
+                ->back()
+                ->withErrors($e->errors())
+                ->withInput();
+        } catch (\Exception $e) {
+            // Tangani error umum dan log untuk debugging
+            Log::error('Error updating Rekap Penjualan: ' . $e->getMessage());
+            return redirect()
+                ->route('rekappenjualan.index')
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
     
-    public function data(Request $request)
-    {
-        try {
-            $bulanTahun = $request->query('bulan_tahun');
-            $query = RekapPenjualan::query();
-
-            if ($bulanTahun) {
-                $query->where('bulan_tahun', $bulanTahun);
-            }
-
-            $pakets = $query->orderBy('created_at', 'desc')->get();
-            $totalPaket = $pakets->sum('total_penjualan'); // Pakai tanda kutip tunggal (')
-
-            return response()->json([
-                'success' => true,
-                'data' => $pakets,
-                'total_paket' => $totalPaket,
-            ], 200);
-        } catch (\Exception $e) {
-            Log::error('Error fetching data: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat mengambil data.',
-            ], 500);
-        }
-    }
-
-    // Store new data
-    public function store(Request $request)
-    {
-        $validatedData = $this->validateData($request);
-
-        try {
-            // Check for duplicate data
-            $existingData = RekapPenjualan::where('bulan_tahun', $validatedData['bulan_tahun'])->first();
-
-            if ($existingData) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Data dengan bulan dan tahun yang sama sudah ada.',
-                ], 400);
-            }
-
-            RekapPenjualan::create($validatedData);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Data berhasil disimpan.',
-            ], 201);
-        } catch (\Exception $e) {
-            Log::error('Error saving data: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan data.',
-            ], 500);
-        }
-    }
-
-    // Update existing data
-    public function update(Request $request, $id)
-    {
-        $validatedData = $this->validateData($request);
-
-        try {
-            $paket = RekapPenjualan::findOrFail($id);
-
-            // Prevent duplicate month-year for other records
-            $existingData = RekapPenjualan::where('bulan_tahun', $validatedData['bulan_tahun'])
-                ->where('id', '!=', $id)
-                ->first();
-
-            if ($existingData) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Data dengan bulan dan tahun yang sama sudah ada.',
-                ], 400);
-            }
-
-            $paket->update($validatedData);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Data berhasil diperbarui.',
-            ], 200);
-        } catch (\Exception $e) {
-            Log::error('Error updating data: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat memperbarui data.',
-            ], 500);
-        }
-    }
-
-    // Delete data
-    public function destroy($id)
-    {
-        try {
-            $paket = RekapPenjualan::findOrFail($id);
-            $paket->delete();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Data berhasil dihapus.',
-            ], 200);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            Log::error('Data not found: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Data tidak ditemukan.',
-            ], 404);
-        } catch (\Exception $e) {
-            Log::error('Error deleting data: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat menghapus data.',
-            ], 500);
-        }
-    }
-
     public function exportPDF(Request $request)
 {
     try {
-        $data = $request->all();
-        $tableHTML = $data['table'];
-        $chartBase64 = $data['chart'];
-
-        // Create mPDF instance with landscape orientation and margins
-        $mpdf = new Mpdf([
-            'orientation' => 'L',
-            'margin_left' => 10,
-            'margin_right' => 10,
-            'margin_top' => 10,
-            'margin_bottom' => 10,
-            'format' => 'A4', // Set paper size to A4
+        // Validasi input
+        $data = $request->validate([
+            'table' => 'required|string',
+            'chart' => 'required|string',
         ]);
 
-        // Prepare HTML for table
+        // Ambil data dari request
+        $tableHTML = trim($data['table']);
+        $chartBase64 = trim($data['chart']);
+
+        // Validasi isi tabel dan chart untuk mencegah halaman kosong
+        if (empty($tableHTML)) {
+            return response()->json(['success' => false, 'message' => 'Data tabel kosong.'], 400);
+        }
+        if (empty($chartBase64)) {
+            return response()->json(['success' => false, 'message' => 'Data grafik kosong.'], 400);
+        }
+
+        // Buat instance mPDF dengan konfigurasi
+        $mpdf = new \Mpdf\Mpdf([
+            'orientation' => 'L', // Landscape orientation
+            'margin_left' => 10,
+            'margin_right' => 10,
+            'margin_top' => 10, // Kurangi margin atas
+            'margin_bottom' => 10, // Kurangi margin bawah
+            'format' => 'A4', // Ukuran kertas A4
+        ]);
+
+        // Tambahkan header ke PDF
+        $mpdf->SetHeader('Laporan Rekap Penjualan||{PAGENO}');
+
+        // Tambahkan footer ke PDF
+        $mpdf->SetFooter('{DATE j-m-Y}|Laporan Rekap Penjualan|Halaman {PAGENO}');
+
+        // Buat konten tabel dengan gaya CSS yang lebih ketat
         $tableHTMLContent = "
-            <h1 style='text-align:center;'>Rekap Penjualan</h1>
-            <h2>Data Tabel</h2>
-            <table style='border-collapse: collapse; width: 100%;' border='1'>
+            <h1 style='text-align:center; font-size: 16px; margin-top: 32px;'>Laporan Kas Hutang Piutang Stok</h1>
+            <h2 style='text-align:center; font-size: 12px; margin: 5px 0;'>Data Rekapitulasi</h2>
+            <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                 <thead>
-                    <tr>
-                        <th style='border: 1px solid #000; padding: 8px;'>Bulan/Tahun</th>
-                        <th style='border: 1px solid #000; padding: 8px;'>Total Penjualan (RP)</th>
+                    <tr style='background-color: #f2f2f2;'>
+                        <th style='border: 1px solid #000; padding: 5px;'>Bulan/Tahun</th>
+                        <th style='border: 1px solid #000; padding: 5px;'>Total Penjualan (Rp)</th>
                     </tr>
                 </thead>
                 <tbody>
                     {$tableHTML}
-                </tbody>    
+                </tbody>
             </table>
         ";
 
-        // Prepare HTML for chart
-        $chartHTMLContent = "
-            <h1 style='text-align:center;'>Rekap Penjualan</h1>
-            <h2>Grafik Penjualan</h2>
-            <div style='text-align: center;'>
-                <img src='{$chartBase64}' alt='Chart' style='width: 100%; max-width: 100%; height: auto;' />
-            </div>
-        ";
-
-        // Write table content to the first page
+        // Tambahkan konten tabel ke PDF
         $mpdf->WriteHTML($tableHTMLContent);
 
-        // Add a new page for the chart
-        $mpdf->AddPage();
+        // Tambahkan halaman baru hanya jika konten chart tersedia
+        if (!empty($chartBase64)) {
+            $chartHTMLContent = "
+                <h1 style='text-align:center; font-size: 16px; margin: 10px 0;'>Grafik Kas Hutang Piutang Stok</h1>
+                <div style='text-align: center; margin: 10px 0;'>
+                    <img src='{$chartBase64}' alt='Chart' style='max-width: 50%; height: auto;' />
+                </div>
+            ";
+            $mpdf->WriteHTML($chartHTMLContent);
+        }
 
-        // Write chart content to the second page
-        $mpdf->WriteHTML($chartHTMLContent);
-
-        // Output as downloadable PDF
+        // Return PDF sebagai respon download
         return response($mpdf->Output('', 'S'), 200)
             ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'attachment; filename="rekap_penjualan.pdf"');
+            ->header('Content-Disposition', 'attachment; filename="laporan_rekap_penjualan.pdf"');
     } catch (\Exception $e) {
-        return response()->json(['success' => false, 'message' => 'Gagal mengekspor PDF.']);
+        // Log error jika terjadi masalah
+        Log::error('Error exporting PDF: ' . $e->getMessage());
+        return response()->json(['success' => false, 'message' => 'Gagal mengekspor PDF.'], 500);
     }
 }
-    // Validate input data
-    private function validateData(Request $request)
+
+
+    public function destroy(RekapPenjualan $rp)
     {
-        return $request->validate([
-            'bulan_tahun' => ['required', 'regex:/^(0[1-9]|1[0-2])\/\d{4}$/'],
-            'total_penjualan' => 'required|integer|min:0',
-        ]);
+        try {
+            $rp->delete();
+            return redirect()->route('rekappenjualan.index')->with('success', 'Data Berhasil Dihapus');
+        } catch (\Exception $e) {
+            Log::error('Error Deleting Rekap Penjualan Data: ' . $e->getMessage());
+            return redirect()->route('rekappenjualan.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
+        }
     }
+    public function getRekapPenjualanData()
+    {
+        $data = RekapPenjualan::all(['bulan','total_penjualan']);
+    
+        return response()->json($data);
+    }
+
 }
+

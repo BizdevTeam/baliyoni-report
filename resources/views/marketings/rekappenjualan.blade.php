@@ -1,491 +1,319 @@
-    <!DOCTYPE html>
-    <html lang="en">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Rekap Penjualan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    @vite('resources/css/app.css')
+    <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
+    <!-- Tempusdominus Bootstrap 4 -->
+    <link rel="stylesheet"
+        href="{{ asset('templates/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
+    <!-- Theme style -->
+    <!-- overlayScrollbars -->
+    <link rel="stylesheet" href="{{ asset('templates/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    @vite('resources/css/tailwind.css')
+    @vite('resources/css/custom.css')
+    @vite('resources/js/app.js')
+</head>
+<body class="bg-gray-100 hold-transition sidebar-mini layout-fixed">
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <x-sidebar class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-        <title>Rekap Penjualan</title>
-        @vite('resources/css/app.css')
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
-        <!-- Google Font: Source Sans Pro -->
-        <link rel="stylesheet"
-            href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-        <!-- Font Awesome -->
-        <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
-        <!-- Tempusdominus Bootstrap 4 -->
-        <link rel="stylesheet"
-            href="{{ asset('templates/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
-        <!-- Theme style -->
-        <!-- overlayScrollbars -->
-        <link rel="stylesheet" href="{{ asset('templates/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
-        <!-- Custom CSS -->
-        <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
-        @vite('resources/css/custom.css')
-        @vite('resources/css/tailwind.css')
-        @vite('resources/js/app.js')
-    </head>
+        <!-- Navbar -->
+        <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
 
-    <body class="bg-gray-100 hold-transition sidebar-mini layout-fixed">
-        <div class="wrapper">
-            <!-- Sidebar -->
-            <x-sidebar class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
-
-            <!-- Navbar -->
-            <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
-
-            <!-- Main Content -->
-            <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
-                <div class="mx-auto bg-white/70 p-6 rounded-lg shadow">
-                    <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Rekap Penjualan</h1>
-
-                    <h1 class="text-sm mb-4 text-black font-lato">Laporan per Bulan</h1>
-
-                    <button id="open-modal" class="bg-red-600 text-white px-4 py-2 rounded mb-4">Tambah Data</button>
-
-                    <!-- Modal -->
-                    <div id="modal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
-                        <div class="bg-white p-6 rounded shadow w-full max-w-md">
-                            <h2 class="text-xl font-bold mb-4" id="modal-title">Tambah Data</h2>
-                            <form id="modal-form" class="space-y-4">
-                                <div>
-                                    <label for="modal-bulan_tahun" class="block text-sm font-medium">Bulan/Tahun</label>
-                                    <input type="text" id="modal-bulan_tahun" name="bulan_tahun"
-                                        class="w-full border-gray-300 rounded p-2" placeholder="mm/yyyy" required>
-                                </div>
-                                <div>
-                                    <label for="modal-total_penjualan" class="block text-sm font-medium">Total Penjualan
-                                        (RP)</label>
-                                    <input type="text" id="modal-total_penjualan" name="total_penjualan"
-                                        class="w-full border-gray-300 rounded p-2" placeholder="0" min="0" required>
-                                </div>
-                                <div class="flex justify-end space-x-2">
-                                    <button type="button" id="close-modal"
-                                        class="bg-red-600 text-white px-4 py-2 rounded">Batal</button>
-                                    <button type="submit" id="save-data"
-                                        class="bg-red-600 text-white px-4 py-2 rounded">Simpan</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="filter-tahun" class="block text-sm font-medium">Filter Berdasarkan Tahun</label>
-                        <input type="text" id="filter-tahun" class="border-gray-300 rounded p-2" placeholder="yyyy">
-                        <button type="button" id="apply-filter" class="bg-red-600 text-white px-4 py-2 rounded">Terapkan
-                            Filter</button>
-                    </div>
-
-                    <!-- Table -->
-                    <table class="w-full table-auto border-collapse border border-gray-300 mt-6">
-                        <thead class="bg-gray-200">
-                            <tr>
-                                <th class="border border-gray-300 px-4 py-2">Bulan/Tahun</th>
-                                <th class="border border-gray-300 px-4 py-2">Total Penjualan (RP)</th>
-                                <th class="border border-gray-300 px-4 py-2">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="data-table"></tbody>
-                    </table>
-                    <div id="pagination-container" class="flex justify-center mt-4"></div>
-
-                    <!-- Chart -->
-                    <div class="mt-6">
-                        <canvas id="chart"></canvas>
-                    </div>
-
-                    <button onclick="exportToPDF()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                        Ekspor ke PDF
+        <!-- Main Content -->
+        <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
+            <div class="mx-auto bg-white p-6 rounded-lg shadow">
+                <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Rekap Penjualan</h1>
+        <!-- Action Buttons -->
+        <div class="flex items-center mb-4">
+            <form method="GET" action="{{ route('rekappenjualan.index') }}">
+                <div class="flex items-center border border-gray-700 rounded-lg p-2 mr-2 max-w-md">
+                    <input type="text" name="search" placeholder="Search" value="{{ request('search') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
+                    <button type="submit" class="text-gray-500 focus:outline-none" aria-label="Search">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m2.85-7.65a8.5 8.5 0 11-17 0 8.5 8.5 0 0117 0z" />
+                        </svg>
                     </button>
-
                 </div>
-            </div>
+            </form>
+            
+            <button class="bg-red-600 text-white px-4 py-2 rounded shadow flex items-center gap-2" data-modal-target="#addEventModal">
+                Add New
+            </button>
         </div>
 
-        <script>
-            const modal = document.getElementById('modal');
-            const openModalButton = document.getElementById('open-modal');
-            const closeModalButton = document.getElementById('close-modal');
-            const modalForm = document.getElementById('modal-form');
-            const modalTitle = document.getElementById('modal-title');
-            const chartCanvas = document.getElementById('chart');
+        <!-- Success Message -->
+        @if (session('success'))
+            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if (session('error'))
+            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
+                {{ session('error') }}
+            </div>
+        @endif
 
-            let editMode = false;
-            let editId = null;
+        <!-- Event Table -->
+        <div class="overflow-x-auto bg-white shadow-md">
+            <table class="table-auto w-full border-collapse border border-gray-300" id="data-table">
+                <thead class="bg-gray-200">
+                    <tr>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Total Penjualan</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($rekappenjualans as $rekappenjualan)
+                        <tr class="hover:bg-gray-100">
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $rekappenjualan->bulan_formatted }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $rekappenjualan->total_penjualan_formatted }}</td>
+                            <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
+                                <!-- Edit Button -->
+                                <button class="bg-red-600 text-white px-3 py-2 rounded" data-modal-target="#editEventModal{{ $rekappenjualan->id_rp }}">
+                                    <i class="fa fa-pen"></i>
+                                    Edit
+                                </button>
+                                <!-- Delete Form -->
+                                <form method="POST" action="{{ route('rekappenjualan.destroy', $rekappenjualan->id_rp) }}">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="bg-red-600 text-white px-3 py-2 rounded" onclick="return confirm('Are you sure to delete?')">
+                                        <i class="fa fa-trash"></i>
+                                        Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        
+                        <!-- Modal for Edit Event -->
+                        <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="editEventModal{{ $rekappenjualan->id_rp }}">
+                            <div class="bg-white w-1/2 p-6 rounded shadow-lg">
+                                <h3 class="text-xl font-semibold mb-4">Edit Data</h3>
+                                <form method="POST" action="{{ route('rekappenjualan.update', $rekappenjualan->id_rp) }}" enctype="multipart/form-data">
+                                    @csrf
+                                    @method('PUT')
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label for="bulan" class="block text-sm font-medium">Bulan</label>
+                                            <input type="month" name="bulan" class="w-full p-2 border rounded" value="{{ $rekappenjualan->bulan }}" required>
+                                        </div>
+                                        <div>
+                                            <label for="total_penjualan" class="block text-sm font-medium">Total Penjualan</label>
+                                            <input type="number" name="total_penjualan" class="w-full p-2 border rounded" value="{{ $rekappenjualan->total_penjualan }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 flex justify-end gap-2">
+                                        <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
+                                        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Update</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    @endforeach
+                </tbody>
+            </table>
+        <div class="m-4">
+            {{ $rekappenjualans->links('pagination::tailwind') }}
+        </div>
+        </div>
+        </div>
+        <div class="mx-auto bg-white p-6 mt-3 rounded-lg shadow">
+            <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Diagram</h1>
+            <div class="mt-6 items-center text-center mx-auto">
+                <canvas id="chart"></canvas>
+            </div>
+            <button onclick="exportToPDF()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                Ekspor ke PDF
+            </button>
+        </div>
+    </div>
 
-            // Open Modal
-            openModalButton.addEventListener('click', () => {
-                modalForm.reset();
-                modalTitle.textContent = 'Tambah Data';
-                editMode = false;
-                modal.classList.remove('hidden');
-            });
+    <!-- Modal untuk Add Event -->
+<div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">
+    <div class="bg-white w-1/2 p-6 rounded shadow-lg">
+        <h3 class="text-xl font-semibold mb-4">Add New Data</h3>
+        <form method="POST" action="{{ route('rekappenjualan.store') }}" enctype="multipart/form-data">
+            @csrf
+            <div class="space-y-4">
+                <div>
+                    <label for="bulan" class="block text-sm font-medium">Bulan</label>
+                    <input type="month" name="bulan" class="w-full p-2 border rounded" required>
+                </div>
+                <div>
+                    <label for="total_penjualan" class="block text-sm font-medium">Total Penjualan</label>
+                    <input type="number" name="total_penjualan" class="w-full p-2 border rounded" required>
+                </div>
+            </div>
+            <div class="mt-4 flex justify-end gap-2">
+                <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
+                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Add</button>
+            </div>
+        </form>
+    </div>
+</div>
 
-            // Close Modal
-            closeModalButton.addEventListener('click', () => {
-                modal.classList.add('hidden');
-            });
+</body>
+<script>
 
-            // Submit Form
-            modalForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-
-                const data = {
-                    bulan_tahun: document.getElementById('modal-bulan_tahun').value
-                    , total_penjualan: Number(document.getElementById('modal-total_penjualan').value)
-                , };
-
-                const url = editMode ? `/marketings/rekappenjualan/update/${editId}` :
-                    '/marketings/rekappenjualan/store';
-                const method = editMode ? 'PUT' : 'POST';
-
-                try {
-                    const response = await fetch(url, {
-                        method
-                        , headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                            , 'Content-Type': 'application/json'
-                        , }
-                        , body: JSON.stringify(data)
-                    , });
-
-                    const result = await response.json();
-                    if (response.ok && result.success) {
-                        updateData(); // Refresh data
-                        modal.classList.add('hidden'); // Hide modal
-                    } else {
-                        alert(result.message || 'Gagal menyimpan data.');
-                    }
-                } catch (error) {
-                    console.error('Network Error:', error);
-                    alert('Terjadi kesalahan saat menyimpan data.');
-                }
-            });
-
-            // Delete Data
-            async function deleteData(id) {
-                try {
-                    const response = await fetch(`/marketings/rekappenjualan/destroy/${id}`, {
-                        method: 'DELETE'
-                        , headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                            , 'Content-Type': 'application/json'
-                        , }
-                    , });
-
-                    const result = await response.json();
-                    if (result.success) {
-                        updateData(); // Refresh data after deletion
-                    } else {
-                        alert(result.message || 'Gagal menghapus data.');
-                    }
-                } catch (error) {
-                    console.error('Error deleting data:', error);
-                    alert('Terjadi kesalahan saat menghapus data.');
-                }
+    const chartCanvas = document.getElementById('chart');
+    // Mengatur tombol untuk membuka modal add
+    document.querySelector('[data-modal-target="#addEventModal"]').addEventListener('click', function() {
+        const modal = document.querySelector('#addEventModal');
+        modal.classList.remove('hidden');
+    });
+    // Mengatur tombol untuk membuka modal edit
+    document.querySelectorAll('[data-modal-target]').forEach(button => {
+        button.addEventListener('click', function() {
+            // Menemukan modal berdasarkan ID yang diberikan di data-modal-target
+            const modalId = this.getAttribute('data-modal-target');
+            const modal = document.querySelector(modalId);
+            if (modal) {
+                modal.classList.remove('hidden'); // Menampilkan modal
             }
-
-            //filter tahun
-            async function updateDataByYear(year) {
-                const url = `/marketings/rekappenjualan/filter?tahun=${year}`;
-                try {
-                    const response = await fetch(url, {
-                        method: 'GET'
-                        , headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                        , }
-                    , });
-
-                    if (!response.ok) {
-                        console.error(`HTTP Error: ${response.status}`);
-                        throw new Error(`Failed to fetch data. Status: ${response.status}`);
-                    }
-
-                    const result = await response.json();
-
-                    if (result.success) {
-                        const items = result.data; // Data untuk tabel dan grafik
-                        const totalPaket = items.reduce((sum, item) => sum + item.total_penjualan, 0);
-
-                        updateTable(items, totalPaket); // Update tabel
-                        updateChart(items); // Update chart
-                    } else {
-                        alert(result.message || 'Data tidak ditemukan untuk tahun ini.');
-                        updateTable([]); // Kosongkan tabel
-                        updateChart([]); // Kosongkan chart
-                    }
-                } catch (error) {
-                    console.error('Error fetching data by year:', error.message);
-                    alert('Terjadi kesalahan saat memuat data. Lihat console untuk detail.');
-                }
-            }
-
-            // Apply Filter
-            document.getElementById('apply-filter').addEventListener('click', () => {
-        const filterYear = document.getElementById('filter-tahun').value.trim();
-        if (filterYear.length === 4 && !isNaN(filterYear)) {
-            updateDataByYear(filterYear); // Panggil fungsi filter
-        } else {
-            alert('Masukkan tahun yang valid (format: yyyy).');
-        }
+        });
+    });
+    // Menutup modal ketika tombol Close ditekan
+    document.querySelectorAll('[data-modal-close]').forEach(button => {
+        button.addEventListener('click', function() {
+            const modal = this.closest('.fixed');
+            modal.classList.add('hidden'); // Menyembunyikan modal
+        });
     });
 
-    async function updateData(filter = '') {
-        const url = filter ? `/marketings/rekappenjualan/data?bulan_tahun=${filter}` : '/marketings/rekappenjualan/data';
+    var chartData = @json($chartData);
 
-        try {
-            const response = await fetch(url);
-            const result = await response.json();
+var ctx = document.getElementById('chart').getContext('2d');
+var barChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: chartData.labels, // Label bulan
+        datasets: chartData.datasets, // Dataset total penjualan
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top', // Posisi legenda
+            labels: {
+                font :{
+                size: 20,
+                weight : 'bold',
+                    }, //
+                }, //
+             }, //
+            tooltip: {
+                callbacks: {
+                    label: function(tooltipItem) {
+                        let value = tooltipItem.raw; // Ambil data nilai
+                        return tooltipItem.dataset.label + ': ' + value.toLocaleString(); // Format angka
+                    },
+                },
+            },
+        },
+        scales: {
+            x: {
+                title: {
+                    display: true,
+                    text: 'Bulan', // Label sumbu X
+                },
+            },
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Total Penjualan (Rp)', // Label sumbu Y
+                },
+                ticks: {
+                    callback: function(value) {
+                        return value.toLocaleString(); // Format angka
+                    },
+                },
+            },
+        },
+    },
+});
 
-            if (result.success) {
-                const items = result.data;
-                updateTable(items); // Update tabel dengan data terbaru
-                updateChart(items); // Perbarui chart jika diperlukan
-            } else {
-                alert('Gagal memuat data.');
-            }
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            alert('Terjadi kesalahan saat memuat data.');
-        }
+    async function exportToPDF() {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    if (!csrfToken) {
+        alert('CSRF token tidak ditemukan. Pastikan meta tag CSRF disertakan.');
+        return;
     }
 
-    // Filter data berdasarkan tahun
-    function updateDataByYear(year) {
-        const filteredData = filteredItems.filter(item => item.bulan_tahun.endsWith(`/${year}`));
-        updateTable(filteredData);
+    // Ambil data dari tabel
+    const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
+        const cells = row.querySelectorAll('td');
+        return {
+            bulan: cells[0]?.innerText.trim() || '',
+            total_penjualan: cells[1]?.innerText.trim() || '',
+        };
+    });
+
+    const tableContent = items
+        .filter(item => item.bulan && item.total_penjualan)
+        .map(item => `
+            <tr>
+                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.bulan}</td>
+                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${item.total_penjualan}</td>
+            </tr>
+        `).join('');
+
+    const pdfTable = tableContent;
+
+    const chartCanvas = document.querySelector('#chart');
+    if (!chartCanvas) {
+        alert('Elemen canvas grafik tidak ditemukan.');
+        return;
     }
 
-    // Variabel untuk tabel dan paginasi
-    let currentPage = 1;
-    let itemsPerPage = 12; // Maksimal 12 item per halaman
-    let filteredItems = []; // Data yang difilter berdasarkan bulan dan tahun
+    const chartBase64 = chartCanvas.toDataURL();
 
-    function updateTable(items) {
-        const tableBody = document.getElementById('data-table');
-        const paginationContainer = document.getElementById('pagination-container');
+    try {
+        const response = await fetch('/marketings/rekappenjualan/export-pdf', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                table: pdfTable,
+                chart: chartBase64,
+            }),
+        });
 
-        filteredItems = items; // Simpan data yang diterima
-        const totalItems = filteredItems.length;
-        const totalPages = Math.ceil(totalItems / itemsPerPage);
-
-        // Pastikan halaman tetap dalam rentang yang valid
-        currentPage = Math.min(Math.max(currentPage, 1), totalPages);
-
-        // Hitung data untuk halaman saat ini
-        const startIndex = (currentPage - 1) * itemsPerPage;
-        const endIndex = startIndex + itemsPerPage;
-        const paginatedItems = filteredItems.slice(startIndex, endIndex);
-
-        // Bersihkan tabel sebelum mengisi data baru
-        tableBody.innerHTML = '';
-
-        if (paginatedItems.length === 0) {
-            tableBody.innerHTML = '<tr><td class="text-center" colspan="4">Tidak ada daya yang bisa ditampilkan</td></tr>';
+    if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Laporan_rekap_penjualan.pdf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         } else {
-            paginatedItems.forEach((item) => {
-                const row = `
-                    <tr class="border-b">
-                        <td class="border px-4 py-2">${item.bulan_tahun}</td>
-                        <td class="border px-4 py-2">Rp ${item.total_penjualan.toLocaleString()}</td>
-                        <td class="border px-4 py-2 flex items-center justify-center space-x-2">
-                            <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')" 
-                                    class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
-                                <i class="fas fa-edit mr-2"></i> Edit
-                            </button>
-                            <button onclick="deleteData(${item.id})" 
-                                    class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
-                                <i class="fas fa-trash mr-2"></i> Delete
-                            </button>
-                        </td>
-                    </tr>`;
-                tableBody.insertAdjacentHTML('beforeend', row);
-            });
+            alert('Gagal mengekspor PDF.');
         }
+    } catch (error) {
+        console.error('Error exporting to PDF:', error);
+        alert('Terjadi kesalahan saat mengekspor PDF.');
+    }
+}
 
-        // Update tombol pagination
-            paginationContainer.innerHTML = `
-                <button ${currentPage === 1 ? 'disabled' : ''} onclick="changePage('prev')" 
-                        class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}">
-                    Previous
-                </button>
-                <span class="px-4">Page ${currentPage} of ${totalPages}</span>
-                <button ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage('next')" 
-                        class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}">
-                    Next
-                </button>`;
-            }
-
-            function changePage(direction) {
-                if (direction === 'prev' && currentPage > 1) {
-                    currentPage--;
-                } else if (direction === 'next' && currentPage * itemsPerPage < filteredItems.length) {
-                    currentPage++;
-                }
-                updateTable(filteredItems);
-            }
-
-            //update chart
-            function updateChart(items) {
-                // Sort items by bulan_tahun in ascending order
-                items.sort((a, b) => {
-                    const [monthA, yearA] = a.bulan_tahun.split('/').map(Number);
-                    const [monthB, yearB] = b.bulan_tahun.split('/').map(Number);
-
-                    if (yearA === yearB) {
-                        return monthA - monthB; // Sort by month if years are the same
-                    }
-                    return yearA - yearB; // Sort by year
-                });
-
-                // Extract sorted data
-                const labels = items.map((item) => item.bulan_tahun);
-                const dataValues = items.map((item) => item.total_penjualan);
-                const backgroundColors = items.map(() =>
-                    `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.7)`);
-
-                const ctx = chartCanvas.getContext('2d');
-
-                // Destroy existing chart instance if any
-                if (window.myChart) {
-                    window.myChart.destroy();
-                }
-
-                // If no data, show placeholder chart
-                if (items.length === 0) {
-                    window.myChart = new Chart(ctx, {
-                        type: 'bar'
-                        , data: {
-                            labels: ['Tidak ada data']
-                            , datasets: [{
-                                label: 'Total Penjualan (RP)'
-                                , data: [0]
-                                , backgroundColor: backgroundColors
-                            , }]
-                        , }
-                        , options: {
-                            responsive: true
-                            , scales: {
-                                y: {
-                                    beginAtZero: true
-                                , }
-                            , }
-                        , }
-                    , });
-                    return;
-                }
-
-                // Create new chart with sorted data
-                window.myChart = new Chart(ctx, {
-                    type: 'bar'
-                    , data: {
-                        labels
-                        , datasets: [{
-                            label: 'Total Penjualan (RP)'
-                            , data: dataValues
-                            , backgroundColor: backgroundColors
-                            , borderWidth: 1
-                        , }]
-                    , }
-                    , options: {
-                        responsive: true
-                        , plugins: {
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        return `Rp ${context.raw.toLocaleString()}`;
-                                    }
-                                , }
-                            , }
-                        , }
-                        , scales: {
-                            y: {
-                                beginAtZero: true
-                            , }
-                        , }
-                    , }
-                , });
-            }
-
-            async function exportToPDF() {
-                // Ambil data dari tabel
-                const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
-                    const cells = row.querySelectorAll('td');
-                    return {
-                        bulan_tahun: cells[0]?.innerText.trim() || '',
-                        total_penjualan: cells[1]?.innerText.trim() || '',
-                    };
-                });
-
-                // Buat konten tabel hanya untuk baris yang memiliki data
-                const tableContent = items
-                    .filter(item => item.bulan_tahun && item.total_penjualan)
-                    .map(item => `
-                        <tr>
-                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.bulan_tahun}</td>
-                            <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${item.total_penjualan}</td>
-                        </tr>
-                    `).join('');
-
-                // Simpan hanya konten tabel untuk dikirim ke server
-                const pdfTable = tableContent;
-
-                // Konversi chart menjadi base64
-                const chartBase64 = chartCanvas.toDataURL();
-
-                // Kirim data tabel dan chart ke server untuk diekspor ke PDF
-                try {
-                    const response = await fetch('/marketings/rekappenjualan/export-pdf', {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            table: pdfTable,
-                            chart: chartBase64,
-                        }),
-                    });
-
-                    // Proses hasil ekspor
-                    if (response.ok) {
-                        const blob = await response.blob();
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = 'data_penjualan.pdf';
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                    } else {
-                        alert('Gagal mengekspor PDF.');
-                    }
-                } catch (error) {
-                    console.error('Error exporting to PDF:', error);
-                    alert('Terjadi kesalahan saat mengekspor PDF.');
-                }
-            }
-            
-            // Edit Data
-            async function editData(id, data) {
-                const parsedData = JSON.parse(decodeURIComponent(data));
-
-                editMode = true;
-                editId = id;
-                modalTitle.textContent = 'Edit Data';
-
-                document.getElementById('modal-bulan_tahun').value = parsedData.bulan_tahun;
-                document.getElementById('modal-total_penjualan').value = parsedData.total_penjualan;
-
-                modal.classList.remove('hidden');
-            }
-
-
-            // Initial Load
-            updateData();
-
-        </script>
-    </body>
-
-    </html>
+</script>
+</html>
