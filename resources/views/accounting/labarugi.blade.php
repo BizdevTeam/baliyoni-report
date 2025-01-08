@@ -95,11 +95,11 @@
                                     data-aos-duration="400"
                                     data-aos-easing="ease-out-sine">
                                     <div class="relative hover:scale-[1.5] transition-transform duration-300">
-                                    @if ($laporanlabarugi->gambar)
-                                    <img src="{{ asset('images/accounting/labarugi/' . $laporanlabarugi->gambar) }}" alt="Eror Image" class=" shadow-md hover:shadow-xl rounded-md transition-shadow duration-300 h-16 mx-auto object-cover ">
-                                    @else
-                                    <img src="{{ asset('images/no_image.png') }}" alt="Default Image" class=" shadow-md hover:shadow-xl rounded-md transition-shadow duration-300 h-16 mx-auto object-cover ">
-                                    @endif
+                                        @if ($laporanlabarugi->gambar)
+                                        <img src="{{ asset('images/accounting/labarugi/' . $laporanlabarugi->gambar) }}" alt="Eror Image" class=" shadow-md hover:shadow-xl rounded-md transition-shadow duration-300 h-16 mx-auto object-cover cursor-pointer" onclick="openModal('{{ asset('images/accounting/labarugi/' . $laporanlabarugi->gambar) }}')">
+                                        @else
+                                        <img src="{{ asset('images/no_image.png') }}" alt="Default Image" class=" shadow-md hover:shadow-xl rounded-md transition-shadow duration-300 h-16 mx-auto object-cover cursor-pointer" onclick="openModal('{{ asset('images/no_image.png') }}')">
+                                        @endif
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-center text-pretty border-b" data-aos="fade-right"
@@ -120,7 +120,7 @@
                                     <!-- Edit Button -->
                                     <button class="transition duration-300 ease-in-out transform hover:scale-125 flex items-center gap-2 p-2" data-modal-target="#editEventModal{{ $laporanlabarugi->id_labarugi }}">
                                         <i class="fa fa-pen  text-red-600" data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out"></i>
-                               
+
                                     </button>
                                     <!-- Delete Form -->
                                     <form method="POST" action="{{ route('labarugi.destroy', $laporanlabarugi->id_labarugi) }}">
@@ -128,13 +128,13 @@
                                         @method('DELETE')
                                         <button class="transition duration-300 ease-in-out transform hover:scale-125  flex items-center p-2" onclick="return confirm('Are you sure to delete?')">
                                             <i class="fa fa-trash  text-red-600" data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out"></i>
-                                        
+
                                         </button>
-                                    </form> 
+                                    </form>
                                 </td>
                             </tr>
 
-                            
+
 
                             <!-- Modal for Edit Event -->
                             <div class="fixed z-50 overflow-y-auto inset-0 backdrop-blur-sm bg-black bg-opacity-70 w-full flex items-center justify-center hidden" id="editEventModal{{ $laporanlabarugi->id_labarugi }}">
@@ -182,7 +182,7 @@
                     </table>
                 </div>
             </div>
-            
+
 
             <!-- Modal untuk Add Event -->
             <div class="fixed z-50 overflow-y-auto inset-0 backdrop-blur-sm bg-black bg-opacity-70 w-full flex items-center justify-center hidden" id="addEventModal">
@@ -216,6 +216,14 @@
                 </div>
             </div>
 
+            <!-- modal for image -->
+            <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-70 hidden justify-center items-center z-50">
+    <div class="relative">
+        <img id="modalImage" src="" alt="Full Image" class="max-w-2xl max-h-[500px] rounded-md shadow-lg">
+        <button onclick="closeModal()" class="absolute top-2 right-2 bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white p-3 rounded-full shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm">✖</button>
+    </div>
+</div>
+
 </body>
 <script>
     // Mengatur tombol untuk membuka modal add
@@ -247,7 +255,22 @@
                 modal.classList.remove('closing'); // Menghapus kelas animasi
             }, 500); // Durasi animasi (sesuaikan dengan durasi animasi CSS)
         });
-    });
+    }); 
+
+//modal img
+function openModal(imageSrc) {
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        modalImage.src = imageSrc;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('imageModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
 </script>
 
 </html>

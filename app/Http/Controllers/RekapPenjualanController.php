@@ -244,9 +244,6 @@ class RekapPenjualanController extends Controller
         return response()->json(['success' => false, 'message' => 'Gagal mengekspor PDF.']);
     }
 }
-
-
-
     // Validate input data
     private function validateData(Request $request)
     {

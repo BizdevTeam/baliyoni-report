@@ -309,76 +309,66 @@
             }
 
             let currentPage = 1;
-let itemsPerPage = 12; // Maksimal 12 item per halaman
-let filteredItems = []; // Data yang difilter berdasarkan bulan dan tahun
+            let itemsPerPage = 12; // Maksimal 12 item per halaman
+            let filteredItems = []; // Data yang difilter berdasarkan bulan dan tahun
 
-function updateTable(items, bulanTahun = null) {
-    const tableBody = document.getElementById('data-table');
-    const paginationContainer = document.getElementById('pagination-container');
-    const sumContainer = document.getElementById('sum-container'); // Menyediakan container untuk menampilkan jumlah paket_rp
+            function updateTable(items, bulanTahun = null) {
+                const tableBody = document.getElementById('data-table');
+                const paginationContainer = document.getElementById('pagination-container');
 
-    // Filter data berdasarkan bulan dan tahun jika parameter `bulanTahun` diberikan
-    if (bulanTahun) {
-        filteredItems = items.filter(item => item.bulan_tahun === bulanTahun);
-    } else {
-        filteredItems = items; // Semua data jika tidak ada filter bulan/tahun
-    }
+                // Filter data berdasarkan bulan dan tahun jika parameter `bulanTahun` diberikan
+                if (bulanTahun) {
+                    filteredItems = items.filter(item => item.bulan_tahun === bulanTahun);
+                } else {
+                    filteredItems = items; // Semua data jika tidak ada filter bulan/tahun
+                }
 
-    const totalItems = filteredItems.length;
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
+                const totalItems = filteredItems.length;
+                const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-    // Pastikan halaman tetap dalam rentang yang valid
-    if (currentPage > totalPages) {
-        currentPage = totalPages;
-    }
-    if (currentPage < 1 ) {
-        currentPage = 1;
-    }
+                // Pastikan halaman tetap dalam rentang yang valid
+                if (currentPage > totalPages) {
+                    currentPage = totalPages;
+                }
+                if (currentPage < 1 ) {
+                    currentPage = 1;
+                }
 
-    // Hitung data yang akan ditampilkan berdasarkan halaman
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const paginatedItems = filteredItems.slice(startIndex, endIndex);
+                // Hitung data yang akan ditampilkan berdasarkan halaman
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+                const paginatedItems = filteredItems.slice(startIndex, endIndex);
 
-    // Bersihkan tabel sebelum mengisi data baru
-    tableBody.innerHTML = '';
+                // Bersihkan tabel sebelum mengisi data baru
+                tableBody.innerHTML = '';
 
-    // Jika tidak ada data yang sesuai
-    if (paginatedItems.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="5">No data available</td></tr>';
-    } else {
-        paginatedItems.forEach((item) => {
-            const row = `
+                // Jika tidak ada data yang sesuai
+                if (paginatedItems.length === 0) {
+                    tableBody.innerHTML = '<tr><td class="text-center" colspan="4">Tidak ada daya yang bisa ditampilkan</td></tr>';
+                } else {
+                    paginatedItems.forEach((item) => {
+                        const row = `
             <tr class="border-b">
                 <td class="border px-4 py-2">${item.bulan_tahun}</td>
                 <td class="border px-4 py-2">${item.website}</td>
                 <td class="border px-4 py-2">${item.paket_rp.toLocaleString()}</td>
-                <td class="border px-4 py-2">${item.new_column || 'N/A'}</td> <!-- Kolom baru -->
                 <td class="border px-4 py-2 flex items-center justify-center space-x-2">
-                    <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
-                            class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
-                        <i class="fas fa-edit mr-2"></i> Edit
-                    </button>
-                    <button onclick="deleteData(${item.id})" 
-                            class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
-                        <i class="fas fa-trash mr-2"></i> Delete
-                    </button>
+                  <button onclick="editData(${item.id}, '${encodeURIComponent(JSON.stringify(item))}')"
+                        class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
+                    <i class="fas fa-edit mr-2"></i> Edit
+                </button>
+                <button onclick="deleteData(${item.id})" 
+                        class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
+                    <i class="fas fa-trash mr-2"></i> Delete
+                </button>
                 </td>
             </tr>`;
-            tableBody.insertAdjacentHTML('beforeend', row);
-        });
-    }
+                        tableBody.insertAdjacentHTML('beforeend', row);
+                    });
+                }
 
-    // Fungsi untuk menghitung total paket_rp
-    const totalPaketRp = filteredItems.reduce((total, item) => total + item.paket_rp, 0);
-    
-    // Menampilkan jumlah paket_rp pada halaman
-    sumContainer.innerHTML = `
-        <p class="font-bold">Total Paket RP: ${totalPaketRp.toLocaleString()}</p>
-    `;
-
-    // Buat tombol pagination
-    paginationContainer.innerHTML = `
+                // Buat tombol pagination
+                paginationContainer.innerHTML = `
         <button ${currentPage === 1 ? 'disabled' : ''} onclick="changePage('prev')" 
                 class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}">
             Previous
@@ -388,17 +378,16 @@ function updateTable(items, bulanTahun = null) {
                 class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}">
             Next
         </button>`;
-}
+            }
 
-function changePage(direction) {
-    if (direction === 'prev' && currentPage > 1) {
-        currentPage--;
-    } else if (direction === 'next' && currentPage * itemsPerPage < filteredItems.length) {
-        currentPage++;
-    }
-    updateTable(filteredItems);
-}
-
+            function changePage(direction) {
+                if (direction === 'prev' && currentPage > 1) {
+                    currentPage--;
+                } else if (direction === 'next' && currentPage * itemsPerPage < filteredItems.length) {
+                    currentPage++;
+                }
+                updateTable(filteredItems);
+            }
 
             // Update Chart
             function updateChart(items) {

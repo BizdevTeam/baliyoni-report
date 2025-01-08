@@ -18,8 +18,8 @@
         <!-- Pie Chart -->
         <div class="bg-white rounded-lg shadow-lg p-6 flex-1 md:max-w-[49%]">
             <h1 class="text-2xl font-semibold text-gray-700 mb-4">Kas, Hutang, Piutang, Stok</h1>
-            <div class="flex justify-center items-center">
-                <canvas id="chartPie1" class=" h-[250px]"></canvas>
+            <div class="flex justify-center items-center w-full h-[250px]">
+                <canvas id="chartPie1" class=" w-full h-[250px]"></canvas>
             </div>
         </div>
 
@@ -33,8 +33,8 @@
         <!-- Pie Chart -->
         <div class="bg-white rounded-lg shadow-lg p-6 flex-1 md:max-w-[49%]">
             <h1 class="text-2xl font-semibold text-gray-700 mb-4">Arus Kas</h1>
-            <div class="flex justify-center items-center">
-                <canvas id="chartPie2" class=" h-[250px]"></canvas>
+            <div class="flex justify-center items-center  w-full h-[250px]">
+                <canvas id="chartPie2" class=" w-full h-[250px]"></canvas>
             </div>
         </div>
 
@@ -167,46 +167,35 @@
         });
     }
 
-    function renderPieChart(ctxId, labels, data, title) {
-        const ctx = document.getElementById(ctxId).getContext('2d');
-        new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: labels,
-                datasets: [{
-                    data: data,
-                    backgroundColor: [
-                        'rgba(75, 192, 192, 0.7)', // Kas
-                        'rgba(255, 99, 132, 0.7)', // Hutang
-                        'rgba(54, 162, 235, 0.7)', // Piutang
-                        'rgba(255, 206, 86, 0.7)', // Stok
-                    ],
-                    borderWidth: 1,
-                }],
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                aspectRatio: 1.5,
-                plugins: {
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                const total = context.dataset.data.reduce((sum, val) => sum + val, 0);
-                                const value = context.raw;
-                                const percentage = ((value / total) * 100).toFixed(2);
-                                return `Rp ${value.toLocaleString()} (${percentage}%)`;
-                            },
-                        },
-                    },
-                    title: {
-                        display: true,
-                        text: title,
-                    },
+    function renderPieChart(canvasId, labels, data, title) {
+    const ctx = document.getElementById(canvasId).getContext('2d');
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#2ab952'],
+                hoverBackgroundColor: ['#FF4757', '#3B8BEB', '#FFD700', '#00a623']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
                 },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            return labels[tooltipItem.dataIndex] + ': ' + data[tooltipItem.dataIndex].toLocaleString();
+                        }
+                    }
+                }
             },
-        });
-    }
+        }
+    });
+}
 
     (async function loadCharts() {
         try {
@@ -238,6 +227,7 @@
             const kashutangpiutangstokData = await fetchChartData(
                 '{{ route('khps.index') }}');
             if (kashutangpiutangstokData) {
+                // Hitung total untuk setiap kategori
                 const totalData = {
                     kas: kashutangpiutangstokData.reduce((sum, item) => sum + item.kas, 0),
                     hutang: kashutangpiutangstokData.reduce((sum, item) => sum + item.hutang, 0),
@@ -245,6 +235,7 @@
                     stok: kashutangpiutangstokData.reduce((sum, item) => sum + item.stok, 0),
                 };
 
+                // Render chart dengan data yang diperoleh
                 renderPieChart(
                     'chartPie1',
                     ['Kas', 'Hutang', 'Piutang', 'Stok'],
