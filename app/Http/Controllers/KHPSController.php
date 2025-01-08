@@ -94,16 +94,24 @@ class KHPSController extends Controller
         ]);
 
         // Ambil data dari request
-        $tableHTML = $data['table'];
-        $chartBase64 = $data['chart'];
+        $tableHTML = trim($data['table']);
+        $chartBase64 = trim($data['chart']);
+
+        // Validasi isi tabel dan chart untuk mencegah halaman kosong
+        if (empty($tableHTML)) {
+            return response()->json(['success' => false, 'message' => 'Data tabel kosong.'], 400);
+        }
+        if (empty($chartBase64)) {
+            return response()->json(['success' => false, 'message' => 'Data grafik kosong.'], 400);
+        }
 
         // Buat instance mPDF dengan konfigurasi
-        $mpdf = new Mpdf([
+        $mpdf = new \Mpdf\Mpdf([
             'orientation' => 'L', // Landscape orientation
             'margin_left' => 10,
             'margin_right' => 10,
-            'margin_top' => 15,
-            'margin_bottom' => 15,
+            'margin_top' => 10, // Kurangi margin atas
+            'margin_bottom' => 10, // Kurangi margin bawah
             'format' => 'A4', // Ukuran kertas A4
         ]);
 
@@ -113,18 +121,18 @@ class KHPSController extends Controller
         // Tambahkan footer ke PDF
         $mpdf->SetFooter('{DATE j-m-Y}|Laporan Kas Hutang Piutang Stok|Halaman {PAGENO}');
 
-        // Buat konten tabel
+        // Buat konten tabel dengan gaya CSS yang lebih ketat
         $tableHTMLContent = "
-            <h1 style='text-align:center; font-size: 18px;'>Laporan Kas Hutang Piutang Stok</h1>
-            <h2 style='text-align:center; font-size: 14px;'>Data Rekapitulasi</h2>
-            <table style='border-collapse: collapse; width: 100%;' border='1'>
+            <h1 style='text-align:center; font-size: 16px; margin-top: 32px;'>Laporan Kas Hutang Piutang Stok</h1>
+            <h2 style='text-align:center; font-size: 12px; margin: 5px 0;'>Data Rekapitulasi</h2>
+            <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                 <thead>
                     <tr style='background-color: #f2f2f2;'>
-                        <th style='border: 1px solid #000; padding: 8px;'>Bulan/Tahun</th>
-                        <th style='border: 1px solid #000; padding: 8px;'>Kas (Rp)</th>
-                        <th style='border: 1px solid #000; padding: 8px;'>Hutang (Rp)</th>
-                        <th style='border: 1px solid #000; padding: 8px;'>Piutang (Rp)</th>
-                        <th style='border: 1px solid #000; padding: 8px;'>Stok (Rp)</th>
+                        <th style='border: 1px solid #000; padding: 5px;'>Bulan/Tahun</th>
+                        <th style='border: 1px solid #000; padding: 5px;'>Kas (Rp)</th>
+                        <th style='border: 1px solid #000; padding: 5px;'>Hutang (Rp)</th>
+                        <th style='border: 1px solid #000; padding: 5px;'>Piutang (Rp)</th>
+                        <th style='border: 1px solid #000; padding: 5px;'>Stok (Rp)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -136,19 +144,16 @@ class KHPSController extends Controller
         // Tambahkan konten tabel ke PDF
         $mpdf->WriteHTML($tableHTMLContent);
 
-        // Tambahkan halaman baru untuk chart
-        $mpdf->AddPage();
-
-        // Buat konten chart
-        $chartHTMLContent = "
-            <h1 style='text-align:center; font-size: 18px;'>Grafik Kas Hutang Piutang Stok</h1>
-            <div style='text-align: center; margin-top: 20px;'>
-                <img src='{$chartBase64}' alt='Chart' style='max-width: 100%; height: auto;' />
-            </div>
-        ";
-
-        // Tambahkan konten chart ke PDF
-        $mpdf->WriteHTML($chartHTMLContent);
+        // Tambahkan halaman baru hanya jika konten chart tersedia
+        if (!empty($chartBase64)) {
+            $chartHTMLContent = "
+                <h1 style='text-align:center; font-size: 16px; margin: 10px 0;'>Grafik Kas Hutang Piutang Stok</h1>
+                <div style='text-align: center; margin: 10px 0;'>
+                    <img src='{$chartBase64}' alt='Chart' style='max-width: 50%; height: auto;' />
+                </div>
+            ";
+            $mpdf->WriteHTML($chartHTMLContent);
+        }
 
         // Return PDF sebagai respon download
         return response($mpdf->Output('', 'S'), 200)
@@ -161,6 +166,7 @@ class KHPSController extends Controller
     }
 }
 
+
     public function destroy(KasHutangPiutang $khp)
     {
         try {
@@ -172,4 +178,12 @@ class KHPSController extends Controller
             return redirect()->route('khps.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
     }
+    public function getKashutangpiutangstokData()
+    {
+        $data = KasHutangPiutang::all(['kas', 'hutang', 'piutang', 'stok']);
+    
+        return response()->json($data);
+    }
+
 }
+
