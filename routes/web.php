@@ -38,17 +38,17 @@ use App\Http\Controllers\LaporanOutletController;
 
 Route::middleware(['web'])->group(function () {
     // Accounting
-
-  Route::prefix('accounting')->group(function () {
-    // Resourceful Routes
-    Route::resource('labarugi', LaporanLabaRugiController::class);
-    Route::resource('neraca', LaporanNeracaController::class);
-    Route::resource('rasio', LaporanRasioController::class);
-    Route::resource('taxplaning', LaporanTaxPlaningController::class);
-    Route::resource('laporanppn', LaporanPpnController::class);
-    Route::resource('khps', KHPSController::class);
-    Route::resource('aruskas', ArusKasController::class);
-});
+    Route::prefix('accounting')->group(function () {
+        Route::resource('labarugi', LaporanLabaRugiController::class);
+        Route::resource('neraca', LaporanNeracaController::class);
+        Route::resource('rasio', LaporanRasioController::class);
+        Route::resource('taxplaning', LaporanTaxPlaningController::class);
+        Route::resource('laporanppn', LaporanPpnController::class);
+        Route::resource('khps', KHPSController::class);
+        Route::post('khps/export-pdf', [KHPSController::class, 'exportPDF'])->name('accounting.khps.exportPDF');
+        Route::get('khps/data', [KHPSController::class, 'getKashutangpiutangstokData'])->name('accounting.khps.data');
+        Route::resource('aruskas', ArusKasController::class);
+    });
 
     // IT
     Route::prefix('admin/it')->group(function () {
@@ -278,21 +278,7 @@ Route::middleware(['web'])->group(function () {
         ->name('hrga.laporanterlambat.destroy');
 
     //Route untuk laporan ptboss hrga
-    Route::get('laporanptbos', [LaporanPtBosController::class, 'index'])
-        ->name('hrga.laporanptbos');
-
-    Route::post('laporanptbos/store', [LaporanPtBosController::class, 'store'])
-        ->name('hrga.laporanptbos.store');
-
-    Route::put('laporanptbos/update/{id}', [LaporanPtBosController::class, 'update'])
-        ->name('hrga.laporanptbos.update');
-
-    Route::get('laporanptbos/data', [LaporanPtBosController::class, 'getData'])
-        ->name('hrga.laporanptbos.getData');
-
-    Route::delete('laporanptbos/destroy/{id}', [LaporanPtBosController::class, 'destroy'])
-        ->name('hrga.laporanptbos.destroy');
-
+    Route::resource('laporanptbos', LaporanPtBosController::class);
 
     //Route untuk laporan ijasa hrga
     Route::get('laporanijasa', [LaporanIjasaController::class, 'index'])
