@@ -217,7 +217,7 @@
                 </button>
                 <ul id="dropdown-hrga" class="hidden py-2 pl-8 space-y-2">
                     <li>
-                        <a href="{{ route("hrga.laporanptbos") }}"
+                        <a href="{{ route('laporanptbos.index') }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
                             <img src="{{ asset("icon/ptbos.svg") }}" class="w-5 h-5">
                             <span class="ml-2">PT.BOS</span>
@@ -645,7 +645,7 @@
                 </button>
                 <ul id="dropdown-hrga" class="hidden py-2 pl-8 space-y-2">
                     <li>
-                        <a href="{{ route("hrga.laporanptbos") }}"
+                        <a href="{{ route('laporanptbos.index') }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
                             <img src="{{ asset("icon/ptbos.svg") }}" class="w-5 h-5">
                             <span class="ml-2">PT.BOS</span>

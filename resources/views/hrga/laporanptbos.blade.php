@@ -1,17 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>PT.BOS</title>
-    @vite('resources/css/app.css')
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Laporan PT Bos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    @vite('resources/css/app.css')
     <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
     <!-- Google Font: Source Sans Pro -->
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
     <!-- Tempusdominus Bootstrap 4 -->
@@ -26,7 +25,6 @@
     @vite('resources/css/custom.css')
     @vite('resources/js/app.js')
 </head>
-
 <body class="bg-gray-100 hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
         <!-- Sidebar -->
@@ -37,270 +35,180 @@
 
         <!-- Main Content -->
         <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
-            <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow">
-                <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">PT.BOS</h1>
-                    <!-- Button Tambah Data -->
-                    <button id="open-modal" class="bg-red-600 text-white px-4 py-2 rounded mb-4">Tambah Data</button>
+            <div class="mx-auto bg-white p-6 rounded-lg shadow">
+                <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">PT. Bos</h1>
+        <!-- Action Buttons -->
+        <div class="flex items-center mb-4">
+            <form method="GET" action="{{ route('laporanholding.index') }}">
+                <div class="flex items-center border border-gray-700 rounded-lg p-2 mr-2 max-w-md">
+                    <input type="text" name="search" placeholder="Search" value="{{ request('search') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
+                    <button type="submit" class="text-gray-500 focus:outline-none" aria-label="Search">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m2.85-7.65a8.5 8.5 0 11-17 0 8.5 8.5 0 0117 0z" />
+                        </svg>
+                    </button>
+                </div>
+            </form>
+            
+            <button class="bg-red-600 text-white px-4 py-2 rounded shadow flex items-center gap-2" data-modal-target="#addEventModal">
+                Add New
+            </button>
+        </div>
 
-        <!-- Modal -->
-        <div id="modal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
-            <div class="bg-white p-6 rounded shadow w-full max-w-md">
-                <h2 class="text-xl font-bold mb-4" id="modal-title">Tambah Data</h2>
-                <form id="modal-form" class="space-y-4">
-                    <div>
-                        <label for="modal-bulan_tahun" class="block text-sm font-medium">Bulan/Tahun</label>
-                        <input type="text" id="modal-bulan_tahun" name="bulan_tahun" class="w-full border-gray-300 rounded p-2" 
-                        placeholder="mm/yyyy" required>
+        <!-- Success Message -->
+        @if (session('success'))
+            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if (session('error'))
+            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
+                {{ session('error') }}
+            </div>
+        @endif
 
-                    </div>
-                    <div>
-                        <label for="modal-pekerjaan" class="block text-sm font-medium">Pekerjaan</label>
-                        <input type="text" id="modal-pekerjaan" name="pekerjaan" class="w-full border-gray-300 rounded p-2"
-                            placeholder="Masukkan Nama Pekerjaan">
-                    </div>
-                    <div>
-                        <label for="modal-kondisi_bulan_lalu" class="block text-sm font-medium">Kondisi Bulan Lalu</label>
-                        <input type="text" id="modal-kondisi_bulan_lalu" name="kondisi_bulan_lalu" class="w-full border-gray-300 rounded p-2"
-                            placeholder="Masukkan Kondisi Bulan Lalu">
-                    </div>
-                    <div>
-                        <label for="modal-kondisi_bulan_ini" class="block text-sm font-medium">Kondisi Bulan Ini</label>
-                        <input type="text" id="modal-kondisi_bulan_ini" name="kondisi_bulan_ini" class="w-full border-gray-300 rounded p-2"
-                            placeholder="Masukkan Kondisi Bulan Ini">
-                    </div>
-                    <div>
-                        <label for="modal-update" class="block text-sm font-medium">Update</label>
-                        <input type="text" id="modal-update" name="update" class="w-full border-gray-300 rounded p-2"
-                            placeholder="Masukkan Update">
-                    </div>
-                    <div>
-                        <label for="modal-rencana_implementasi" class="block text-sm font-medium">Rencana Implementasi</label>
-                        <input type="text" id="modal-rencana_implementasi" name="rencana_implementasi"
-                            class="w-full border-gray-300 rounded p-2" placeholder="Masukkan Rencana">
-                    </div>
-                    <div>
-                        <label for="modal-keterangan" class="block text-sm font-medium">Keterangan</label>
-                        <input type="text" id="modal-keterangan" name="keterangan" class="w-full border-gray-300 rounded p-2"
-                            placeholder="Masukkan Keterangan">
-                    </div>
-                                     
-                    <div class="flex justify-end space-x-2">
-                        <button type="button" id="close-modal"
-                            class="bg-red-600 text-white px-4 py-2 rounded">Batal</button>
-                        <button type="submit" id="save-data"
-                            class="bg-red-600 text-white px-4 py-2 rounded">Simpan</button>
-                    </div>
-                </form>
+        <!-- Event Table -->
+        <div class="overflow-x-auto bg-white shadow-md">
+            <table class="table-auto w-full border-collapse border border-gray-300">
+                <thead class="bg-gray-200">
+                    <tr>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Perusahaan</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Nilai</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($laporanpembelianholdings as $laporanholding)
+                        <tr class="hover:bg-gray-100">
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanholding->bulan_formatted }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanholding->perusahaan }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanholding->nilai_formatted }}</td>
+                            <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
+                                <!-- Edit Button -->
+                                <button class="bg-red-600 text-white px-3 py-2 rounded" data-modal-target="#editEventModal{{ $laporanholding->id_holding }}">
+                                    <i class="fa fa-pen"></i>
+                                    Edit
+                                </button>
+                                <!-- Delete Form -->
+                                <form method="POST" action="{{ route('laporanholding.destroy', $laporanholding->id_holding) }}">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="bg-red-600 text-white px-3 py-2 rounded" onclick="return confirm('Are you sure to delete?')">
+                                        <i class="fa fa-trash"></i>
+                                        Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        <!-- Modal for Edit Event -->
+                        <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="editEventModal{{ $laporanholding->id_holding }}">
+                            <div class="bg-white w-1/2 p-6 rounded shadow-lg">
+                                <h3 class="text-xl font-semibold mb-4">Edit Data</h3>
+                                <form method="POST" action="{{ route('laporanholding.update', $laporanholding->id_holding) }}" enctype="multipart/form-data">
+                                    @csrf
+                                    @method('PUT')
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label for="bulan" class="block text-sm font-medium">Bulan</label>
+                                            <input type="month" name="bulan" class="w-full p-2 border rounded" value="{{ $laporanholding->bulan }}" required>
+                                        </div>
+                                        <div>
+                                            <label for="perusahaan" class="block text-sm font-medium">Kas Masuk</label>
+                                            <select name="perusahaan" class="w-full p-2 border rounded" required>
+                                                <option value="PT. Baliyoni Saguna" {{ $laporanholding->perusahaan == 'PT. Baliyoni Saguna' ? 'selected' : '' }}>PT. Baliyoni Saguna</option>
+                                                <option value="CV. ELKA MANDIRI" {{ $laporanholding->perusahaan == 'CV. ELKA MANDIRI' ? 'selected' : '' }}>CV. ELKA MANDIRI</option>
+                                                <option value="PT. NABA TECHNOLOGY SOLUTIONS" {{ $laporanholding->perusahaan == 'PT. NABA TECHNOLOGY SOLUTIONS' ? 'selected' : '' }}>PT. NABA TECHNOLOGY SOLUTIONS</option>
+                                                <option value="CV. BHIRMA TEKNIK" {{ $laporanholding->perusahaan == 'CV. BHIRMA TEKNIK' ? 'selected' : '' }}>CV. BHIRMA TEKNIK</option>
+                                                <option value="PT. DWI SRIKANDI NUSANTARA" {{ $laporanholding->perusahaan == 'PT. DWI SRIKANDI NUSANTARA' ? 'selected' : '' }}>PT. DWI SRIKANDI NUSANTARA</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label for="nilai" class="block text-sm font-medium">Nilai</label>
+                                            <input type="number" name="nilai" class="w-full p-2 border rounded" value="{{ $laporanholding->nilai }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 flex justify-end gap-2">
+                                        <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
+                                        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Update</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    @endforeach
+                </tbody>
+            </table>
+        <div class="m-4">
+            {{ $laporanpembelianholdings->links('pagination::tailwind') }}
+        </div>
+        </div>
+        </div>
+        <div class="mx-auto bg-white p-6 mt-3 rounded-lg shadow">
+            <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Diagram</h1>
+            <div class="mt-6 items-center text-center mx-auto w-[600px]">
+                <canvas id="pieChart"></canvas>
             </div>
         </div>
-
-        <div class="mb-4">
-            <label for="filter-bulan-tahun" class="block text-sm font-medium">Filter Bulan/Tahun</label>
-            <input type="text" id="filter-bulan-tahun" class="border-gray-300 rounded p-2" placeholder="mm/yyyy">
-            <button type="button" id="apply-filter" class="bg-red-600 text-white px-4 py-2 rounded">Terapkan
-                Filter</button>
-        </div>
-
-        <!-- Table -->
-        <table class="w-full table-auto border-collapse border border-gray-300 mt-6">
-            <thead class="bg-gray-200">
-                <tr>
-                    <th class="border border-gray-300 px-4 py-2">Bulan/Tahun</th>
-                    <th class="border border-gray-300 px-4 py-2">Pekerjaan</th>
-                    <th class="border border-gray-300 px-4 py-2">Kondisi Bulan Lalu</th>
-                    <th class="border border-gray-300 px-4 py-2">Kondisi Bulan Ini</th>
-                    <th class="border border-gray-300 px-4 py-2">Update</th>
-                    <th class="border border-gray-300 px-4 py-2">Rencana Implementasi</th>
-                    <th class="border border-gray-300 px-4 py-2">Keterangan</th>
-                    <th class="border border-gray-300 px-4 py-2">Aksi</th>
-                </tr>
-            </thead>
-            <tbody id="data-table"></tbody>
-        </table>
-
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const modal = document.getElementById('modal');
-            const openModalButton = document.getElementById('open-modal');
-            const closeModalButton = document.getElementById('close-modal');
-            const modalForm = document.getElementById('modal-form');
-            const modalTitle = document.getElementById('modal-title');
-            const chartCanvas = document.getElementById('chart');
-
-            let editMode = false;
-            let editId = null;
-
-            // Open Modal
-            openModalButton.addEventListener('click', () => {
-                modalForm.reset();
-                modalTitle.textContent = 'Tambah Data';
-                editMode = false;
-                modal.classList.remove('hidden');
-            });
-
-            // Close Modal
-            closeModalButton.addEventListener('click', () => {
-                modal.classList.add('hidden');
-            });
-
-            // Submit Form
-            modalForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-
-                // Validasi input
-                const bulanTahun = document.getElementById('modal-bulan_tahun').value.trim();
-                const Pekerjaan = document.getElementById('modal-pekerjaan').value.trim();
-                const kondisibulanLalu = document.getElementById('modal-kondisi_bulan_lalu').value.trim();
-                const kondisibulanIni = document.getElementById('modal-kondisi_bulan_ini').value.trim();
-                const Update = document.getElementById('modal-update').value.trim();
-                const rencanaImplementasi = document.getElementById('modal-rencana_implementasi').value.trim();
-                const Keterangan = document.getElementById('modal-keterangan').value.trim();
-               
-                const data = {
-                    bulan_tahun: bulanTahun,
-                    pekerjaan: Pekerjaan,
-                    kondisi_bulan_lalu: kondisibulanLalu,
-                    kondisi_bulan_ini: kondisibulanIni,
-                    update: Update,
-                    rencana_implementasi: rencanaImplementasi,
-                    keterangan: Keterangan,
-                };
-
-                // Tentukan URL dan metode
-                const url = editMode ? `/hrga/laporanptbos/update/${editId}` :
-                    '/hrga/laporanptbos/store';
-                const method = editMode ? 'PUT' : 'POST';
-
-                try {
-                    const response = await fetch(url, {
-                        method,
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                .content,
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(data),
-                    });
-
-                    const result = await response.json();
-                    if (response.ok && result.success) {
-                        alert(result.message || 'Data berhasil disimpan.');
-                        updateData(); // Refresh data
-                        modal.classList.add('hidden'); // Tutup modal
-                    } else {
-                        alert(result.message || 'Gagal menyimpan data.');
-                    }
-                } catch (error) {
-                    console.error('Network Error:', error);
-                    alert('Terjadi kesalahan saat menyimpan data.');
-                }
-            });
-            // Delete Data
-            window.deleteData = async function deleteData(id) {
-                if (!confirm('Apakah Anda yakin ingin menghapus data ini?')) return;
-
-                try {
-                    const response = await fetch(`/hrga/laporanptbos/destroy/${id}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        },
-                    });
-
-                    const result = await response.json();
-                    if (response.ok && result.success) {
-                        alert(result.message || 'Data berhasil dihapus.');
-                        updateData();
-                    } else {
-                        alert(result.message || 'Gagal menghapus data.');
-                    }
-                } catch (error) {
-                    console.error('Error deleting data:', error);
-                    alert('Terjadi kesalahan saat menghapus data.');
-                }
-            }
-
-            // Apply Filter
-            document.getElementById('apply-filter').addEventListener('click', () => {
-                const filterValue = document.getElementById('filter-bulan-tahun').value;
-                updateData(filterValue);
-            });
-
-            // Fetch and Update Data
-            async function updateData(filter = '') {
-                const url = filter ? `/hrga/laporanptbos/data?bulan_tahun=${filter}` :
-                '/hrga/laporanptbos/data';
-                try {
-                    const response = await fetch(url);
-                    const data = await response.json();
-                    if (response.ok && data.success) {
-                        updateTable(data.data);
-
-                    } else {
-                        alert(data.message || 'Gagal memuat data.');
-                    }
-                } catch (error) {
-                    console.error('Error fetching data:', error);
-                }
-            }
-
-            // Update Table
-            function updateTable(items) {
-                const tableBody = document.getElementById('data-table');
-                tableBody.innerHTML = ''; // Clear table before populating
-
-                items.forEach((item) => {
-                    // const encodedData = encodeURIComponent(JSON.stringify(item));
-
-                    const row = `
-            <tr class="border-b">
-                <td class="border px-4 py-2">${item.bulan_tahun}</td>
-                <td class="border px-4 py-2">${item.pekerjaan}</td>
-                <td class="border px-4 py-2">${item.kondisi_bulan_lalu}</td>
-                <td class="border px-4 py-2">${item.kondisi_bulan_ini}</td>
-                <td class="border px-4 py-2">${item.update}</td>
-                <td class="border px-4 py-2">${item.rencana_implementasi}</td>
-                <td class="border px-4 py-2">${item.keterangan}</td>
-                <td class="border px-4 py-2 flex items-center justify-center space-x-2">
-                    <button onclick="editData(${item.id}, decodeURIComponent('${encodeURIComponent(JSON.stringify(item))}'))" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
-                        <i class="fas fa-edit mr-2"></i> Edit
-                    </button>
-                    <button onclick="deleteData(${item.id})" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 flex items-center">
-                        <i class="fas fa-trash mr-2"></i> Delete
-                    </button>
-                </td>
-            </tr>`;
-                    tableBody.insertAdjacentHTML('beforeend', row);
-                });
-            }
-
-           
-            // Edit Data
-            window.editData = function(id, data) {
-                const parsedData = JSON.parse(decodeURIComponent(data));
-
-                editMode = true;
-                editId = id;
-                modalTitle.textContent = 'Edit Data';
-
-                document.getElementById('modal-bulan_tahun').value = parsedData.bulan_tahun;
-                document.getElementById('modal-pekerjaan').value = parsedData.pekerjaan;
-                document.getElementById('modal-kondisi_bulan_lalu').value = parsedData.kondisi_bulan_lalu;
-                document.getElementById('modal-kondisi_bulan_ini').value = parsedData.kondisi_bulan_ini;
-                document.getElementById('modal-update').value = parsedData.update;
-                document.getElementById('modal-rencana_implementasi').value = parsedData.rencana_implementasi;
-                document.getElementById('modal-keterangan').value = parsedData.keterangan;
-
-                modal.classList.remove('hidden');
-            }
-
-            updateData();
-        });
-    </script>
-
+    <!-- Modal untuk Add Event -->
+<div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">
+    <div class="bg-white w-1/2 p-6 rounded shadow-lg">
+        <h3 class="text-xl font-semibold mb-4">Add New Data</h3>
+        <form method="POST" action="{{ route('laporanholding.store') }}" enctype="multipart/form-data">
+            @csrf
+            <div class="space-y-4">
+                <div>
+                    <label for="bulan" class="block text-sm font-medium">Bulan</label>
+                    <input type="month" name="bulan" class="w-full p-2 border rounded" required>
+                </div>
+                <div>
+                    <label for="kas_masuk" class="block text-sm font-medium">Perusahaan</label>
+                    <select name="perusahaan" class="block text-sm font-medium" required>
+                        <option value="PT. Baliyoni Saguna">PT. Baliyoni Saguna</option>
+                        <option value="CV. ELKA MANDIRI">CV. ELKA MANDIRI</option>
+                        <option value="PT. NABA TECHNOLOGY SOLUTIONS">PT. NABA TECHNOLOGY SOLUTIONS</option>
+                        <option value="CV. BHIRMA TEKNIK">CV. BHIRMA TEKNIK</option>
+                        <option value="PT. DWI SRIKANDI NUSANTARA">PT. DWI SRIKANDI NUSANTARA</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="nilai" class="block text-sm font-medium">Nilai</label>
+                    <input type="number" name="nilai" class="w-full p-2 border rounded" required>
+                </div>
+            </div>
+            <div class="mt-4 flex justify-end gap-2">
+                <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
+                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Add</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 </body>
-
+<script>
+    // Mengatur tombol untuk membuka modal add
+    document.querySelector('[data-modal-target="#addEventModal"]').addEventListener('click', function() {
+        const modal = document.querySelector('#addEventModal');
+        modal.classList.remove('hidden');
+    });
+    // Mengatur tombol untuk membuka modal edit
+    document.querySelectorAll('[data-modal-target]').forEach(button => {
+        button.addEventListener('click', function() {
+            // Menemukan modal berdasarkan ID yang diberikan di data-modal-target
+            const modalId = this.getAttribute('data-modal-target');
+            const modal = document.querySelector(modalId);
+            if (modal) {
+                modal.classList.remove('hidden'); // Menampilkan modal
+            }
+        });
+    });
+    // Menutup modal ketika tombol Close ditekan
+    document.querySelectorAll('[data-modal-close]').forEach(button => {
+        button.addEventListener('click', function() {
+            const modal = this.closest('.fixed');
+            modal.classList.add('hidden'); // Menyembunyikan modal
+        });
+    });
+</script>
 </html>

@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('laporan_ptboss', function (Blueprint $table) {
-            $table->id();   
-            $table->string('bulan_tahun');
-            $table->string('pekerjaan'); 
-            $table->string('kondisi_bulan_lalu');
-            $table->string('kondisi_bulan_ini'); 
-            $table->string('update'); 
+        Schema::create('laporan_ptbos', function (Blueprint $table) {
+            $table->id('id_ptbos');
+            $table->string('bulan');
+            $table->string('pekerjaan');
+            $table->string('kondisi_bulanlalu');
+            $table->string('kondisi_bulanini');
+            $table->string('update');
             $table->string('rencana_implementasi');
             $table->string('keterangan');
             $table->timestamps();
@@ -29,7 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        
-        Schema::dropIfExists('laporan_ptboss');
+        Schema::dropIfExists('laporan_pt_bos');
     }
 };
