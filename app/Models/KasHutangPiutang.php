@@ -22,7 +22,7 @@ class KasHutangPiutang extends Model
         return Carbon::parse($this->bulan)->format('m/Y');
     }
 
-    // Menambahkan accessor untuk kas, hutang, piutang, stok dengan format Rp
+    // Menambahkan accessor dengan format Rp
     public function getKasFormattedAttribute()
     {
         return 'Rp ' . number_format($this->kas, 0, ',', '.');
@@ -42,5 +42,4 @@ class KasHutangPiutang extends Model
     {
         return 'Rp ' . number_format($this->stok, 0, ',', '.');
     }
-
 }

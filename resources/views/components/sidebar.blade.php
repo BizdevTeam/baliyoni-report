@@ -83,28 +83,28 @@
                 </button>
                 <ul id="dropdown-procurement" class="hidden py-2 pl-8 space-y-2">
                     <li>
-                        <a href="{{ route("procurements.laporanpembelianholding") }}"
+                        <a href="{{ route("laporanholding.index") }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
                             <img src="{{ asset("icon/RekapPenjualan.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Pembelian (Holding)</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route("procurements.laporanstok") }}"
+                        <a href="{{ route("laporanstok.index") }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/RekapPenjualanPerusahaan.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Stok</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route("procurements.laporanpembelianoutlet") }}"
+                        <a href="{{ route('laporanoutlet.index') }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/LaporanPaketAdministrasi.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Pembelian Outlet</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route("procurements.laporannegosiasi") }}"
+                        <a href="{{ route("laporannegosiasi.index") }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/LaporanStatusPaket.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Negosiasi</span>
@@ -177,21 +177,14 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route("accounting.kashutangpiutangstok") }}"
-                            class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
-                            <img src="{{ asset("icon/kashutangpiutang.svg") }}" class="w-5 h-5">
-                            <span class="ml-2">Kas, Hutang, Piutang, Stok</span>
-                        </a>
-                    </li>
-                    <li>
                         <a href="{{ route("khps.index") }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/kashutangpiutang.svg") }}" class="w-5 h-5">
-                            <span class="ml-2">KHPS</span>
+                            <span class="ml-2">Kas Hutang Piutang Stok</span>
                         </a>
-                    </li>
+                    </li> 
                     <li>
-                    <a href="{{ route("accounting.aruskas") }}"
+                    <a href="{{ route('aruskas.index') }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/aruskas.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Arus Kas</span>
@@ -440,28 +433,28 @@
                 </button>
                 <ul id="dropdown-procurement" class="hidden py-2 pl-8 space-y-2">
                     <li>
-                        <a href="{{ route("procurements.laporanpembelianholding") }}"
+                        <a href="{{ route("laporanholding.index") }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
                             <img src="{{ asset("icon/RekapPenjualan.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Pembelian (Holding)</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route("procurements.laporanstok") }}"
+                        <a href="{{ route("laporanstok.index") }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/RekapPenjualanPerusahaan.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Stok</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route("procurements.laporanpembelianoutlet") }}"
+                        <a href="{{ route('laporanoutlet.index') }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/LaporanPaketAdministrasi.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Pembelian Outlet</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route("procurements.laporannegosiasi") }}"
+                        <a href="{{ route("laporannegosiasi.index") }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/LaporanStatusPaket.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Negosiasi</span>
@@ -586,21 +579,14 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route("accounting.kashutangpiutangstok") }}"
-                            class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
-                            <img src="{{ asset("icon/kashutangpiutang.svg") }}" class="w-5 h-5">
-                            <span class="ml-2">Kas, Hutang, Piutang, Stok</span>
-                        </a>
-                    </li>
-                    <li>
                         <a href="{{ route("khps.index") }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/kashutangpiutang.svg") }}" class="w-5 h-5">
-                            <span class="ml-2">KHPS</span>
+                            <span class="ml-2">Kas Hutang Piutang Stok</span>
                         </a>
                     </li>
                     <li>
-                    <a href="{{ route("accounting.aruskas") }}"
+                    <a href="{{ route("aruskas.index") }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/aruskas.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Arus Kas</span>

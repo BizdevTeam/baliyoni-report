@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('arus_kass', function (Blueprint $table) {
-            $table->id();
-                $table->string('bulan_tahun');
-                $table->bigInteger('kas_masuk');
-                $table->bigInteger('kas_keluar');
-                $table->timestamps();
-            });
+        Schema::create('arus_kas', function (Blueprint $table) {
+            $table->id('id_aruskas');
+            $table->string('bulan');
+            $table->bigInteger('kas_masuk');
+            $table->bigInteger('kas_keluar');
+            $table->timestamps();
+        });
     }
 
     /**
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('arus_kass');
+        Schema::dropIfExists('arus_kas');
     }
 };

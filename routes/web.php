@@ -23,11 +23,8 @@ use App\Http\Controllers\LaporanTerlambatController;
 use App\Http\Controllers\LaporanTaxPlaningController;
 use App\Http\Controllers\ItMultimediaTiktokController;
 use App\Http\Controllers\LaporanPerInstansiController;
-use App\Http\Controllers\KasHutangPiutangStokController;
 use App\Http\Controllers\ItMultimediaInstagramController;
 use App\Http\Controllers\KHPSController;
-use App\Http\Controllers\LaporanPembelianOutletController;
-use App\Http\Controllers\LaporanPembelianHoldingController;
 use App\Http\Controllers\LaporanPaketAdministrasiController;
 use App\Http\Controllers\LaporanSamitraController;
 use App\Http\Controllers\RekapPenjualanPerusahaanController;
@@ -36,8 +33,8 @@ use App\Http\Controllers\RekapPiutangServisAspController;
 use App\Http\Controllers\LaporanSPIController;
 use App\Http\Controllers\laporanSPITiController;
 use App\Http\Controllers\LaporanDetransController;
-
-
+use App\Http\Controllers\LaporanHoldingController;
+use App\Http\Controllers\LaporanOutletController;
 
 Route::middleware(['web'])->group(function () {
     // Accounting
@@ -50,34 +47,7 @@ Route::middleware(['web'])->group(function () {
     Route::resource('taxplaning', LaporanTaxPlaningController::class);
     Route::resource('laporanppn', LaporanPpnController::class);
     Route::resource('khps', KHPSController::class);
-
-    // KAS, HUTANG, PIUTANG, STOK
-    Route::get('kashutangpiutangstok', [KasHutangPiutangStokController::class, 'index'])
-        ->name('accounting.kashutangpiutangstok');
-    Route::post('kashutangpiutangstok/store', [KasHutangPiutangStokController::class, 'store'])
-        ->name('accounting.kashutangpiutangstok.store');
-    Route::put('kashutangpiutangstok/update/{id}', [KasHutangPiutangStokController::class, 'update'])
-        ->name('accounting.kashutangpiutangstok.update');
-    Route::get('kashutangpiutangstok/data', [KasHutangPiutangStokController::class, 'data'])
-        ->name('accounting.kashutangpiutangstok.data');
-    Route::get('kashutangpiutangstok/filter', [KasHutangPiutangStokController::class, 'filterData'])
-        ->name('accounting.kashutangpiutangstok.filter');
-    Route::delete('kashutangpiutangstok/destroy/{id}', [KasHutangPiutangStokController::class, 'destroy'])
-        ->name('accounting.kashutangpiutangstok.destroy');
-
-    // LAPORAN ARUS KAS
-    Route::get('aruskas', [ArusKasController::class, 'index'])
-        ->name('accounting.aruskas');
-    Route::post('aruskas/store', [ArusKasController::class, 'store'])
-        ->name('accounting.aruskas.store');
-    Route::put('aruskas/update/{id}', [ArusKasController::class, 'update'])
-        ->name('accounting.aruskas.update');
-    Route::get('aruskas/data', [ArusKasController::class, 'data'])
-        ->name('accounting.aruskas.data');
-    Route::get('aruskas/filter', [ArusKasController::class, 'filterData'])
-        ->name('accounting.aruskas.filter');
-    Route::delete('aruskas/destroy/{id}', [ArusKasController::class, 'destroy'])
-        ->name('accounting.aruskas.destroy');
+    Route::resource('aruskas', ArusKasController::class);
 });
 
     // IT
@@ -185,65 +155,12 @@ Route::middleware(['web'])->group(function () {
 
 
 
-    //PROCUREMENT
+    // PROCUREMENT
     Route::prefix('procurements')->group(function () {
-        // LAPORAN PEMBELIAN HOLDING
-        Route::get('laporanpembelianholding', [LaporanPembelianHoldingController::class, 'index'])
-            ->name('procurements.laporanpembelianholding');
-        Route::post('laporanpembelianholding/store', [LaporanPembelianHoldingController::class, 'store'])
-            ->name('procurements.laporanpembelianholding.store');
-        Route::put('laporanpembelianholding/update/{id}', [LaporanPembelianHoldingController::class, 'update'])
-            ->name('procurements.laporanpembelianholding.update');
-        Route::get('laporanpembelianholding/data', [LaporanPembelianHoldingController::class, 'data'])
-            ->name('procurements.laporanpembelianholding.data');
-        Route::get('laporanpembelianholding/filter', [LaporanPembelianHoldingController::class, 'filterData'])
-            ->name('procurements.laporanpembelianholding.filter');
-        Route::delete('laporanpembelianholding/destroy/{id}', [LaporanPembelianHoldingController::class, 'destroy'])
-            ->name('procurements.laporanpembelianholding.destroy');
-
-        // LAPORAN STOK
-        Route::get('laporanstok', [LaporanStokController::class, 'index'])
-            ->name('procurements.laporanstok');
-        Route::post('laporanstok/store', [LaporanStokController::class, 'store'])
-            ->name('procurements.laporanstok.store');
-        Route::put('laporanstok/update/{id}', [LaporanStokController::class, 'update'])
-            ->name('procurements.laporanstok.update');
-        Route::get('laporanstok/data', [LaporanStokController::class, 'data'])
-            ->name('procurements.laporanstok.data');
-        Route::get('laporanstok/filter', [LaporanStokController::class, 'filterData'])
-            ->name('procurements.laporanstok.filter');
-        Route::delete('laporanstok/destroy/{id}', [LaporanStokController::class, 'destroy'])
-            ->name('procurements.laporanstok.destroy');
-            Route::get('procurements.laporanstok/chart-data',[LaporanPaketAdministrasiController::class, 'getChartData'])
-            ->name('procurements.laporanstok.chartdata');
-
-        // LAPORAN PEMBELIAN OUTLET
-        Route::get('laporanpembelianoutlet', [LaporanPembelianOutletController::class, 'index'])
-            ->name('procurements.laporanpembelianoutlet');
-        Route::post('laporanpembelianoutlet/store', [LaporanPembelianOutletController::class, 'store'])
-            ->name('procurements.laporanpembelianoutlet.store');
-        Route::put('laporanpembelianoutlet/update/{id}', [LaporanPembelianOutletController::class, 'update'])
-            ->name('procurements.laporanpembelianoutlet.update');
-        Route::get('laporanpembelianoutlet/data', [LaporanPembelianOutletController::class, 'data'])
-            ->name('procurements.laporanpembelianoutlet.data');
-        Route::get('laporanpembelianoutlet/filter', [LaporanPembelianOutletController::class, 'filterData'])
-            ->name('procurements.laporanpembelianoutlet.filter');
-        Route::delete('laporanpembelianoutlet/destroy/{id}', [LaporanPembelianOutletController::class, 'destroy'])
-            ->name('procurements.laporanpembelianoutlet.destroy');
-
-        // LAPORAN NEGOSIASI
-        Route::get('laporannegosiasi', [LaporanNegosiasiController::class, 'index'])
-            ->name('procurements.laporannegosiasi');
-        Route::post('laporannegosiasi/store', [LaporanNegosiasiController::class, 'store'])
-            ->name('procurements.laporannegosiasi.store');
-        Route::put('laporannegosiasi/update/{id}', [LaporanNegosiasiController::class, 'update'])
-            ->name('procurements.laporannegosiasi.update');
-        Route::get('laporannegosiasi/data', [LaporanNegosiasiController::class, 'data'])
-            ->name('procurements.laporannegosiasi.data');
-        Route::get('laporannegosiasi/filter', [LaporanNegosiasiController::class, 'filterData'])
-            ->name('procurements.laporannegosiasi.filter');
-        Route::delete('laporannegosiasi/destroy/{id}', [LaporanNegosiasiController::class, 'destroy'])
-            ->name('procurements.laporannegosiasi.destroy');
+        Route::resource('laporanholding', LaporanHoldingController::class);
+        Route::resource('laporanstok', LaporanStokController::class);
+        Route::resource('laporanoutlet', LaporanOutletController::class);
+        Route::resource('laporannegosiasi', LaporanNegosiasiController::class);
     });
 
     Route::prefix('supports')->group(function () {

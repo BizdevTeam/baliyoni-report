@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('laporan_stoks', function (Blueprint $table) {
-            $table->id();
-                $table->string('bulan_tahun');
-                $table->bigInteger('stok');
-                $table->timestamps();
-            });
+        Schema::create('laporan_outlets', function (Blueprint $table) {
+            $table->id('id_outlet');
+            $table->string('bulan');
+            $table->bigInteger('total_pembelian');
+            $table->timestamps();
+        });
     }
 
     /**
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('laporan_stoks');
+        Schema::dropIfExists('laporan_outlets');
     }
 };

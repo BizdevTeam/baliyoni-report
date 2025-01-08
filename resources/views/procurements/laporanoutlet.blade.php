@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Arus Kas</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Laporan Outlet</title>
     @vite('resources/css/app.css')
     <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
     <!-- Google Font: Source Sans Pro -->
@@ -36,10 +34,10 @@
         <!-- Main Content -->
         <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
             <div class="mx-auto bg-white p-6 rounded-lg shadow">
-                <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Arus Kas</h1>
+                <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Laporan Pembelian Outlet</h1>
         <!-- Action Buttons -->
         <div class="flex items-center mb-4">
-            <form method="GET" action="{{ route('aruskas.index') }}">
+            <form method="GET" action="{{ route('laporanoutlet.index') }}">
                 <div class="flex items-center border border-gray-700 rounded-lg p-2 mr-2 max-w-md">
                     <input type="text" name="search" placeholder="Search" value="{{ request('search') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
                     <button type="submit" class="text-gray-500 focus:outline-none" aria-label="Search">
@@ -73,25 +71,23 @@
                 <thead class="bg-gray-200">
                     <tr>
                         <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Kas Masuk</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Kas Keluar</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Total Stok</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($aruskass as $aruskas)
+                    @foreach ($laporanoutlets as $laporanoutlet)
                         <tr class="hover:bg-gray-100">
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $aruskas->bulan_formatted }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $aruskas->masuk_formatted }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $aruskas->keluar_formatted }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanoutlet->bulan_formatted }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanoutlet->pembelian_formatted }}</td>
                             <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
                                 <!-- Edit Button -->
-                                <button class="bg-red-600 text-white px-3 py-2 rounded" data-modal-target="#editEventModal{{ $aruskas->id_aruskas }}">
+                                <button class="bg-red-600 text-white px-3 py-2 rounded" data-modal-target="#editEventModal{{ $laporanoutlet->id_outlet }}">
                                     <i class="fa fa-pen"></i>
                                     Edit
                                 </button>
                                 <!-- Delete Form -->
-                                <form method="POST" action="{{ route('aruskas.destroy', $aruskas->id_aruskas) }}">
+                                <form method="POST" action="{{ route('laporanoutlet.destroy', $laporanoutlet->id_outlet) }}">
                                     @csrf
                                     @method('DELETE')
                                     <button class="bg-red-600 text-white px-3 py-2 rounded" onclick="return confirm('Are you sure to delete?')">
@@ -102,24 +98,20 @@
                             </td>
                         </tr>
                         <!-- Modal for Edit Event -->
-                        <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="editEventModal{{ $aruskas->id_aruskas }}">
+                        <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="editEventModal{{ $laporanoutlet->id_outlet }}">
                             <div class="bg-white w-1/2 p-6 rounded shadow-lg">
                                 <h3 class="text-xl font-semibold mb-4">Edit Data</h3>
-                                <form method="POST" action="{{ route('aruskas.update', $aruskas->id_aruskas) }}" enctype="multipart/form-data">
+                                <form method="POST" action="{{ route('laporanoutlet.update', $laporanoutlet->id_outlet) }}" enctype="multipart/form-data">
                                     @csrf
                                     @method('PUT')
                                     <div class="space-y-4">
                                         <div>
                                             <label for="bulan" class="block text-sm font-medium">Bulan</label>
-                                            <input type="month" name="bulan" class="w-full p-2 border rounded" value="{{ $aruskas->bulan }}" required>
+                                            <input type="month" name="bulan" class="w-full p-2 border rounded" value="{{ $laporanoutlet->bulan }}" required>
                                         </div>
                                         <div>
-                                            <label for="kas_masuk" class="block text-sm font-medium">Kas Masuk</label>
-                                            <input type="number" name="kas_masuk" class="w-full p-2 border rounded" value="{{ $aruskas->kas_masuk }}" required>
-                                        </div>
-                                        <div>
-                                            <label for="kas_keluar" class="block text-sm font-medium">Kas Keluar</label>
-                                            <input type="number" name="kas_keluar" class="w-full p-2 border rounded" value="{{ $aruskas->kas_keluar }}" required>
+                                            <label for="total_pembelian" class="block text-sm font-medium">Total Pembelian</label>
+                                            <input type="number" name="total_pembelian" class="w-full p-2 border rounded" value="{{ $laporanoutlet->total_pembelian }}" required>
                                         </div>
                                     </div>
                                     <div class="mt-4 flex justify-end gap-2">
@@ -133,7 +125,7 @@
                 </tbody>
             </table>
         <div class="m-4">
-            {{ $aruskass->links('pagination::tailwind') }}
+            {{ $laporanoutlets->links('pagination::tailwind') }}
         </div>
         </div>
         </div>
@@ -149,7 +141,7 @@
 <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">
     <div class="bg-white w-1/2 p-6 rounded shadow-lg">
         <h3 class="text-xl font-semibold mb-4">Add New Data</h3>
-        <form method="POST" action="{{ route('aruskas.store') }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('laporanoutlet.store') }}" enctype="multipart/form-data">
             @csrf
             <div class="space-y-4">
                 <div>
@@ -157,12 +149,8 @@
                     <input type="month" name="bulan" class="w-full p-2 border rounded" required>
                 </div>
                 <div>
-                    <label for="kas_masuk" class="block text-sm font-medium">Kas Masuk</label>
-                    <input type="number" name="kas_masuk" class="w-full p-2 border rounded" required>
-                </div>
-                <div>
-                    <label for="kas_keluar" class="block text-sm font-medium">Kas Keluar</label>
-                    <input type="number" name="kas_keluar" class="w-full p-2 border rounded" required>
+                    <label for="total_pembelian" class="block text-sm font-medium">Total Pembelian</label>
+                    <input type="number" name="total_pembelian" class="w-full p-2 border rounded" required>
                 </div>
             </div>
             <div class="mt-4 flex justify-end gap-2">

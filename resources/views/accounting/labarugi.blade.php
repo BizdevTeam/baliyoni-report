@@ -6,8 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Laba Rugi</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     @vite('resources/css/app.css')
     <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
     <!-- Google Font: Source Sans Pro -->
@@ -42,9 +40,9 @@
         <!-- Main Content -->
         <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
             <div class="mx-auto bg-white/70  p-6 rounded-lg shadow-lg ">
-                <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Laba Rugi</h1>
+                <h1 class="text-3xl font-bold text-red-600 mb-2 font-montserrat">Laba Rugi</h1>
 
-                <h1 class="text-sm mb-4 text-black font-lato">Laporan per Bulan</h1>
+                <h1 class="text-2xl mb-4 text-black font-lato">Laporan per Bulan</h1>
                 <!-- Action Buttons -->
                 <div class="flex justify-end gap-2 mb-4" data-aos="fade-left" data-aos-anchor-placement="center-center">
 

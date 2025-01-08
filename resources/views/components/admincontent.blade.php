@@ -227,7 +227,7 @@
             }
 
             // Stok
-            const stokData = await fetchChartData('{{ route('procurements.laporanstok.data') }}');
+            const stokData = await fetchChartData('{{ route('laporanstok.index') }}');
             if (stokData) {
                 const labels = stokData.map(item => item.bulan_tahun);
                 const values = stokData.map(item => Number(item.stok));
@@ -236,7 +236,7 @@
 
             // Kas, Hutang, Piutang, Stok
             const kashutangpiutangstokData = await fetchChartData(
-                '{{ route('accounting.kashutangpiutangstok.data') }}');
+                '{{ route('khps.index') }}');
             if (kashutangpiutangstokData) {
                 const totalData = {
                     kas: kashutangpiutangstokData.reduce((sum, item) => sum + item.kas, 0),
@@ -252,7 +252,7 @@
                     'Distribusi Kas, Hutang, Piutang, dan Stok'
                 );
             }
-            const aruskasData = await fetchChartData('{{ route('accounting.aruskas.data') }}');
+            const aruskasData = await fetchChartData('{{ route('aruskas.index') }}');
             if (aruskasData) {
                 const totalData = {
                     kas_masuk: aruskasData.reduce((sum, item) => sum + item.kas_masuk, 0),

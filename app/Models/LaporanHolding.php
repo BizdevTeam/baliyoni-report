@@ -6,15 +6,15 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class LaporanNegosiasi extends Model
+class LaporanHolding extends Model
 {
     //
     use HasFactory;
-    protected $table = 'laporan_negosiasis'; // Nama tabel
+    protected $table = 'laporan_holdings'; // Nama tabel
 
-    protected $primaryKey = 'id_negosiasi'; // Primary key custom
+    protected $primaryKey = 'id_holding'; // Primary key custom
 
-    protected $fillable = ['bulan', 'total_negosiasi'];
+    protected $fillable = ['bulan', 'perusahaan', 'nilai'];
 
     // Menambahkan accessor untuk bulan dengan format 'mm/yyyy'
     public function getBulanFormattedAttribute()
@@ -23,8 +23,8 @@ class LaporanNegosiasi extends Model
     }
 
     // Menambahkan accessor dengan format Rp
-    public function getNegosiasiFormattedAttribute()
+    public function getNilaiFormattedAttribute()
     {
-        return 'Rp ' . number_format($this->total_negosiasi, 0, ',', '.');
+        return 'Rp ' . number_format($this->nilai, 0, ',', '.');
     }
 }
