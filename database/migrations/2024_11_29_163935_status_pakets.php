@@ -12,10 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('status_pakets', function (Blueprint $table) {
-        $table->id();
-            $table->string('bulan_tahun');
-            $table->string('status');
-            $table->bigInteger('paket');
+        $table->id('id_statuspaket');
+        $table->string('bulan');
+        $table->enum('status',[
+            'Surat Pesanan',
+            'Surat Pertanggungjawaban',
+            'Keuangan',
+            'Dokumen Akhir',
+            'Finish',
+        ]);
+        $table->bigInteger('total_paket');
             $table->timestamps();
         });
     }

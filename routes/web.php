@@ -74,72 +74,33 @@ Route::middleware(['web'])->group(function () {
             ->name('marketings.rekappenjualan.data');
         Route::delete('rekappenjualan/{rp}', [RekapPenjualanController::class, 'destroy']);
 
-
-        // Laporan Paket Administrasi
-        Route::get('laporanpaketadministrasi', [LaporanPaketAdministrasiController::class, 'index'])
-            ->name('marketings.laporanpaketadministrasi');
-        Route::post('laporanpaketadministrasi/store', [LaporanPaketAdministrasiController::class, 'store'])
-            ->name('marketings.laporanpaketadministrasi.store');
-        Route::put('laporanpaketadministrasi/update/{id}', [LaporanPaketAdministrasiController::class, 'update'])
-            ->name('marketings.laporanpaketadministrasi.update');
-        Route::get('laporanpaketadministrasi/data', [LaporanPaketAdministrasiController::class, 'data'])
-            ->name('marketings.laporanpaketadministrasi.data');
-        Route::get('laporanpaketadministrasi/filter', [LaporanPaketAdministrasiController::class, 'filterData'])
-            ->name('marketings.laporanpaketadministrasi.filter');
-        Route::delete('laporanpaketadministrasi/destroy/{id}', [LaporanPaketAdministrasiController::class, 'destroy'])
-            ->name('marketings.laporanpaketadministrasi.destroy');
-        Route::get('marketings/laporanpaketadministrasi/chart-data',[LaporanPaketAdministrasiController::class, 'getChartData'])
-            ->name('marketings.laporanpaketadministrasi.chartdata');
-        Route::post('laporanpaketadministrasi/export-pdf', [LaporanPaketAdministrasiController::class, 'exportPDF'])
-            ->name('marketings.laporanpaketadministrasi.exportPDF');
-
-        // Status Paket
-        Route::get('statuspaket', [StatusPaketController::class, 'index'])
-            ->name('marketings.laporanstatuspaket');
-        Route::post('statuspaket/store', [StatusPaketController::class, 'store'])
-            ->name('marketings.laporanstatuspaket.store');
-        Route::put('statuspaket/update/{id}', [StatusPaketController::class, 'update'])
-            ->name('marketings.laporanstatuspaket.update');
-        Route::get('statuspaket/data', [StatusPaketController::class, 'data'])
-            ->name('marketings.laporanstatuspaket.data');
-        Route::get('statuspaket/filter', [StatusPaketController::class, 'filterData'])
-            ->name('marketings.laporanstatuspaket.filter');
-        Route::delete('statuspaket/destroy/{id}', [StatusPaketController::class, 'destroy'])
-            ->name('marketings.laporanstatuspaket.destroy');
-            Route::post('statuspaket/export-pdf', [StatusPaketController::class, 'exportPDF'])
-            ->name('marketings.statuspaket.exportPDF');
-
-        // Laporan Per Instansi
-        Route::get('laporanperinstansi', [LaporanPerInstansiController::class, 'index'])
-            ->name('marketings.laporanperinstansi');
-        Route::post('laporanperinstansi/store', [LaporanPerInstansiController::class, 'store'])
-            ->name('marketings.laporanperinstansi.store');
-        Route::put('laporanperinstansi/update/{id}', [LaporanPerInstansiController::class, 'update'])
-            ->name('marketings.laporanperinstansi.update');
-        Route::get('laporanperinstansi/data', [LaporanPerInstansiController::class, 'data'])
-            ->name('marketings.laporanperinstansi.data');
-        Route::get('laporanperinstansi/filter', [LaporanPerInstansiController::class, 'filterData'])
-            ->name('marketings.laporanperinstansi.filter');
-        Route::delete('laporanperinstansi/destroy/{id}', [LaporanPerInstansiController::class, 'destroy'])
-            ->name('marketings.laporanperinstansi.destroy');
-        Route::post('laporanperinstansi/export-pdf', [LaporanPerInstansiController::class, 'exportPDF'])
-            ->name('marketings.laporanperinstansi.exportPDF');
-
-        // Rekap Penjualan Perusahaan
-        Route::get('rekappenjualanperusahaan', [RekapPenjualanPerusahaanController::class, 'index'])
-            ->name('marketings.rekappenjualanperusahaan');
-        Route::post('rekappenjualanperusahaan/store', [RekapPenjualanPerusahaanController::class, 'store'])
-            ->name('marketings.rekappenjualanperusahaan.store');
-        Route::put('rekappenjualanperusahaan/update/{id}', [RekapPenjualanPerusahaanController::class, 'update'])
-            ->name('marketings.rekappenjualanperusahaan.update');
-        Route::get('rekappenjualanperusahaan/data', [RekapPenjualanPerusahaanController::class, 'data'])
-            ->name('marketings.rekappenjualanperusahaan.data');
-        Route::get('rekappenjualanperusahaan/filter', [RekapPenjualanPerusahaanController::class, 'filterData'])
-            ->name('marketings.rekappenjualanperusahaan.filter');
-        Route::delete('rekappenjualanperusahaan/destroy/{id}', [RekapPenjualanPerusahaanController::class, 'destroy'])
-            ->name('marketings.rekappenjualanperusahaan.destroy');
+        Route::resource('rekappenjualanperusahaan', RekapPenjualanPerusahaanController::class);
         Route::post('rekappenjualanperusahaan/export-pdf', [RekapPenjualanPerusahaanController::class, 'exportPDF'])
             ->name('marketings.rekappenjualanperusahaan.exportPDF');
+        Route::get('rekappenjualanperusahaan/data', [RekapPenjualanPerusahaanController::class, 'getRekapPenjualaPerusahaannData'])
+            ->name('marketings.rekappenjualanperusahaan.data');
+        Route::delete('rekappenjualanperusahaan/{rp}', [RekapPenjualanPerusahaanController::class, 'destroy']);
+
+        Route::resource('laporanpaketadministrasi', LaporanPaketAdministrasiController::class);
+        Route::post('laporanpaketadministrasi/export-pdf', [LaporanPaketAdministrasiController::class, 'exportPDF'])
+            ->name('marketings.laporanpaketadministrasi.exportPDF');
+        Route::get('laporanpaketadministrasi/data', [LaporanPaketAdministrasiController::class, 'getLaporanPaketAdministrasiData'])
+            ->name('marketings.laporanpaketadministrasi.data');
+        Route::delete('laporanpaketadministrasi/{rp}', [LaporanPaketAdministrasiController::class, 'destroy']);
+
+        Route::resource('statuspaket', StatusPaketController::class);
+        Route::post('statuspaket/export-pdf', [StatusPaketController::class, 'exportPDF'])
+            ->name('marketings.statuspaket.exportPDF');
+        Route::get('statuspaket/data', [StatusPaketController::class, 'getStatusPaketData'])
+            ->name('marketings.statuspaket.data');
+        Route::delete('statuspaket/{rp}', [StatusPaketController::class, 'destroy']);
+
+        Route::resource('laporanperinstansi', LaporanPerInstansiController::class);
+        Route::post('laporanperinstansi/export-pdf', [LaporanPerInstansiController::class, 'exportPDF'])
+            ->name('marketings.laporanperinstansi.exportPDF');
+        Route::get('laporanperinstansi/data', [LaporanPerInstansiController::class, 'getLaporanPerinstansiData'])
+            ->name('marketings.laporanperinstansi.data');
+        Route::delete('laporanperinstansi/{rp}', [LaporanPerInstansiController::class, 'destroy']);
 
     });
 

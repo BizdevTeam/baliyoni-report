@@ -43,28 +43,28 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route("marketings.rekappenjualanperusahaan") }}"
+                        <a href="{{ route("rekappenjualanperusahaan.index") }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/RekapPenjualanPerusahaan.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Rekap Penjualan Perusahaan</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route("marketings.laporanpaketadministrasi") }}"
+                        <a href="{{ route("laporanpaketadministrasi.index") }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/LaporanPaketAdministrasi.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Paket Administrasi</span>
                         </a>
                     </li>
                     <li>
-                       <a href="{{ route("marketings.laporanstatuspaket") }}"
+                       <a href="{{ route("statuspaket.index") }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/LaporanStatusPaket.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Status Paket </span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route("marketings.laporanperinstansi") }}"
+                        <a href="{{ route("laporanperinstansi.index") }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/LaporanPerinstansi.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Per Instansi</span>

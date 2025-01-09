@@ -12,14 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('laporan_per_instansis', function (Blueprint $table) {
-            $table->id();
-                $table->string('bulan_tahun');
-                $table->string('instansi');
+            $table->id('id_perinstansi');
+                $table->string('bulan');
+                $table->enum('instansi',[
+                    'Badung',
+                    'Denpasar',
+                    'Provinsi',
+                    'Bangli',
+                    'Klungkung',
+                ]);
                 $table->bigInteger('nilai');
                 $table->timestamps();
-
-                $table->unique(['bulan_tahun', 'instansi']);
-
             });
     }
 

@@ -7,244 +7,220 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Mpdf\Mpdf;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Rule;
 
 class LaporanPaketAdministrasiController extends Controller
 {
     // Menampilkan halaman utama
-    public function index()
-    {
-        return view('marketings.laporanpaketadministrasi');
-    }
+    public function index(Request $request)
+    { 
+        $perPage = $request->input('per_page', 12);
+        $search = $request->input('search');
 
-    // Fetch data dengan filter
-    public function data(Request $request)
-    {
-        try {
-            $bulanTahun = $request->query('bulan_tahun');
+        #$query = KasHutangPiutang::query();
 
-            $query = LaporanPaketAdministrasi::query();
-            if ($bulanTahun) {
-                $query->where('bulan_tahun', $bulanTahun);
-            }
+        // Query untuk mencari berdasarkan tahun dan bulan
+        $laporanpaketadministrasis = LaporanPaketAdministrasi::query()
+            ->when($search, function ($query, $search) {
+                return $query->where('bulan', 'LIKE', "%$search%");
+            })
+            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
+            ->paginate($perPage);
 
-            $data = $query->orderBy('created_at', 'desc')->get();
+        // Hitung total untuk masing-masing kategori
+        $totalPenjualan = $laporanpaketadministrasis->sum('total_paket');
 
-            return response()->json(['success' => true, 'data' => $data], 200);
-        } catch (\Exception $e) {
-            Log::error("Error fetching data: {$e->getMessage()}");
-            return response()->json(['success' => false, 'message' => 'Gagal mengambil data.'], 500);
+        // Siapkan data untuk chart
+        function getRandomRGBA($opacity = 0.7) {
+            return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
         }
-    }
+        
+        $labels = $laporanpaketadministrasis->pluck('bulan')->toArray();
+        $data = $laporanpaketadministrasis->pluck('total_paket')->toArray();
+        
+        // Generate random colors for each data item
+        $backgroundColors = array_map(fn() => getRandomRGBA(), $data);
+        $borderColors = array_map(fn() => getRandomRGBA(1.0), $data);
+        
+        $chartData = [
+            'labels' => $labels, // Labels untuk chart
+            'datasets' => [
+                [
+                    'label' => 'Grafik Total Penjualan', // Nama dataset
+                    'data' => $data, // Data untuk chart
+                    'backgroundColor' => $backgroundColors, // Warna batang random
+                    'borderColor' => $borderColors,        // Warna border random
+                    'borderWidth' => 1,                    // Ketebalan border
+                ],
+            ],
+        ];
+        
+        return view('marketings.laporanpaketadministrasi', compact('laporanpaketadministrasis', 'chartData'));    }
 
-    // Simpan data baru
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'bulan_tahun' => 'required|date_format:m/Y',
-            'website' => 'required|array|min:1',
-            'website.*' => 'required|string|max:255',
-            'paket_rp' => 'required|array|min:1',
-            'paket_rp.*' => 'required|numeric|min:0',
-        ]);
-
         try {
-            $dataToInsert = $this->prepareDataForInsert($validated);
-
-            LaporanPaketAdministrasi::insert($dataToInsert);
-
-            return response()->json(['success' => true, 'message' => 'Data berhasil disimpan.']);
-        } catch (\Exception $e) {
-            Log::error('Error saving data: ' . $e->getMessage());
-            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat menyimpan data.'], 500);
-        }
-    }
-
-    // Perbarui data
-
-    public function update(Request $request, $id)
-    {
-        $validated = $request->validate([
-            'bulan_tahun' => 'required|date_format:m/Y',
-            'website' => 'required|array|min:1',
-            'website.*' => 'required|string|max:255',
-            'paket_rp' => 'required|array|min:1',
-            'paket_rp.*' => 'required|numeric|min:0',
-        ]);
-
-        try {
-            // Hapus data lama untuk website terkait
-            LaporanPaketAdministrasi::where('id', $id)->delete();
-
-            $dataToInsert = $this->prepareDataForInsert($validated);
-            LaporanPaketAdministrasi::insert($dataToInsert);
-
-            return response()->json(['success' => true, 'message' => 'Data berhasil diperbarui.']);
-        } catch (\Exception $e) {
-            Log::error('Error updating data: ' . $e->getMessage());
-            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat memperbarui data.'], 500);
-        }
-    }
-
-    // Fungsi umum untuk save/update data
-    private function saveData(Request $request, $id = null)
-    {
-        $validated = $request->validate([
-            'bulan_tahun' => 'required|date_format:m/Y',
-            'website' => 'required|array|min:1',
-            'website.*' => 'required|string|max:255',
-            'paket_rp' => 'required|array|min:1',
-            'paket_rp.*' => 'required|numeric|min:0',
-        ]);
-
-        try {
-            foreach ($validated['website'] as $index => $website) {
-                $query = LaporanPaketAdministrasi::where('website', $website)
-                    ->where('bulan_tahun', $validated['bulan_tahun']);
-
-                if ($id) {
-                    $query->where('id', '!=', $id); // Abaikan ID yang sedang diupdate
-                }
-
-                if ($query->exists()) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => "Website '$website' sudah ada untuk bulan {$validated['bulan_tahun']}.",
-                    ], 400);
-                }
-            }
-
-            // Jika ID ada, hapus data lama (update)
-            if ($id) {
-                LaporanPaketAdministrasi::where('id', $id)->delete();
-            }
-
-            $dataToInsert = $this->prepareDataForInsert($validated);
-            LaporanPaketAdministrasi::insert($dataToInsert);
-
-            return response()->json([
-                'success' => true,
-                'message' => $id ? 'Data berhasil diperbarui.' : 'Data berhasil disimpan.',
-            ], $id ? 200 : 201);
-        } catch (\Exception $e) {
-            Log::error("Error saving data: {$e->getMessage()}");
-            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat menyimpan data.'], 500);
-        }
-    }
-
-    // Hapus data
-    public function destroy($id)
-    {
-        try {
-            $paket = LaporanPaketAdministrasi::findOrFail($id);
-            $paket->delete();
-
-            return response()->json(['success' => true, 'message' => 'Data berhasil dihapus.'], 200);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            Log::error("Data not found: {$e->getMessage()}");
-            return response()->json(['success' => false, 'message' => 'Data tidak ditemukan.'], 404);
-        } catch (\Exception $e) {
-            Log::error("Error deleting data: {$e->getMessage()}");
-            return response()->json(['success' => false, 'message' => 'Gagal menghapus data.'], 500);
-        }
-    }
-
-    // Ambil data untuk Chart
-    public function getChartData()
-    {
-        try {
-            $data = LaporanPaketAdministrasi::select(
-                'website',
-                'bulan_tahun',
-                DB::raw('SUM(paket_rp) as total_rp')
-            )
-                ->groupBy('website', 'bulan_tahun')
-                ->orderBy('bulan_tahun', 'asc')
-                ->get();
-
-            return response()->json(['success' => true, 'data' => $data], 200);
-        } catch (\Exception $e) {
-            Log::error("Error fetching chart data: {$e->getMessage()}");
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal memuat data chart.',
-            ], 500);
-        }
-    }
-
-    public function exportPDF(Request $request)
-    {
-        try {
-            $data = $request->all();
-            $tableHTML = $data['table'];
-            $chartBase64 = $data['chart'];
-
-            // Create mPDF instance with landscape orientation and margins
-            $mpdf = new Mpdf([
-                'orientation' => 'L',
-                'margin_left' => 10,
-                'margin_right' => 10,
-                'margin_top' => 10,
-                'margin_bottom' => 10,
-                'format' => 'A4', // Set paper size to A4
+            $validatedata = $request->validate([
+                'bulan' => 'required|date_format:Y-m',
+                'website' => [
+                    'required',
+                    Rule::in([
+                        'E - Katalog',
+                        'E - Katalog Luar Bali',
+                        'Balimall',
+                        'Siplah'
+                    ]),
+                ],
+                'total_paket' => 'required|integer|min:0',
             ]);
+    
+            LaporanPaketAdministrasi::create($validatedata);
+    
+            return redirect()->route('laporanpaketadministrasi.index')->with('success', 'Data Berhasil Ditambahkan');
+        } catch (\Exception $e) {
+            Log::error('Error Storing Rekap Penjualan Data: ' . $e->getMessage());
+            Log::info('Perusahaan input:', [$request->input('website')]);
+            return redirect()->route('laporanpaketadministrasi.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
+        }
+    }
 
-            // Prepare HTML for table
-            $tableHTMLContent = "
-                <h1 style='text-align:center;'>Rekap Penjualan Perusahaan</h1>
-                <h2>Data Tabel</h2>
-                <table style='border-collapse: collapse; width: 100%;' border='1'>
-                    <thead>
-                        <tr>
-                            <th style='border: 1px solid #000; padding: 8px;'>Bulan/Tahun</th>
-                            <th style='border: 1px solid #000; padding: 8px;'>Perusahaan</th>
-                            <th style='border: 1px solid #000; padding: 8px;'>Nilai Paket</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {$tableHTML}
-                    </tbody>    
-                </table>
-            ";
+    public function update(Request $request, LaporanPaketAdministrasi $laporanpaketadministrasi)
+    {
+        try {
+            // Validasi input
+            $validatedData = $request->validate([
+                'bulan' => 'required|date_format:Y-m',
+                'website' => [
+                'required',
+                Rule::in([
+                    'E - Katalog',
+                    'E - Katalog Luar Bali',
+                    'Balimall',
+                    'Siplah',
+                ]),
+            ],
+                'total_paket' => 'required|integer|min:0',
+            ]);
+    
+            // Update data
+            $laporanpaketadministrasi->update($validatedData);
+    
+            // Redirect dengan pesan sukses
+            return redirect()
+                ->route('laporanpaketadministrasi.index')
+                ->with('success', 'Data berhasil diperbarui.');
+        } catch (ValidationException $e) {
+            // Tangani error validasi
+            return redirect()
+                ->back()
+                ->withErrors($e->errors())
+                ->withInput();
+        } catch (\Exception $e) {
+            // Tangani error umum dan log untuk debugging
+            Log::error('Error updating Rekap Penjualan: ' . $e->getMessage());
+            return redirect()
+                ->route('laporanpaketadministrasi.index')
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+    
+    public function exportPDF(Request $request)
+{
+    try {
+        // Validasi input
+        $data = $request->validate([
+            'table' => 'required|string',
+            'chart' => 'required|string',
+        ]);
 
-            // Prepare HTML for chart
+        // Ambil data dari request
+        $tableHTML = trim($data['table']);
+        $chartBase64 = trim($data['chart']);
+
+        // Validasi isi tabel dan chart untuk mencegah halaman kosong
+        if (empty($tableHTML)) {
+            return response()->json(['success' => false, 'message' => 'Data tabel kosong.'], 400);
+        }
+        if (empty($chartBase64)) {
+            return response()->json(['success' => false, 'message' => 'Data grafik kosong.'], 400);
+        }
+
+        // Buat instance mPDF dengan konfigurasi
+        $mpdf = new \Mpdf\Mpdf([
+            'orientation' => 'L', // Landscape orientation
+            'margin_left' => 10,
+            'margin_right' => 10,
+            'margin_top' => 10, // Kurangi margin atas
+            'margin_bottom' => 10, // Kurangi margin bawah
+            'format' => 'A4', // Ukuran kertas A4
+        ]);
+
+        // Tambahkan header ke PDF
+        $mpdf->SetHeader('Laporan Rekap Penjualan||{PAGENO}');
+
+        // Tambahkan footer ke PDF
+        $mpdf->SetFooter('{DATE j-m-Y}|Laporan Rekap Penjualan|Halaman {PAGENO}');
+
+        // Buat konten tabel dengan gaya CSS yang lebih ketat
+        $tableHTMLContent = "
+            <h1 style='text-align:center; font-size: 16px; margin-top: 32px;'>Laporan Rekap Penjualan Perusahaan</h1>
+            <h2 style='text-align:center; font-size: 12px; margin: 5px 0;'>Data Rekapitulasi</h2>
+            <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
+                <thead>
+                    <tr style='background-color: #f2f2f2;'>
+                        <th style='border: 1px solid #000; padding: 5px;'>Bulan/Tahun</th>
+                        <th style='border: 1px solid #000; padding: 5px;'>Website</th>
+                        <th style='border: 1px solid #000; padding: 5px;'>Total Paket</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {$tableHTML}
+                </tbody>
+            </table>
+        ";
+
+        // Tambahkan konten tabel ke PDF
+        $mpdf->WriteHTML($tableHTMLContent);
+
+        // Tambahkan halaman baru hanya jika konten chart tersedia
+        if (!empty($chartBase64)) {
             $chartHTMLContent = "
-                <h1 style='text-align:center;'>Rekap Penjualan Perusahaan</h1>
-                <h2>Grafik Penjualan</h2>
-                <div style='text-align: center;'>
-                    <img src='{$chartBase64}' alt='Chart' style='width: 100%; max-width: 100%; height: auto;' />
+                <h1 style='text-align:center; font-size: 16px; margin: 10px 0;'>Grafik Rekap Penjualan Perusahaan</h1>
+                <div style='text-align: center; margin: 10px 0;'>
+                    <img src='{$chartBase64}' alt='Chart' style='max-width: 50%; height: auto;' />
                 </div>
             ";
-            // Write table content to the first page
-            $mpdf->WriteHTML($tableHTMLContent);
-
-            // Add a new page for the chart
-            $mpdf->AddPage();
-
-            // Write chart content to the second page
             $mpdf->WriteHTML($chartHTMLContent);
-
-            // Output as downloadable PDF
-            return response($mpdf->Output('', 'S'), 200)
-                ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'attachment; filename="rekap_penjualan_perusahaan.pdf"');
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Gagal mengekspor PDF.']);
         }
-    }
 
-    // Persiapkan data untuk di-insert ke database
-    private function prepareDataForInsert($validated)
-    {
-        $dataToInsert = [];
-        foreach ($validated['website'] as $index => $website) {
-            $dataToInsert[] = [
-                'bulan_tahun' => $validated['bulan_tahun'],
-                'website' => $website,
-                'paket_rp' => $validated['paket_rp'][$index],
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-        }
-        return $dataToInsert;
+        // Return PDF sebagai respon download
+        return response($mpdf->Output('', 'S'), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename="laporan_rekap_penjualan_perusahaan.pdf"');
+    } catch (\Exception $e) {
+        // Log error jika terjadi masalah
+        Log::error('Error exporting PDF: ' . $e->getMessage());
+        return response()->json(['success' => false, 'message' => 'Gagal mengekspor PDF.'], 500);
     }
 }
+
+    public function destroy(LaporanPaketAdministrasi $laporanpaketadministrasi)
+    {
+        try {
+            $laporanpaketadministrasi->delete();
+            return redirect()->route('laporanpaketadministrasi.index')->with('success', 'Data Berhasil Dihapus');
+        } catch (\Exception $e) {
+            Log::error('Error Deleting Rekap Penjualan Data: ' . $e->getMessage());
+            return redirect()->route('laporanpaketadministrasi.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
+        }
+    }
+    public function getLaporanPaketAdministrasiData()
+    {
+        $data = LaporanPaketAdministrasi::all(['bulan','website','total_paket']);
+    
+        return response()->json($data);
+    }
+
+}
+
