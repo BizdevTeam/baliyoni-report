@@ -115,6 +115,21 @@ Route::middleware(['web'])->group(function () {
     });
 
     Route::prefix('supports')->group(function () {
+
+        Route::resource('laporansamitra', LaporanSamitraController::class);
+        Route::post('laporansamitra/export-pdf', [LaporanSamitraController::class, 'exportPDF'])
+            ->name('supports.laporansamitra.exportPDF');
+        Route::get('laporansamitra/data', [LaporanSamitraController::class, 'getLaporanSamitraData'])
+            ->name('supports.laporansamitra.data');
+        Route::delete('laporansamitra/{rp}', [LaporanSamitraController::class, 'destroy']);
+
+        Route::resource('laporandetrans', LaporanDetransController::class);
+        Route::post('laporandetrans/export-pdf', [LaporanDetransController::class, 'exportPDF'])
+            ->name('supports.laporandetrans.exportPDF');
+        Route::get('laporandetrans/data', [LaporanDetransController::class, 'getLaporanSamitraData'])
+            ->name('supports.laporandetrans.data');
+        Route::delete('laporandetrans/{rp}', [LaporanDetransController::class, 'destroy']);
+
         // LAPORAN REKAP PENDAPATAN SERVIS ASP
         Route::get('rekappendapatanservisasp', [RekapPendapatanServisAspController::class, 'index'])
             ->name('supports.rekappendapatanservisasp');
@@ -143,32 +158,6 @@ Route::middleware(['web'])->group(function () {
         Route::delete('rekappiutangservisasp/destroy/{id}', [RekapPiutangServisAspController::class, 'destroy'])
             ->name('supports.rekappiutangservisasp.destroy');
     
-        // RUTE REKAP PENJUALAN
-        Route::get('laporandetrans', [LaporanDetransController::class, 'index'])
-            ->name('supports.laporandetrans');
-        Route::post('laporandetrans/store', [LaporanDetransController::class, 'store'])
-            ->name('supports.laporandetrans.store');
-        Route::put('laporandetrans/update/{id}', [LaporanDetransController::class, 'update'])
-            ->name('supports.laporandetrans.update');
-        Route::get('laporandetrans/data', [LaporanDetransController::class, 'data'])
-            ->name('supports.laporandetrans.data');
-        Route::get('laporandetrans/filter', [LaporanDetransController::class, 'filterData'])
-            ->name('supports.laporandetrans.filterByYear');
-        Route::delete('laporandetrans/destroy/{id}', [LaporanDetransController::class, 'destroy'])
-            ->name('supports.laporandetrans.destroy');
-    
-        Route::get('laporansamitra', [LaporanSamitraController::class, 'index'])
-            ->name('supports.laporansamitra');
-        Route::post('laporansamitra/store', [LaporanSamitraController::class, 'store'])
-            ->name('supports.laporansamitra.store');
-        Route::put('laporansamitra/update/{id}', [LaporanSamitraController::class, 'update'])
-            ->name('supports.laporansamitra.update');
-        Route::get('laporansamitra/data', [LaporanSamitraController::class, 'data'])
-            ->name('supports.laporansamitra.data');
-        Route::get('laporansamitra/filter', [LaporanSamitraController::class, 'filterData'])
-            ->name('supports.laporansamitra.filterByYear');
-        Route::delete('laporansamitra/destroy/{id}', [LaporanSamitraController::class, 'destroy'])
-            ->name('supports.laporansamitra.destroy');
     });
 
     Route::prefix('hrga')->group(function () {
