@@ -12,13 +12,24 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('rekap_penjualan_perusahaans', function (Blueprint $table) {
-            $table->id();
-                $table->string('bulan_tahun');
-                $table->string('perusahaan');
-                $table->bigInteger('nilai_paket');
+            $table->id('id_rpp');
+                $table->string('bulan');
+                $table->enum('perusahaan',[
+                    'PT. BALI UNGGUL SEJAHTERA',
+                    'CV. DANA RASA',
+                    'CV. LAGAAN SAKETI',
+                    'CV. BALI JAKTI INFORMATIK',
+                    'CV. BALI LINGGA KOMPUTER',
+                    'CV. ARTSOLUTION',
+                    'PT. BALI LINGGA SAKA GUMI',
+                    'CV. SAHABAT UTAMA',
+                    'CV. N & b NET ACCESS',
+                    'PT. ELKA SOLUTION NUSANTARA',
+                    'CV. ARINDAH',
+                    'ARFALINDO',
+                ]);
+                $table->bigInteger('total_penjualan');
                 $table->timestamps();
-
-                $table->unique(['bulan_tahun', 'perusahaan']);
 
             });
     }
