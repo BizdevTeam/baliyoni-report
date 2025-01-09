@@ -2,25 +2,27 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-
 class LaporanIjasa extends Model
 {
-    //
     use HasFactory;
+    protected $table = 'laporan_ijasas'; // Nama tabel
 
-    protected $table = 'laporan_ijasas';
+    protected $primaryKey = 'id_ijasa'; // Primary key custom
 
-    // Kolom yang dapat diisi menggunakan metode mass assignment
-    protected $fillable = [
-        'tanggal',      // Format bulan dan tahun (contoh: '11/2024')
-        'jam',      
-        'permasalahan',      
-        'impact',      
-        'troubleshooting',      
-        'resolve_tanggal',      
-        'resolve_jam',      
-    ];
+    protected $fillable = ['tanggal', 'jam', 'permasalahan', 'impact', 'troubleshooting', 'resolve_tanggal', 'resolve_jam'];
+
+    // Menambahkan accessor untuk tanggal dengan format 'd/m/y'
+    public function getTanggalFormattedAttribute()
+    {
+        return $this->tanggal ? Carbon::parse($this->tanggal)->format('d/m/y') : '-';
+    }
+
+    public function getResolveFormattedAttribute()
+    {
+        return $this->resolve_tanggal ? Carbon::parse($this->resolve_tanggal)->format('d/m/y') : '-';
+    }
 }

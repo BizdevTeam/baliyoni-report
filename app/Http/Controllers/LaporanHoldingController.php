@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\LaporanHolding;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class LaporanHoldingController extends Controller
 {
@@ -30,33 +31,54 @@ class LaporanHoldingController extends Controller
 
     public function store(Request $request)
     {
-
-        $validatedata = $request->validate([
-            'bulan' => 'required|date_format:Y-m',
-            'perusahaan' => 'required|in:PT. Baliyoni Saguna,CV. ELKA MANDIRI, PT. NABA TECHNOLOGY SOLUTIONS,CV. BHIRMA TEKNIK,PT. DWI SRIKANDI NUSANTARA',
-            'nilai' => 'required|integer|min:0'
-        ]);
+        try {
+            $validatedata = $request->validate([
+                'bulan' => 'required|date_format:Y-m',
+                'perusahaan' => [
+                    'required',
+                    Rule::in([
+                        'PT. Baliyoni Saguna',
+                        'CV. ELKA MANDIRI',
+                        'PT. NABA TECHNOLOGY SOLUTIONS',
+                        'CV. BHIRMA TEKNIK',
+                        'T. DWI SRIKANDI NUSANTARA']),
+                ],
+                'nilai' => 'required|integer|min:0'
+            ]);
+        
+            LaporanHolding::create($validatedata);
     
-        LaporanHolding::create($validatedata);
-
-        return redirect()->route('laporanholding.index')->with('success', 'Data Berhasil Ditambahkan');
+            return redirect()->route('laporanholding.index')->with('success', 'Data Berhasil Ditambahkan');
+        } catch (\Exception $e) {
+            Log::error('Error Storing Holdings: ' . $e->getMessage());
+            return redirect()->route('laporanholding.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
+        }
     }
 
     public function update(Request $request, LaporanHolding $laporanholding)
     {
-        $validatedata = $request->validate([
-            'bulan' => 'required|date_format:Y-m',
-            'perusahaan' => 'required|in:PT. Baliyoni Saguna,
-                            CV. ELKA MANDIRI,
-                            PT. NABA TECHNOLOGY SOLUTIONS,
-                            CV. BHIRMA TEKNIK,
-                            PT. DWI SRIKANDI NUSANTARA',
-            'nilai' => 'required|integer|min:0'
-        ]);
-        
-        $laporanholding->update($validatedata);
-
-        return redirect()->route('laporanholding.index')->with('success', 'Data Berhasil Diupdate');
+        try {
+            $validatedata = $request->validate([
+                'bulan' => 'required|date_format:Y-m',
+                'perusahaan' => [
+                    'required',
+                    Rule::in([
+                        'PT. Baliyoni Saguna',
+                        'CV. ELKA MANDIRI',
+                        'PT. NABA TECHNOLOGY SOLUTIONS',
+                        'CV. BHIRMA TEKNIK',
+                        'PT. DWI SRIKANDI NUSANTARA']),
+                ],
+                'nilai' => 'required|integer|min:0'
+            ]);
+            
+            $laporanholding->update($validatedata);
+    
+            return redirect()->route('laporanholding.index')->with('success', 'Data Berhasil Diupdate');
+        } catch (\Exception $e) {
+            Log::error('Error Updating Holdings: ' . $e->getMessage());
+            return redirect()->route('laporanholding.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
+        }
     }
 
     public function destroy(LaporanHolding $laporanholding)

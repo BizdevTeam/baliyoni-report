@@ -2,123 +2,97 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\RekapPiutangServisAsp;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
+use App\Models\RekapPiutangServisASP;
 
 class RekapPiutangServisAspController extends Controller
 {
-    // Menampilkan halaman utama
-    public function index()
+    public function index(Request $request)
     {
-        return view('supports.rekappiutangservisasp');
+        $perPage = $request->input('per_pages', 12);
+        $search = $request->input('search');
+
+        $rpiutangsasps = RekapPiutangServisASP::query()
+            ->when($search, function ($query, $search) {
+                return $query->where('bulan', 'like', "%$search%")
+                             ->orWhere('pelaksana', 'like', "%$search%");
+            })
+            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
+            ->paginate($perPage);
+
+        return view('supports.rekappiutangservisasp', compact('rpiutangsasps'));
     }
 
-    // Fetch data dengan filter
-    public function data(Request $request)
-    {
-        try {
-            $bulanTahun = $request->query('bulan_tahun');
-            $query = RekapPiutangServisAsp::query();
-
-            if ($bulanTahun) {
-                $query->where('bulan_tahun', $bulanTahun);
-            }
-
-            $data = $query->orderBy('created_at', 'desc')->get();
-
-            return response()->json([
-                'success' => true,
-                'data' => $data,
-            ], 200);
-        } catch (\Exception $e) {
-            Log::error('Error fetching data: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat mengambil data.',
-            ], 500);
-        }
-    }
-
-    // Simpan data baru
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'bulan_tahun' => 'required|date_format:m/Y',
-            'pelaksana' => 'required|array|min:1',
-            'pelaksana.*' => 'required|string|max:255',
-            'nilai_piutang' => 'required|array|min:1',
-            'nilai_piutang.*' => 'required|numeric|min:0',
-        ]);
-
         try {
-            $dataToInsert = $this->prepareDataForInsert($validated);
+            // Validasi input
+            $validatedata = $request->validate([
+                'bulan' => 'required|date_format:Y-m',
+                'pelaksana' => [
+                    'required',
+                    Rule::in([
+                        'CV. ARI DISTRIBUTION CENTER',
+                        'CV. BALIYONI COMPUTER',
+                        'PT. NABA TECHNOLOGY SOLUTIONS',
+                        'CV. ELKA MANDIRI (50%)-SAMITRA',
+                        'CV. ELKA MANDIRI (50%)-DETRAN',
+                    ]),
+                ],
+                'nilai_pendapatan' => 'required|integer|min:0'
+            ]);
 
-            RekapPiutangServisAsp::insert($dataToInsert);
+            // Simpan data ke database
+            RekapPiutangServisASP::create($validatedata);
 
-            return response()->json(['success' => true, 'message' => 'Data berhasil disimpan.']);
+            return redirect()->route('rpiutangsasp.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
-            Log::error('Error saving data: ' . $e->getMessage());
-            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat menyimpan data.'], 500);
+            Log::error('Error storing Rekap Piutang data: ' . $e->getMessage());
+            return redirect()->route('rpiutangsasp.index')->with('error', 'Terjadi Kesalahan: ' . $e->getMessage());
         }
     }
 
-    // Perbarui data
-    public function update(Request $request, $id)
+    public function update(Request $request, RekapPiutangServisASP $rpiutangsasp)
     {
-        $validated = $request->validate([
-            'bulan_tahun' => 'required|date_format:m/Y',
-            'pelaksana' => 'required|array|min:1',
-            'pelaksana.*' => 'required|string|max:255',
-            'nilai_piutang' => 'required|array|min:1',
-            'nilai_piutang.*' => 'required|numeric|min:0',
-        ]);
-
         try {
-            // Hapus data lama untuk pelaksana terkait
-            RekapPiutangServisAsp::where('id', $id)->delete();
+            // Validasi input
+            $validatedata = $request->validate([
+                'bulan' => 'required|date_format:Y-m',
+                'pelaksana' => [
+                    'required',
+                    Rule::in([
+                        'CV. ARI DISTRIBUTION CENTER',
+                        'CV. BALIYONI COMPUTER',
+                        'PT. NABA TECHNOLOGY SOLUTIONS',
+                        'CV. ELKA MANDIRI (50%)-SAMITRA',
+                        'CV. ELKA MANDIRI (50%)-DETRAN',
+                    ]),
+                ],
+                'nilai_pendapatan' => 'required|integer|min:0'
+            ]);
 
-            $dataToInsert = $this->prepareDataForInsert($validated);
-            RekapPiutangServisAsp::insert($dataToInsert);
+            // Update data rekappiutang
+            $rpiutangsasp->update($validatedata);
 
-            return response()->json(['success' => true, 'message' => 'Data berhasil diperbarui.']);
+            return redirect()->route('rpiutangsasp.index')->with('success', 'Data Berhasil Diupdate');
         } catch (\Exception $e) {
-            Log::error('Error updating data: ' . $e->getMessage());
-            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat memperbarui data.'], 500);
+            Log::error('Error updating Rekap Piutang data: ' . $e->getMessage());
+            return redirect()->route('rpiutangsasp.index')->with('error', 'Terjadi Kesalahan: ' . $e->getMessage());
         }
     }
 
-    // Hapus data
-    public function destroy($id)
+    public function destroy(RekapPiutangServisASP $rpiutangsasp)
     {
         try {
-            $paket = RekapPiutangServisAsp::findOrFail($id);
-            $paket->delete();
+            // Hapus data rekappiutang
+            $rpiutangsasp->delete();
 
-            return response()->json(['success' => true, 'message' => 'Data berhasil dihapus.'], 200);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            Log::error('Data not found: ' . $e->getMessage());
-            return response()->json(['success' => false, 'message' => 'Data tidak ditemukan.'], 404);
+            return redirect()->route('rpiutangsasp.index')->with('success', 'Data Berhasil Dihapus');
         } catch (\Exception $e) {
-            Log::error('Error deleting data: ' . $e->getMessage());
-            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat menghapus data.'], 500);
+            Log::error('Error deleting Rekap Piutang data: ' . $e->getMessage());
+            return redirect()->route('rpiutangsasp.index')->with('error', 'Terjadi Kesalahan: ' . $e->getMessage());
         }
-    }
-
-    // Persiapkan data untuk di-insert ke database
-    private function prepareDataForInsert($validated)
-    {
-        $dataToInsert = [];
-        foreach ($validated['pelaksana'] as $index => $pelaksana) {
-            $dataToInsert[] = [
-                'bulan_tahun' => $validated['bulan_tahun'],
-                'pelaksana' => $pelaksana,
-                'nilai_piutang' => $validated['nilai_piutang'][$index],
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-        }
-        return $dataToInsert;
     }
 }

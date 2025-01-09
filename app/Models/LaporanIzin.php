@@ -2,27 +2,22 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-
 class LaporanIzin extends Model
 {
-    //
     use HasFactory;
+    protected $table = 'laporan_izins'; // Nama tabel
 
-    // Tabel yang akan digunakan (opsional jika nama tabel sesuai konvensi Laravel, yaitu "laporan_paket_administrasis")
-    protected $table = 'laporan_izins';
+    protected $primaryKey = 'id_izin'; // Primary key custom
 
-    // Kolom yang dapat diisi menggunakan metode mass assignment
-    protected $fillable = [
-        'bulan_tahun',      // Format bulan dan tahun (contoh: '11/2024')
-        'total_izin',      // Total paket dalam nilai integer
-        'nama',       // Keterangan tambahan (nullable)
-    ];
-    protected $casts = [
-        'total_sakit' => 'integer',
-    ];
+    protected $fillable = ['bulan', 'total_izin', 'nama'];
+
+    // Menambahkan accessor untuk bulan dengan format 'mm/yyyy'
+    public function getBulanFormattedAttribute()
+    {
+        return Carbon::parse($this->bulan)->format('m/Y');
+    }
 }
-
-

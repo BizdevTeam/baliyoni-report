@@ -8,95 +8,70 @@ use Illuminate\Support\Facades\Log;
 
 class LaporanIjasaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('hrga.laporanijasa');
+        $perPage = $request->input('per_page', 2);
+        $search = $request->input('search');
+
+        $laporanijasas = LaporanIjasa::query()
+        ->when($search, function ($query, $search) {
+            return $query->where('tanggal', 'LIKE', "%$search%")
+                         ->orWhere('permasalahan', 'LIKE', "%$search%");
+        })
+        ->orderBy('tanggal', 'DESC')
+        ->paginate($perPage);
+    
+    return view('hrga.laporanijasa', compact('laporanijasas'));
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'tanggal' => 'required|date_format:Y-m',
-            'jam' => 'required|date_format:H:i',
-            'permasalahan' => 'required|string|max:255',
-            'impact' => 'required|string|max:255',
-            'troubleshooting' => 'required|string|max:255',
-            'resolve_tanggal' => 'required|date',
-            'resolve_jam' => 'required|date_format:H:i',
-        ]);
-
         try {
-            LaporanIjasa::create($validated);
-            return response()->json(['success' => true, 'message' => 'Data berhasil disimpan.']);
+            $validatedata = $request->validate([
+                'tanggal' => 'required|date',
+                'jam' => 'required|date_format:H:i:s',
+                'permasalahan' => 'required|string',
+                'impact' => 'required|string',
+                'troubleshooting' => 'required|string',
+                'resolve_tanggal' => 'required|date',
+                'resolve_jam' => 'required|date_format:H:i:s'
+            ]);
+    
+            LaporanIjasa::create($validatedata);
+    
+            return redirect()->route('laporanijasa.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
-            Log::error("Error Store Laporan: " . $e->getMessage());
-            return response()->json(['success' => false, 'message' => 'Gagal menyimpan data.']);
+            Log::error('Error storing Ijasa data: ' . $e->getMessage());
+            return redirect()->route('laporanijasa.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
     }
 
-    public function update($id, Request $request)
+    public function update(Request $request, LaporanIjasa $laporanijasa)
     {
-        $validated = $request->validate([
-            'tanggal' => 'required|date_format:Y-m',
-            'jam' => 'required|date_format:H:i',
-            'permasalahan' => 'required|string|max:255',
-            'impact' => 'required|string|max:255',
-            'troubleshooting' => 'required|string|max:255',
-            'resolve_tanggal' => 'required|date',
-            'resolve_jam' => 'required|date_format:H:i',
-        ]);
-
         try {
-            $laporanIjasa = LaporanIjasa::findOrFail($id);
-            $laporanIjasa->update($validated);
-            return response()->json(['success' => true, 'message' => 'Data berhasil diperbarui.']);
+            $validatedata = $request->validate([
+                'tanggal' => 'required|date',
+                'jam' => 'nullable|date_format:H:i:s',
+                'permasalahan' => 'required|string',
+                'impact' => 'required|string',
+                'troubleshooting' => 'required|string',
+                'resolve_tanggal' => 'required|date',
+                'resolve_jam' => 'required|date_format:H:i:s'
+            ]);
+    
+            $laporanijasa->update($validatedata);
+    
+            return redirect()->route('laporanijasa.index')->with('success', 'Data Berhasil Diupdate');
         } catch (\Exception $e) {
-            Log::error("Error Update Laporan: " . $e->getMessage());
-            return response()->json(['success' => false, 'message' => 'Gagal memperbarui data.']);
+            Log::error('Error Updating Ijasa data: ' . $e->getMessage());
+            return redirect()->route('laporanijasa.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
     }
 
-    public function destroy($id)
+    public function destroy(LaporanIjasa $laporanijasa)
     {
-        try {
-            $laporanIjasa = LaporanIjasa::findOrFail($id);
-            $laporanIjasa->delete();
+        $laporanijasa->delete();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Data berhasil dihapus.',
-            ]);
-        } catch (\Exception $e) {
-            Log::error("Error Delete Laporan: " . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal menghapus data. Error: ' . $e->getMessage(),
-            ]);
-        }
-    }
-
-    public function getData(Request $request)
-    {
-        try {
-            $filter = $request->input('bulan_tahun', '');
-            $query = LaporanIjasa::query();
-
-            if ($filter) {
-                $query->where('tanggal', 'LIKE', $filter . '%');
-            }
-
-            $data = $query->get();
-
-            return response()->json([
-                'success' => true,
-                'data' => $data,
-            ]);
-        } catch (\Exception $e) {
-            Log::error("Error Fetch Laporan Data: " . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal memuat data. Error: ' . $e->getMessage(),
-            ]);
-        }
+        return redirect()->route('laporanijasa.index')->with('success', 'Data Berhasil Dihapus');
     }
 }

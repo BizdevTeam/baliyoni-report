@@ -11,15 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('laporan_sakits', function (Blueprint $table) {
-            $table->id();   
-            $table->string('bulan_tahun'); // Pastikan tidak ada duplikasi
-            $table->integer('total_sakit')->default(0); // Default value untuk menghindari nilai null
+        Schema::create('laporan_izins', function (Blueprint $table) {
+            $table->id('id_izin');
+            $table->string('bulan');
+            $table->integer('total_izin')->default(0); 
             $table->string('nama');
             $table->timestamps();
-
-            $table->unique(['nama']);
-
         });
     }
 
@@ -28,7 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        
-        Schema::dropIfExists('laporan_sakits');
+        Schema::dropIfExists('laporan_izins');
     }
 };

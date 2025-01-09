@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class LaporanHolding extends Model
 {
-    //
     use HasFactory;
     protected $table = 'laporan_holdings'; // Nama tabel
 

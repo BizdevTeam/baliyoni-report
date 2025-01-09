@@ -11,19 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('laporan_izins', function (Blueprint $table) {
-            $table->id();   
-            $table->string('bulan_tahun'); 
-            $table->integer('total_izin')->default(0); 
+        Schema::create('laporan_terlambats', function (Blueprint $table) {
+            $table->id('id_telat');
+            $table->string('bulan');
+            $table->integer('total_telat')->default(0);
             $table->string('nama');
             $table->timestamps();
         });
     }
 
-    
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        
-        Schema::dropIfExists('laporan_izins');
+        Schema::dropIfExists('laporan_terlambats');
     }
 };

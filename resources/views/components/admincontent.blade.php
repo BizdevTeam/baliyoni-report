@@ -260,7 +260,7 @@
             }
 
             // Laporan Sakit
-            const sakitData = await fetchChartData('{{ route('hrga.laporansakit.data') }}');
+            const sakitData = await fetchChartData('{{ route('laporansakit.index') }}');
             if (sakitData) {
                 const limitedSakitData = sakitData.slice(0, 5); 
                 const labels = limitedSakitData.map(item => item.nama);

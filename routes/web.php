@@ -154,33 +154,8 @@ Route::middleware(['web'])->group(function () {
     });
 
     Route::prefix('supports')->group(function () {
-        // LAPORAN REKAP PENDAPATAN SERVIS ASP
-        Route::get('rekappendapatanservisasp', [RekapPendapatanServisAspController::class, 'index'])
-            ->name('supports.rekappendapatanservisasp');
-        Route::post('rekappendapatanservisasp/store', [RekapPendapatanServisAspController::class, 'store'])
-            ->name('supports.rekappendapatanservisasp.store');
-        Route::put('rekappendapatanservisasp/update/{id}', [RekapPendapatanServisAspController::class, 'update'])
-            ->name('supports.rekappendapatanservisasp.update');
-        Route::get('rekappendapatanservisasp/data', [RekapPendapatanServisAspController::class, 'data'])
-            ->name('supports.rekappendapatanservisasp.data');
-        Route::get('rekappendapatanservisasp/filter', [RekapPendapatanServisAspController::class, 'filterData'])
-            ->name('supports.rekappendapatanservisasp.filter');
-        Route::delete('rekappendapatanservisasp/destroy/{id}', [RekapPendapatanServisAspController::class, 'destroy'])
-            ->name('supports.rekappendapatanservisasp.destroy');
-    
-        // LAPORAN REKAP PIUTANG SERVIS ASP
-        Route::get('rekappiutangservisasp', [RekapPiutangServisAspController::class, 'index'])
-            ->name('supports.rekappiutangservisasp');
-        Route::post('rekappiutangservisasp/store', [RekapPiutangServisAspController::class, 'store'])
-            ->name('supports.rekappiutangservisasp.store');
-        Route::put('rekappiutangservisasp/update/{id}', [RekapPiutangServisAspController::class, 'update'])
-            ->name('supports.rekappiutangservisasp.update');
-        Route::get('rekappiutangservisasp/data', [RekapPiutangServisAspController::class, 'data'])
-            ->name('supports.rekappiutangservisasp.data');
-        Route::get('rekappiutangservisasp/filter', [RekapPiutangServisAspController::class, 'filterData'])
-            ->name('supports.rekappiutangservisasp.filter');
-        Route::delete('rekappiutangservisasp/destroy/{id}', [RekapPiutangServisAspController::class, 'destroy'])
-            ->name('supports.rekappiutangservisasp.destroy');
+        Route::resource('rpsasp', RekapPendapatanServisAspController::class);
+        Route::resource('rpiutangsasp', RekapPiutangServisAspController::class);
     
         // RUTE REKAP PENJUALAN
         Route::get('laporandetrans', [LaporanDetransController::class, 'index'])
@@ -211,80 +186,13 @@ Route::middleware(['web'])->group(function () {
     });
 
     Route::prefix('hrga')->group(function () {
-
-    Route::get('laporansakit', [LaporanSakitController::class, 'index'])
-        ->name('hrga.laporansakit');
-    Route::post('laporansakit/store', [LaporanSakitController::class, 'store'])
-        ->name('hrga.laporansakit.store');
-    Route::put('laporansakit/update/{id}', [LaporanSakitController::class, 'update'])
-        ->name('hrga.laporansakit.update');
-    Route::get('laporansakit/data', [LaporanSakitController::class, 'data'])
-        ->name('hrga.laporansakit.data');
-    Route::get('laporansakit/filter', [LaporanSakitController::class, 'filterData'])
-        ->name('hrga.laporansakit.filter');
-    Route::delete('laporansakit/destroy/{id}', [LaporanSakitController::class, 'destroy'])
-        ->name('hrga.laporansakit.destroy');
-
-    //Route untuk laporan izin hrga
-    Route::get('laporanizin', [LaporanIzinController::class, 'index'])
-        ->name('hrga.laporanizin');
-    Route::post('laporanizin/store', [LaporanIzinController::class, 'store'])
-        ->name('hrga.laporanizin.store');
-    Route::put('laporanizin/update/{id}', [LaporanIzinController::class, 'update'])
-        ->name('hrga.laporanizin.update');
-    Route::get('laporanizin/data', [LaporanIzinController::class, 'data'])
-        ->name('hrga.laporanizin.data');
-    Route::get('laporanizin/filter', [LaporanIzinController::class, 'filterData'])
-        ->name('hrga.laporanizin.filter');
-    Route::delete('laporanizin/destroy/{id}', [LaporanIzinController::class, 'destroy'])
-        ->name('hrga.laporanizin.destroy');
-
-    //Route untuk laporan cuti hrga
-    Route::get('laporancuti', [LaporanCutiController::class, 'index'])
-    ->name('hrga.laporancuti');
-    Route::post('laporancuti/store', [LaporanCutiController::class, 'store'])
-        ->name('hrga.laporancuti.store');
-    Route::put('laporancuti/update/{id}', [LaporanCutiController::class, 'update'])
-        ->name('hrga.laporancuti.update');
-    Route::get('laporancuti/data', [LaporanCutiController::class, 'data'])
-        ->name('hrga.laporancuti.data');
-    Route::get('laporancuti/filter', [LaporanCutiController::class, 'filterData'])
-        ->name('hrga.laporancuti.filter');
-    Route::delete('laporancuti/destroy/{id}', [LaporanCutiController::class, 'destroy'])
-        ->name('hrga.laporancuti.destroy');
-
-    //Route untuk laporan terlambat hrga
-    Route::get('laporanterlambat', [LaporanTerlambatController::class, 'index'])
-    ->name('hrga.laporanterlambat');
-    Route::post('laporanterlambat/store', [LaporanTerlambatController::class, 'store'])
-        ->name('hrga.laporanterlambat.store');
-    Route::put('laporanterlambat/update/{id}', [LaporanTerlambatController::class, 'update'])
-        ->name('hrga.laporanterlambat.update');
-    Route::get('laporanterlambat/data', [LaporanTerlambatController::class, 'data'])
-        ->name('hrga.laporanterlambat.data');
-    Route::get('laporanterlambat/filter', [LaporanTerlambatController::class, 'filterData'])
-        ->name('hrga.laporanterlambat.filter');
-    Route::delete('laporanterlambat/destroy/{id}', [LaporanTerlambatController::class, 'destroy'])
-        ->name('hrga.laporanterlambat.destroy');
-
-    //Route untuk laporan ptboss hrga
-    Route::resource('laporanptbos', LaporanPtBosController::class);
-
+        Route::resource('laporantelat', LaporanTerlambatController::class);
+        Route::resource('laporancuti', LaporanCutiController::class);
+        Route::resource('laporanizin', LaporanIzinController::class);
+        Route::resource('laporansakit', LaporanSakitController::class);
+        Route::resource('laporanptbos', LaporanPtBosController::class);
+        Route::resource('laporanijasa', LaporanIjasaController::class);
     //Route untuk laporan ijasa hrga
-    Route::get('laporanijasa', [LaporanIjasaController::class, 'index'])
-        ->name('hrga.laporanijasa');
-
-    Route::post('laporanijasa/store', [LaporanIjasaController::class, 'store'])
-        ->name('hrga.laporanijasa.store');
-
-    Route::put('laporanijasa/update/{id}', [LaporanIjasaController::class, 'update'])
-        ->name('hrga.laporanijasa.update');
-
-    Route::get('laporanijasa/data', [LaporanIjasaController::class, 'getData'])
-        ->name('hrga.laporanijasa.getData');
-
-    Route::delete('laporanijasa/destroy/{id}', [LaporanIjasaController::class, 'destroy'])
-        ->name('hrga.laporanijasa.destroy');
     });
 });
 
