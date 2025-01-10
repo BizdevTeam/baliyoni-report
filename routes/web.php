@@ -131,22 +131,6 @@ Route::middleware(['web'])->group(function () {
         Route::get('laporandetrans/data', [LaporanDetransController::class, 'getLaporanSamitraData'])
             ->name('supports.laporandetrans.data');
         Route::delete('laporandetrans/{rp}', [LaporanDetransController::class, 'destroy']);
-
-    
-        // LAPORAN REKAP PIUTANG SERVIS ASP
-        Route::get('rekappiutangservisasp', [RekapPiutangServisAspController::class, 'index'])
-            ->name('supports.rekappiutangservisasp');
-        Route::post('rekappiutangservisasp/store', [RekapPiutangServisAspController::class, 'store'])
-            ->name('supports.rekappiutangservisasp.store');
-        Route::put('rekappiutangservisasp/update/{id}', [RekapPiutangServisAspController::class, 'update'])
-            ->name('supports.rekappiutangservisasp.update');
-        Route::get('rekappiutangservisasp/data', [RekapPiutangServisAspController::class, 'data'])
-            ->name('supports.rekappiutangservisasp.data');
-        Route::get('rekappiutangservisasp/filter', [RekapPiutangServisAspController::class, 'filterData'])
-            ->name('supports.rekappiutangservisasp.filter');
-        Route::delete('rekappiutangservisasp/destroy/{id}', [RekapPiutangServisAspController::class, 'destroy'])
-            ->name('supports.rekappiutangservisasp.destroy');
-    
     });
 
     Route::prefix('hrga')->group(function () {
