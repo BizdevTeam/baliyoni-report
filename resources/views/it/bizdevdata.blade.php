@@ -39,11 +39,20 @@
     <div class="mx-auto bg-white p-6 rounded-lg shadow">
         <!-- Page Header -->
         <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Laporan Data Bizdev</h1>
-        <h1 class="text-2xl font-bold">Judul</h1>
-        <h2 class="text-2xl font-bold mb-5">{{ $bizdevbulanan->judul }}</h2>
+        <h2 class="text-2xl font-bold mb-5">Bulan {{ $bizdevbulanan->judul }}</h2>
 
         <!-- Action Buttons -->
         <div class="flex items-center mb-4">
+            <form method="GET" action="{{ route('bizdevdata.index', $bizdevbulanan->id_bizdevbulanan) }}">
+                <div class="flex items-center border border-gray-700 rounded-lg p-2 mr-2 max-w-md">
+                    <input type="text" name="search" placeholder="Search" value="{{ request('search') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
+                    <button type="submit" class="text-gray-500 focus:outline-none" aria-label="Search">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m2.85-7.65a8.5 8.5 0 11-17 0 8.5 8.5 0 0117 0z" />
+                        </svg>
+                    </button>
+                </div>
+            </form>
             <button class="bg-red-600 text-white px-4 py-2 mr-2 rounded shadow float-left flex items-center gap-2">
                 <a href="{{ route('bizdevbulanan.index') }}">Back</a>
             </button>
@@ -151,6 +160,9 @@
                     @endforeach
                 </tbody>
             </table>
+            <div class="m-4">
+                {{ $itbizdevdatas->links('pagination::tailwind') }}
+            </div>
         </div>
     </div>
     </div>

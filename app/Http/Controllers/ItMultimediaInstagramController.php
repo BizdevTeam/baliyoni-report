@@ -9,10 +9,19 @@ use Illuminate\Support\Facades\Log;
 
 class ItMultimediaInstagramController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-            $itmultimediainstagrams = ItMultimediaInstagram::all();
-            return view('it.multimediainstagram', compact('itmultimediainstagrams'));
+        $perPage = $request->input('per_page', 12);
+        $search = $request->input('search');
+
+        $itmultimediainstagrams = ItMultimediaInstagram::query()
+            ->when($search, function($query, $search) {
+                return $query->where('bulan', 'like', "%$search%")
+                             ->orWhere('keterangan', 'like', "%$search%");
+            })
+            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
+            ->paginate($perPage);
+        return view('it.multimediainstagram', compact('itmultimediainstagrams'));
     }
 
     public function store(Request $request)

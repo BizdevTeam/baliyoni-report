@@ -172,7 +172,7 @@
                         <option value="E - Katalog">E - Katalog</option>
                         <option value="E - Katalog Luar Bali">E - Katalog Luar Bali</option>
                         <option value="Balimall">Balimall</option>
-                        <opapotion value="Siplah">Siplah</option>
+                        <option value="Siplah">Siplah</option>
                     </select>
                 </div>
                 <div>

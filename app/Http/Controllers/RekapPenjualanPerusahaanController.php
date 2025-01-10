@@ -23,7 +23,8 @@ class RekapPenjualanPerusahaanController extends Controller
         // Query untuk mencari berdasarkan tahun dan bulan
         $rekappenjualanperusahaans = RekapPenjualanPerusahaan::query()
             ->when($search, function ($query, $search) {
-                return $query->where('bulan', 'LIKE', "%$search%");
+                return $query->where('bulan', 'LIKE', "%$search%")
+                             ->orWhere('perusahaan', 'like', "%$search%");
             })
             ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
             ->paginate($perPage);

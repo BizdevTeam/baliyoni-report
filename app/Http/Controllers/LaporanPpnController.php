@@ -12,9 +12,18 @@ class LaporanPpnController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $laporanppns = LaporanPpn::all();
+        $perPage = $request->input('per_page', 12);
+        $search = $request->input('search');
+
+        $laporanppns = LaporanPpn::query()
+        ->when($search, function($query, $search) {
+            return $query->where('bulan', 'like', "%$search%")
+                         ->orWhere('keterangan', 'like', "%$search%");
+        })
+        ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
+        ->paginate($perPage);
         return view('accounting.laporanppn', compact('laporanppns'));
     }
 

@@ -9,9 +9,18 @@ use Illuminate\Support\Facades\File;
 
 class ItMultimediaTiktokController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $itmultimediatiktoks = ItMultimediaTiktok::all();
+        $perPage = $request->input('per_page', 12);
+        $search = $request->input('search');
+
+        $itmultimediatiktoks = ItMultimediaTiktok::query()
+        ->when($search, function($query, $search) {
+            return $query->where('bulan', 'like', "%$search%")
+                         ->orWhere('keterangan', 'like', "%$search%");
+        })
+        ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
+        ->paginate($perPage);
         return view('it.mutimediatiktok', compact('itmultimediatiktoks'));
     }
 

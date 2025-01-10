@@ -11,7 +11,7 @@ class RekapPendapatanServisAspController extends Controller
 {
     public function index(Request $request)
     {
-        $perPage = $request->input('per_pages', 2);
+        $perPage = $request->input('per_pages', 12);
         $search = $request->input('search');
 
         $rpsasps = RekapPendapatanServisAsp::query()

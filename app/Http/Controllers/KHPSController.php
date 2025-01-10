@@ -14,8 +14,6 @@ class KHPSController extends Controller
         $perPage = $request->input('per_page', 12);
         $search = $request->input('search');
 
-        #$query = KasHutangPiutang::query();
-
         // Query untuk mencari berdasarkan tahun dan bulan
         $kashutangpiutangstoks = KasHutangPiutang::query()
             ->when($search, function ($query, $search) {

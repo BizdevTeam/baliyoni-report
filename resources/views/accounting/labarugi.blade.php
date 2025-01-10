@@ -45,7 +45,16 @@
                 <h1 class="text-2xl mb-4 text-black font-lato">Laporan per Bulan</h1>
                 <!-- Action Buttons -->
                 <div class="flex justify-end gap-2 mb-4" data-aos="fade-left" data-aos-anchor-placement="center-center">
-
+                    <form method="GET" action="{{ route('labarugi.index') }}">
+                        <div class="flex items-center border border-gray-700 rounded-lg p-2 mr-2 max-w-md">
+                            <input type="text" name="search" placeholder="Search" value="{{ request('search') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
+                            <button type="submit" class="text-gray-500 focus:outline-none" aria-label="Search">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m2.85-7.65a8.5 8.5 0 11-17 0 8.5 8.5 0 0117 0z" />
+                                </svg>
+                            </button>
+                        </div>
+                    </form>
                     <button class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-1.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm" data-modal-target="#addEventModal">
                         Add New
                     </button>
@@ -180,6 +189,9 @@
                             @endforeach
                         </tbody>
                     </table>
+                    <div class="m-4">
+                        {{ $laporanlabarugis->links('pagination::tailwind') }}
+                    </div>
                 </div>
             </div>
 

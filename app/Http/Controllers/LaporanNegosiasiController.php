@@ -12,7 +12,7 @@ class LaporanNegosiasiController extends Controller
     public function index(Request $request)
     {
         try {
-            $perPage = $request->input('per_pages', 2);
+            $perPage = $request->input('per_pages', 12);
             $search = $request->input('search');
     
             $laporannegosiasis = LaporanNegosiasi::query()

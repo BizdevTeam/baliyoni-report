@@ -9,7 +9,7 @@ class LaporanPtBosController extends Controller
 {
     public function index(Request $request)
     {
-        $perPage = $request->input('per_page', 2);
+        $perPage = $request->input('per_page', 12);
         $search = $request->input('search');
 
         $laporanptboss = LaporanPtBos::query()
