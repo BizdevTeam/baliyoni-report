@@ -242,7 +242,7 @@ var barChart = new Chart(ctx, {
                 callbacks: {
                     label: function(tooltipItem) {
                         let value = tooltipItem.raw; // Ambil data instansi
-                        return tooltipItem.dataset.label + ': ' + value.toLocaleString(); // Format angka
+                        return tooltipItem.dataset.text + ' : ' + value.toLocaleString(); // Format angka
                     },
                 },
             },
@@ -251,7 +251,7 @@ var barChart = new Chart(ctx, {
             x: {
                 title: {
                     display: true,
-                    text: 'Bulan', // Label sumbu X
+                    text: 'Instansi', // Label sumbu X
                 },
             },
             y: {
@@ -282,17 +282,18 @@ var barChart = new Chart(ctx, {
         const cells = row.querySelectorAll('td');
         return {
             bulan: cells[0]?.innerText.trim() || '',
-            instansi: cells[1]?.innerText.trim() || '',
+            instansi: cells[2]?.innerText.trim() || '',
+            nilai: cells[1]?.innerText.trim() || '',
         };
     });
 
     const tableContent = items
-        .filter(item => item.bulan && item.instansi && item.instansi)
+        .filter(item => item.bulan && item.instansi && item.nilai)
         .map(item => `
             <tr>
-                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.bulan}</td>
-                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${item.instansi}</td>
-                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${item.instansi}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.bulan}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.instansi}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.nilai}</td>
             </tr>
         `).join('');
 
@@ -324,7 +325,7 @@ var barChart = new Chart(ctx, {
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'Laporan_rekap_penjualan.pdf';
+            a.download = 'laporan_penjualan_perinstansi.pdf';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);

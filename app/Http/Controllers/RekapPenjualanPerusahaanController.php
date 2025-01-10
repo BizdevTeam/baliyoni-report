@@ -47,6 +47,7 @@ class RekapPenjualanPerusahaanController extends Controller
             'datasets' => [
                 [
                     'label' => 'Grafik Rekap Penjualan Perusahaan', // Nama dataset
+                    'text' => 'Total Penjualan Perusahaan', // Nama dataset
                     'data' => $data, // Data untuk chart
                     'backgroundColor' => $backgroundColors, // Warna batang random
                 ],

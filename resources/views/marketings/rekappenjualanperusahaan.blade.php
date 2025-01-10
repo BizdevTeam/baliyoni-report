@@ -257,7 +257,7 @@ var barChart = new Chart(ctx, {
                 callbacks: {
                     label: function(tooltipItem) {
                         let value = tooltipItem.raw; // Ambil data nilai
-                        return tooltipItem.dataset.label + ': ' + value.toLocaleString(); // Format angka
+                        return tooltipItem.dataset.text + ' : ' + value.toLocaleString(); // Format angka
                     },
                 },
             },

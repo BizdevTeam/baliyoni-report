@@ -84,7 +84,7 @@
                         <tr class="hover:bg-gray-100">
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanpaketadministrasi->bulan_formatted }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanpaketadministrasi->website }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanpaketadministrasi->total_paket_formatted }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanpaketadministrasi->total_paket }}</td>
                             <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
                                 <!-- Edit Button -->
                                 <button class="bg-red-600 text-white px-3 py-2 rounded" data-modal-target="#editEventModal{{ $laporanpaketadministrasi->id_laporanpaket }}">
@@ -241,7 +241,7 @@ var barChart = new Chart(ctx, {
                 callbacks: {
                     label: function(tooltipItem) {
                         let value = tooltipItem.raw; // Ambil data nilai
-                        return tooltipItem.dataset.label + ': ' + value.toLocaleString(); // Format angka
+                        return tooltipItem.dataset.text + ' : ' + value.toLocaleString(); // Format angka
                     },
                 },
             },
@@ -250,14 +250,14 @@ var barChart = new Chart(ctx, {
             x: {
                 title: {
                     display: true,
-                    text: 'Bulan', // Label sumbu X
+                    text: 'Website', // Label sumbu X
                 },
             },
             y: {
                 beginAtZero: true,
                 title: {
                     display: true,
-                    text: 'Total Penjualan (Rp)', // Label sumbu Y
+                    text: 'Total Paket', // Label sumbu Y
                 },
                 ticks: {
                     callback: function(value) {
@@ -281,7 +281,8 @@ var barChart = new Chart(ctx, {
         const cells = row.querySelectorAll('td');
         return {
             bulan: cells[0]?.innerText.trim() || '',
-            total_paket: cells[1]?.innerText.trim() || '',
+            website: cells[1]?.innerText.trim() || '',
+            total_paket: cells[2]?.innerText.trim() || '',
         };
     });
 
