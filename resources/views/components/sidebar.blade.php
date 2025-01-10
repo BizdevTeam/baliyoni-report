@@ -231,28 +231,28 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('laporansakit.index') }}"
+                        <a href="{{ route("laporansakit.index") }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/laporansakit.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Sakit</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route("laporanizin.index") }}"
+                        <a href="{{ route("laopranizin.index") }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/laporanizin.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Izin</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('laporancuti.index') }}"
+                        <a href="{{ route("laporancuti.index") }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/laporancuti.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Cuti</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('laporantelat.index') }}"
+                        <a href="{{ route("laporanterlambat.index") }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/laporanterlambat.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Terlambat</span>
@@ -360,35 +360,35 @@
                 </button>
                 <ul id="dropdown-marketing" class="hidden py-2 pl-8 space-y-2">
                     <li>
-                        <a href="{{ route("marketings.rekappenjualan") }}"
+                        <a href="{{ route("rekappenjualan.index") }}"
                             class="flex items-center px-3 py-2 text-gray-700  transition">
                             <img src="{{ asset("icon/RekapPenjualan.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Rekap Penjualan</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route("marketings.rekappenjualanperusahaan") }}"
+                        <a href="{{ route("rekappenjualanperusahaan.index") }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/RekapPenjualanPerusahaan.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Rekap Penjualan Perusahaan</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route("marketings.laporanpaketadministrasi") }}"
+                        <a href="{{ route("laporanpaketadministrasi.index") }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/LaporanPaketAdministrasi.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Paket Administrasi</span>
                         </a>
                     </li>
                     <li>
-                       <a href="{{ route("marketings.laporanstatuspaket") }}"
+                       <a href="{{ route("laporanstatuspaket.index") }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/LaporanStatusPaket.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Status Paket </span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route("marketings.laporanperinstansi") }}"
+                        <a href="{{ route("laporanperinstansi.index") }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/LaporanPerinstansi.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Per Instansi</span>
@@ -652,21 +652,21 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('laporanijasa.index') }}"
+                        <a href="{{ route("laporanijasa.index") }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/ijasa.svg") }}" class="w-5 h-5">
                             <span class="ml-2">iJASA</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('laporansakit.index') }}"
+                        <a href="{{ route("laporansakit.index") }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/laporansakit.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Sakit</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route("laporanizin.index") }}"
+                        <a href="{{ route("laopranizin.index") }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/laporanizin.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Izin</span>
@@ -680,7 +680,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('laporantelat.index') }}"
+                        <a href="{{ route("laporanterlambat.index") }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/laporanterlambat.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Terlambat</span>
@@ -776,13 +776,13 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route("supports.laporansamitra") }}"
+                        <a href="{{ route("laporansamitra.index") }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
                             <img src="{{ asset("icon/RekapPenjualan.svg") }}" class="w-5 h-5">
                             <span class="ml-2">PT. Saguna Mitra Transindo</span>
                         </a>
                     </li>
-                        <a href="{{ route("supports.laporandetrans") }}"
+                        <a href="{{ route("laporandetrans.index") }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/RekapPenjualanPerusahaan.svg") }}" class="w-5 h-5">
                             <span class="ml-2">PT. Detran Jelajah Nusantara</span>
