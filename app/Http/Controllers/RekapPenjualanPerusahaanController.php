@@ -36,22 +36,19 @@ class RekapPenjualanPerusahaanController extends Controller
             return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
         }
         
-        $labels = $rekappenjualanperusahaans->pluck('bulan')->toArray();
+        $labels = $rekappenjualanperusahaans->pluck('perusahaan')->toArray();
         $data = $rekappenjualanperusahaans->pluck('total_penjualan')->toArray();
         
         // Generate random colors for each data item
         $backgroundColors = array_map(fn() => getRandomRGBA(), $data);
-        $borderColors = array_map(fn() => getRandomRGBA(1.0), $data);
         
         $chartData = [
             'labels' => $labels, // Labels untuk chart
             'datasets' => [
                 [
-                    'label' => 'Grafik Total Penjualan', // Nama dataset
+                    'label' => 'Grafik Rekap Penjualan Perusahaan', // Nama dataset
                     'data' => $data, // Data untuk chart
                     'backgroundColor' => $backgroundColors, // Warna batang random
-                    'borderColor' => $borderColors,        // Warna border random
-                    'borderWidth' => 1,                    // Ketebalan border
                 ],
             ],
         ];
@@ -143,84 +140,93 @@ class RekapPenjualanPerusahaanController extends Controller
     }
     
     public function exportPDF(Request $request)
-{
-    try {
-        // Validasi input
-        $data = $request->validate([
-            'table' => 'required|string',
-            'chart' => 'required|string',
-        ]);
-
-        // Ambil data dari request
-        $tableHTML = trim($data['table']);
-        $chartBase64 = trim($data['chart']);
-
-        // Validasi isi tabel dan chart untuk mencegah halaman kosong
-        if (empty($tableHTML)) {
-            return response()->json(['success' => false, 'message' => 'Data tabel kosong.'], 400);
-        }
-        if (empty($chartBase64)) {
-            return response()->json(['success' => false, 'message' => 'Data grafik kosong.'], 400);
-        }
-
-        // Buat instance mPDF dengan konfigurasi
-        $mpdf = new \Mpdf\Mpdf([
-            'orientation' => 'L', // Landscape orientation
-            'margin_left' => 10,
-            'margin_right' => 10,
-            'margin_top' => 10, // Kurangi margin atas
-            'margin_bottom' => 10, // Kurangi margin bawah
-            'format' => 'A4', // Ukuran kertas A4
-        ]);
-
-        // Tambahkan header ke PDF
-        $mpdf->SetHeader('Laporan Rekap Penjualan||{PAGENO}');
-
-        // Tambahkan footer ke PDF
-        $mpdf->SetFooter('{DATE j-m-Y}|Laporan Rekap Penjualan|Halaman {PAGENO}');
-
-        // Buat konten tabel dengan gaya CSS yang lebih ketat
-        $tableHTMLContent = "
-            <h1 style='text-align:center; font-size: 16px; margin-top: 32px;'>Laporan Rekap Penjualan Perusahaan</h1>
-            <h2 style='text-align:center; font-size: 12px; margin: 5px 0;'>Data Rekapitulasi</h2>
-            <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
-                <thead>
-                    <tr style='background-color: #f2f2f2;'>
-                        <th style='border: 1px solid #000; padding: 5px;'>Bulan/Tahun</th>
-                        <th style='border: 1px solid #000; padding: 5px;'>Perusahaan</th>
-                        <th style='border: 1px solid #000; padding: 5px;'>Total Penjualan (Rp)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {$tableHTML}
-                </tbody>
-            </table>
-        ";
-
-        // Tambahkan konten tabel ke PDF
-        $mpdf->WriteHTML($tableHTMLContent);
-
-        // Tambahkan halaman baru hanya jika konten chart tersedia
-        if (!empty($chartBase64)) {
-            $chartHTMLContent = "
-                <h1 style='text-align:center; font-size: 16px; margin: 10px 0;'>Grafik Rekap Penjualan Perusahaan</h1>
-                <div style='text-align: center; margin: 10px 0;'>
-                    <img src='{$chartBase64}' alt='Chart' style='max-width: 50%; height: auto;' />
+    {
+        try {
+            // Validasi input
+            $data = $request->validate([
+                'table' => 'required|string',
+                'chart' => 'required|string',
+            ]);
+    
+            // Ambil data dari request
+            $tableHTML = trim($data['table']);
+            $chartBase64 = trim($data['chart']);
+    
+            // Validasi isi tabel dan chart untuk mencegah halaman kosong
+            if (empty($tableHTML)) {
+                return response()->json(['success' => false, 'message' => 'Data tabel kosong.'], 400);
+            }
+            if (empty($chartBase64)) {
+                return response()->json(['success' => false, 'message' => 'Data grafik kosong.'], 400);
+            }
+    
+            // Buat instance mPDF dengan konfigurasi
+            $mpdf = new \Mpdf\Mpdf([
+                'orientation' => 'L', // Landscape orientation
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 35, // Tambahkan margin atas untuk header teks
+                'margin_bottom' => 10, // Kurangi margin bawah
+                'format' => 'A4', // Ukuran kertas A4
+            ]);
+    
+            // Tambahkan gambar sebagai header tanpa margin
+            $headerImagePath = public_path('images/HEADER.png'); // Sesuaikan path
+            $mpdf->SetHTMLHeader("
+                <div style='position: absolute; top: 0; left: 0; width: 100%; height: auto; z-index: -1;'>
+                    <img src='{$headerImagePath}' alt='Header' style='width: 100%; height: auto;' />
                 </div>
+            ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
+    
+            // Tambahkan footer ke PDF
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Rekap Penjualan|Halaman {PAGENO}');
+    
+            // Buat konten tabel dengan gaya CSS yang lebih ketat
+            $tableHTMLContent = "
+                <h1 style='text-align:center; font-size: 16px; margin-top: 50px;'>Laporan Rekap Penjualan Perusahaan</h1>
+                <h2 style='text-align:center; font-size: 12px; margin: 5px 0;'>Data Rekapitulasi</h2>
+                <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
+                    <thead>
+                        <tr style='background-color: #f2f2f2;'>
+                            <th style='border: 1px solid #000; padding: 5px;'>Bulan/Tahun</th>
+                            <th style='border: 1px solid #000; padding: 5px;'>Perusahaan</th>
+                            <th style='border: 1px solid #000; padding: 5px;'>Total Penjualan (Rp)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {$tableHTML}
+                    </tbody>
+                </table>
             ";
-            $mpdf->WriteHTML($chartHTMLContent);
+    
+            // Tambahkan konten tabel ke PDF
+            $mpdf->WriteHTML($tableHTMLContent);
+    
+            // Tambahkan pemisah halaman
+            $mpdf->AddPage();
+    
+            // Tambahkan halaman baru dengan konten grafik
+            if (!empty($chartBase64)) {
+                $chartHTMLContent = "
+                    <h1 style='text-align:center; font-size: 16px; margin: 10px 0;'>Grafik Rekap Penjualan Perusahaan</h1>
+                    <div style='text-align: center; margin: 10px 0;'>
+                        <img src='{$chartBase64}' alt='Chart' style='max-width: 90%; height: auto;' />
+                    </div>
+                ";
+                $mpdf->WriteHTML($chartHTMLContent);
+            }
+    
+            // Return PDF sebagai respon download
+            return response($mpdf->Output('', 'S'), 200)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename="laporan_rekap_penjualan_perusahaan.pdf"');
+        } catch (\Exception $e) {
+            // Log error jika terjadi masalah
+            Log::error('Error exporting PDF: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Gagal mengekspor PDF.'], 500);
         }
-
-        // Return PDF sebagai respon download
-        return response($mpdf->Output('', 'S'), 200)
-            ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'attachment; filename="laporan_rekap_penjualan_perusahaan.pdf"');
-    } catch (\Exception $e) {
-        // Log error jika terjadi masalah
-        Log::error('Error exporting PDF: ' . $e->getMessage());
-        return response()->json(['success' => false, 'message' => 'Gagal mengekspor PDF.'], 500);
     }
-}
+    
 
     public function destroy(RekapPenjualanPerusahaan $rekappenjualanperusahaan)
     {
