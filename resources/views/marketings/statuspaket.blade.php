@@ -84,7 +84,7 @@
                         <tr class="hover:bg-gray-100">
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $statuspaket->bulan_formatted }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $statuspaket->status }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $statuspaket->total_paket_formatted }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $statuspaket->total_paket }}</td>
                             <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
                                 <!-- Edit Button -->
                                 <button class="bg-red-600 text-white px-3 py-2 rounded" data-modal-target="#editEventModal{{ $statuspaket->id_statuspaket }}">
@@ -242,7 +242,7 @@ var barChart = new Chart(ctx, {
                 callbacks: {
                     label: function(tooltipItem) {
                         let value = tooltipItem.raw; // Ambil data nilai
-                        return tooltipItem.dataset.label + ': ' + value.toLocaleString(); // Format angka
+                        return tooltipItem.dataset.text + ' : ' + value.toLocaleString(); // Format angka
                     },
                 },
             },
@@ -251,7 +251,7 @@ var barChart = new Chart(ctx, {
             x: {
                 title: {
                     display: true,
-                    text: 'Bulan', // Label sumbu X
+                    text: 'Status', // Label sumbu X
                 },
             },
             y: {
@@ -282,7 +282,8 @@ var barChart = new Chart(ctx, {
         const cells = row.querySelectorAll('td');
         return {
             bulan: cells[0]?.innerText.trim() || '',
-            total_paket: cells[1]?.innerText.trim() || '',
+            status: cells[1]?.innerText.trim() || '',
+            total_paket: cells[2]?.innerText.trim() || '',
         };
     });
 
@@ -290,9 +291,9 @@ var barChart = new Chart(ctx, {
         .filter(item => item.bulan && item.status && item.total_paket)
         .map(item => `
             <tr>
-                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.bulan}</td>
-                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${item.status}</td>
-                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${item.total_paket}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.bulan}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.status}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.total_paket}</td>
             </tr>
         `).join('');
 
@@ -324,7 +325,7 @@ var barChart = new Chart(ctx, {
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'Laporan_rekap_penjualan.pdf';
+            a.download = 'laporan_status_paket.pdf';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);

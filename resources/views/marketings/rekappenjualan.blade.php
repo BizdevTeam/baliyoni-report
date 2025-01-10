@@ -269,8 +269,8 @@ var barChart = new Chart(ctx, {
         .filter(item => item.bulan && item.total_penjualan)
         .map(item => `
             <tr>
-                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.bulan}</td>
-                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${item.total_penjualan}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.bulan}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.total_penjualan}</td>
             </tr>
         `).join('');
 

@@ -28,9 +28,4 @@ class LaporanPaketAdministrasi extends Model
         return Carbon::parse($this->bulan)->format('m/Y');
     }
 
-    // Menambahkan accessor dengan format Rp
-    public function getTotalPaketFormattedAttribute()
-    {
-        return 'Rp ' . number_format($this->total_paket, 0, ',', '.');
-    }
 }
