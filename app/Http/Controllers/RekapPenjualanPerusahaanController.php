@@ -81,13 +81,26 @@ class RekapPenjualanPerusahaanController extends Controller
                 ],
                 'total_penjualan' => 'required|integer|min:0',
             ]);
+
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = RekapPenjualanPerusahaan::where('bulan', $validatedata['bulan'])
+            ->where('perusahaan', $validatedata['perusahaan'])
+            ->exists();
+
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
     
             RekapPenjualanPerusahaan::create($validatedata);
     
             return redirect()->route('rekappenjualanperusahaan.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
-            Log::error('Error Storing Rekap Penjualan Data: ' . $e->getMessage());
-            Log::info('Perusahaan input:', [$request->input('perusahaan')]);
+            // Logging untuk debug
+            Log::error('Error Storing Rekap Penjualan Data:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'input' => $request->all(),
+            ]);
             return redirect()->route('rekappenjualanperusahaan.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
     }
@@ -96,7 +109,7 @@ class RekapPenjualanPerusahaanController extends Controller
     {
         try {
             // Validasi input
-            $validatedData = $request->validate([
+            $validatedata = $request->validate([
                 'bulan' => 'required|date_format:Y-m',
                 'perusahaan' => [
                 'required',
@@ -118,26 +131,25 @@ class RekapPenjualanPerusahaanController extends Controller
 
                 'total_penjualan' => 'required|integer|min:0',
             ]);
+
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = RekapPenjualanPerusahaan::where('bulan', $validatedata['bulan'])
+            ->where('perusahaan', $validatedata['perusahaan'])
+            ->exists();
+
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
     
             // Update data
-            $rekappenjualanperusahaan->update($validatedData);
+            $rekappenjualanperusahaan->update($validatedata);
     
             // Redirect dengan pesan sukses
-            return redirect()
-                ->route('rekappenjualanperusahaan.index')
-                ->with('success', 'Data berhasil diperbarui.');
-        } catch (ValidationException $e) {
-            // Tangani error validasi
-            return redirect()
-                ->back()
-                ->withErrors($e->errors())
-                ->withInput();
+            return redirect()->route('rekappenjualanperusahaan.index')->with('success', 'Data berhasil diperbarui.');
         } catch (\Exception $e) {
             // Tangani error umum dan log untuk debugging
             Log::error('Error updating Rekap Penjualan: ' . $e->getMessage());
-            return redirect()
-                ->route('rekappenjualanperusahaan.index')
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return redirect()->route('rekappenjualanperusahaan.index')->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
     
@@ -219,16 +231,13 @@ class RekapPenjualanPerusahaanController extends Controller
             }
     
             // Return PDF sebagai respon download
-            return response($mpdf->Output('', 'S'), 200)
-                ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'attachment; filename="laporan_rekap_penjualan_perusahaan.pdf"');
+            return response($mpdf->Output('', 'S'), 200)->header('Content-Type', 'application/pdf')->header('Content-Disposition', 'attachment; filename="laporan_rekap_penjualan_perusahaan.pdf"');
         } catch (\Exception $e) {
             // Log error jika terjadi masalah
             Log::error('Error exporting PDF: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Gagal mengekspor PDF.'], 500);
         }
-    }
-    
+    }   
 
     public function destroy(RekapPenjualanPerusahaan $rekappenjualanperusahaan)
     {
@@ -240,6 +249,7 @@ class RekapPenjualanPerusahaanController extends Controller
             return redirect()->route('rekappenjualanperusahaan.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
     }
+
     public function getRekapPenjualaPerusahaannData()
     {
         $data = RekapPenjualanPerusahaan::all(['bulan','perusahaan','total_penjualan']);

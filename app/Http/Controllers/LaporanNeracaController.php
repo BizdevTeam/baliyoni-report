@@ -16,10 +16,10 @@ class LaporanNeracaController extends Controller
 
         $laporanneracas = LaporanNeraca::query()
         ->when($search, function($query, $search) {
-            return $query->where('dulan', 'like', "%$search%")
+            return $query->where('bulan', 'like', "%$search%")
                          ->orWhere('keterangan', 'like', "%$search%");
         })
-        ->orderByRaw('YEAR(dulan) DESC, MONTH(dulan) ASC')
+        ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
         ->paginate($perPage);
         return view('accounting.neraca', compact('laporanneracas'));
     }
