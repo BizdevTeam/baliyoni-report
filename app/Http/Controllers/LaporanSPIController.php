@@ -8,9 +8,22 @@ use App\Models\LaporanSPI;
 
 class LaporanSPIController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $laporans = LaporanSPI::all();
+        $perPage = $request->input('per_page', 12);
+        $search = $request->input('search');
+
+        $laporans = LaporanSPI::query()
+        ->when($search, function($query, $search) {
+            return $query->where('bulan_tahun', 'like', "%$search%")
+                         ->orWhere('judul', 'like', "%$search%")
+                         ->orWhere('aspek', 'like', "%$search%")
+                         ->orWhere('masalah', 'like', "%$search%")
+                         ->orWhere('solusi', 'like', "%$search%")
+                         ->orWhere('implementasi', 'like', "%$search%");
+        })
+        ->orderByRaw('YEAR(bulan_tahun) DESC, MONTH(bulan_tahun) ASC')
+        ->paginate($perPage);
         return view('spi.laporanspi', compact('laporans'));
     }
 

@@ -9,9 +9,18 @@ use Illuminate\Support\Facades\File;
 
 class LaporanTaxPlaningController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $laporantaxplanings = LaporanTaxPlaning::all();
+        $perPage = $request->input('per_page', 12);
+        $search = $request->input('search');
+
+        $laporantaxplanings = LaporanTaxPlaning::query()
+        ->when($search, function($query, $search) {
+            return $query->where('bulan', 'like', "%$search%")
+                         ->orWhere('keterangan', 'like', "%$search%");
+        })
+        ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
+        ->paginate($perPage);
         return view('accounting.taxplaning', compact('laporantaxplanings'));
     }
 

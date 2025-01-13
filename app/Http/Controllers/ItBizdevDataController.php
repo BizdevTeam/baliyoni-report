@@ -12,14 +12,27 @@ class ItBizdevDataController extends Controller
     /**
      * Tampilkan data berdasarkan bulan yang dipilih.
      */
-    public function index($bizdevbulanan_id)
+    public function index(Request $request, $bizdevbulanan_id)
     {
         try {
             // Cari bulan berdasarkan ID
             $bizdevbulanan = ItBizdevBulanan::findOrFail($bizdevbulanan_id);
 
+            // Search dan Paginate
+            $perPage = $request->input('per_page', 12);
+            $search = $request->input('search');
+
             // Ambil semua data terkait bulan tersebut
-            $itbizdevdatas = $bizdevbulanan->datas;
+            $itbizdevdatas = $bizdevbulanan->datas()
+                ->when($search, function ($query, $search) {
+                    return $query->where('aplikasi', 'like', "%$search%")
+                                 ->orWhere('kondisi_bulanlalu', 'like', "%$search%")
+                                 ->orWhere('kondisi_bulanini', 'like', "%$search%")
+                                 ->orWhere('update', 'like', "%$search%")
+                                 ->orWhere('rencana_implementasi', 'like', "%%$search")
+                                 ->orWhere('keterangan', 'like', "%$search%");
+                })
+                ->paginate($perPage);
 
             return view('it.bizdevdata', compact('bizdevbulanan', 'itbizdevdatas'));
         } catch (ModelNotFoundException $e) {

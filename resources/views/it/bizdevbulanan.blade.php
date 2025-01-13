@@ -42,9 +42,22 @@
         <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Laporan Bizdev Bulanan</h1>
 
         <!-- Action Buttons -->
-        <div class="flex items-center mb-4">
-           
-            <button class="bg-red-600 text-white px-4 py-2 rounded shadow flex items-center gap-2" data-modal-target="#addEventModal">
+        <div class="flex items-center mb-4 gap-2">
+            <form method="GET" action="{{ route('bizdevbulanan.index') }}" class="flex items-center gap-2">
+                <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
+                    <input 
+                        type="month" 
+                        name="search" 
+                        placeholder="Search by Month" 
+                        value="{{ request('search') }}" 
+                        class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" 
+                    />
+                </div>
+                <button type="submit" class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm" aria-label="Search">
+                    Search
+                </button>
+            </form>
+            <button class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm" data-modal-target="#addEventModal">
                 Add New
             </button>
         </div>
@@ -81,7 +94,7 @@
                                 <button class="bg-red-600 text-white px-3 py-2 rounded" data-modal-target="#editEventModal">
                                     <a href="{{ route('bizdevdata.index', $itbizdevbulanan->id_bizdevbulanan) }}">
                                         <i class="fa fa-eye"></i>
-                                        Show
+                                        Detail
                                     </a>
                                 </button>
                                 <!-- Edit Button -->
@@ -128,6 +141,9 @@
                     @endforeach
                 </tbody>
             </table>
+            <div class="m-4">
+                {{ $itbizdevbulanans->links('pagination::tailwind') }}
+            </div>
         </div>
     </div>
     </div>

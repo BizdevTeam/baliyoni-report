@@ -9,9 +9,18 @@ use Illuminate\Support\Facades\Log;
 class ItBizdevBulananController extends Controller
 {
     // Menampilkan semua data
-    public function index()
+    public function index(Request $request)
     {
-        $itbizdevbulanans = ItBizdevBulanan::all();
+        $perPage = $request->input('per_page', 12);
+        $search = $request->input('search');
+
+        $itbizdevbulanans = ItBizdevBulanan::query()
+            ->when($search, function ($query, $search) {
+                return $query->where('bulan', 'LIKE', "%$search%");
+            })
+            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
+            ->paginate($perPage);
+            
         return view('it.bizdevbulanan', compact('itbizdevbulanans'));
     }
 
