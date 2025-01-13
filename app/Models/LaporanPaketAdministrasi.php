@@ -27,5 +27,9 @@ class LaporanPaketAdministrasi extends Model
     {
         return Carbon::parse($this->bulan)->format('m/Y');
     }
-
+    
+    public function getTotalPaketFormattedAttribute()
+    {
+        return number_format($this->total_paket, 0, ',', '.');
+    }
 }

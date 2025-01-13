@@ -108,8 +108,23 @@ Route::middleware(['web'])->group(function () {
 
     // PROCUREMENT
     Route::prefix('procurements')->group(function () {
+        
         Route::resource('laporanholding', LaporanHoldingController::class);
+        Route::get('laporanholding/data', [LaporanHoldingController::class, 'getLaporanStokData'])
+            ->name('procurements.laporanholding.data');
+        Route::post('laporanholding/export-pdf', [LaporanHoldingController::class, 'exportPDF'])
+            ->name('procurements.laporanholding.exportPDF');
+        Route::delete('laporanholding/{rp}', [LaporanHoldingController::class, 'destroy']);
+
+
         Route::resource('laporanstok', LaporanStokController::class);
+        Route::get('laporanstok/data', [LaporanStokController::class, 'getLaporanHoldingData'])
+            ->name('procurements.laporanstok.data');
+        Route::post('laporanstok/export-pdf', [LaporanStokController::class, 'exportPDF'])
+            ->name('procurements.laporanstok.exportPDF');
+        Route::delete('laporanstok/{rp}', [LaporanStokController::class, 'destroy']);
+
+
         Route::resource('laporanoutlet', LaporanOutletController::class);
         Route::resource('laporannegosiasi', LaporanNegosiasiController::class);
     });

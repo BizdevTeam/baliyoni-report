@@ -14,7 +14,7 @@ class RekapPenjualanController extends Controller
     // Show the view
     public function index(Request $request)
     { 
-        $perekappenjualanage = $request->input('per_page', 12);
+        $perekappenjualanage = $request->input('per_page', 5);
         $search = $request->input('search');
 
         #$query = KasHutangPiutang::query();

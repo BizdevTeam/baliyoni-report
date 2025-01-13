@@ -84,7 +84,7 @@
                         <tr class="hover:bg-gray-100">
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanpaketadministrasi->bulan_formatted }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanpaketadministrasi->website }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanpaketadministrasi->total_paket }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanpaketadministrasi->total_paket_formatted }}</td>
                             <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
                                 <!-- Edit Button -->
                                 <button class="bg-red-600 text-white px-3 py-2 rounded" data-modal-target="#editEventModal{{ $laporanpaketadministrasi->id_laporanpaket }}">
