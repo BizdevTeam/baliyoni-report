@@ -23,7 +23,7 @@ class LaporanNegosiasi extends Model
     }
 
     // Menambahkan accessor dengan format Rp
-    public function getNegosiasiFormattedAttribute()
+    public function getTotalNegosiasiFormattedAttribute()
     {
         return 'Rp ' . number_format($this->total_negosiasi, 0, ',', '.');
     }

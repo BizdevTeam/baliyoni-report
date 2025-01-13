@@ -334,7 +334,7 @@ var barChart = new Chart(ctx, {
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'Laporan_rekap_penjualan.pdf';
+            a.download = 'laporan_holding.pdf';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);

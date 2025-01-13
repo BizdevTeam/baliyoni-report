@@ -277,10 +277,10 @@
         .map(item => `
             <tr>
                 <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.bulan}</td>
-                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${item.kas}</td>
-                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${item.hutang}</td>
-                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${item.piutang}</td>
-                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${item.stok}</td>
+                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.kas}</td>
+                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.hutang}</td>
+                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.piutang}</td>
+                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.stok}</td>
             </tr>
         `).join('');
 

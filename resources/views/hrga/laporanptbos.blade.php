@@ -161,16 +161,11 @@
             </table>
         <div class="m-4">
             {{ $laporanptboss->links('pagination::tailwind') }}
-        </div>
-        </div>
-        </div>
-        <div class="mx-auto bg-white p-6 mt-3 rounded-lg shadow">
-            <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Diagram</h1>
-            <div class="mt-6 items-center text-center mx-auto w-[600px]">
-                <canvas id="pieChart"></canvas>
             </div>
         </div>
     </div>
+</div>
+</div>
 
     <!-- Modal untuk Add Event -->
 <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">

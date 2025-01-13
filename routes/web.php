@@ -48,6 +48,8 @@ Route::middleware(['web'])->group(function () {
         Route::post('khps/export-pdf', [KHPSController::class, 'exportPDF'])->name('accounting.khps.exportPDF');
         Route::get('khps/data', [KHPSController::class, 'getKashutangpiutangstokData'])->name('accounting.khps.data');
         Route::resource('aruskas', ArusKasController::class);
+        Route::post('aruskas/export-pdf', [ArusKasController::class, 'exportPDF'])
+        ->name('accounting.aruskas.exportPDF');
     });
 
     // IT
@@ -126,7 +128,15 @@ Route::middleware(['web'])->group(function () {
 
 
         Route::resource('laporanoutlet', LaporanOutletController::class);
+        Route::post('laporanoutlet/export-pdf', [LaporanOutletController::class, 'exportPDF'])
+        ->name('procurements.laporanoutlet.exportPDF');
+
         Route::resource('laporannegosiasi', LaporanNegosiasiController::class);
+        Route::post('laporannegosiasi/export-pdf', [LaporanNegosiasiController::class, 'exportPDF'])
+        ->name('procurements.laporannegosiasi.exportPDF');
+        Route::get('laporannegosiasi/data', [LaporanNegosiasiController::class, 'getLaporanNegosiasiData'])
+        ->name('procurements.laporannegosiasi.data');
+
     });
 
     Route::prefix('supports')->group(function () {

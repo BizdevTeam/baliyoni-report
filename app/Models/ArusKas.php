@@ -22,12 +22,12 @@ class ArusKas extends Model
     }
 
     // Menambahkan accessor dengan format Rp
-    public function getMasukFormattedAttribute()
+    public function getKasMasukFormattedAttribute()
     {
         return 'Rp ' . number_format($this->kas_masuk, 0, ',', '.');
     }
 
-    public function getKeluarFormattedAttribute()
+    public function getKasKeluarFormattedAttribute()
     {
         return 'Rp ' . number_format($this->kas_keluar, 0, ',', '.');
     }

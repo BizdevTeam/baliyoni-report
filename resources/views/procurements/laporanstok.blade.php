@@ -76,7 +76,7 @@
             <table class="table-auto w-full border-collapse border border-gray-300" id="data-table">
                 <thead class="bg-gray-200">
                     <tr>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Bulan/Tahun</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Total Nilai Stok</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Aksi</th>
                     </tr>
@@ -113,7 +113,7 @@
                                     @method('PUT')
                                     <div class="space-y-4">
                                         <div>
-                                            <label for="bulan" class="block text-sm font-medium">Bulan</label>
+                                            <label for="bulan" class="block text-sm font-medium">Bulan/Tahun</label>
                                             <input type="month" name="bulan" class="w-full p-2 border rounded" value="{{ $laporanstok->bulan }}" required>
                                         </div>
                                         <div>
@@ -155,7 +155,7 @@
             @csrf
             <div class="space-y-4">
                 <div>
-                    <label for="bulan" class="block text-sm font-medium">Bulan</label>
+                    <label for="bulan" class="block text-sm font-medium">Bulan/Tahun</label>
                     <input type="month" name="bulan" class="w-full p-2 border rounded" required>
                 </div>
                 <div>
@@ -233,7 +233,7 @@ var barChart = new Chart(ctx, {
             x: {
                 title: {
                     display: true,
-                    text: 'Bulan', // Label sumbu X
+                    text: 'Bulan/Tahun', // Label sumbu X
                 },
             },
             y: {
@@ -305,7 +305,7 @@ var barChart = new Chart(ctx, {
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'Laporan_rekap_penjualan.pdf';
+            a.download = 'laporan_stok.pdf';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
