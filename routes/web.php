@@ -159,10 +159,26 @@ Route::middleware(['web'])->group(function () {
     });
 
     Route::prefix('hrga')->group(function () {
-        Route::resource('laporantelat', LaporanTerlambatController::class);
+        Route::resource('laporanterlambat', LaporanTerlambatController::class);
+        Route::post('laporanterlambat/export-pdf', [LaporanTerlambatController::class, 'exportPDF'])
+        ->name('hrga.laporanterlambat.exportPDF');
+
         Route::resource('laporancuti', LaporanCutiController::class);
+        Route::post('laporancuti/export-pdf', [LaporanCutiController::class, 'exportPDF'])
+        ->name('hrga.laporancuti.exportPDF');
+        Route::delete('laporancuti/{rp}', [LaporanCutiController::class, 'destroy']);
+
+
         Route::resource('laporanizin', LaporanIzinController::class);
+        Route::post('laporanizin/export-pdf', [LaporanIzinController::class, 'exportPDF'])
+        ->name('hrga.laporanizin.exportPDF');
+
         Route::resource('laporansakit', LaporanSakitController::class);
+        Route::post('laporansakit/export-pdf', [LaporanSakitController::class, 'exportPDF'])
+        ->name('hrga.laporansakit.exportPDF');
+        Route::delete('laporansakit/{rp}', [LaporanSakitController::class, 'destroy']);
+
+
         Route::resource('laporanptbos', LaporanPtBosController::class);
         Route::resource('laporanijasa', LaporanIjasaController::class);
     //Route untuk laporan ijasa hrga

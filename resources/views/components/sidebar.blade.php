@@ -252,7 +252,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route("laporantelat.index") }}"
+                        <a href="{{ route("laporanterlambat.index") }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/laporanterlambat.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Terlambat</span>
@@ -680,7 +680,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route("laporantelat.index") }}"
+                        <a href="{{ route("laporanterlambat.index") }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/laporanterlambat.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Terlambat</span>

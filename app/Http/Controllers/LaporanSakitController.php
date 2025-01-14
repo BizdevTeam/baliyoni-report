@@ -47,8 +47,8 @@ class LaporanSakitController extends Controller
             'labels' => $labels, // Labels untuk chart
             'datasets' => [
                 [
-                    'label' => 'Grafik Laporan Sakit', // Nama dataset
-                    'text' => 'Total Sakit', // Nama dataset
+                    'label' => 'Grafik Laporan Sakit', // Nama Karyawan dataset
+                    'text' => 'Total Sakit', // Nama Karyawan dataset
                     'data' => $data, // Data untuk chart
                     'backgroundColor' => $backgroundColors, // Warna batang random
                 ],
@@ -163,13 +163,13 @@ class LaporanSakitController extends Controller
     
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $tableHTMLContent = "
-                <h1 style='text-align:center; font-size: 16px; margin-top: 50px;'>Laporan Rekap Penjualan Perusahaan</h1>
+                <h1 style='text-align:center; font-size: 16px; margin-top: 50px;'>Laporan Sakit</h1>
                 <h2 style='text-align:center; font-size: 12px; margin: 5px 0;'>Data Rekapitulasi</h2>
                 <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                     <thead>
                         <tr style='background-color: #f2f2f2;'>
                             <th style='border: 1px solid #000; padding: 5px;'>Bulan/Tahun</th>
-                            <th style='border: 1px solid #000; padding: 5px;'>Nama</th>
+                            <th style='border: 1px solid #000; padding: 5px;'>Nama Karyawan</th>
                             <th style='border: 1px solid #000; padding: 5px;'>Total Sakit</th>
                         </tr>
                     </thead>
@@ -188,7 +188,7 @@ class LaporanSakitController extends Controller
             // Tambahkan halaman baru dengan konten grafik
             if (!empty($chartBase64)) {
                 $chartHTMLContent = "
-                    <h1 style='text-align:center; font-size: 16px; margin: 10px 0;'>Grafik Rekap Penjualan Perusahaan</h1>
+                    <h1 style='text-align:center; font-size: 16px; margin: 10px 0;'>Grafik Laporan Sakit</h1>
                     <div style='text-align: center; margin: 10px 0;'>
                         <img src='{$chartBase64}' alt='Chart' style='max-width: 90%; height: auto;' />
                     </div>

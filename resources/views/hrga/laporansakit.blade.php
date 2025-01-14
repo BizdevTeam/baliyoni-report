@@ -73,13 +73,13 @@
 
         <!-- Event Table -->
         <div class="overflow-x-auto bg-white shadow-md">
-            <table class="table-auto w-full border-collapse border border-gray-300">
+            <table class="table-auto w-full border-collapse border border-gray-300" id="data-table">
                 <thead class="bg-gray-200">
                     <tr>
                         <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Nama Karyawan</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Total Sakit</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Action</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -105,6 +105,7 @@
                                 </form>
                             </td>
                         </tr>
+                        
                         <!-- Modal for Edit Event -->
                         <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="editEventModal{{ $laporansakit->id_sakit }}">
                             <div class="bg-white w-1/2 p-6 rounded shadow-lg">
@@ -122,7 +123,7 @@
                                             <input type="text" name="nama" class="w-full p-2 border rounded" value="{{ $laporansakit->nama }}" required>
                                         </div>
                                         <div>
-                                            <label for="total_sakit" class="block text-sm font-medium">Total Sakit</label>
+                                            <label for="total_sakit" class="block text-sm font-medium">Total Penjualan</label>
                                             <input type="number" name="total_sakit" class="w-full p-2 border rounded" value="{{ $laporansakit->total_sakit }}" required>
                                         </div>
                                     </div>
@@ -168,8 +169,8 @@
                     <input type="text" name="nama" class="w-full p-2 border rounded" required>
                 </div>
                 <div>
-                    <label for="total_sakit" class="block text-sm font-medium">Total Sakit</label>
-                    <input type="text" name="total_sakit" class="w-full p-2 border rounded" required>
+                    <label for="total_sakit" class="block text-sm font-medium">Total Penjualan</label>
+                    <input type="number" name="total_sakit" class="w-full p-2 border rounded" required>
                 </div>
             </div>
             <div class="mt-4 flex justify-end gap-2">
@@ -182,6 +183,7 @@
 
 </body>
 <script>
+
     const chartCanvas = document.getElementById('chart');
     // Mengatur tombol untuk membuka modal add
     document.querySelector('[data-modal-target="#addEventModal"]').addEventListener('click', function() {
@@ -232,7 +234,7 @@ var barChart = new Chart(ctx, {
                 callbacks: {
                     label: function(tooltipItem) {
                         let value = tooltipItem.raw; // Ambil data nilai
-                        return tooltipItem.dataset.text + ' : ' + value.toLocaleString(); // Format angka
+                        return tooltipItem.dataset.label + ': ' + value.toLocaleString(); // Format angka
                     },
                 },
             },
@@ -241,7 +243,7 @@ var barChart = new Chart(ctx, {
             x: {
                 title: {
                     display: true,
-                    text: 'Perusahaan', // Label sumbu X
+                    text: 'Bulan', // Label sumbu X
                 },
             },
             y: {
@@ -315,7 +317,7 @@ var barChart = new Chart(ctx, {
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'laporan_sakit.pdf';
+            a.download = 'laporansakit.pdf';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
