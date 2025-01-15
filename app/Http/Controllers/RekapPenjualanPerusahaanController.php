@@ -109,47 +109,48 @@ class RekapPenjualanPerusahaanController extends Controller
     {
         try {
             // Validasi input
-            $validatedata = $request->validate([
+            $validatedData = $request->validate([
                 'bulan' => 'required|date_format:Y-m',
                 'perusahaan' => [
                 'required',
                 Rule::in([
-                    'PT. BALI UNGGUL SEJAHTERA',
-                    'CV. DANA RASA',
-                    'CV. LAGAAN SAKETI',
-                    'CV. BALI JAKTI INFORMATIK',
-                    'CV. BALI LINGGA KOMPUTER',
-                    'CV. ARTSOLUTION',
-                    'PT. BALI LINGGA SAKA GUMI',
-                    'CV. SAHABAT UTAMA',
-                    'CV. N & b NET ACCESS',
-                    'PT. ELKA SOLUTION NUSANTARA',
-                    'CV. ARINDAH',
-                    'ARFALINDO'
+                        'PT. BALI UNGGUL SEJAHTERA',
+                        'CV. DANA RASA',
+                        'CV. LAGAAN SAKETI',
+                        'CV. BALI JAKTI INFORMATIK',
+                        'CV. BALI LINGGA KOMPUTER',
+                        'CV. ARTSOLUTION',
+                        'PT. BALI LINGGA SAKA GUMI',
+                        'CV. SAHABAT UTAMA',
+                        'CV. N & b NET ACCESS',
+                        'PT. ELKA SOLUTION NUSANTARA',
+                        'CV. ARINDAH',
+                        'ARFALINDO'
                 ]),
             ],
 
                 'total_penjualan' => 'required|integer|min:0',
             ]);
-
-            // Cek kombinasi unik bulan dan perusahaan
-            $exists = RekapPenjualanPerusahaan::where('bulan', $validatedata['bulan'])
-            ->where('perusahaan', $validatedata['perusahaan'])
-            ->exists();
-
-            if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
-            }
     
             // Update data
-            $rekappenjualanperusahaan->update($validatedata);
+            $rekappenjualanperusahaan->update($validatedData);
     
             // Redirect dengan pesan sukses
-            return redirect()->route('rekappenjualanperusahaan.index')->with('success', 'Data berhasil diperbarui.');
+            return redirect()
+                ->route('rekappenjualanperusahaan.index')
+                ->with('success', 'Data berhasil diperbarui.');
+        } catch (ValidationException $e) {
+            // Tangani error validasi
+            return redirect()
+                ->back()
+                ->withErrors($e->errors())
+                ->withInput();
         } catch (\Exception $e) {
             // Tangani error umum dan log untuk debugging
-            Log::error('Error updating Rekap Penjualan: ' . $e->getMessage());
-            return redirect()->route('rekappenjualanperusahaan.index')->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            Log::error('Error updating Rekap Pendapatan Perusahaan: ' . $e->getMessage());
+            return redirect()
+                ->route('rekappendapatanservisasp.index')
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
     

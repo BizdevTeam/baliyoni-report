@@ -36,7 +36,7 @@ class LaporanPaketAdministrasiController extends Controller
             return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
         }
         
-        $labels = $laporanpaketadministrasis->pluck('website    ')->toArray();
+        $labels = $laporanpaketadministrasis->pluck('website')->toArray();
         $data = $laporanpaketadministrasis->pluck('total_paket')->toArray();
         
         // Generate random colors for each data item

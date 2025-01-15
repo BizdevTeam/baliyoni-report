@@ -46,7 +46,7 @@ class LaporanPerInstansiController extends Controller
             'labels' => $labels, // Labels untuk chart
             'datasets' => [
                 [
-                    'label' => 'Grafik Total Penjualan', // Nama dataset
+                    'label' => 'Grafik Laporan Per Instansi', // Nama dataset
                     'text' => 'Total Penjualan Instansi', // Nama dataset
                     'data' => $data, // Data untuk chart
                     'backgroundColor' => $backgroundColors, // Warna batang random
@@ -66,9 +66,14 @@ class LaporanPerInstansiController extends Controller
                     Rule::in([
                         'Badung',
                         'Denpasar',
-                        'Provinsi',
+                        'Tabanan',
+                        'Gianyar',
+                        'Karangasem',
                         'Bangli',
+                        'Singaraja',
+                        'Jembrana',
                         'Klungkung',
+                        'Provinsi',
                     ]),
                 ],
                 'nilai' => 'required|integer|min:0',
@@ -95,9 +100,14 @@ class LaporanPerInstansiController extends Controller
                 Rule::in([
                     'Badung',
                     'Denpasar',
-                    'Provinsi',
+                    'Tabanan',
+                    'Gianyar',
+                    'Karangasem',
                     'Bangli',
+                    'Singaraja',
+                    'Jembrana',
                     'Klungkung',
+                    'Provinsi',
                 ]),
             ],
                 'nilai' => 'required|integer|min:0',

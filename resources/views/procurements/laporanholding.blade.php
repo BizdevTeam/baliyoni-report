@@ -121,11 +121,6 @@
                                         <div>
                                             <label for="perusahaan" class="block text-sm font-medium">Pilih Perusahaan</label>
                                             <select name="perusahaan" class="w-full p-2 border rounded" required>
-                                                'PT. Baliyoni Saguna',
-                                                'CV. ELKA MANDIRI',
-                                                'PT. NABA TECHNOLOGY SOLUTIONS',
-                                                'CV. BHIRMA TEKNIK',
-                                                'PT. DWI SRIKANDI NUSANTARA'
                                                 <option value="PT. Baliyoni Saguna" {{ $laporanholding->perusahaan == 'PT. Baliyoni Saguna' ? 'selected' : '' }}>PT. Baliyoni Saguna</option>
                                                 <option value="CV. ELKA MANDIRI" {{ $laporanholding->perusahaan == 'CV. ELKA MANDIRI' ? 'selected' : '' }}>CV. ELKA MANDIRI</option>
                                                 <option value="PT. NABA TECHNOLOGY SOLUTIONS" {{ $laporanholding->perusahaan == 'PT. NABA TECHNOLOGY SOLUTIONS' ? 'selected' : '' }}>PT. NABA TECHNOLOGY SOLUTIONS</option>
@@ -134,7 +129,7 @@
                                             </select>
                                         </div>
                                         <div>
-                                            <label for="nilai" class="block text-sm font-medium">Total Holding</label>
+                                            <label for="nilai" class="block text-sm font-medium">NIlai Holding</label>
                                             <input type="number" name="nilai" class="w-full p-2 border rounded" value="{{ $laporanholding->nilai }}" required>
                                         </div>
                                     </div>
@@ -186,7 +181,7 @@
                     </select>
                 </div>
                 <div>
-                    <label for="nilai" class="block text-sm font-medium">Total Holding</label>
+                    <label for="nilai" class="block text-sm font-medium">NIlai Holding</label>
                     <input type="number" name="nilai" class="w-full p-2 border rounded" required>
                 </div>
             </div>
@@ -267,7 +262,7 @@ var barChart = new Chart(ctx, {
                 beginAtZero: true,
                 title: {
                     display: true,
-                    text: 'Total Holding (Rp)', // Label sumbu Y
+                    text: 'NIlai Holding (Rp)', // Label sumbu Y
                 },
                 ticks: {
                     callback: function(value) {

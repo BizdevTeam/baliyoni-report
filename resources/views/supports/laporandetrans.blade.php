@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Laporan Pengiriman Detrans</title>
+    <title>Rekap Pendapatan Pengiriman Luar Bali (PT Detrans Jelajah Nusantara)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @vite('resources/css/app.css')
@@ -37,7 +37,7 @@
         <!-- Main Content -->
         <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
             <div class="mx-auto bg-white p-6 rounded-lg shadow">
-                <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Laporan Pengiriman Detrans</h1>
+                <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Rekap Pendapatan Luar Bali (PT Detrans Jelajah Nusantara)</h1>
         <!-- Action Buttons -->
         <div class="flex items-center mb-4 gap-2">
             <form method="GET" action="{{ route('laporandetrans.index') }}" class="flex items-center gap-2">
@@ -252,7 +252,7 @@ var barChart = new Chart(ctx, {
     },
 });
 
-    async function exportToPDF() {
+async function exportToPDF() {
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
     if (!csrfToken) {
         alert('CSRF token tidak ditemukan. Pastikan meta tag CSRF disertakan.');
@@ -260,24 +260,32 @@ var barChart = new Chart(ctx, {
     }
 
     // Ambil data dari tabel
-    const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
-        const cells = row.querySelectorAll('td');
-        return {
-            bulan: cells[0]?.innerText.trim() || '',
-            total_pengiriman: cells[1]?.innerText.trim() || '',
-        };
-    });
+    const tableRows = document.querySelectorAll('#data-table tbody tr');
+    if (tableRows.length === 0) {
+        alert('Tabel data kosong. Tidak dapat mengekspor ke PDF.');
+        return;
+    }
 
-    const tableContent = items
-        .filter(item => item.bulan && item.total_pengiriman)
-        .map(item => `
-            <tr>
-                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.bulan}</td>
-                <td style="border: 1px solid #000; padding: 8px; text-align: left;">${item.total_pengiriman}</td>
-            </tr>
-        `).join('');
+    const tableContent = Array.from(tableRows)
+        .map(row => {
+            const cells = row.querySelectorAll('td');
+            if (cells.length < 2) return ''; // Pastikan ada dua kolom (bulan dan total_pengiriman)
+            const bulan = cells[0]?.innerText.trim() || '-';
+            const total_pengiriman = cells[1]?.innerText.trim() || '-';
+            return `
+                <tr>
+                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${bulan}</td>
+                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${total_pengiriman}</td>
+                </tr>
+            `;
+        })
+        .filter(row => row !== '')
+        .join('');
 
-    const pdfTable = tableContent;
+    if (!tableContent) {
+        alert('Tidak ada data yang valid di tabel.');
+        return;
+    }
 
     const chartCanvas = document.querySelector('#chart');
     if (!chartCanvas) {
@@ -285,7 +293,7 @@ var barChart = new Chart(ctx, {
         return;
     }
 
-    const chartBase64 = chartCanvas.toDataURL();
+    const chartBase64 = chartCanvas.toDataURL('image/png');
 
     try {
         const response = await fetch('/supports/laporandetrans/export-pdf', {
@@ -295,12 +303,12 @@ var barChart = new Chart(ctx, {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                table: pdfTable,
+                table: tableContent,
                 chart: chartBase64,
             }),
         });
 
-    if (response.ok) {
+        if (response.ok) {
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -310,13 +318,15 @@ var barChart = new Chart(ctx, {
             a.click();
             document.body.removeChild(a);
         } else {
-            alert('Gagal mengekspor PDF.');
+            const errorData = await response.json();
+            alert(`Gagal mengekspor PDF: ${errorData.message || 'Kesalahan tidak diketahui'}`);
         }
     } catch (error) {
         console.error('Error exporting to PDF:', error);
-        alert('Terjadi kesalahan saat mengekspor PDF.');
+        alert('Terjadi kesalahan saat mengekspor PDF. Periksa koneksi atau coba lagi.');
     }
 }
+
 
 </script>
 </html>

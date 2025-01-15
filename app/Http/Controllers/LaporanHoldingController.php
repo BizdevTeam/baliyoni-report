@@ -47,7 +47,7 @@ class LaporanHoldingController extends Controller
             'datasets' => [
                 [
                     'label' => 'Grafik Laporan Holding', // Nama dataset
-                    'text' => 'Total Holding', // Nama dataset
+                    'text' => 'Nilai Holding', // Nama dataset
                     'data' => $data, // Data untuk chart
                     'backgroundColor' => $backgroundColors, // Warna batang random
                 ],
@@ -100,7 +100,6 @@ class LaporanHoldingController extends Controller
                     'PT. DWI SRIKANDI NUSANTARA'
                 ]),
             ],
-
                 'nilai' => 'required|integer|min:0',
             ]);
     
@@ -177,7 +176,7 @@ class LaporanHoldingController extends Controller
                         <tr style='background-color: #f2f2f2;'>
                             <th style='border: 1px solid #000; padding: 5px;'>Bulan/Tahun</th>
                             <th style='border: 1px solid #000; padding: 5px;'>Perusahaan</th>
-                            <th style='border: 1px solid #000; padding: 5px;'>Nilai (Rp)</th>
+                            <th style='border: 1px solid #000; padding: 5px;'>Nilai Holding (Rp)</th>
                         </tr>
                     </thead>
                     <tbody>
