@@ -240,7 +240,7 @@ var barChart = new Chart(ctx, {
                 beginAtZero: true,
                 title: {
                     display: true,
-                    text: 'Total Penjualan (Rp)', // Label sumbu Y
+                    text: 'Total Pengiriman (Rp)', // Label sumbu Y
                 },
                 ticks: {
                     callback: function(value) {

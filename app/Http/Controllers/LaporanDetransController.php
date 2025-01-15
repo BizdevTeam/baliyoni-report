@@ -159,29 +159,27 @@ class LaporanDetransController extends Controller
 
         // Konten HTML
         $htmlContent = "
-<div style='display: flex; flex-direction: row; align-items: flex-start; gap: 20px;'>
-    <div style='width: 30%; border: 1px solid #ddd; padding: 10px;'>
-        <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Data Rekapitulasi</h2>
-        <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
-            <thead>
-                <tr style='background-color: #f2f2f2;'>
-                    <th style='border: 1px solid #000; padding: 5px;'>Bulan</th>
-                    <th style='border: 1px solid #000; padding: 5px;'>Total Penjualan (Rp)</th>
-                </tr>
-            </thead>
-            <tbody>
-                {$tableHTML}
-            </tbody>
-        </table>
-    </div>
-    <div style='width: 65%; text-align: center; border: 1px solid #ddd; padding: 10px;'>
-        <h2 style='font-size: 14px; margin-bottom: 10px;'>Grafik Penjualan</h2>
-        <img src='{$chartBase64}' style='width: 100%; height: auto; border: 1px solid #ccc;' alt='Grafik Penjualan' />
-    </div>
-</div>
-";
-
-
+        <div style='display: flex; flex-direction: row; align-items: flex-start; gap: 20px;'>
+            <div style='width: 30%;'>
+                <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Data Rekapitulasi</h2>
+                <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
+                    <thead>
+                        <tr style='background-color: #f2f2f2;'>
+                            <th style='border: 1px solid #000; padding: 5px;'>Bulan</th>
+                            <th style='border: 1px solid #000; padding: 5px;'>Total Penjualan (Rp)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {$tableHTML}
+                    </tbody>
+                </table>
+            </div>
+            <div style='width: 25%; text-align: center;'>
+                <h2 style='font-size: 14px; margin-bottom: 10px;'>Grafik Penjualan</h2>
+                <img src='{$chartBase64}' style='width: 100%; height: auto;' alt='Grafik Penjualan' />
+            </div>
+        </div>
+        ";
         // Tambahkan konten ke PDF
         $mpdf->WriteHTML($htmlContent);
 
