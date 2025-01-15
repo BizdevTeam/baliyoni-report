@@ -297,13 +297,13 @@
                 </button>
                 <ul id="dropdown-support" class="hidden py-2 pl-8 space-y-2">
                     <li>
-                        <a href="{{ route('rpsasp.index') }}"
+                        <a href="{{ route('rekappendapatanservisasp.index') }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
                             <img src="{{ asset("icon/RekapPenjualan.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Rekap Pendapatan Servis ASP</span>
                         </a>
                     </li>
-                        <a href="{{ route('rpiutangsasp.index') }}"
+                        <a href="{{ route('rekappiutangservisasp.index') }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/RekapPenjualanPerusahaan.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Rekap Piutang Servis ASP</span>
@@ -763,13 +763,13 @@
                 </button>
                 <ul id="dropdown-support" class="hidden py-2 pl-8 space-y-2">
                     <li>
-                        <a href="{{ route('rpsasp.index') }}"
+                        <a href="{{ route('rekappendapatanservisasp.index') }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
                             <img src="{{ asset("icon/RekapPenjualan.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Rekap Pendapatan Servis ASP</span>
                         </a>
                     </li>
-                        <a href="{{ route('rpiutangsasp.index') }}"
+                        <a href="{{ route('rekappiutangservisasp.index') }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/RekapPenjualanPerusahaan.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Rekap Piutang Servis ASP</span>

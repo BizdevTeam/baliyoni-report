@@ -22,7 +22,7 @@ class RekapPendapatanServisASP extends Model
     }
 
     // Menambahkan accessor dengan format Rp
-    public function getNilaiFormattedAttribute()
+    public function getNilaiPendapatanFormattedAttribute()
     {
         return 'Rp ' . number_format($this->nilai_pendapatan, 0, ',', '.');
     }

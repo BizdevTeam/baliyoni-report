@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Rekap Pendapatan Service ASP</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Rekap Pendapatan Servis ASP</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @vite('resources/css/app.css')
@@ -36,10 +37,10 @@
         <!-- Main Content -->
         <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
             <div class="mx-auto bg-white p-6 rounded-lg shadow">
-                <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Rekap Pendapatan Service ASP</h1>
+                <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Rekap Pendapatan Servis ASP</h1>
         <!-- Action Buttons -->
         <div class="flex items-center mb-4 gap-2">
-            <form method="GET" action="{{ route('rpsasp.index') }}" class="flex items-center gap-2">
+            <form method="GET" action="{{ route('rekappendapatanservisasp.index') }}" class="flex items-center gap-2">
                 <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
                     <input 
                         type="month" 
@@ -72,29 +73,29 @@
 
         <!-- Event Table -->
         <div class="overflow-x-auto bg-white shadow-md">
-            <table class="table-auto w-full border-collapse border border-gray-300">
+            <table class="table-auto w-full border-collapse border border-gray-300" id="data-table">
                 <thead class="bg-gray-200">
                     <tr>
                         <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">pelaksana</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Nilai</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Action</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Pelaksana</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Nilai Pendapatan</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($rpsasps as $rpsasp)
+                    @foreach ($rekappendapatanservisasps as $rekappendapatanservisasp)
                         <tr class="hover:bg-gray-100">
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $rpsasp->bulan_formatted }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $rpsasp->pelaksana }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $rpsasp->nilai_formatted }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $rekappendapatanservisasp->bulan_formatted }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $rekappendapatanservisasp->pelaksana }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $rekappendapatanservisasp->nilai_pendapatan_formatted }}</td>
                             <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
                                 <!-- Edit Button -->
-                                <button class="bg-red-600 text-white px-3 py-2 rounded" data-modal-target="#editEventModal{{ $rpsasp->id_rpsasp }}">
+                                <button class="bg-red-600 text-white px-3 py-2 rounded" data-modal-target="#editEventModal{{ $rekappendapatanservisasp->id_rpsasp }}">
                                     <i class="fa fa-pen"></i>
                                     Edit
                                 </button>
                                 <!-- Delete Form -->
-                                <form method="POST" action="{{ route('rpsasp.destroy', $rpsasp->id_rpsasp) }}">
+                                <form method="POST" action="{{ route('rekappendapatanservisasp.destroy', $rekappendapatanservisasp->id_rpsasp) }}">
                                     @csrf
                                     @method('DELETE')
                                     <button class="bg-red-600 text-white px-3 py-2 rounded" onclick="return confirm('Are you sure to delete?')">
@@ -104,31 +105,32 @@
                                 </form>
                             </td>
                         </tr>
+                        
                         <!-- Modal for Edit Event -->
-                        <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="editEventModal{{ $rpsasp->id_rpsasp }}">
+                        <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="editEventModal{{ $rekappendapatanservisasp->id_rpsasp }}">
                             <div class="bg-white w-1/2 p-6 rounded shadow-lg">
                                 <h3 class="text-xl font-semibold mb-4">Edit Data</h3>
-                                <form method="POST" action="{{ route('rpsasp.update', $rpsasp->id_rpsasp) }}" enctype="multipart/form-data">
+                                <form method="POST" action="{{ route('rekappendapatanservisasp.update', $rekappendapatanservisasp->id_rpsasp) }}" enctype="multipart/form-data">
                                     @csrf
                                     @method('PUT')
                                     <div class="space-y-4">
                                         <div>
                                             <label for="bulan" class="block text-sm font-medium">Bulan</label>
-                                            <input type="month" name="bulan" class="w-full p-2 border rounded" value="{{ $rpsasp->bulan }}" required>
+                                            <input type="month" name="bulan" class="w-full p-2 border rounded" value="{{ $rekappendapatanservisasp->bulan }}" required>
                                         </div>
                                         <div>
-                                            <label for="pelaksana" class="block text-sm font-medium">Pelaksana</label>
+                                            <label for="pelaksana" class="block text-sm font-medium">Pilih Pelaksana</label>
                                             <select name="pelaksana" class="w-full p-2 border rounded" required>
-                                                <option value="CV. ARI DISTRIBUTION CENTER" {{ $rpsasp->pelaksana == 'CV. ARI DISTRIBUTION CENTER' ? 'selected' : '' }}>CV. ARI DISTRIBUTION CENTER</option>
-                                                <option value="CV. BALIYONI COMPUTER" {{ $rpsasp->pelaksana == 'CV. BALIYONI COMPUTER' ? 'selected' : '' }}>CV. BALIYONI COMPUTER</option>
-                                                <option value="PT. NABA TECHNOLOGY SOLUTIONS" {{ $rpsasp->pelaksana == 'PT. NABA TECHNOLOGY SOLUTIONS' ? 'selected' : '' }}>PT. NABA TECHNOLOGY SOLUTIONS</option>
-                                                <option value="CV. ELKA MANDIRI (50%)-SAMITRA" {{ $rpsasp->pelaksana == 'CV. ELKA MANDIRI (50%)-SAMITRA' ? 'selected' : '' }}>CV. ELKA MANDIRI (50%)-SAMITRA</option>
-                                                <option value="CV. ELKA MANDIRI (50%)-DETRAN" {{ $rpsasp->pelaksana == 'CV. ELKA MANDIRI (50%)-DETRAN' ? 'selected' : '' }}>CV. ELKA MANDIRI (50%)-DETRAN</option>
+                                                <option value="CV. ARI DISTRIBUTION CENTER" {{ $rekappendapatanservisasp->pelaksana == 'CV. ARI DISTRIBUTION CENTER' ? 'selected' : '' }}>CV. ARI DISTRIBUTION CENTER</option>
+                                                <option value="CV. BALIYONI COMPUTER" {{ $rekappendapatanservisasp->pelaksana == 'CV. BALIYONI COMPUTER' ? 'selected' : '' }}>CV. BALIYONI COMPUTER</option>
+                                                <option value="PT. NABA TECHNOLOGY SOLUTIONS" {{ $rekappendapatanservisasp->pelaksana == 'PT. NABA TECHNOLOGY SOLUTIONS' ? 'selected' : '' }}>PT. NABA TECHNOLOGY SOLUTIONS</option>
+                                                <option value="CV. ELKA MANDIRI (50%)-SAMITRA" {{ $rekappendapatanservisasp->pelaksana == 'CV. ELKA MANDIRI (50%)-SAMITRA' ? 'selected' : '' }}>CV. ELKA MANDIRI (50%)-SAMITRA</option>
+                                                <option value="CV. ELKA MANDIRI (50%)-DETRAN" {{ $rekappendapatanservisasp->pelaksana == 'CV. ELKA MANDIRI (50%)-DETRAN' ? 'selected' : '' }}>CV. ELKA MANDIRI (50%)-DETRAN</option>
                                             </select>
                                         </div>
                                         <div>
-                                            <label for="nilai_pendapatan" class="block text-sm font-medium">Nilai</label>
-                                            <input type="number" name="nilai_pendapatan" class="w-full p-2 border rounded" value="{{ $rpsasp->nilai_pendapatan }}" required>
+                                            <label for="nilai_pendapatan" class="block text-sm font-medium">Nilai Pendapatan</label>
+                                            <input type="number" name="nilai_pendapatan" class="w-full p-2 border rounded" value="{{ $rekappendapatanservisasp->nilai_pendapatan }}" required>
                                         </div>
                                     </div>
                                     <div class="mt-4 flex justify-end gap-2">
@@ -142,15 +144,18 @@
                 </tbody>
             </table>
         <div class="m-4">
-            {{ $rpsasps->links('pagination::tailwind') }}
+            {{ $rekappendapatanservisasps->links('pagination::tailwind') }}
         </div>
         </div>
         </div>
         <div class="mx-auto bg-white p-6 mt-3 rounded-lg shadow">
             <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Diagram</h1>
-            <div class="mt-6 items-center text-center mx-auto w-[600px]">
-                <canvas id="pieChart"></canvas>
+            <div class="mt-6 items-center text-center mx-auto h-[600px] w-[600px]">
+                <canvas id="chart"></canvas>
             </div>
+            <button onclick="exportToPDF()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                Ekspor ke PDF
+            </button>
         </div>
     </div>
 
@@ -158,7 +163,7 @@
 <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">
     <div class="bg-white w-1/2 p-6 rounded shadow-lg">
         <h3 class="text-xl font-semibold mb-4">Add New Data</h3>
-        <form method="POST" action="{{ route('rpsasp.store') }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('rekappendapatanservisasp.store') }}" enctype="multipart/form-data">
             @csrf
             <div class="space-y-4">
                 <div>
@@ -166,8 +171,8 @@
                     <input type="month" name="bulan" class="w-full p-2 border rounded" required>
                 </div>
                 <div>
-                    <label for="kas_masuk" class="block text-sm font-medium">pelaksana</label>
-                    <select name="pelaksana" class="block text-sm font-medium" required>
+                    <label for="pelaksana" class="block text-sm font-medium">Pilih Pelaksana</label>
+                    <select name="pelaksana" class="w-full p-2 border rounded" required>
                         <option value="CV. ARI DISTRIBUTION CENTER">CV. ARI DISTRIBUTION CENTER</option>
                         <option value="CV. BALIYONI COMPUTER">CV. BALIYONI COMPUTER</option>
                         <option value="PT. NABA TECHNOLOGY SOLUTIONS">PT. NABA TECHNOLOGY SOLUTIONS</option>
@@ -176,7 +181,7 @@
                     </select>
                 </div>
                 <div>
-                    <label for="nilai_pendapatan" class="block text-sm font-medium">Nilai</label>
+                    <label for="nilai_pendapatan" class="block text-sm font-medium">Nilai Pendapatan</label>
                     <input type="number" name="nilai_pendapatan" class="w-full p-2 border rounded" required>
                 </div>
             </div>
@@ -190,6 +195,8 @@
 
 </body>
 <script>
+
+    const chartCanvas = document.getElementById('chart');
     // Mengatur tombol untuk membuka modal add
     document.querySelector('[data-modal-target="#addEventModal"]').addEventListener('click', function() {
         const modal = document.querySelector('#addEventModal');
@@ -213,5 +220,97 @@
             modal.classList.add('hidden'); // Menyembunyikan modal
         });
     });
+
+    var chartData = @json($chartData);
+
+    var ctx = document.getElementById('chart').getContext('2d');
+        var pieChart = new Chart(ctx, {
+            type: 'pie', 
+            data: chartData, 
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return tooltipItem.label + ': ' + tooltipItem.raw.toLocaleString(); // Menampilkan data dengan format angka
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+    async function exportToPDF() {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    if (!csrfToken) {
+        alert('CSRF token tidak ditemukan. Pastikan meta tag CSRF disertakan.');
+        return;
+    }
+
+    // Ambil data dari tabel
+    const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
+        const cells = row.querySelectorAll('td');
+        return {
+            bulan: cells[0]?.innerText.trim() || '',
+            pelaksana: cells[1]?.innerText.trim() || '',
+            nilai_pendapatan: cells[2]?.innerText.trim() || '',
+        };
+    });
+
+    const tableContent = items
+        .filter(item => item.bulan && item.pelaksana && item.nilai_pendapatan)
+        .map(item => `
+            <tr>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.bulan}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.pelaksana}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.nilai_pendapatan}</td>
+            </tr>
+        `).join('');
+
+    const pdfTable = tableContent;
+
+    const chartCanvas = document.querySelector('#chart');
+    if (!chartCanvas) {
+        alert('Elemen canvas grafik tidak ditemukan.');
+        return;
+    }
+
+    const chartBase64 = chartCanvas.toDataURL();
+
+    try {
+        const response = await fetch('/supports/rekappendapatanservisasp/export-pdf', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                table: pdfTable,
+                chart: chartBase64,
+            }),
+        });
+
+    if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'rekappendapatanservisasp.pdf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        } else {
+            alert('Gagal mengekspor PDF.');
+        }
+    } catch (error) {
+        console.error('Error exporting to PDF:', error);
+        alert('Terjadi kesalahan saat mengekspor PDF.');
+    }
+}
+
 </script>
 </html>

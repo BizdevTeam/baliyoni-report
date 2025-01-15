@@ -21,7 +21,7 @@ return new class extends Migration
                 'CV. ELKA MANDIRI (50%)-SAMITRA',
                 'CV. ELKA MANDIRI (50%)-DETRAN'
             ]);
-            $table->bigInteger('nilai_pendapatan');
+            $table->bigInteger('nilai_piutang');
             $table->timestamps();
         });
     }

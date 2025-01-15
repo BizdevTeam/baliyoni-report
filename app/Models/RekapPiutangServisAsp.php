@@ -13,7 +13,7 @@ class RekapPiutangServisASP extends Model
 
     protected $primaryKey = 'id_rpiutangsasp'; // Primary key custom
 
-    protected $fillable = ['bulan', 'pelaksana', 'nilai_pendapatan'];
+    protected $fillable = ['bulan', 'pelaksana', 'nilai_piutang']; // Kolom yang dapat diisi
 
     // Menambahkan accessor untuk bulan dengan format 'mm/yyyy'
     public function getBulanFormattedAttribute()
@@ -22,8 +22,8 @@ class RekapPiutangServisASP extends Model
     }
 
     // Menambahkan accessor dengan format Rp
-    public function getNilaiFormattedAttribute()
+    public function getNilaiPiutangFormattedAttribute()
     {
-        return 'Rp ' . number_format($this->nilai_pendapatan, 0, ',', '.');
+        return 'Rp ' . number_format($this->nilai_piutang, 0, ',', '.');
     }
 }

@@ -140,8 +140,14 @@ Route::middleware(['web'])->group(function () {
     });
 
     Route::prefix('supports')->group(function () {
-        Route::resource('rpsasp', RekapPendapatanServisAspController::class);
-        Route::resource('rpiutangsasp', RekapPiutangServisAspController::class);
+        Route::resource('rekappendapatanservisasp', RekapPendapatanServisAspController::class);
+        Route::post('rekappendapatanservisasp/export-pdf', [RekapPendapatanServisAspController::class, 'exportPDF'])
+            ->name('supports.rekappendapatanservisasp.exportPDF');
+
+        Route::resource('rekappiutangservisasp', RekapPiutangServisAspController::class);
+        Route::post('rekappiutangservisasp/export-pdf', [RekapPiutangServisAspController::class, 'exportPDF'])
+        ->name('supports.rekappiutangservisasp.exportPDF');
+
 
         Route::resource('laporansamitra', LaporanSamitraController::class);
         Route::post('laporansamitra/export-pdf', [LaporanSamitraController::class, 'exportPDF'])
