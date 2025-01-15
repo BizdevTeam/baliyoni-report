@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\LaporanStok;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class LaporanStokController extends Controller
 {
@@ -25,26 +26,50 @@ class LaporanStokController extends Controller
 
     public function store(Request $request)
     {
-        $validatedata = $request->validate([
-            'bulan' => 'required|date_format:Y-m',
-            'stok' => 'required|integer|min:0'
-        ]);
-
-        LaporanStok::create($validatedata);
-
-        return redirect()->route('laporanstok.index')->with('success', 'Data Berhasil Ditambahkan');
+        try {
+            $validatedata = $request->validate([
+                'bulan' => 'required|date_format:Y-m',
+                'stok' => 'required|integer|min:0'
+            ]);
+    
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = LaporanStok::where('bulan', $validatedata['bulan'])->exists();
+                    
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
+    
+            LaporanStok::create($validatedata);
+    
+            return redirect()->route('laporanstok.index')->with('success', 'Data Berhasil Ditambahkan');
+        } catch (\Exception $e) {
+            Log::error('Error Storing Stok data: ' . $e->getMessage());
+            return redirect()->route('laporanstok.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
+        }
     }
 
     public function update(Request $request, LaporanStok $laporanstok)
     {
-        $validatedata = $request->validate([
-            'bulan' => 'required|date_format:Y-m',
-            'stok' => 'required|integer|min:0'
-        ]);
-
-        $laporanstok->update($validatedata);
-
-        return redirect()->route('laporanstok.index')->with('success', 'Data Berhasil Diupdate');
+        try {
+            $validatedata = $request->validate([
+                'bulan' => 'required|date_format:Y-m',
+                'stok' => 'required|integer|min:0'
+            ]);
+    
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = LaporanStok::where('bulan', $validatedata['bulan'])->exists();
+                        
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
+    
+            $laporanstok->update($validatedata);
+    
+            return redirect()->route('laporanstok.index')->with('success', 'Data Berhasil Diupdate');
+        } catch (\Exception $e) {
+            Log::error('Error Updating Stok data: ' . $e->getMessage());
+            return redirect()->route('laporanstok.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
+        }
     }
 
     public function destroy(LaporanStok $laporanstok)

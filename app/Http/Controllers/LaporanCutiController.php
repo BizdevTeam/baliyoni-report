@@ -26,28 +26,53 @@ class LaporanCutiController extends Controller
 
     public function store(Request $request)
     {
-        $validatedata = $request->validate([
-            'bulan' => 'required|date_format:Y-m',
-            'total_cuti' => 'required|integer',
-            'nama' => 'required|string'
-        ]);
-
-        LaporanCuti::create($validatedata);
-
-        return redirect()->route('laporancuti.index')->with('success', 'Data Berhasil Ditambah');
+        try {
+            $validatedata = $request->validate([
+                'bulan' => 'required|date_format:Y-m',
+                'total_cuti' => 'required|integer',
+                'nama' => 'required|string'
+            ]);
+    
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = LaporanCuti::where('bulan', $validatedata['bulan'])->exists();
+        
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
+    
+            LaporanCuti::create($validatedata);
+    
+            return redirect()->route('laporancuti.index')->with('success', 'Data Berhasil Ditambah');
+        } catch (\Exception $e) {
+            Log::error('Error storing Laporan Coti data: ' . $e->getMessage());
+            return redirect()->route('laporancuti.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
+        }
     }
 
     public function update(Request $request, LaporanCuti $laporancuti)
     {
-        $validatedata = $request->validate([
-            'bulan' => 'required|date_format:Y-m',
-            'total_cuti' => 'required|integer',
-            'nama' => 'required|string'
-        ]);
-
-        $laporancuti->update($validatedata);
-
-        return redirect()->route('laporancuti.index')->with('success', 'Data Berhasil Diupdate');
+        try {
+            $validatedata = $request->validate([
+                'bulan' => 'required|date_format:Y-m',
+                'total_cuti' => 'required|integer',
+                'nama' => 'required|string'
+            ]);
+    
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = LaporanCuti::where('bulan', $validatedata['bulan'])->exists();
+            
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
+    
+            $laporancuti->update($validatedata);
+    
+            return redirect()->route('laporancuti.index')->with('success', 'Data Berhasil Diupdate');
+        } catch (\Exception $e) {
+            Log::error('Error storing Laporan Coti data: ' . $e->getMessage());
+            return redirect()->route('laporancuti.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
+        }
+        
     }
 
     public function destroy(LaporanCuti $laporancuti)

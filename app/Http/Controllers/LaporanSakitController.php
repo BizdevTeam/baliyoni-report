@@ -26,28 +26,52 @@ class LaporanSakitController extends Controller
 
     public function store(Request $request)
     {
-        $validatedata = $request->validate([
-            'bulan' => 'required|date_format:Y-m',
-            'total_sakit' => 'required|integer',
-            'nama' => 'required|string'
-        ]);
-
-        LaporanSakit::create($validatedata);
-
-        return redirect()->route('laporansakit.index')->with('success', 'Data Berhasil Ditambahkan');
+        try {
+            $validatedata = $request->validate([
+                'bulan' => 'required|date_format:Y-m',
+                'total_sakit' => 'required|integer',
+                'nama' => 'required|string'
+            ]);
+    
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = LaporanSakit::where('nama', $validatedata['nama'])->exists();
+                
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
+    
+            LaporanSakit::create($validatedata);
+    
+            return redirect()->route('laporansakit.index')->with('success', 'Data Berhasil Ditambahkan');
+        } catch (\Exception $e) {
+            Log::error('Error storing Rasio data: ' . $e->getMessage());
+            return redirect()->route('laporansakit.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
+        }
     }
 
     public function update(Request $request, LaporanSakit $laporansakit)
     {
-        $validatedata = $request->validate([
-            'bulan' => 'required|date_format:Y-m',
-            'total_sakit' => 'required|integer',
-            'nama' => 'required|string'
-        ]);
+        try {
+            $validatedata = $request->validate([
+                'bulan' => 'required|date_format:Y-m',
+                'total_sakit' => 'required|integer',
+                'nama' => 'required|string'
+            ]);
 
-        $laporansakit->update($validatedata);
-
-        return redirect()->route('laporansakit.index')->with('success', 'Data Berhasil Diupdate');
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = LaporanSakit::where('nama', $validatedata['nama'])->exists();
+                
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
+    
+            $laporansakit->update($validatedata);
+    
+            return redirect()->route('laporansakit.index')->with('success', 'Data Berhasil Diupdate');
+        } catch (\Exception $e) {
+            Log::error('Error Updating Rasio data: ' . $e->getMessage());
+            return redirect()->route('laporansakit.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
+        }
     }
 
     public function destroy(LaporanSakit $laporansakit)

@@ -167,7 +167,7 @@
                 </div>
                 <div>
                     <label for="kas_masuk" class="block text-sm font-medium">pelaksana</label>
-                    <select name="pelaksana" class="block text-sm font-medium" required>
+                    <select name="pelaksana" class="w-full p-2 border rounded" required>
                         <option value="CV. ARI DISTRIBUTION CENTER">CV. ARI DISTRIBUTION CENTER</option>
                         <option value="CV. BALIYONI COMPUTER">CV. BALIYONI COMPUTER</option>
                         <option value="PT. NABA TECHNOLOGY SOLUTIONS">PT. NABA TECHNOLOGY SOLUTIONS</option>

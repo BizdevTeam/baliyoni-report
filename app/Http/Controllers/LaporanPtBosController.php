@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\LaporanPtBos;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class LaporanPtBosController extends Controller
 {
@@ -24,36 +25,46 @@ class LaporanPtBosController extends Controller
 
     public function store(Request $request)
     {
-        $validatedata = $request->validate([
-            'bulan' => 'required|date_format:Y-m',
-            'pekerjaan' => 'required|string',
-            'kondisi_bulanlalu' => 'required|string',
-            'kondisi_bulanini' => 'required|string',
-            'update' => 'required|string',
-            'rencana_implementasi' => 'required|string',
-            'keterangan' => 'required|string'
-        ]);
-
-        LaporanPtBos::create($validatedata);
-
-        return redirect()->route('laporanptbos.index')->with('success', 'Data Berhasil Ditambahkan');
+        try {
+            $validatedata = $request->validate([
+                'bulan' => 'required|date_format:Y-m',
+                'pekerjaan' => 'required|string',
+                'kondisi_bulanlalu' => 'required|string',
+                'kondisi_bulanini' => 'required|string',
+                'update' => 'required|string',
+                'rencana_implementasi' => 'required|string',
+                'keterangan' => 'required|string'
+            ]);
+    
+            LaporanPtBos::create($validatedata);
+    
+            return redirect()->route('laporanptbos.index')->with('success', 'Data Berhasil Ditambahkan');
+        } catch (\Exception $e) {
+            Log::error('Error Storing PT BOS Data: ' . $e->getMessage());
+            return redirect()->route('laporanptbos.index')->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
     }
 
     public function update(Request $request, LaporanPtBos $laporanptbo)
     {
-        $validatedata = $request->validate([
-            'bulan' => 'required|date_format:Y-m',
-            'pekerjaan' => 'required|string',
-            'kondisi_bulanlalu' => 'required|string',
-            'kondisi_bulanini' => 'required|string',
-            'update' => 'required|string',
-            'rencana_implementasi' => 'required|string',
-            'keterangan' => 'required|string'
-        ]);
-
-        $laporanptbo->update($validatedata);
-
-        return redirect()->route('laporanptbos.index')->with('success', 'Data Berhasil Diupdate');
+        try {
+            $validatedata = $request->validate([
+                'bulan' => 'required|date_format:Y-m',
+                'pekerjaan' => 'required|string',
+                'kondisi_bulanlalu' => 'required|string',
+                'kondisi_bulanini' => 'required|string',
+                'update' => 'required|string',
+                'rencana_implementasi' => 'required|string',
+                'keterangan' => 'required|string'
+            ]);
+    
+            $laporanptbo->update($validatedata);
+    
+            return redirect()->route('laporanptbos.index')->with('success', 'Data Berhasil Diupdate');
+        } catch (\Exception $e) {
+            Log::error('Error Updating PT BOS Data: ' . $e->getMessage());
+            return redirect()->route('laporanptbos.index')->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
     }
 
     public function destroy(LaporanPtBos $laporanptbo)

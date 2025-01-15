@@ -32,6 +32,13 @@ class ItBizdevBulananController extends Controller
                 'bulan' => 'required|date_format:Y-m',
                 'judul' => 'required|string|max:255'
             ]);
+
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = ItBizdevBulanan::where('bulan', $validatedata['bulan'])->exists();
+    
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
     
             ItBizdevBulanan::create($validatedata);
     
@@ -50,6 +57,12 @@ class ItBizdevBulananController extends Controller
                 'bulan' => 'required|date_format:Y-m',
                 'judul' => 'required|string|max:255'
             ]);
+
+            $exists = ItBizdevBulanan::where('bulan', $validatedata['bulan'])->exists();
+    
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
     
             $bizdevbulanan->update($validatedata);
     

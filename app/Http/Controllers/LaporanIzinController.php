@@ -16,8 +16,7 @@ class LaporanIzinController extends Controller
 
         $laporanizins = LaporanIzin::query()
         ->when($search, function ($query, $search) {
-            return $query->where('bulan', 'LIKE', "%$search%")
-                         ->orWhere('nama', 'like', "%$search%");
+            return $query->where('bulan', 'LIKE', "%$search%");
         })
         ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
         ->paginate($perPage);
@@ -27,28 +26,52 @@ class LaporanIzinController extends Controller
 
     public function store(Request $request)
     {
-        $validatedata = $request->validate([
-            'bulan' => 'required|date_format:Y-m',
-            'total_izin' => 'required|integer',
-            'nama' => 'required|string'
-        ]);
-
-        LaporanIzin::create($validatedata);
-
-        return redirect()->route('laporanizin.index')->with('success', 'Data Berhasil Ditambahkan');
+        try {
+            $validatedata = $request->validate([
+                'bulan' => 'required|date_format:Y-m',
+                'total_izin' => 'required|integer',
+                'nama' => 'required|string'
+            ]);
+    
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = LaporanIzin::where('nama', $validatedata['nama'])->exists();
+    
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
+    
+            LaporanIzin::create($validatedata);
+    
+            return redirect()->route('laporanizin.index')->with('success', 'Data Berhasil Ditambahkan');
+        } catch (\Exception $e) {
+            Log::error('Error Storing Laporan Izin: ' . $e->getMessage());
+            return redirect()->route('laporanizin.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
+        }
     }
 
     public function update(Request $request, LaporanIzin $laporanizin)
     {
-        $validatedata = $request->validate([
-            'bulan' => 'required|date_format:Y-m',
-            'total_izin' => 'required|integer',
-            'nama' => 'required|string'
-        ]);
+        try {
+            $validatedata = $request->validate([
+                'bulan' => 'required|date_format:Y-m',
+                'total_izin' => 'required|integer',
+                'nama' => 'required|string'
+            ]);
+    
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = LaporanIzin::where('nama', $validatedata['nama'])->exists();
         
-        $laporanizin->update($validatedata);
-
-        return redirect()->route('laporanizin.index')->with('success', 'Data Berhasil Diupdate');
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
+            
+            $laporanizin->update($validatedata);
+    
+            return redirect()->route('laporanizin.index')->with('success', 'Data Berhasil Diupdate');
+        } catch (\Exception $e) {
+            Log::error('Error Updating Laporan Izin: ' . $e->getMessage());
+            return redirect()->route('laporanizin.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
+        }
     }
 
     public function destroy(LaporanIzin $laporanizin)

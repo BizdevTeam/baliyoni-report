@@ -63,6 +63,13 @@ class LaporanSamitraController extends Controller
                 'bulan' => 'required|date_format:Y-m',
                 'total_pengiriman' => 'required|integer|min:0',
             ]);
+
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = laporansamitra::where('bulan', $validatedata['bulan'])->exists();
+                
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
     
             LaporanSamitra::create($validatedata);
     
@@ -77,13 +84,20 @@ class LaporanSamitraController extends Controller
     {
         try {
             // Validasi input
-            $validatedData = $request->validate([
+            $validatedata = $request->validate([
                 'bulan' => 'required|date_format:Y-m',
                 'total_pengiriman' => 'required|integer|min:0',
             ]);
+
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = laporansamitra::where('bulan', $validatedata['bulan'])->exists();
+                
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
     
             // Update data
-            $laporansamitra->update($validatedData);
+            $laporansamitra->update($validatedata);
     
             // Redirect dengan pesan sukses
             return redirect()

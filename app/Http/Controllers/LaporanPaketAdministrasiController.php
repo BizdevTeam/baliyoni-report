@@ -72,6 +72,14 @@ class LaporanPaketAdministrasiController extends Controller
                 ],
                 'total_paket' => 'required|integer|min:0',
             ]);
+
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = LaporanPaketAdministrasi::where('bulan', $validatedata['bulan'])
+            ->where('website', $validatedata['website'])->exists();
+            
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
     
             LaporanPaketAdministrasi::create($validatedata);
     
@@ -87,7 +95,7 @@ class LaporanPaketAdministrasiController extends Controller
     {
         try {
             // Validasi input
-            $validatedData = $request->validate([
+            $validatedata = $request->validate([
                 'bulan' => 'required|date_format:Y-m',
                 'website' => [
                 'required',
@@ -100,9 +108,17 @@ class LaporanPaketAdministrasiController extends Controller
             ],
                 'total_paket' => 'required|integer|min:0',
             ]);
+
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = LaporanPaketAdministrasi::where('bulan', $validatedata['bulan'])
+            ->where('website', $validatedata['website'])->exists();
+            
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
     
             // Update data
-            $laporanpaketadministrasi->update($validatedData);
+            $laporanpaketadministrasi->update($validatedata);
     
             // Redirect dengan pesan sukses
             return redirect()

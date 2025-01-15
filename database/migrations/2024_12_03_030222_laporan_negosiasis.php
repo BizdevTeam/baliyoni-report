@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('bulan');
             $table->bigInteger('total_negosiasi');
             $table->timestamps();
+
+            $table->unique(['bulan']);
         });
     }
 

@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('laporan_detrans', function (Blueprint $table) {
             $table->id('id_detrans');
-            $table->string('bulan')->unique(); // Pastikan tidak ada duplikasi
-            $table->integer('total_pengiriman')->default(0); // Default value untuk menghindari nilai null
+            $table->string('bulan');
+            $table->bigInteger('total_pengiriman'); // Default value untuk menghindari nilai null
             $table->timestamps();
+
+            $table->unique(['bulan']);
         });
     }
 

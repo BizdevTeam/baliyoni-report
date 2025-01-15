@@ -167,12 +167,12 @@
                 </div>
                 <div>
                     <label for="kas_masuk" class="block text-sm font-medium">Perusahaan</label>
-                    <select name="perusahaan" class="block text-sm font-medium" required>
-                    <option value="PT. Baliyoni Saguna">PT. Baliyoni Saguna</option>
-                    <option value="CV. ELKA MANDIRI">CV. ELKA MANDIRI</option>
-                    <option value="PT. NABA TECHNOLOGY SOLUTIONS">PT. NABA TECHNOLOGY SOLUTIONS</option>
-                    <option value="CV. BHIRMA TEKNIK">CV. BHIRMA TEKNIK</option>
-                    <option value="PT. DWI SRIKANDI NUSANTARA">PT. DWI SRIKANDI NUSANTARA</option>
+                    <select name="perusahaan" class="w-full p-2 border rounded" required>
+                        <option value="PT. Baliyoni Saguna">PT. Baliyoni Saguna</option>
+                        <option value="CV. ELKA MANDIRI">CV. ELKA MANDIRI</option>
+                        <option value="PT. NABA TECHNOLOGY SOLUTIONS">PT. NABA TECHNOLOGY SOLUTIONS</option>
+                        <option value="CV. BHIRMA TEKNIK">CV. BHIRMA TEKNIK</option>
+                        <option value="PT. DWI SRIKANDI NUSANTARA">PT. DWI SRIKANDI NUSANTARA</option>
                     </select>
                 </div>
                 <div>

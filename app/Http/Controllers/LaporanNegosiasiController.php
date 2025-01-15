@@ -31,26 +31,50 @@ class LaporanNegosiasiController extends Controller
 
     public function store(Request $request)
     {
-        $validatedata = $request->validate([
-            'bulan' => 'required|date_format:Y-m',
-            'total_negosiasi' => 'required|integer|min:0'
-        ]);
-
-        LaporanNegosiasi::create($validatedata);
-
-        return redirect()->route('laporannegosiasi.index')->with('success', 'Data Berhasil Ditambah');
+        try {
+            $validatedata = $request->validate([
+                'bulan' => 'required|date_format:Y-m',
+                'total_negosiasi' => 'required|integer|min:0'
+            ]);
+    
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = LaporanNegosiasi::where('bulan', $validatedata['bulan'])->exists();
+        
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
+    
+            LaporanNegosiasi::create($validatedata);
+    
+            return redirect()->route('laporannegosiasi.index')->with('success', 'Data Berhasil Ditambah');
+        } catch (\Exception $e) {
+            Log::error('Error Storing Negosiasi data: ' . $e->getMessage());
+            return redirect()->route('laporannegosiasi.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
+        }
     }
 
     public function update(Request $request, LaporanNegosiasi $laporannegosiasi)
     {
-        $validatedata = $request->validate([
-            'bulan' => 'required|date_format:Y-m',
-            'total_negosiasi' => 'required|integer|min:0'
-        ]);
-
-        $laporannegosiasi->update($validatedata);
-
-        return redirect()->route('laporannegosiasi.index')->with('success', 'Data Berhsail Diupdate');
+        try {
+            $validatedata = $request->validate([
+                'bulan' => 'required|date_format:Y-m',
+                'total_negosiasi' => 'required|integer|min:0'
+            ]);
+    
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = LaporanNegosiasi::where('bulan', $validatedata['bulan'])->exists();
+            
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
+    
+            $laporannegosiasi->update($validatedata);
+    
+            return redirect()->route('laporannegosiasi.index')->with('success', 'Data Berhsail Diupdate');
+        } catch (\Exception $e) {
+            Log::error('Error Updating Negosiasi data: ' . $e->getMessage());
+            return redirect()->route('laporannegosiasi.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
+        }
     }
 
     public function destroy(LaporanNegosiasi $laporannegosiasi)

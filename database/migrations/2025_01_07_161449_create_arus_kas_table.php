@@ -17,6 +17,8 @@ return new class extends Migration
             $table->bigInteger('kas_masuk');
             $table->bigInteger('kas_keluar');
             $table->timestamps();
+
+            $table->unique(['bulan']);
         });
     }
 

@@ -45,6 +45,13 @@ class LaporanRasioController extends Controller
                 $request->file('gambar')->move(public_path('images/accounting/rasio'), $excelfilename);
                 $validatedata['gambar'] = $excelfilename;
             }
+
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = LaporanRasio::where('bulan', $validatedata['bulan'])->exists();
+            
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
     
             LaporanRasio::create($validatedata);
     
@@ -86,6 +93,13 @@ class LaporanRasioController extends Controller
             $excelfilename = time() . $request->file('file_excel')->getClientOriginalName();
             $request->file('file_excel')->move(public_path('files/accounting/rasio'), $excelfilename);
             $validatedata['file_excel'] = $excelfilename;
+        }
+
+        // Cek kombinasi unik bulan dan perusahaan
+        $exists = LaporanRasio::where('bulan', $validatedata['bulan'])->exists();
+            
+        if ($exists) {
+            return redirect()->back()->with('error', 'Data Already Exists.');
         }
 
         $rasio->update($validatedata);

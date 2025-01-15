@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('bulan');
             $table->string('judul');
             $table->timestamps();
+
+            $table->unique(['bulan']);
         });
     }
 

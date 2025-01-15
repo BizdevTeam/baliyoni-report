@@ -82,7 +82,7 @@
                             <tr class="font-sans">
                                 <th class="px-6 py-3 text-center border-b " data-aos="fade-right"
                                     data-aos-duration="400"
-                                    data-aos-easing="ease-out-sine">Bulan & Tahun</th>
+                                    data-aos-easing="ease-out-sine">Bulan</th>
                                 <th class="px-6 py-3 text-center border-b " data-aos="fade-right"
                                     data-aos-duration="400"
                                     data-aos-easing="ease-out-sine">Judul</th>
@@ -152,7 +152,7 @@
                                         @method('PUT')
                                         <div class="space-y-3">
                                             <div>
-                                                <label for="bulan_tahun" class="block text-sm font-medium">Bulan & Tahun</label>
+                                                <label for="bulan_tahun" class="block text-sm font-medium">Bulan</label>
                                                 <input type="month" name="bulan_tahun" class="w-full p-2 border rounded" value="{{ $laporanspiti->bulan_tahun }}" required>
                                             </div>
                                             <div>
@@ -200,7 +200,7 @@
                     @csrf
                     <div class="space-y-4">
                         <div>
-                            <label for="bulan_tahun" class="block text-sm font-medium">Bulan & Tahun</label>
+                            <label for="bulan_tahun" class="block text-sm font-medium">Bulan</label>
                             <input type="month" name="bulan_tahun" class="w-full p-2 border rounded" required>
                         </div>
                         <div>

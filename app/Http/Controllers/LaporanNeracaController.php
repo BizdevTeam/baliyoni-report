@@ -45,6 +45,13 @@ class LaporanNeracaController extends Controller
                 $request->file('gambar')->move(public_path('images/accounting/neraca'), $excelfilename);
                 $validatedata['gambar'] = $excelfilename;
             }
+            
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = LaporanNeraca::where('bulan', $validatedata['bulan'])->exists();
+        
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
     
             LaporanNeraca::create($validatedata);
     
@@ -59,38 +66,45 @@ class LaporanNeracaController extends Controller
     {
         try {
             $fileRules = $neraca->file_excel ? 'nullable|mimes:xlsx,xls|max:2048' : 'required|mimes:xlsx,xls|max:2048';
-        $validatedata = $request->validate([
-            'bulan' => 'required|date_format:Y-m',
-            'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550',
-            'file_excel' => $fileRules,
-            'keterangan' => 'required|string|max:255'
-        ]);
+            $validatedata = $request->validate([
+                'bulan' => 'required|date_format:Y-m',
+                'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550',
+                'file_excel' => $fileRules,
+                'keterangan' => 'required|string|max:255'
+            ]);
 
-        if ($request->hasFile('gambar')) {
-            $destinationimages = "images/accounting/neraca/" . $neraca->gambar;
-            if (File::exists($destinationimages)) {
-                File::delete($destinationimages);
+            if ($request->hasFile('gambar')) {
+                $destinationimages = "images/accounting/neraca/" . $neraca->gambar;
+                if (File::exists($destinationimages)) {
+                    File::delete($destinationimages);
+                }
+
+                $filename = time() . $request->file('gambar')->getClientOriginalName();
+                $request->file('gambar')->move(public_path('images/accounting/neraca'), $filename);
+                $validatedata['gambar'] = $filename;
             }
 
-            $filename = time() . $request->file('gambar')->getClientOriginalName();
-            $request->file('gambar')->move(public_path('images/accounting/neraca'), $filename);
-            $validatedata['gambar'] = $filename;
-        }
+            if ($request->hasFile('file_excel')) {
+                $destinationfiles = "files/accounting/neraca/" . $neraca->file_excel;
+                if (File::exists($destinationfiles)) {
+                    File::delete($destinationfiles);
+                }
 
-        if ($request->hasFile('file_excel')) {
-            $destinationfiles = "files/accounting/neraca/" . $neraca->file_excel;
-            if (File::exists($destinationfiles)) {
-                File::delete($destinationfiles);
+                $excelfilename = time() . $request->file('file_excel')->getClientOriginalName();
+                $request->file('file_excel')->move(public_path('files/accounting/neraca'), $excelfilename);
+                $validatedata['file_excel'] = $excelfilename;
             }
 
-            $excelfilename = time() . $request->file('file_excel')->getClientOriginalName();
-            $request->file('file_excel')->move(public_path('files/accounting/neraca'), $excelfilename);
-            $validatedata['file_excel'] = $excelfilename;
-        }
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = LaporanNeraca::where('bulan', $validatedata['bulan'])->exists();
+            
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
 
-        $neraca->update($validatedata);
+            $neraca->update($validatedata);
 
-        return redirect()->route('neraca.index')->with('success', 'Data Telah Diupdate');
+            return redirect()->route('neraca.index')->with('success', 'Data Telah Diupdate');
         } catch (\Exception $e) {
             Log::error('Error updating neraca data: ' . $e->getMessage());
             return redirect()->route('neraca.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());

@@ -23,6 +23,8 @@ return new class extends Migration
             ]);
             $table->bigInteger('nilai_pendapatan');
             $table->timestamps();
+
+            $table->unique(['bulan', 'pelaksana']);
         });
     }
 

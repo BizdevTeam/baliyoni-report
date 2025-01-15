@@ -17,6 +17,8 @@ return new class extends Migration
             $table->integer('total_izin')->default(0); 
             $table->string('nama');
             $table->timestamps();
+
+            $table->unique(['nama']);
         });
     }
 

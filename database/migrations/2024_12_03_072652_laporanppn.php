@@ -18,7 +18,9 @@ return new class extends Migration
             $table->string('file')->nullable();
             $table->string('keterangan');
             $table->timestamps();
-            });
+
+            $table->unique(['bulan']);
+        });
     }
 
     /**

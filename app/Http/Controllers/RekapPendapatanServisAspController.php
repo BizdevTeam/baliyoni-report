@@ -42,6 +42,15 @@ class RekapPendapatanServisAspController extends Controller
                 ],
                 'nilai_pendapatan' => 'required|integer|min:0'
             ]);
+
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = RekapPendapatanServisAsp::where('bulan', $validatedata['bulan'])
+            ->where('pelaksana', $validatedata['pelaksana'])
+            ->exists();
+
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
     
             RekapPendapatanServisAsp::create($validatedata);
     
@@ -69,6 +78,15 @@ class RekapPendapatanServisAspController extends Controller
                 ],
                 'nilai_pendapatan' => 'required|integer|min:0'
             ]);
+
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = RekapPendapatanServisAsp::where('bulan', $validatedata['bulan'])
+            ->where('pelaksana', $validatedata['pelaksana'])
+            ->exists();
+
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
     
             $rpsasp->update($validatedata);
     

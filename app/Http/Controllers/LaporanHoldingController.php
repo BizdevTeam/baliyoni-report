@@ -45,6 +45,15 @@ class LaporanHoldingController extends Controller
                 ],
                 'nilai' => 'required|integer|min:0'
             ]);
+
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = LaporanHolding::where('bulan', $validatedata['bulan'])
+            ->where('perusahaan', $validatedata['perusahaan'])
+            ->exists();
+
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
         
             LaporanHolding::create($validatedata);
     
@@ -71,6 +80,15 @@ class LaporanHoldingController extends Controller
                 ],
                 'nilai' => 'required|integer|min:0'
             ]);
+
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = LaporanHolding::where('bulan', $validatedata['bulan'])
+            ->where('perusahaan', $validatedata['perusahaan'])
+            ->exists();
+
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
             
             $laporanholding->update($validatedata);
     
