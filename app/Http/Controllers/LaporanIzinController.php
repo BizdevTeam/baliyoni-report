@@ -28,11 +28,6 @@ class LaporanIzinController extends Controller
             })
             ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
             ->paginate($perPage);
-        ->when($search, function ($query, $search) {
-            return $query->where('bulan', 'LIKE', "%$search%");
-        })
-        ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
-        ->paginate($perPage);
 
         // Hitung total untuk masing-masing kategori
         $totalPenjualan = $laporanizins->sum('total_izin');
@@ -124,13 +119,13 @@ class LaporanIzinController extends Controller
                 'nama' => 'required|string',
                 'total_izin' => 'required|integer|min:0',
             ]);
+            
             // Cek kombinasi unik bulan dan nama
-            $exists = LaporanIzin::where('bulan', $validatedata['bulan'])
-            ->where('nama', $validatedata['nama'])
-            ->exists();
+            $exists = LaporanIzin::where('nama', $validatedata['nama'])
+                ->where('id_izin', '!=', $laporanizin->id_izin)->exists();
 
             if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
             }
     
             // Update data
@@ -230,28 +225,6 @@ class LaporanIzinController extends Controller
             return response()->json(['success' => false, 'message' => 'Gagal mengekspor PDF.'], 500);
         }
     }   
-        try {
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
-                'total_izin' => 'required|integer',
-                'nama' => 'required|string'
-            ]);
-    
-            // Cek kombinasi unik bulan dan perusahaan
-            $exists = LaporanIzin::where('nama', $validatedata['nama'])->exists();
-        
-            if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
-            }
-            
-            $laporanizin->update($validatedata);
-    
-            return redirect()->route('laporanizin.index')->with('success', 'Data Berhasil Diupdate');
-        } catch (\Exception $e) {
-            Log::error('Error Updating Laporan Izin: ' . $e->getMessage());
-            return redirect()->route('laporanizin.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
-        }
-    }
 
     public function destroy(LaporanIzin $laporanizin)
     {

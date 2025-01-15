@@ -96,10 +96,11 @@ class LaporanNeracaController extends Controller
             }
 
             // Cek kombinasi unik bulan dan perusahaan
-            $exists = LaporanNeraca::where('bulan', $validatedata['bulan'])->exists();
-            
+            $exists = LaporanNeraca::where('bulan', $validatedata['bulan'])
+            ->where('id_neraca', '!=', $neraca->id_neraca)->exists();
+
             if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
             }
 
             $neraca->update($validatedata);

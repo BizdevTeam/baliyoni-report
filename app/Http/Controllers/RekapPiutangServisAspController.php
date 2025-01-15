@@ -127,6 +127,14 @@ class RekapPiutangServisAspController extends Controller
 
                 'nilai_piutang' => 'required|integer|min:0',
             ]);
+
+            $exists = RekapPiutangServisAsp::where('bulan', $validatedData['bulan'])
+            ->where('pelaksana', $validatedData['pelaksana'])
+            ->where('id_rpiutangsasp', '!=', $rekappiutangservisasp->id_rpiutangsasp)->exists();
+
+            if ($exists) {
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
+            }
     
             // Update data
             $rekappiutangservisasp->update($validatedData);

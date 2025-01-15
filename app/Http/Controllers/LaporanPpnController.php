@@ -100,13 +100,15 @@ class LaporanPpnController extends Controller
             }
 
             // Cek kombinasi unik bulan dan perusahaan
-            $exists = LaporanPpn::where('bulan', $validatedata['bulan'])->exists();
-            
+            $exists = LaporanPpn::where('bulan', $validatedata['bulan'])
+            ->where('id_laporanppn', '!=', $laporanppn->id_laporanppn)->exists();
+
             if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
             }
 
             $laporanppn->update($validatedata);
+            
             return redirect()->route('laporanppn.index')->with('success', 'Data berhasil diubah!');
 
         } catch (\Exception $e) {

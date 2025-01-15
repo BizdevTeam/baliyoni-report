@@ -123,7 +123,7 @@
                                             <input type="text" name="nama" class="w-full p-2 border rounded" value="{{ $laporansakit->nama }}" required>
                                         </div>
                                         <div>
-                                            <label for="total_sakit" class="block text-sm font-medium">Total Penjualan</label>
+                                            <label for="total_sakit" class="block text-sm font-medium">Total Sakit</label>
                                             <input type="number" name="total_sakit" class="w-full p-2 border rounded" value="{{ $laporansakit->total_sakit }}" required>
                                         </div>
                                     </div>
@@ -169,7 +169,7 @@
                     <input type="text" name="nama" class="w-full p-2 border rounded" required>
                 </div>
                 <div>
-                    <label for="total_sakit" class="block text-sm font-medium">Total Penjualan</label>
+                    <label for="total_sakit" class="block text-sm font-medium">Total Sakit</label>
                     <input type="number" name="total_sakit" class="w-full p-2 border rounded" required>
                 </div>
             </div>

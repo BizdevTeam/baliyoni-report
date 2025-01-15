@@ -88,10 +88,11 @@ class RekapPenjualanController extends Controller
             ]);
 
             // Cek kombinasi unik bulan dan perusahaan
-            $exists = RekapPenjualan::where('bulan', $validatedData['bulan'])->exists();
+            $exists = RekapPenjualan::where('bulan', $validatedData['bulan'])
+                ->where('id_rp', '!=', $rekappenjualan->id_rp)->exists();
 
             if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
             }
     
             // Update data

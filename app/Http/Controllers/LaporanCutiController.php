@@ -95,7 +95,7 @@ class LaporanCutiController extends Controller
             ]);
     
             // Cek kombinasi unik bulan dan perusahaan
-            $exists = LaporanCuti::where('bulan', $validatedata['bulan'])->exists();
+            $exists = LaporanCuti::where('nama', $validatedata['nama'])->exists();
         
             if ($exists) {
                 return redirect()->back()->with('error', 'Data Already Exists.');
@@ -119,13 +119,13 @@ class LaporanCutiController extends Controller
                 'nama' => 'required|string',
                 'total_cuti' => 'required|integer|min:0',
             ]);
+
             // Cek kombinasi unik bulan dan nama
-            $exists = LaporanCuti::where('bulan', $validatedata['bulan'])
-            ->where('nama', $validatedata['nama'])
-            ->exists();
+            $exists = LaporanCuti::where('nama', $validatedata['nama'])
+                ->where('id_cuti', '!=', $laporancuti->id_cuti)->exists();
 
             if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
             }
     
             // Update data
@@ -225,29 +225,6 @@ class LaporanCutiController extends Controller
             return response()->json(['success' => false, 'message' => 'Gagal mengekspor PDF.'], 500);
         }
     }   
-        try {
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
-                'total_cuti' => 'required|integer',
-                'nama' => 'required|string'
-            ]);
-    
-            // Cek kombinasi unik bulan dan perusahaan
-            $exists = LaporanCuti::where('bulan', $validatedata['bulan'])->exists();
-            
-            if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
-            }
-    
-            $laporancuti->update($validatedata);
-    
-            return redirect()->route('laporancuti.index')->with('success', 'Data Berhasil Diupdate');
-        } catch (\Exception $e) {
-            Log::error('Error storing Laporan Coti data: ' . $e->getMessage());
-            return redirect()->route('laporancuti.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
-        }
-        
-    }
 
     public function destroy(LaporanCuti $laporancuti)
     {

@@ -95,11 +95,12 @@ class LaporanLabaRugiController extends Controller
         }
 
         // Cek kombinasi unik bulan dan perusahaan
-        $exists = LaporanLabaRugi::where('bulan', $validatedata['bulan'])->exists();
-    
-        if ($exists) {
-            return redirect()->back()->with('error', 'Data Already Exists.');
-        }
+        $exists = LaporanLabaRugi::where('bulan', $validatedata['bulan'])
+                ->where('id_labarugi', '!=', $labarugi->id_labarugi)->exists();
+
+            if ($exists) {
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
+            }
 
         $labarugi->update($validatedata);
 

@@ -112,20 +112,17 @@ class LaporanHoldingController extends Controller
             ],
                 'nilai' => 'required|integer|min:0',
             ]);
-    
-            // Update data
-            $laporanholding->update($validatedData);
 
             // Cek kombinasi unik bulan dan perusahaan
-            $exists = LaporanHolding::where('bulan', $validatedata['bulan'])
-            ->where('perusahaan', $validatedata['perusahaan'])
-            ->exists();
+            $exists = LaporanHolding::where('bulan', $validatedData['bulan'])
+                ->where('perusahaan', $validatedData['perusahaan'])
+                ->where('id_holding', '!=', $laporanholding->id_holding)->exists();
 
             if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
             }
             
-            $laporanholding->update($validatedata);
+            $laporanholding->update($validatedData);
     
             // Redirect dengan pesan sukses
             return redirect()

@@ -58,10 +58,11 @@ class ItBizdevBulananController extends Controller
                 'judul' => 'required|string|max:255'
             ]);
 
-            $exists = ItBizdevBulanan::where('bulan', $validatedata['bulan'])->exists();
-    
+            $exists = ItBizdevBulanan::where('bulan', $validatedata['bulan'])
+                ->where('id_bizdevbulanan', '!=', $bizdevbulanan->id_bizdevbulanan)->exists();
+
             if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
             }
     
             $bizdevbulanan->update($validatedata);

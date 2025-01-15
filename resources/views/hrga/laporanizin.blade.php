@@ -123,7 +123,7 @@
                                             <input type="text" name="nama" class="w-full p-2 border rounded" value="{{ $laporanizin->nama }}" required>
                                         </div>
                                         <div>
-                                            <label for="total_izin" class="block text-sm font-medium">Total Penjualan</label>
+                                            <label for="total_izin" class="block text-sm font-medium">Total Izin</label>
                                             <input type="number" name="total_izin" class="w-full p-2 border rounded" value="{{ $laporanizin->total_izin }}" required>
                                         </div>
                                     </div>
@@ -169,7 +169,7 @@
                     <input type="text" name="nama" class="w-full p-2 border rounded" required>
                 </div>
                 <div>
-                    <label for="total_izin" class="block text-sm font-medium">Total Penjualan</label>
+                    <label for="total_izin" class="block text-sm font-medium">Total Izin</label>
                     <input type="number" name="total_izin" class="w-full p-2 border rounded" required>
                 </div>
             </div>

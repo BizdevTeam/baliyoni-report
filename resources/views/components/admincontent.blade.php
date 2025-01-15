@@ -1,4 +1,4 @@
-<div id="admincontent" class="content-wrapper ml-72 p-4 transition-all duration-300">
+{{-- <div id="admincontent" class="content-wrapper ml-72 p-4 transition-all duration-300">
     <!-- Container untuk Laporan -->
     <div class="flex flex-wrap justify-between gap-4 mt-6">
         <!-- Laporan Paket Administrasi -->
@@ -200,7 +200,7 @@
         try {
             // Paket Administrasi
             const paketData = await fetchChartData(
-                '{{ route('marketings.laporanpaketadministrasi.chartdata') }}');
+                '{{ route('marketings.laporanpaketadministrasi.data') }}');
             if (paketData) {
                 const limitedPaketData = paketData.slice(0, 5); // Ambil hanya 12 data pertama
                 const labels = limitedPaketData.map(item => `${item.website} (${item.bulan_tahun})`);
@@ -280,4 +280,4 @@
             console.error('Error loading charts:', error);
         }
     })();
-</script>
+</script> --}}

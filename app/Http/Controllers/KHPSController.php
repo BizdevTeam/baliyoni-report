@@ -81,10 +81,11 @@ class KHPSController extends Controller
             ]);
 
             // Cek kombinasi unik bulan dan perusahaan
-            $exists = KasHutangPiutang::where('bulan', $validatedata['bulan'])->exists();
-    
+            $exists = KasHutangPiutang::where('bulan', $validatedata['bulan'])
+                ->where('id_khps', '!=', $khp->id_khps)->exists();
+
             if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
             }
     
             $khp->update($validatedata);

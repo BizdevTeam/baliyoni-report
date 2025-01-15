@@ -96,11 +96,12 @@ class LaporanRasioController extends Controller
         }
 
         // Cek kombinasi unik bulan dan perusahaan
-        $exists = LaporanRasio::where('bulan', $validatedata['bulan'])->exists();
-            
-        if ($exists) {
-            return redirect()->back()->with('error', 'Data Already Exists.');
-        }
+        $exists = LaporanRasio::where('bulan', $validatedata['bulan'])
+            ->where('id_rasio', '!=', $rasio->id_rasio)->exists();
+
+            if ($exists) {
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
+            }
 
         $rasio->update($validatedata);
 

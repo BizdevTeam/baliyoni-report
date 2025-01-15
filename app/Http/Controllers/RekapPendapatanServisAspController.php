@@ -129,12 +129,12 @@ class RekapPendapatanServisAspController extends Controller
             ]);
 
             // Cek kombinasi unik bulan dan perusahaan
-            $exists = RekapPendapatanServisAsp::where('bulan', $validatedata['bulan'])
-            ->where('pelaksana', $validatedata['pelaksana'])
-            ->exists();
+            $exists = RekapPendapatanServisAsp::where('bulan', $validatedData['bulan'])
+            ->where('pelaksana', $validatedData['pelaksana'])
+            ->where('id_rpsasp', '!=', $rekappendapatanservisasp->id_rpsasp)->exists();
 
             if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
             }
     
             // Update data

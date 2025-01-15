@@ -123,7 +123,7 @@
                                             <input type="text" name="nama" class="w-full p-2 border rounded" value="{{ $laporanterlambat->nama }}" required>
                                         </div>
                                         <div>
-                                            <label for="total_terlambat" class="block text-sm font-medium">Total Penjualan</label>
+                                            <label for="total_terlambat" class="block text-sm font-medium">Total Terlambat</label>
                                             <input type="number" name="total_terlambat" class="w-full p-2 border rounded" value="{{ $laporanterlambat->total_terlambat }}" required>
                                         </div>
                                     </div>
@@ -169,7 +169,7 @@
                     <input type="text" name="nama" class="w-full p-2 border rounded" required>
                 </div>
                 <div>
-                    <label for="total_terlambat" class="block text-sm font-medium">Total Penjualan</label>
+                    <label for="total_terlambat" class="block text-sm font-medium">Total Terlambat</label>
                     <input type="number" name="total_terlambat" class="w-full p-2 border rounded" required>
                 </div>
             </div>

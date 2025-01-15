@@ -96,10 +96,11 @@ class LaporanTaxPlaningController extends Controller
             }
 
             // Cek kombinasi unik bulan dan perusahaan
-            $exists = LaporanTaxPlaning::where('bulan', $validatedata['bulan'])->exists();
-                    
+            $exists = LaporanTaxPlaning::where('bulan', $validatedata['bulan'])
+            ->where('id_taxplaning', '!=', $taxplaning->id_taxplaning)->exists();
+
             if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
             }
 
             $taxplaning->update($validatedata);

@@ -123,10 +123,11 @@ class LaporanPerInstansiController extends Controller
 
             // Cek kombinasi unik bulan dan perusahaan
             $exists = LaporanPerInstansi::where('bulan', $validatedata['bulan'])
-            ->where('instansi', $validatedata['instansi'])->exists();
-            
+            ->where('instansi', $validatedata['instansi'])
+            ->where('id_perinstansi', '!=', $laporanperinstansi->id_perinstansi)->exists();
+
             if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
             }
     
             // Update data

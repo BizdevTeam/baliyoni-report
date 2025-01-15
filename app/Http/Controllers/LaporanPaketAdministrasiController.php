@@ -54,7 +54,8 @@ class LaporanPaketAdministrasiController extends Controller
             ],
         ];
         
-        return view('marketings.laporanpaketadministrasi', compact('laporanpaketadministrasis', 'chartData'));    }
+        return view('marketings.laporanpaketadministrasi', compact('laporanpaketadministrasis', 'chartData'));    
+    }
 
     public function store(Request $request)
     {
@@ -111,10 +112,11 @@ class LaporanPaketAdministrasiController extends Controller
 
             // Cek kombinasi unik bulan dan perusahaan
             $exists = LaporanPaketAdministrasi::where('bulan', $validatedata['bulan'])
-            ->where('website', $validatedata['website'])->exists();
-            
+            ->where('website', $validatedata['website'])
+            ->where('id_laporanpaket', '!=', $laporanpaketadministrasi->id_laporanpaket)->exists();
+
             if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
             }
     
             // Update data

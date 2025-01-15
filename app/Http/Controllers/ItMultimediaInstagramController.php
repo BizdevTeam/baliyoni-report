@@ -76,10 +76,11 @@ class ItMultimediaInstagramController extends Controller
             }
 
             // Cek kombinasi unik bulan dan perusahaan
-            $exists = ItMultimediaInstagram::where('bulan', $validatedata['bulan'])->exists();
-    
+            $exists = ItMultimediaInstagram::where('bulan', $validatedata['bulan'])
+                ->where('id_instagram', '!=', $instagram->id_instagram)->exists();
+
             if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
             }
 
             $instagram->update($validatedata);

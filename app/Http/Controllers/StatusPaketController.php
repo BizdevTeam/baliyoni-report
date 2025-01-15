@@ -114,10 +114,10 @@ class StatusPaketController extends Controller
             // Cek kombinasi unik bulan dan perusahaan
             $exists = StatusPaket::where('bulan', $validatedData['bulan'])
             ->where('status', $validatedData['status'])
-            ->exists();
+            ->where('id_statuspaket', '!=', $statuspaket->id_statuspaket)->exists();
 
             if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
             }
     
             // Update data

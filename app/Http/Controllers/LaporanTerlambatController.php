@@ -73,8 +73,7 @@ class LaporanTerlambatController extends Controller
             ]);
 
             // Cek kombinasi unik bulan dan nama
-            $exists = LaporanTerlambat::where('bulan', $validatedata['bulan'])
-            ->where('nama', $validatedata['nama'])
+            $exists = LaporanTerlambat::where('nama', $validatedata['nama'])
             ->exists();
 
             if ($exists) {
@@ -96,56 +95,29 @@ class LaporanTerlambatController extends Controller
     }
 
     public function update(Request $request, LaporanTerlambat $laporanterlambat)
+    {
         try {
             $validatedata = $request->validate([
                 'bulan' => 'required|date_format:Y-m',
-                'total_telat' => 'required|integer',
+                'total_terlambat' => 'required|integer',
                 'nama' => 'required|string'
             ]);
     
             // Cek kombinasi unik bulan dan perusahaan
-            $exists = LaporanTerlambat::where('nama', $validatedata['nama'])->exists();
-                        
-            if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
-            }
-    
-            LaporanTerlambat::create($validatedata);
-    
-            return redirect()->route('laporantelat.index')->with('success', 'Data Berhasil Ditambah');
-        } catch (\Exception $e) {
-            Log::error('Error Storing Laporan Terlambat data: ' . $e->getMessage());
-            return redirect()->route('laporantelat.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
-        }
-    }
-
-    public function update(Request $request, LaporanTerlambat $laporantelat)
-    {
-        try {
-            // Validasi input
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
-                'nama' => 'required|string',
-                'total_terlambat' => 'required|integer|min:0',
-            ]);
-            // Cek kombinasi unik bulan dan nama
-            $exists = LaporanTerlambat::where('bulan', $validatedata['bulan'])
-            ->where('nama', $validatedata['nama'])
-            ->exists();
+            $exists = LaporanTerlambat::where('nama', $validatedata['nama'])
+                ->where('id_terlambat', '!=', $laporanterlambat->id_terlambat)
+                ->exists();
 
             if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
             }
     
-            // Update data
             $laporanterlambat->update($validatedata);
     
-            // Redirect dengan pesan sukses
-            return redirect()->route('laporanterlambat.index')->with('success', 'Data berhasil diperbarui.');
+            return redirect()->route('laporanterlambat.index')->with('success', 'Data Berhasil Ditambah');
         } catch (\Exception $e) {
-            // Tangani error umum dan log untuk debugging
-            Log::error('Error updating Laporan Terlambat: ' . $e->getMessage());
-            return redirect()->route('laporanterlambat.index')->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            Log::error('Error Storing Laporan Terlambat data: ' . $e->getMessage());
+            return redirect()->route('laporanterlambat.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
     }
     
@@ -251,37 +223,5 @@ class LaporanTerlambatController extends Controller
         $data = LaporanTerlambat::all(['bulan','nama','total_terlambat']);
     
         return response()->json($data);
-    }
-
-}
-
-        try {
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
-                'total_telat' => 'required|integer',
-                'nama' => 'required|string'
-            ]);
-    
-            // Cek kombinasi unik bulan dan perusahaan
-            $exists = LaporanTerlambat::where('nama', $validatedata['nama'])->exists();
-                            
-            if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
-            }
-    
-            $laporantelat->update($validatedata);
-    
-            return redirect()->route('laporantelat.index')->with('success', 'Data Berhasil Diupdate');
-        } catch (\Exception $e) {
-            Log::error('Error Updating Laporan Terlambat data: ' . $e->getMessage());
-            return redirect()->route('laporantelat.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
-        }
-    }
-
-    public function destroy(LaporanTerlambat $laporantelat)
-    {
-        $laporantelat->delete();
-
-        return redirect()->route('laporantelat.index')->with('success', 'Data Berhasil Dihapus');
     }
 }

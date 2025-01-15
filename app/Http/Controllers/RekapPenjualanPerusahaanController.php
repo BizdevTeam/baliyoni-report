@@ -131,14 +131,21 @@ class RekapPenjualanPerusahaanController extends Controller
 
                 'total_penjualan' => 'required|integer|min:0',
             ]);
+
+            $exists = RekapPenjualanPerusahaan::where('bulan', $validatedData['bulan'])
+                ->where('perusahaan', $validatedData['perusahaan'])
+                ->where('total_penjualan', $validatedData['total_penjualan'])
+                ->where('id_rpp', '!=', $rekappenjualanperusahaan->id_rpp)->exists();
+
+            if ($exists) {
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
+            }
     
             // Update data
             $rekappenjualanperusahaan->update($validatedData);
     
             // Redirect dengan pesan sukses
-            return redirect()
-                ->route('rekappenjualanperusahaan.index')
-                ->with('success', 'Data berhasil diperbarui.');
+            return redirect()->route('rekappenjualanperusahaan.index')->with('success', 'Data berhasil diperbarui.');
         } catch (ValidationException $e) {
             // Tangani error validasi
             return redirect()
@@ -148,9 +155,7 @@ class RekapPenjualanPerusahaanController extends Controller
         } catch (\Exception $e) {
             // Tangani error umum dan log untuk debugging
             Log::error('Error updating Rekap Pendapatan Perusahaan: ' . $e->getMessage());
-            return redirect()
-                ->route('rekappendapatanservisasp.index')
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return redirect()->route('rekappenjualanperusahaan.index')->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
     

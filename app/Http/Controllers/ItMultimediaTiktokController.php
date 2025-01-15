@@ -76,10 +76,11 @@ class ItMultimediaTiktokController extends Controller
             }
 
             // Cek kombinasi unik bulan dan perusahaan
-            $exists = ItMultimediaTiktok::where('bulan', $validatedata['bulan'])->exists();
-    
+            $exists = ItMultimediaTiktok::where('bulan', $validatedata['bulan'])
+                ->where('id_tiktok', '!=', $tiktok->id_tiktok)->exists();
+
             if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
             }
 
             $tiktok->update($validatedata);

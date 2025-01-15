@@ -86,17 +86,17 @@ class LaporanDetransController extends Controller
                 'bulan' => 'required|date_format:Y-m',
                 'total_pengiriman' => 'required|integer|min:0',
             ]);
-    
-            // Update data
-            $laporandetran->update($validatedData);
-            $laporandetrans->update($validatedata);
 
             // Cek kombinasi unik bulan dan perusahaan
-            $exists = LaporanDetrans::where('bulan', $validatedata['bulan'])->exists();
-            
+            $exists = LaporanDetrans::where('bulan', $validatedata['bulan'])
+                ->where('id_detrans', '!=', $laporandetran->id_detrans)->exists();
+
             if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
             }
+
+            // Update data
+            $laporandetran->update($validatedata);
     
             // Redirect dengan pesan sukses
             return redirect()->route('laporandetrans.index')->with('success', 'Data berhasil diperbarui.');
