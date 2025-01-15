@@ -75,7 +75,7 @@ class LaporanSamitraController extends Controller
     
             return redirect()->route('laporansamitra.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
-            Log::error('Error Storing Rekap Penjualan Data: ' . $e->getMessage());
+            Log::error('Error Storing Laporan Samitra Data: ' . $e->getMessage());
             return redirect()->route('laporansamitra.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
     }
@@ -111,7 +111,7 @@ class LaporanSamitraController extends Controller
                 ->withInput();
         } catch (\Exception $e) {
             // Tangani error umum dan log untuk debugging
-            Log::error('Error updating Rekap Penjualan: ' . $e->getMessage());
+            Log::error('Error updating Laporan Samitra Data: ' . $e->getMessage());
             return redirect()
                 ->route('laporansamitra.index')
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
@@ -150,7 +150,12 @@ class LaporanSamitraController extends Controller
         ]);
 
         // Tambahkan header ke PDF
-        $mpdf->SetHeader('Laporan Pengiriman Samitra||{PAGENO}');
+        $headerImagePath = public_path('images/HEADER.png'); // Sesuaikan path
+        $mpdf->SetHTMLHeader("
+            <div style='position: absolute; top: 0; left: 0; width: 100%; height: auto; z-index: -1;'>
+                <img src='{$headerImagePath}' alt='Header' style='width: 100%; height: auto;' />
+            </div>
+        ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
 
         // Tambahkan footer ke PDF
         $mpdf->SetFooter('{DATE j-m-Y}|Laporan Pengiriman Samitra|Halaman {PAGENO}');
@@ -204,7 +209,7 @@ class LaporanSamitraController extends Controller
             $laporansamitra->delete();
             return redirect()->route('laporansamitra.index')->with('success', 'Data Berhasil Dihapus');
         } catch (\Exception $e) {
-            Log::error('Error Deleting Rekap Penjualan Data: ' . $e->getMessage());
+            Log::error('Error Deleting Laporan Samitra Data Data: ' . $e->getMessage());
             return redirect()->route('laporansamitra.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
     }

@@ -298,7 +298,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route("laporantelat.index") }}"
+                        <a href="{{ route("laporanterlambat.index") }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/laporanterlambat.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Terlambat</span>
@@ -334,7 +334,43 @@
                 </li>
             </ul>
 
-            <!-- logout -->
+            <li class="relative">
+                <button type="button"
+                    class="flex items-center w-full px-4 py-2 text-gray-700 rounded-md . . transition"
+                    aria-controls="dropdown-support" aria-expanded="false">
+                    <img src="{{ asset("images/support.svg") }}" class="w-5 h-5">
+                    <span class="menu-label flex-1 ml-3 text-left">SUPPORT</span>
+                    <i class="fas fa-chevron-down ml-auto text-gray-400 group-hover:text-gray-700 transition-transform"></i>
+                </button>
+                <ul id="dropdown-support" class="hidden py-2 pl-8 space-y-2">
+                    <li>
+                        <a href="{{ route('rekappendapatanservisasp.index') }}"
+                            class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
+                            <img src="{{ asset("icon/RekapPenjualan.svg") }}" class="w-5 h-5">
+                            <span class="ml-2">Rekap Pendapatan Servis ASP</span>
+                        </a>
+                    </li>
+                        <a href="{{ route('rekappiutangservisasp.index') }}"
+                            class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
+                            <img src="{{ asset("icon/RekapPenjualanPerusahaan.svg") }}" class="w-5 h-5">
+                            <span class="ml-2">Rekap Piutang Servis ASP</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route("laporansamitra.index") }}"
+                            class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
+                            <img src="{{ asset("icon/RekapPenjualan.svg") }}" class="w-5 h-5">
+                            <span class="ml-2">PT. Saguna Mitra Transindo</span>
+                        </a>
+                    </li>
+                        <a href="{{ route("laporandetrans.index") }}"
+                            class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
+                            <img src="{{ asset("icon/RekapPenjualanPerusahaan.svg") }}" class="w-5 h-5">
+                            <span class="ml-2">PT. Detran Jelajah Nusantara</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
             <li class="relative mb-24">
                 <form method="post" action="{{ route("logout") }}">
                 @csrf
@@ -691,7 +727,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route("laporantelat.index") }}"
+                        <a href="{{ route("laporanterlambat.index") }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/laporanterlambat.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Terlambat</span>
@@ -774,14 +810,14 @@
                 </button>
                 <ul id="dropdown-support" class="hidden py-2 pl-8 space-y-2">
                     <li>
-                        <a href="{{ route('rpsasp.index') }}"
-                            class="flex items-center px-3 py-2 text-gray-700 rounded-md . transition">
+                        <a href="{{ route('rekappendapatanservisasp.index') }}"
+                            class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
                             <img src="{{ asset("icon/RekapPenjualan.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Rekap Pendapatan Servis ASP</span>
                         </a>
                     </li>
-                        <a href="{{ route('rpiutangsasp.index') }}"
-                            class="flex items-center px-3 py-2 text-gray-700 rounded-md . transition">
+                        <a href="{{ route('rekappiutangservisasp.index') }}"
+                            class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/RekapPenjualanPerusahaan.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Rekap Piutang Servis ASP</span>
                         </a>

@@ -122,17 +122,22 @@ class KHPSController extends Controller
                 'orientation' => 'L', // Landscape orientation
                 'margin_left' => 10,
                 'margin_right' => 10,
-                'margin_top' => 10, // Kurangi margin atas
+                'margin_top' => 35, // Kurangi margin atas
                 'margin_bottom' => 10, // Kurangi margin bawah
                 'format' => 'A4', // Ukuran kertas A4
             ]);
 
             // Tambahkan header ke PDF
-            $mpdf->SetHeader('Laporan Kas Hutang Piutang Stok||{PAGENO}');
-
+            $headerImagePath = public_path('images/HEADER.png'); // Sesuaikan path
+            $mpdf->SetHTMLHeader("
+                <div style='position: absolute; top: 0; left: 0; width: 100%; height: auto; z-index: -1;'>
+                    <img src='{$headerImagePath}' alt='Header' style='width: 100%; height: auto;' />
+                </div>
+            ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
+    
             // Tambahkan footer ke PDF
             $mpdf->SetFooter('{DATE j-m-Y}|Laporan Kas Hutang Piutang Stok|Halaman {PAGENO}');
-
+    
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $tableHTMLContent = "
                 <h1 style='text-align:center; font-size: 16px; margin-top: 32px;'>Laporan Kas Hutang Piutang Stok</h1>

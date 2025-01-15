@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Laporan Pengiriman Samitra</title>
+    <title>Rekap Pendapatan Pengiriman Daerah Bali (PT Saguna Mitra Transindo)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @vite('resources/css/app.css')
@@ -37,7 +37,7 @@
         <!-- Main Content -->
         <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
             <div class="mx-auto bg-white p-6 rounded-lg shadow">
-                <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Laporan Pengiriman Samitra</h1>
+                <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Rekap Pendapatan Pengiriman Daerah Bali (PT Saguna Mitra Transindo)</h1>
         <!-- Action Buttons -->
         <div class="flex items-center mb-4 gap-2">
             <form method="GET" action="{{ route('laporansamitra.index') }}" class="flex items-center gap-2">
@@ -118,7 +118,7 @@
                                         </div>
                                         <div>
                                             <label for="total_pengiriman" class="block text-sm font-medium">Total Pengiriman</label>
-                                            <input type="number" name="total_pengiriman" class="w-full p-2 border rounded" value="{{ $laporansamitra->total_pengiriman }}" required>
+                                            <input type="float" name="total_pengiriman" class="w-full p-2 border rounded" value="{{ $laporansamitra->total_pengiriman }}" required>
                                         </div>
                                     </div>
                                     <div class="mt-4 flex justify-end gap-2">
@@ -160,7 +160,7 @@
                 </div>
                 <div>
                     <label for="total_pengiriman" class="block text-sm font-medium">Total Pengiriman</label>
-                    <input type="number" name="total_pengiriman" class="w-full p-2 border rounded" required>
+                    <input type="float" name="total_pengiriman" class="w-full p-2 border rounded" required>
                 </div>
             </div>
             <div class="mt-4 flex justify-end gap-2">
@@ -273,7 +273,7 @@ var barChart = new Chart(ctx, {
         .map(item => `
             <tr>
                 <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.bulan}</td>
-                <td style="border: 1px solid #000; padding: 8px; text-align: left;">${item.total_pengiriman}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.total_pengiriman}</td>
             </tr>
         `).join('');
 

@@ -46,7 +46,7 @@ class StatusPaketController extends Controller
             'datasets' => [
                 [
                     'label' => 'Grafik Status Paket', // Nama dataset
-                    'text' => 'Total Paket', // Nama dataset
+                    'text' => 'Total Jumlah Paket', // Nama dataset
                     'data' => $data, // Data untuk chart
                     'backgroundColor' => $backgroundColors, // Warna batang random
                 ],

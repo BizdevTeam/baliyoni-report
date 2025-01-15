@@ -11,9 +11,9 @@ class LaporanTerlambat extends Model
     use HasFactory;
     protected $table = 'laporan_terlambats'; // Nama tabel
 
-    protected $primaryKey = 'id_telat'; // Primary key custom
+    protected $primaryKey = 'id_terlambat'; // Primary key custom
 
-    protected $fillable = ['bulan', 'total_telat', 'nama'];
+    protected $fillable = ['bulan', 'total_terlambat', 'nama'];
 
     // Menambahkan accessor untuk bulan dengan format 'mm/yyyy'
     public function getBulanFormattedAttribute()

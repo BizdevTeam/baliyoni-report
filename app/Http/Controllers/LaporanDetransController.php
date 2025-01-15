@@ -48,8 +48,6 @@ class LaporanDetransController extends Controller
                     'label' => 'Grafik Laporan Pengiriman Detrans', // Nama dataset
                     'data' => $data, // Data untuk chart
                     'backgroundColor' => $backgroundColors, // Warna batang random
-                    'borderColor' => $borderColors,        // Warna border random
-                    'borderWidth' => 1,                    // Ketebalan border
                 ],
             ],
         ];
@@ -75,12 +73,12 @@ class LaporanDetransController extends Controller
     
             return redirect()->route('laporandetrans.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
-            Log::error('Error Storing Rekap Penjualan Data: ' . $e->getMessage());
+            Log::error('Error Storing Laporan Detrans Data: ' . $e->getMessage());
             return redirect()->route('laporandetrans.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
     }
 
-    public function update(Request $request, LaporanDetrans $laporandetrans)
+    public function update(Request $request, LaporanDetrans $laporandetran)
     {
         try {
             // Validasi input
@@ -90,6 +88,7 @@ class LaporanDetransController extends Controller
             ]);
     
             // Update data
+            $laporandetran->update($validatedData);
             $laporandetrans->update($validatedata);
 
             // Cek kombinasi unik bulan dan perusahaan
@@ -109,7 +108,7 @@ class LaporanDetransController extends Controller
                 ->withInput();
         } catch (\Exception $e) {
             // Tangani error umum dan log untuk debugging
-            Log::error('Error updating Rekap Penjualan: ' . $e->getMessage());
+            Log::error('Error updating Laporan Detrans Data: ' . $e->getMessage());
             return redirect()
                 ->route('laporandetrans.index')
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
@@ -142,47 +141,49 @@ class LaporanDetransController extends Controller
             'orientation' => 'L', // Landscape orientation
             'margin_left' => 10,
             'margin_right' => 10,
-            'margin_top' => 14, // Kurangi margin atas
+            'margin_top' => 35, // Kurangi margin atas
             'margin_bottom' => 10, // Kurangi margin bawah
             'format' => 'A4', // Ukuran kertas A4
         ]);
 
         // Tambahkan header ke PDF
-        $mpdf->SetHeader('Laporan Pengiriman Detrans||{PAGENO}');
+        $headerImagePath = public_path('images/HEADER.png'); // Sesuaikan path
+        $mpdf->SetHTMLHeader("
+            <div style='position: absolute; top: 0; left: 0; width: 100%; height: auto; z-index: -1;'>
+                <img src='{$headerImagePath}' alt='Header' style='width: 100%; height: auto;' />
+            </div>
+        ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
 
         // Tambahkan footer ke PDF
         $mpdf->SetFooter('{DATE j-m-Y}|Laporan Pengiriman Detrans|Halaman {PAGENO}');
 
-        // Buat konten tabel dengan gaya CSS yang lebih ketat
-        $tableHTMLContent = "
-            <h1 style='text-align:center; font-size: 16px; margin-top: 32px;'>Laporan Pengiriman Detrans</h1>
-            <h2 style='text-align:center; font-size: 12px; margin: 5px 0;'>Data Rekapitulasi</h2>
-            <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
-                <thead>
-                    <tr style='background-color: #f2f2f2;'>
-                        <th style='border: 1px solid #000; padding: 5px;'>Bulan/Tahun</th>
-                        <th style='border: 1px solid #000; padding: 5px;'>Total Pengiriman (Rp)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {$tableHTML}
-                </tbody>
-            </table>
-        ";
+        // Konten HTML
+        $htmlContent = "
+<div style='display: flex; flex-direction: row; align-items: flex-start; gap: 20px;'>
+    <div style='width: 30%; border: 1px solid #ddd; padding: 10px;'>
+        <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Data Rekapitulasi</h2>
+        <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
+            <thead>
+                <tr style='background-color: #f2f2f2;'>
+                    <th style='border: 1px solid #000; padding: 5px;'>Bulan</th>
+                    <th style='border: 1px solid #000; padding: 5px;'>Total Penjualan (Rp)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {$tableHTML}
+            </tbody>
+        </table>
+    </div>
+    <div style='width: 65%; text-align: center; border: 1px solid #ddd; padding: 10px;'>
+        <h2 style='font-size: 14px; margin-bottom: 10px;'>Grafik Penjualan</h2>
+        <img src='{$chartBase64}' style='width: 100%; height: auto; border: 1px solid #ccc;' alt='Grafik Penjualan' />
+    </div>
+</div>
+";
 
-        // Tambahkan konten tabel ke PDF
-        $mpdf->WriteHTML($tableHTMLContent);
 
-        // Tambahkan halaman baru hanya jika konten chart tersedia
-        if (!empty($chartBase64)) {
-            $chartHTMLContent = "
-                <h1 style='text-align:center; font-size: 16px; margin: 10px 0;'>Grafik Laporan Pengiriman Detrans</h1>
-                <div style='text-align: center; margin: 10px 0;'>
-                    <img src='{$chartBase64}' alt='Chart' style='max-width: 90%; height: auto;' />
-                </div>
-            ";
-            $mpdf->WriteHTML($chartHTMLContent);
-        }
+        // Tambahkan konten ke PDF
+        $mpdf->WriteHTML($htmlContent);
 
         // Return PDF sebagai respon download
         return response($mpdf->Output('', 'S'), 200)
@@ -196,13 +197,13 @@ class LaporanDetransController extends Controller
 }
 
 
-    public function destroy(LaporanDetrans $laporandetrans)
+    public function destroy(LaporanDetrans $laporandetran)
     {
         try {
-            $laporandetrans->delete();
+            $laporandetran->delete();
             return redirect()->route('laporandetrans.index')->with('success', 'Data Berhasil Dihapus');
         } catch (\Exception $e) {
-            Log::error('Error Deleting Rekap Penjualan Data: ' . $e->getMessage());
+            Log::error('Error Deleting Laporan Detrans Data Data: ' . $e->getMessage());
             return redirect()->route('laporandetrans.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
     }

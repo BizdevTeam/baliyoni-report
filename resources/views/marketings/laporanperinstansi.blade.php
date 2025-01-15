@@ -122,9 +122,13 @@
                                             <select name="instansi" class="w-full p-2 border rounded" required>
                                                 <option value="Badung" {{ $laporanperinstansi->instansi == 'Badung' ? 'selected' : '' }}>Badung</option>
                                                 <option value="Denpasar" {{ $laporanperinstansi->instansi == 'Denpasar' ? 'selected' : '' }}>Denpasar</option>
-                                                <option value="Provinsi" {{ $laporanperinstansi->instansi == 'Provinsi' ? 'selected' : '' }}>Provinsi</option>
-                                                <option value="Bangli" {{ $laporanperinstansi->instansi == 'Bangli' ? 'selected' : '' }}>Bangli</option>
+                                                <option value="Tabanan" {{ $laporanperinstansi->instansi == 'Tabanan' ? 'selected' : '' }}>Tabanan</option>
+                                                <option value="Gianyar" {{ $laporanperinstansi->instansi == 'Gianyar' ? 'selected' : '' }}>Gianyar</option>
+                                                <option value="Karangasem" {{ $laporanperinstansi->instansi == 'Karangasem' ? 'selected' : '' }}>Karangasem</option>
+                                                <option value="Singaraja" {{ $laporanperinstansi->instansi == 'Singaraja' ? 'selected' : '' }}>Singaraja</option>
+                                                <option value="Jembrana" {{ $laporanperinstansi->instansi == 'Jembrana' ? 'selected' : '' }}>Jembrana</option>
                                                 <option value="Klungkung" {{ $laporanperinstansi->instansi == 'Klungkung' ? 'selected' : '' }}>Klungkung</option>
+                                                <option value="Provinsi" {{ $laporanperinstansi->instansi == 'Provinsi' ? 'selected' : '' }}>Provinsi</option>
                                             </select>
                                         </div>
                                         <div>
@@ -174,9 +178,14 @@
                     <select name="instansi" class="w-full p-2 border rounded" required>
                         <option value="Badung">Badung</option>
                         <option value="Denpasar">Denpasar</option>
+                        <option value="Tabanan">Tabanan</option>
+                        <option value="Gianyar">Gianyar</option>
+                        <option value="Karangasem">Karangasem</option>
+                        <option value="Singaraja">Singaraja</option>
+                        <option value="Tabanan">Tabanan</option>
+                        <option value="Jembrana">Jembrana</option>
+                        <option value="Klungung">Klungung</option>
                         <option value="Provinsi">Provinsi</option>
-                        <option value="Bangli">Bangli</option>
-                        <option value="Klungkung">Klungkung</option>
                     </select>
                 </div>
                 <div>

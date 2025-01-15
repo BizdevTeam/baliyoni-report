@@ -48,6 +48,8 @@ Route::middleware(['web'])->group(function () {
         Route::post('khps/export-pdf', [KHPSController::class, 'exportPDF'])->name('accounting.khps.exportPDF');
         Route::get('khps/data', [KHPSController::class, 'getKashutangpiutangstokData'])->name('accounting.khps.data');
         Route::resource('aruskas', ArusKasController::class);
+        Route::post('aruskas/export-pdf', [ArusKasController::class, 'exportPDF'])
+        ->name('accounting.aruskas.exportPDF');
     });
 
     // IT
@@ -108,15 +110,44 @@ Route::middleware(['web'])->group(function () {
 
     // PROCUREMENT
     Route::prefix('procurements')->group(function () {
+        
         Route::resource('laporanholding', LaporanHoldingController::class);
+        Route::get('laporanholding/data', [LaporanHoldingController::class, 'getLaporanStokData'])
+            ->name('procurements.laporanholding.data');
+        Route::post('laporanholding/export-pdf', [LaporanHoldingController::class, 'exportPDF'])
+            ->name('procurements.laporanholding.exportPDF');
+        Route::delete('laporanholding/{rp}', [LaporanHoldingController::class, 'destroy']);
+
+
         Route::resource('laporanstok', LaporanStokController::class);
+        Route::get('laporanstok/data', [LaporanStokController::class, 'getLaporanHoldingData'])
+            ->name('procurements.laporanstok.data');
+        Route::post('laporanstok/export-pdf', [LaporanStokController::class, 'exportPDF'])
+            ->name('procurements.laporanstok.exportPDF');
+        Route::delete('laporanstok/{rp}', [LaporanStokController::class, 'destroy']);
+
+
         Route::resource('laporanoutlet', LaporanOutletController::class);
+        Route::post('laporanoutlet/export-pdf', [LaporanOutletController::class, 'exportPDF'])
+        ->name('procurements.laporanoutlet.exportPDF');
+
         Route::resource('laporannegosiasi', LaporanNegosiasiController::class);
+        Route::post('laporannegosiasi/export-pdf', [LaporanNegosiasiController::class, 'exportPDF'])
+        ->name('procurements.laporannegosiasi.exportPDF');
+        Route::get('laporannegosiasi/data', [LaporanNegosiasiController::class, 'getLaporanNegosiasiData'])
+        ->name('procurements.laporannegosiasi.data');
+
     });
 
     Route::prefix('supports')->group(function () {
-        Route::resource('rpsasp', RekapPendapatanServisAspController::class);
-        Route::resource('rpiutangsasp', RekapPiutangServisAspController::class);
+        Route::resource('rekappendapatanservisasp', RekapPendapatanServisAspController::class);
+        Route::post('rekappendapatanservisasp/export-pdf', [RekapPendapatanServisAspController::class, 'exportPDF'])
+            ->name('supports.rekappendapatanservisasp.exportPDF');
+
+        Route::resource('rekappiutangservisasp', RekapPiutangServisAspController::class);
+        Route::post('rekappiutangservisasp/export-pdf', [RekapPiutangServisAspController::class, 'exportPDF'])
+        ->name('supports.rekappiutangservisasp.exportPDF');
+
 
         Route::resource('laporansamitra', LaporanSamitraController::class);
         Route::post('laporansamitra/export-pdf', [LaporanSamitraController::class, 'exportPDF'])
@@ -134,10 +165,26 @@ Route::middleware(['web'])->group(function () {
     });
 
     Route::prefix('hrga')->group(function () {
-        Route::resource('laporantelat', LaporanTerlambatController::class);
+        Route::resource('laporanterlambat', LaporanTerlambatController::class);
+        Route::post('laporanterlambat/export-pdf', [LaporanTerlambatController::class, 'exportPDF'])
+        ->name('hrga.laporanterlambat.exportPDF');
+
         Route::resource('laporancuti', LaporanCutiController::class);
+        Route::post('laporancuti/export-pdf', [LaporanCutiController::class, 'exportPDF'])
+        ->name('hrga.laporancuti.exportPDF');
+        Route::delete('laporancuti/{rp}', [LaporanCutiController::class, 'destroy']);
+
+
         Route::resource('laporanizin', LaporanIzinController::class);
+        Route::post('laporanizin/export-pdf', [LaporanIzinController::class, 'exportPDF'])
+        ->name('hrga.laporanizin.exportPDF');
+
         Route::resource('laporansakit', LaporanSakitController::class);
+        Route::post('laporansakit/export-pdf', [LaporanSakitController::class, 'exportPDF'])
+        ->name('hrga.laporansakit.exportPDF');
+        Route::delete('laporansakit/{rp}', [LaporanSakitController::class, 'destroy']);
+
+
         Route::resource('laporanptbos', LaporanPtBosController::class);
         Route::resource('laporanijasa', LaporanIjasaController::class);
     //Route untuk laporan ijasa hrga

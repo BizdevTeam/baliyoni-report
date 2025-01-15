@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Laporan Ijasa</title>
+    <title>Laporan iJASA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @vite('resources/css/app.css')
@@ -36,7 +36,7 @@
         <!-- Main Content -->
         <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
             <div class="mx-auto bg-white p-6 rounded-lg shadow">
-                <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Laporan Ijasa</h1>
+                <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Laporan iJASA</h1>
         <!-- Action Buttons -->
         <div class="flex items-center mb-4 gap-2">
             <form method="GET" action="{{ route('laporanijasa.index') }}" class="flex items-center gap-2">
@@ -161,16 +161,11 @@
             </table>
         <div class="m-4">
             {{ $laporanijasas->links('pagination::tailwind') }}
-        </div>
-        </div>
-        </div>
-        <div class="mx-auto bg-white p-6 mt-3 rounded-lg shadow">
-            <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Diagram</h1>
-            <div class="mt-6 items-center text-center mx-auto w-[600px]">
-                <canvas id="pieChart"></canvas>
             </div>
         </div>
     </div>
+</div>
+</div>
 
     <!-- Modal untuk Add Event -->
 <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">

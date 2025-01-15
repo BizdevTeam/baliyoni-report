@@ -23,7 +23,7 @@ class LaporanOutlet extends Model
     }
 
     // Menambahkan accessor dengan format Rp
-    public function getPembelianFormattedAttribute()
+    public function getTotalPembelianFormattedAttribute()
     {
         return 'Rp ' . number_format($this->total_pembelian, 0, ',', '.');
     }

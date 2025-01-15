@@ -17,7 +17,7 @@ class RekapPenjualan extends Model
     protected $fillable = ['bulan', 'total_penjualan'];
     public function getBulanFormattedAttribute()
     {
-        return Carbon::parse($this->bulan)->format('m/Y');
+        return Carbon::parse($this->bulan)->format('m-Y');
     }
 
     // Menambahkan accessor untuk kas, hutang, piutang, stok dengan format Rp

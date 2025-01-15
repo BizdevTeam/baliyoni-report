@@ -78,7 +78,7 @@
                     <tr>
                         <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Status</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Nilai Paket</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Jumlah Paket</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -128,7 +128,7 @@
                                             </select>
                                         </div>
                                         <div>
-                                            <label for="total_paket" class="block text-sm font-medium">Nilai Paket</label>
+                                            <label for="total_paket" class="block text-sm font-medium">Jumlah Paket</label>
                                             <input type="number" name="total_paket" class="w-full p-2 border rounded" value="{{ $statuspaket->total_paket }}" required>
                                         </div>
                                     </div>
@@ -180,7 +180,7 @@
                     </select>
                 </div>
                 <div>
-                    <label for="total_paket" class="block text-sm font-medium">Nilai Paket</label>
+                    <label for="total_paket" class="block text-sm font-medium">Jumlah Paket</label>
                     <input type="number" name="total_paket" class="w-full p-2 border rounded" required>
                 </div>
             </div>

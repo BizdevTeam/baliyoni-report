@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Laporan Sakit</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -72,13 +73,13 @@
 
         <!-- Event Table -->
         <div class="overflow-x-auto bg-white shadow-md">
-            <table class="table-auto w-full border-collapse border border-gray-300">
+            <table class="table-auto w-full border-collapse border border-gray-300" id="data-table">
                 <thead class="bg-gray-200">
                     <tr>
                         <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Nama Karyawan</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Total Sakit</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Action</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -104,6 +105,7 @@
                                 </form>
                             </td>
                         </tr>
+                        
                         <!-- Modal for Edit Event -->
                         <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="editEventModal{{ $laporansakit->id_sakit }}">
                             <div class="bg-white w-1/2 p-6 rounded shadow-lg">
@@ -121,7 +123,7 @@
                                             <input type="text" name="nama" class="w-full p-2 border rounded" value="{{ $laporansakit->nama }}" required>
                                         </div>
                                         <div>
-                                            <label for="total_sakit" class="block text-sm font-medium">Total Sakit</label>
+                                            <label for="total_sakit" class="block text-sm font-medium">Total Penjualan</label>
                                             <input type="number" name="total_sakit" class="w-full p-2 border rounded" value="{{ $laporansakit->total_sakit }}" required>
                                         </div>
                                     </div>
@@ -142,9 +144,12 @@
         </div>
         <div class="mx-auto bg-white p-6 mt-3 rounded-lg shadow">
             <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Diagram</h1>
-            <div class="mt-6 items-center text-center mx-auto w-[600px]">
-                <canvas id="pieChart"></canvas>
+            <div class="mt-6 items-center text-center mx-auto">
+                <canvas id="chart"></canvas>
             </div>
+            <button onclick="exportToPDF()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                Ekspor ke PDF
+            </button>
         </div>
     </div>
 
@@ -164,8 +169,8 @@
                     <input type="text" name="nama" class="w-full p-2 border rounded" required>
                 </div>
                 <div>
-                    <label for="total_sakit" class="block text-sm font-medium">Total Sakit</label>
-                    <input type="text" name="total_sakit" class="w-full p-2 border rounded" required>
+                    <label for="total_sakit" class="block text-sm font-medium">Total Penjualan</label>
+                    <input type="number" name="total_sakit" class="w-full p-2 border rounded" required>
                 </div>
             </div>
             <div class="mt-4 flex justify-end gap-2">
@@ -178,6 +183,8 @@
 
 </body>
 <script>
+
+    const chartCanvas = document.getElementById('chart');
     // Mengatur tombol untuk membuka modal add
     document.querySelector('[data-modal-target="#addEventModal"]').addEventListener('click', function() {
         const modal = document.querySelector('#addEventModal');
@@ -201,5 +208,127 @@
             modal.classList.add('hidden'); // Menyembunyikan modal
         });
     });
+
+    var chartData = @json($chartData);
+
+var ctx = document.getElementById('chart').getContext('2d');
+var barChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: chartData.labels, // Label bulan
+        datasets: chartData.datasets, // Dataset total penjualan
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top', // Posisi legenda
+            labels: {
+                font :{
+                size: 20,
+                weight : 'bold',
+                    }, //
+                }, //
+             }, //
+            tooltip: {
+                callbacks: {
+                    label: function(tooltipItem) {
+                        let value = tooltipItem.raw; // Ambil data nilai
+                        return tooltipItem.dataset.label + ': ' + value.toLocaleString(); // Format angka
+                    },
+                },
+            },
+        },
+        scales: {
+            x: {
+                title: {
+                    display: true,
+                    text: 'Bulan', // Label sumbu X
+                },
+            },
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Total Penjualan (Rp)', // Label sumbu Y
+                },
+                ticks: {
+                    callback: function(value) {
+                        return value.toLocaleString(); // Format angka
+                    },
+                },
+            },
+        },
+    },
+});
+
+    async function exportToPDF() {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    if (!csrfToken) {
+        alert('CSRF token tidak ditemukan. Pastikan meta tag CSRF disertakan.');
+        return;
+    }
+
+    // Ambil data dari tabel
+    const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
+        const cells = row.querySelectorAll('td');
+        return {
+            bulan: cells[0]?.innerText.trim() || '',
+            nama: cells[1]?.innerText.trim() || '',
+            total_sakit: cells[2]?.innerText.trim() || '',
+        };
+    });
+
+    const tableContent = items
+        .filter(item => item.bulan && item.nama && item.total_sakit)
+        .map(item => `
+            <tr>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.bulan}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.nama}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.total_sakit}</td>
+            </tr>
+        `).join('');
+
+    const pdfTable = tableContent;
+
+    const chartCanvas = document.querySelector('#chart');
+    if (!chartCanvas) {
+        alert('Elemen canvas grafik tidak ditemukan.');
+        return;
+    }
+
+    const chartBase64 = chartCanvas.toDataURL();
+
+    try {
+        const response = await fetch('/hrga/laporansakit/export-pdf', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                table: pdfTable,
+                chart: chartBase64,
+            }),
+        });
+
+    if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'laporansakit.pdf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        } else {
+            alert('Gagal mengekspor PDF.');
+        }
+    } catch (error) {
+        console.error('Error exporting to PDF:', error);
+        alert('Terjadi kesalahan saat mengekspor PDF.');
+    }
+}
+
 </script>
 </html>
