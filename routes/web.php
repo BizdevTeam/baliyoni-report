@@ -86,8 +86,8 @@ Route::middleware(['web'])->group(function () {
         Route::resource('laporanpaketadministrasi', LaporanPaketAdministrasiController::class);
         Route::post('laporanpaketadministrasi/export-pdf', [LaporanPaketAdministrasiController::class, 'exportPDF'])
             ->name('marketings.laporanpaketadministrasi.exportPDF');
-        Route::get('laporanpaketadministrasi/data', [LaporanPaketAdministrasiController::class, 'getLaporanPaketAdministrasiData'])
-            ->name('marketings.laporanpaketadministrasi.data');
+        Route::get('laporanpaketadministrasi/chart-data', [LaporanPaketAdministrasiController::class, 'getChartData'])
+            ->name('marketings.laporanpaketadministrasi.getChartData');
         Route::delete('laporanpaketadministrasi/{rp}', [LaporanPaketAdministrasiController::class, 'destroy']);
 
         Route::resource('statuspaket', StatusPaketController::class);

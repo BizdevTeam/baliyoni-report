@@ -199,7 +199,7 @@
         });
     });
 
-    var chartData = @json($chartData);
+   var chartData = @json($chartData);
 
 var ctx = document.getElementById('chart').getContext('2d');
 var barChart = new Chart(ctx, {
@@ -212,19 +212,13 @@ var barChart = new Chart(ctx, {
         responsive: true,
         plugins: {
             legend: {
-                position: 'top', // Posisi legenda
-            labels: {
-                font :{
-                size: 20,
-                weight : 'bold',
-                    }, //
-                }, //
-             }, //
+                display: false, // Sembunyikan legenda
+            },
             tooltip: {
                 callbacks: {
                     label: function(tooltipItem) {
                         let value = tooltipItem.raw; // Ambil data nilai
-                        return tooltipItem.dataset.label + ': ' + value.toLocaleString(); // Format angka
+                        return tooltipItem.dataset.text + ': ' + value.toLocaleString(); // Format angka
                     },
                 },
             },
@@ -232,15 +226,13 @@ var barChart = new Chart(ctx, {
         scales: {
             x: {
                 title: {
-                    display: true,
-                    text: 'Bulan', // Label sumbu X
+                    display: false, // Sembunyikan label sumbu X
                 },
             },
             y: {
                 beginAtZero: true,
                 title: {
-                    display: true,
-                    text: 'Total Pengiriman (Rp)', // Label sumbu Y
+                    display: false, // Sembunyikan label sumbu Y
                 },
                 ticks: {
                     callback: function(value) {

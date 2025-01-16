@@ -203,9 +203,6 @@ class RekapPendapatanServisAspController extends Controller
             // Tambahkan konten tabel ke PDF
             $mpdf->WriteHTML($tableHTMLContent);
     
-            // Tambahkan pemisah halaman
-            $mpdf->AddPage();
-    
             // Tambahkan halaman baru dengan konten grafik
             if (!empty($chartBase64)) {
                 $chartHTMLContent = "

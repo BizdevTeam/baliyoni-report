@@ -14,7 +14,7 @@ class RekapPenjualanController extends Controller
     // Show the view
     public function index(Request $request)
     { 
-        $perekappenjualanage = $request->input('per_page', 5);
+        $perPage = $request->input('per_page', 12);
         $search = $request->input('search');
 
         #$query = KasHutangPiutang::query();
@@ -25,7 +25,7 @@ class RekapPenjualanController extends Controller
                 return $query->where('bulan', 'LIKE', "%$search%");
             })
             ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
-            ->paginate($perekappenjualanage);
+            ->paginate($perPage);
 
         // Hitung total untuk masing-masing kategori
         $totalPenjualan = $rekappenjualans->sum('total_penjualan');

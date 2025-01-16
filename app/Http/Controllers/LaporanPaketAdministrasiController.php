@@ -222,12 +222,33 @@ class LaporanPaketAdministrasiController extends Controller
             return redirect()->route('laporanpaketadministrasi.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
     }
-    public function getLaporanPaketAdministrasiData()
-    {
-        $data = LaporanPaketAdministrasi::all(['bulan','website','total_paket']);
     
-        return response()->json($data);
+    public function getChartData()
+    {
+        $laporanpaketadministrasis = LaporanPaketAdministrasi::query()
+            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
+            ->get();
+    
+        $labels = $laporanpaketadministrasis->pluck('website')->toArray();
+        $data = $laporanpaketadministrasis->pluck('total_paket')->toArray();
+        dd($labels, $data);
+    
+        return response()->json([
+            'success' => true,
+            'data' => [
+                
+                'labels' => $labels,
+                'datasets' => [
+                    [
+                        'label' => 'Grafik Laporan Paket Administrasi',
+                        'data' => $data,
+                        'backgroundColor' => array_map(fn() => sprintf('rgba(%d, %d, %d, 0.7)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255)), $data),
+                    ],
+                ],
+            ],
+        ]);
     }
+    
 
 }
 

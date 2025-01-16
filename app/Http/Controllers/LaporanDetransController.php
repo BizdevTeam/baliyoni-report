@@ -45,7 +45,7 @@ class LaporanDetransController extends Controller
             'labels' => $labels, // Labels untuk chart
             'datasets' => [
                 [
-                    'label' => 'Grafik Laporan Pengiriman Detrans', // Nama dataset
+                    'text' => 'Total Nilai Pengiriman Detrans', // Nama dataset
                     'data' => $data, // Data untuk chart
                     'backgroundColor' => $backgroundColors, // Warna batang random
                 ],
@@ -146,14 +146,14 @@ class LaporanDetransController extends Controller
 
         // Konten HTML
         $htmlContent = "
-        <div style='display: flex; flex-direction: row; align-items: flex-start; gap: 20px;'>
-            <div style='width: 30%;'>
+        <div style='gap: 100px; width: 100%;'>
+            <div style='width: 30%; float: left; padding-right: 20px;'>
                 <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Data Rekapitulasi</h2>
                 <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                     <thead>
                         <tr style='background-color: #f2f2f2;'>
-                            <th style='border: 1px solid #000; padding: 5px;'>Bulan</th>
-                            <th style='border: 1px solid #000; padding: 5px;'>Total Penjualan (Rp)</th>
+                            <th style='border: 1px solid #000; padding: 1px;'>Bulan</th>
+                            <th style='border: 1px solid #000; padding: 2px;'>Total Penjualan (Rp)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -161,7 +161,7 @@ class LaporanDetransController extends Controller
                     </tbody>
                 </table>
             </div>
-            <div style='width: 25%; text-align: center;'>
+            <div style='width: 65%; text-align:center; margin-left: 20px;'>
                 <h2 style='font-size: 14px; margin-bottom: 10px;'>Grafik Penjualan</h2>
                 <img src='{$chartBase64}' style='width: 100%; height: auto;' alt='Grafik Penjualan' />
             </div>
