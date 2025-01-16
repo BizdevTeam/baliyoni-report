@@ -26,6 +26,7 @@
                 </a>
             </li>
             </div>
+            <!-- Marketing -->
             <li class="relative">
                 <button type="button"
                     class="flex items-center w-full px-4 py-2 text-gray-700 rounded-md transition"
@@ -73,6 +74,7 @@
                 </ul>
             </li>
 
+            <!-- Procurement -->
             <li class="relative">
                 <button type="button"
                     class="flex items-center w-full px-4 py-2 text-gray-700 rounded-md . . transition"
@@ -113,39 +115,48 @@
                 </ul>
             </li>
 
+            <!-- Support -->
             <li class="relative">
                 <button type="button"
                     class="flex items-center w-full px-4 py-2 text-gray-700 rounded-md . . transition"
-                    aria-controls="dropdown-IT" aria-expanded="false">
-                    <img src="{{ asset("images/it.svg") }}" class="w-5 h-5">
-                    <span class="menu-label flex-1 ml-3 text-left">IT</span>
+                    aria-controls="dropdown-support" aria-expanded="false">
+                    <img src="{{ asset("images/support.svg") }}" class="w-5 h-5">
+                    <span class="menu-label flex-1 ml-3 text-left">SUPPORT</span>
                     <i class="fas fa-chevron-down ml-auto text-gray-400 group-hover:text-gray-700 transition-transform"></i>
                 </button>
-                <ul id="dropdown-IT" class="hidden py-2 pl-8 space-y-2">
+                <ul id="dropdown-support" class="hidden py-2 pl-8 space-y-2">
                     <li>
-                        <a href="{{ route('instagram.index') }}"
-                            class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
+                        <a href="{{ route('rekappendapatanservisasp.index') }}"
+                            class="flex items-center px-3 py-2 text-gray-700 rounded-md . transition">
                             <img src="{{ asset("icon/RekapPenjualan.svg") }}" class="w-5 h-5">
-                            <span class="ml-2">Laporan Multimedia IG</span>
+                            <span class="ml-2">Rekap Pendapatan Servis ASP</span>
                         </a>
                     </li>
-                    <li>    
-                        <a href="{{ route('tiktok.index') }}"
+                    <li>
+                        <a href="{{ route('rekappiutangservisasp.index') }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/RekapPenjualanPerusahaan.svg") }}" class="w-5 h-5">
-                            <span class="ml-2">Laporan Multimedia Tiktok</span>
+                            <span class="ml-2">Rekap Piutang Servis ASP</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('bizdevbulanan.index') }}"
-                            class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
-                            <img src="{{ asset("icon/LaporanPaketAdministrasi.svg") }}" class="w-5 h-5">
-                            <span class="ml-2">Laporan Bizdev</span>
+                        <a href="{{ route("laporansamitra.index") }}"
+                            class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
+                            <img src="{{ asset("icon/RekapPenjualan.svg") }}" class="w-5 h-5">
+                            <span class="ml-2">Rekap Pendapat Pengiriman Daerah Bali</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route("laporandetrans.index") }}"
+                            class="flex items-center px-3 py-2 text-gray-700 rounded-md . transition">
+                            <img src="{{ asset("icon/RekapPenjualanPerusahaan.svg") }}" class="w-5 h-5">
+                            <span class="ml-2">Rekap Pendapatan Luar Bali</span>
                         </a>
                     </li>
                 </ul>
             </li>
 
+            <!-- Accounting -->
             <li class="relative">
                 <button type="button"
                     class="flex items-center w-full px-4 py-2 text-gray-700 rounded-md . . transition"
@@ -207,6 +218,41 @@
                 </ul>
             </li>
 
+            <!-- It -->
+            <li class="relative">
+                <button type="button"
+                    class="flex items-center w-full px-4 py-2 text-gray-700 rounded-md . . transition"
+                    aria-controls="dropdown-IT" aria-expanded="false">
+                    <img src="{{ asset("images/it.svg") }}" class="w-5 h-5">
+                    <span class="menu-label flex-1 ml-3 text-left">IT</span>
+                    <i class="fas fa-chevron-down ml-auto text-gray-400 group-hover:text-gray-700 transition-transform"></i>
+                </button>
+                <ul id="dropdown-IT" class="hidden py-2 pl-8 space-y-2">
+                    <li>
+                        <a href="{{ route('instagram.index') }}"
+                            class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
+                            <img src="{{ asset("icon/RekapPenjualan.svg") }}" class="w-5 h-5">
+                            <span class="ml-2">Laporan Multimedia IG</span>
+                        </a>
+                    </li>
+                    <li>    
+                        <a href="{{ route('tiktok.index') }}"
+                            class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
+                            <img src="{{ asset("icon/RekapPenjualanPerusahaan.svg") }}" class="w-5 h-5">
+                            <span class="ml-2">Laporan Multimedia Tiktok</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('bizdevbulanan.index') }}"
+                            class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
+                            <img src="{{ asset("icon/LaporanPaketAdministrasi.svg") }}" class="w-5 h-5">
+                            <span class="ml-2">Laporan Bizdev</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <!-- HRGA -->
             <li class="relative">
                 <button type="button"
                     class="flex items-center w-full px-4 py-2 text-gray-700 rounded-md . . transition"
@@ -261,6 +307,7 @@
                 </ul>
             </li>
             
+            <!-- SPI -->
             <li class="relative">
                 <button type="button"
                     class="flex items-center w-full px-4 py-2 text-gray-700 rounded-md . . transition"
@@ -274,7 +321,7 @@
                         <a href="{{ route('laporanspi.index') }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
                             <img src="{{ asset("icon/RekapPenjualan.svg") }}" class="w-5 h-5">
-                            <span class="ml-2">Laporan SPI</span>
+                            <span class="ml-2">Laporan SPI Oprasional</span>
                         </a>
                     </li>
                     <li>
@@ -282,44 +329,6 @@
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
                             <img src="{{ asset("icon/RekapPenjualanPerusahaan.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan SPI IT</span>
-                        </a>
-                    </li>
-                </li>
-            </ul>
-
-            <li class="relative">
-                <button type="button"
-                    class="flex items-center w-full px-4 py-2 text-gray-700 rounded-md . . transition"
-                    aria-controls="dropdown-support" aria-expanded="false">
-                    <img src="{{ asset("images/support.svg") }}" class="w-5 h-5">
-                    <span class="menu-label flex-1 ml-3 text-left">SUPPORT</span>
-                    <i class="fas fa-chevron-down ml-auto text-gray-400 group-hover:text-gray-700 transition-transform"></i>
-                </button>
-                <ul id="dropdown-support" class="hidden py-2 pl-8 space-y-2">
-                    <li>
-                        <a href="{{ route('rekappendapatanservisasp.index') }}"
-                            class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
-                            <img src="{{ asset("icon/RekapPenjualan.svg") }}" class="w-5 h-5">
-                            <span class="ml-2">Rekap Pendapatan Servis ASP</span>
-                        </a>
-                    </li>
-                        <a href="{{ route('rekappiutangservisasp.index') }}"
-                            class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
-                            <img src="{{ asset("icon/RekapPenjualanPerusahaan.svg") }}" class="w-5 h-5">
-                            <span class="ml-2">Rekap Piutang Servis ASP</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route("laporansamitra.index") }}"
-                            class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
-                            <img src="{{ asset("icon/RekapPenjualan.svg") }}" class="w-5 h-5">
-                            <span class="ml-2">PT. Saguna Mitra Transindo</span>
-                        </a>
-                    </li>
-                        <a href="{{ route("laporandetrans.index") }}"
-                            class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
-                            <img src="{{ asset("icon/RekapPenjualanPerusahaan.svg") }}" class="w-5 h-5">
-                            <span class="ml-2">PT. Detran Jelajah Nusantara</span>
                         </a>
                     </li>
                 </ul>
@@ -728,7 +737,7 @@
                         <a href="{{ route('laporanspi.index') }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
                             <img src="{{ asset("icon/RekapPenjualan.svg") }}" class="w-5 h-5">
-                            <span class="ml-2">Laporan SPI</span>
+                            <span class="ml-2">Laporan SPI Operasional</span>
                         </a>
                     </li>
                     <li>
@@ -777,15 +786,15 @@
                     </li>
                     <li>
                         <a href="{{ route("laporansamitra.index") }}"
-                            class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
+                            class="flex items-center px-3 py-2 text-gray-700 rounded-md . transition">
                             <img src="{{ asset("icon/RekapPenjualan.svg") }}" class="w-5 h-5">
-                            <span class="ml-2">PT. Saguna Mitra Transindo</span>
+                            <span class="ml-2">Rekap Pendapat Pengiriman Daerah Bali</span>
                         </a>
                     </li>
                         <a href="{{ route("laporandetrans.index") }}"
-                            class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
+                            class="flex items-center px-3 py-2 text-gray-700 rounded-md . transition">
                             <img src="{{ asset("icon/RekapPenjualanPerusahaan.svg") }}" class="w-5 h-5">
-                            <span class="ml-2">PT. Detran Jelajah Nusantara</span>
+                            <span class="ml-2">Rekap Pendapatan Luar Bali</span>
                         </a>
                     </li>
                 </ul>

@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('file_excel')->nullable();
             $table->string('keterangan');
             $table->timestamps();
+
+            $table->unique(['bulan']);
         });
     }
 

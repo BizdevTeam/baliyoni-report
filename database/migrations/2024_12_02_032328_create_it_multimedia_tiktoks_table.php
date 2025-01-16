@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('gambar')->nullable();
             $table->text('keterangan');
             $table->timestamps();
+
+            $table->unique(['bulan']);
         });
     }
 

@@ -13,22 +13,24 @@ return new class extends Migration
     {
         Schema::create('laporan_per_instansis', function (Blueprint $table) {
             $table->id('id_perinstansi');
-                $table->string('bulan');
-                $table->enum('instansi',[
-                    'Badung',
-                    'Denpasar',
-                    'Tabanan',
-                    'Gianyar',
-                    'Karangasem',
-                    'Bangli',
-                    'Singaraja',
-                    'Jembrana',
-                    'Klungkung',
-                    'Provinsi',
-                ]);
-                $table->bigInteger('nilai');
-                $table->timestamps();
-            });
+            $table->string('bulan');
+            $table->enum('instansi',[
+                'Badung',
+                'Denpasar',
+                'Tabanan',
+                'Gianyar',
+                'Karangasem',
+                'Bangli',
+                'Singaraja',
+                'Jembrana',
+                'Klungkung',
+                'Provinsi',
+            ]);
+            $table->bigInteger('nilai');
+            $table->timestamps();
+
+            $table->unique(['bulan', 'instansi']);
+        });
     }
 
     /**

@@ -39,6 +39,13 @@ class ItMultimediaInstagramController extends Controller
                 $validatedata['gambar'] = $filename;
             }
 
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = ItMultimediaInstagram::where('bulan', $validatedata['bulan'])->exists();
+    
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
+
             ItMultimediaInstagram::create($validatedata);
 
             return redirect()->route('instagram.index')->with('success', 'Data Berhasil Ditambahkan');
@@ -66,6 +73,14 @@ class ItMultimediaInstagramController extends Controller
                 $filename = time() . $request->file('gambar')->getClientOriginalName();
                 $request->file('gambar')->move(public_path('images/it/multimediainstagram'), $filename);
                 $validatedata['gambar'] = $filename;
+            }
+
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = ItMultimediaInstagram::where('bulan', $validatedata['bulan'])
+                ->where('id_instagram', '!=', $instagram->id_instagram)->exists();
+
+            if ($exists) {
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
             }
 
             $instagram->update($validatedata);

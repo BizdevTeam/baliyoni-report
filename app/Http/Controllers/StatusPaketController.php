@@ -72,6 +72,15 @@ class StatusPaketController extends Controller
                 ],
                 'total_paket' => 'required|integer|min:0',
             ]);
+
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = StatusPaket::where('bulan', $validatedata['bulan'])
+            ->where('status', $validatedata['status'])
+            ->exists();
+
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
     
             StatusPaket::create($validatedata);
     
@@ -101,14 +110,21 @@ class StatusPaketController extends Controller
             ],
                 'total_paket' => 'required|integer|min:0',
             ]);
+
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = StatusPaket::where('bulan', $validatedData['bulan'])
+            ->where('status', $validatedData['status'])
+            ->where('id_statuspaket', '!=', $statuspaket->id_statuspaket)->exists();
+
+            if ($exists) {
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
+            }
     
             // Update data
             $statuspaket->update($validatedData);
     
             // Redirect dengan pesan sukses
-            return redirect()
-                ->route('statuspaket.index')
-                ->with('success', 'Data berhasil diperbarui.');
+            return redirect()->route('statuspaket.index')->with('success', 'Data berhasil diperbarui.');
         } catch (ValidationException $e) {
             // Tangani error validasi
             return redirect()

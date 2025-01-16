@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('bulan');
             $table->bigInteger('stok');
             $table->timestamps();
+
+            $table->unique(['bulan']);
         });
     }
 

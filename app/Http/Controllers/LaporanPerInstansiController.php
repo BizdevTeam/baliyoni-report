@@ -78,6 +78,14 @@ class LaporanPerInstansiController extends Controller
                 ],
                 'nilai' => 'required|integer|min:0',
             ]);
+
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = LaporanPerInstansi::where('bulan', $validatedata['bulan'])
+            ->where('instansi', $validatedata['instansi'])->exists();
+            
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
     
             LaporanPerInstansi::create($validatedata);
     
@@ -93,7 +101,7 @@ class LaporanPerInstansiController extends Controller
     {
         try {
             // Validasi input
-            $validatedData = $request->validate([
+            $validatedata = $request->validate([
                 'bulan' => 'required|date_format:Y-m',
                 'instansi' => [
                 'required',
@@ -112,9 +120,18 @@ class LaporanPerInstansiController extends Controller
             ],
                 'nilai' => 'required|integer|min:0',
             ]);
+
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = LaporanPerInstansi::where('bulan', $validatedata['bulan'])
+            ->where('instansi', $validatedata['instansi'])
+            ->where('id_perinstansi', '!=', $laporanperinstansi->id_perinstansi)->exists();
+
+            if ($exists) {
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
+            }
     
             // Update data
-            $laporanperinstansi->update($validatedData);
+            $laporanperinstansi->update($validatedata);
     
             // Redirect dengan pesan sukses
             return redirect()

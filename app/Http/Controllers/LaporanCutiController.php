@@ -87,6 +87,27 @@ class LaporanCutiController extends Controller
             ]);
             return redirect()->route('laporancuti.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
+        try {
+            $validatedata = $request->validate([
+                'bulan' => 'required|date_format:Y-m',
+                'total_cuti' => 'required|integer',
+                'nama' => 'required|string'
+            ]);
+    
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = LaporanCuti::where('nama', $validatedata['nama'])->exists();
+        
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
+    
+            LaporanCuti::create($validatedata);
+    
+            return redirect()->route('laporancuti.index')->with('success', 'Data Berhasil Ditambah');
+        } catch (\Exception $e) {
+            Log::error('Error storing Laporan Coti data: ' . $e->getMessage());
+            return redirect()->route('laporancuti.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
+        }
     }
 
     public function update(Request $request, LaporanCuti $laporancuti)
@@ -98,13 +119,13 @@ class LaporanCutiController extends Controller
                 'nama' => 'required|string',
                 'total_cuti' => 'required|integer|min:0',
             ]);
+
             // Cek kombinasi unik bulan dan nama
-            $exists = LaporanCuti::where('bulan', $validatedata['bulan'])
-            ->where('nama', $validatedata['nama'])
-            ->exists();
+            $exists = LaporanCuti::where('nama', $validatedata['nama'])
+                ->where('id_cuti', '!=', $laporancuti->id_cuti)->exists();
 
             if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
             }
     
             // Update data

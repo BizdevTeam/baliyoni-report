@@ -15,12 +15,7 @@ class laporanSPITiController extends Controller
 
         $laporanspitis = LaporanSPITI::query()
         ->when($search, function($query, $search) {
-            return $query->where('bulan_tahun', 'like', "%$search%")
-                         ->orWhere('judul', 'like', "%$search%")
-                         ->orWhere('aspek', 'like', "%$search%")
-                         ->orWhere('masalah', 'like', "%$search%")
-                         ->orWhere('solusi', 'like', "%$search%")
-                         ->orWhere('implementasi', 'like', "%$search%");
+            return $query->where('bulan_tahun', 'like', "%$search%");
         })
         ->orderByRaw('YEAR(bulan_tahun) DESC, MONTH(bulan_tahun) ASC')
         ->paginate($perPage);

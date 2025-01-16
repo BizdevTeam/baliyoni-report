@@ -46,14 +46,22 @@ class ArusKasController extends Controller
             $validatedata = $request->validate([
                 'bulan' => 'required|date_format:Y-m',
                 'kas_masuk' => 'required|integer|min:0',
-                'kas_keluar' => 'required|integer|min:0',
+                'kas_keluar' => 'required|integer|min:0'
             ]);
+
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = ArusKas::where('bulan', $validatedata['bulan'])->exists();
     
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
+
             ArusKas::create($validatedata);
-    
+
             return redirect()->route('aruskas.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
-            Log::error('Error storing Arus Kas data: ' . $e->getMessage());
+            // Logging untuk debug
+            Log::error('Error updating Arus Kas: ' . $e->getMessage());
             return redirect()->route('aruskas.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
     }
@@ -66,6 +74,13 @@ class ArusKasController extends Controller
                 'kas_masuk' => 'required|integer|min:0',
                 'kas_keluar' => 'required|integer|min:0',
             ]);
+
+            $exists = ArusKas::where('bulan', $validatedata['bulan'])
+                ->where('id_aruskas', '!=', $aruskas->id_aruskas)->exists();
+
+            if ($exists) {
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
+            }
     
             $aruskas->update($validatedata);
     
@@ -179,5 +194,4 @@ class ArusKasController extends Controller
     
         return response()->json($data);
     }
-
 }

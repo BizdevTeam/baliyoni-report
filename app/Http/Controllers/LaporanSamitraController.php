@@ -19,7 +19,7 @@ class LaporanSamitraController extends Controller
         #$query = KasHutangPiutang::query();
 
         // Query untuk mencari berdasarkan tahun dan bulan
-        $laporansamitras = LaporanSamitra::query()
+        $laporansamitras = laporansamitra::query()
             ->when($search, function ($query, $search) {
                 return $query->where('bulan', 'LIKE', "%$search%");
             })
@@ -63,8 +63,15 @@ class LaporanSamitraController extends Controller
                 'bulan' => 'required|date_format:Y-m',
                 'total_pengiriman' => 'required|integer|min:0',
             ]);
+
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = laporansamitra::where('bulan', $validatedata['bulan'])->exists();
+                
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
     
-            LaporanSamitra::create($validatedata);
+            laporansamitra::create($validatedata);
     
             return redirect()->route('laporansamitra.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
@@ -73,17 +80,25 @@ class LaporanSamitraController extends Controller
         }
     }
 
-    public function update(Request $request, LaporanSamitra $laporansamitra)
+    public function update(Request $request, laporansamitra $laporansamitra)
     {
         try {
             // Validasi input
-            $validatedData = $request->validate([
+            $validatedata = $request->validate([
                 'bulan' => 'required|date_format:Y-m',
                 'total_pengiriman' => 'required|integer|min:0',
             ]);
+
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = laporansamitra::where('bulan', $validatedata['bulan'])
+                ->where('id_samitra', '!=', $laporansamitra->id_samitra)->exists();
+
+            if ($exists) {
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
+            }
     
             // Update data
-            $laporansamitra->update($validatedData);
+            $laporansamitra->update($validatedata);
     
             // Redirect dengan pesan sukses
             return redirect()

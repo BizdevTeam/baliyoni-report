@@ -25,6 +25,7 @@ class RekapPiutangServisAspController extends Controller
             ->when($search, function ($query, $search) {
                 return $query->where('bulan', 'LIKE', "%$search%")
                              ->orWhere('pelaksana', 'like', "%$search%");
+                return $query->where('bulan', 'like', "%$search%");
             })
             ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
             ->paginate($perPage);
@@ -75,6 +76,15 @@ class RekapPiutangServisAspController extends Controller
                 'nilai_piutang' => 'required|integer|min:0',
             ]);
 
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = RekapPiutangServisASP::where('bulan', $validatedata['bulan'])
+            ->where('pelaksana', $validatedata['pelaksana'])
+            ->exists();
+
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
+
             // Cek kombinasi unik bulan dan pelaksana
             $exists = RekapPiutangServisAsp::where('bulan', $validatedata['bulan'])
             ->where('pelaksana', $validatedata['pelaksana'])
@@ -117,6 +127,14 @@ class RekapPiutangServisAspController extends Controller
 
                 'nilai_piutang' => 'required|integer|min:0',
             ]);
+
+            $exists = RekapPiutangServisAsp::where('bulan', $validatedData['bulan'])
+            ->where('pelaksana', $validatedData['pelaksana'])
+            ->where('id_rpiutangsasp', '!=', $rekappiutangservisasp->id_rpiutangsasp)->exists();
+
+            if ($exists) {
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
+            }
     
             // Update data
             $rekappiutangservisasp->update($validatedData);
@@ -131,6 +149,20 @@ class RekapPiutangServisAspController extends Controller
                 ->back()
                 ->withErrors($e->errors())
                 ->withInput();
+
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = RekapPiutangServisASP::where('bulan', $validatedata['bulan'])
+            ->where('pelaksana', $validatedata['pelaksana'])
+            ->exists();
+
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
+
+            // Update data rekappiutang
+            $rpiutangsasp->update($validatedata);
+
+            return redirect()->route('rpiutangsasp.index')->with('success', 'Data Berhasil Diupdate');
         } catch (\Exception $e) {
             // Tangani error umum dan log untuk debugging
             Log::error('Error updating Laporan Holding: ' . $e->getMessage());

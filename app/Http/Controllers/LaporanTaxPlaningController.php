@@ -45,6 +45,13 @@ class LaporanTaxPlaningController extends Controller
                 $request->file('gambar')->move(public_path('images/accounting/taxplaning'), $filename);
                 $validatedata['gambar'] = $filename;
             }
+
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = LaporanTaxPlaning::where('bulan', $validatedata['bulan'])->exists();
+                    
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
     
             LaporanTaxPlaning::create($validatedata);
     
@@ -59,38 +66,46 @@ class LaporanTaxPlaningController extends Controller
     {
         try {
             $fileRules = $taxplaning->file_excel ? 'nullable|mimes:xlsx,xls|max:2048' : 'required|mimes:xlsx,xls|max:2048';
-        $validatedata = $request->validate([
-            'bulan' => 'required|date_format:Y-m',
-            'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550',
-            'file_excel' => $fileRules,
-            'keterangan' => 'required|string|max:255'
-        ]);
+            $validatedata = $request->validate([
+                'bulan' => 'required|date_format:Y-m',
+                'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550',
+                'file_excel' => $fileRules,
+                'keterangan' => 'required|string|max:255'
+            ]);
 
-        if ($request->hasFile('gambar')) {
-            $destinationimages = "images/accounting/taxplaning/" . $taxplaning->gambar;
-            if (File::exists($destinationimages)) {
-                File::delete($destinationimages);
+            if ($request->hasFile('gambar')) {
+                $destinationimages = "images/accounting/taxplaning/" . $taxplaning->gambar;
+                if (File::exists($destinationimages)) {
+                    File::delete($destinationimages);
+                }
+
+                $filename = date('d-m-Y') . '_' . $request->file('gambar')->getClientOriginalName();
+                $request->file('gambar')->move(public_path('images/accounting/taxplaning'), $filename);
+                $validatedata['gambar'] = $filename;
             }
 
-            $filename = date('d-m-Y') . '_' . $request->file('gambar')->getClientOriginalName();
-            $request->file('gambar')->move(public_path('images/accounting/taxplaning'), $filename);
-            $validatedata['gambar'] = $filename;
-        }
+            if ($request->hasFile('file_excel')) {
+                $destinationfiles = "files/accounting/taxplaning/" . $taxplaning->file_excel;
+                if (File::exists($destinationfiles)) {
+                    File::delete($destinationfiles);
+                }
 
-        if ($request->hasFile('file_excel')) {
-            $destinationfiles = "files/accounting/taxplaning/" . $taxplaning->file_excel;
-            if (File::exists($destinationfiles)) {
-                File::delete($destinationfiles);
+                $excelfilename = date('d-m-Y') . '_' . $request->file('file_excel')->getClientOriginalName();
+                $request->file('file_excel')->move(public_path('files/accounting/taxplaning'), $excelfilename);
+                $validatedata['file_excel'] = $excelfilename;
             }
 
-            $excelfilename = date('d-m-Y') . '_' . $request->file('file_excel')->getClientOriginalName();
-            $request->file('file_excel')->move(public_path('files/accounting/taxplaning'), $excelfilename);
-            $validatedata['file_excel'] = $excelfilename;
-        }
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = LaporanTaxPlaning::where('bulan', $validatedata['bulan'])
+            ->where('id_taxplaning', '!=', $taxplaning->id_taxplaning)->exists();
 
-        $taxplaning->update($validatedata);
+            if ($exists) {
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
+            }
 
-        return redirect()->route('taxplaning.index')->with('success', 'Data Telah Diupdate');
+            $taxplaning->update($validatedata);
+
+            return redirect()->route('taxplaning.index')->with('success', 'Data Telah Diupdate');
         } catch (\Exception $e) {
             Log::error('Error updating taxplaning data: ' . $e->getMessage());
             return redirect()->route('taxplaning.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());

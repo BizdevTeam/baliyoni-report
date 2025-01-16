@@ -39,6 +39,13 @@ class ItMultimediaTiktokController extends Controller
                 $validatedata['gambar'] = $filename;
             }
 
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = ItMultimediaTiktok::where('bulan', $validatedata['bulan'])->exists();
+    
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
+
             ItMultimediaTiktok::create($validatedata);
 
             return redirect()->route('tiktok.index')->with('success', 'Data Berhasil Ditambahkan');
@@ -66,6 +73,14 @@ class ItMultimediaTiktokController extends Controller
                 $filename = time() . $request->file('gambar')->getClientOriginalName();
                 $request->file('gambar')->move(public_path('images/it/multimediatiktok'), $filename);
                 $validatedata['gambar'] = $filename;
+            }
+
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = ItMultimediaTiktok::where('bulan', $validatedata['bulan'])
+                ->where('id_tiktok', '!=', $tiktok->id_tiktok)->exists();
+
+            if ($exists) {
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
             }
 
             $tiktok->update($validatedata);

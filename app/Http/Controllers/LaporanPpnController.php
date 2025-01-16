@@ -19,8 +19,7 @@ class LaporanPpnController extends Controller
 
         $laporanppns = LaporanPpn::query()
         ->when($search, function($query, $search) {
-            return $query->where('bulan', 'like', "%$search%")
-                         ->orWhere('keterangan', 'like', "%$search%");
+            return $query->where('bulan', 'like', "%$search%");
         })
         ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
         ->paginate($perPage);
@@ -33,7 +32,7 @@ class LaporanPpnController extends Controller
     public function store(Request $request)
     {
         try {
-            $validatedData = $request->validate([
+            $validatedata = $request->validate([
                 'bulan' => 'required|date_format:Y-m',
                 'thumbnail' => 'image|mimes:jpeg,png,jpg,gif|max:2550',
                 'file' => 'required|mimes:xlsx,xls|max:2048',
@@ -43,16 +42,23 @@ class LaporanPpnController extends Controller
             if ($request->hasFile('file')) {
                 $excelFileName = date('d-m-Y') . '_' . $request->file('file')->getClientOriginalName();
                 $request->file('file')->move(public_path('files/accounting/ppn'), $excelFileName);
-                $validatedData['file'] = $excelFileName;
+                $validatedata['file'] = $excelFileName;
             }
 
             if ($request->hasFile('thumbnail')) {
                 $fileName = date('d-m-Y') . '_' . $request->file('thumbnail')->getClientOriginalName();
                 $request->file('thumbnail')->move(public_path('images/accounting/ppn'), $fileName);
-                $validatedData['thumbnail'] = $fileName;
+                $validatedata['thumbnail'] = $fileName;
             }
 
-            LaporanPpn::create($validatedData);
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = LaporanPpn::where('bulan', $validatedata['bulan'])->exists();
+            
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
+
+            LaporanPpn::create($validatedata);
             return redirect()->route('laporanppn.index')->with('success', 'Data berhasil ditambahkan!');
 
         } catch (\Exception $e) {
@@ -66,7 +72,7 @@ class LaporanPpnController extends Controller
     public function update(Request $request, LaporanPpn $laporanppn)
     {
         try{
-            $validatedData = $request->validate([
+            $validatedata = $request->validate([
                 'bulan' => 'required|string',
                 'thumbnail' => 'image|mimes:jpeg,png,jpg,gif|max:2550',
                 'file' => 'mimes:xlsx,xls|max:2048',
@@ -80,7 +86,7 @@ class LaporanPpnController extends Controller
                 }
                 $fileName = date('d-m-Y') . '_' . $request->file('thumbnail')->getClientOriginalName();
                 $request->file('thumbnail')->move(public_path('images/accounting/ppn'), $fileName);
-                $validatedData['thumbnail'] = $fileName;
+                $validatedata['thumbnail'] = $fileName;
             }
 
             if ($request->hasFile('file')) {
@@ -90,13 +96,22 @@ class LaporanPpnController extends Controller
                 }
                 $fileName = date('d-m-Y') . '_' . $request->file('file')->getClientOriginalName();
                 $request->file('file')->move(public_path('files/accounting/ppn'), $fileName);
-                $validatedData['file'] = $fileName;
+                $validatedata['file'] = $fileName;
             }
 
-            $laporanppn->update($validatedData);
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = LaporanPpn::where('bulan', $validatedata['bulan'])
+            ->where('id_laporanppn', '!=', $laporanppn->id_laporanppn)->exists();
+
+            if ($exists) {
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
+            }
+
+            $laporanppn->update($validatedata);
+            
             return redirect()->route('laporanppn.index')->with('success', 'Data berhasil diubah!');
 
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             Log::error('Error updating laporanppn: ' . $e->getMessage());
             return redirect()->route('laporanppn.index')->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }

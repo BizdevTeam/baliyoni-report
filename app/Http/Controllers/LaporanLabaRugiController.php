@@ -16,8 +16,7 @@ class LaporanLabaRugiController extends Controller
 
         $laporanlabarugis = LaporanLabaRugi::query()
         ->when($search, function($query, $search) {
-            return $query->where('bulan', 'like', "%$search%")
-                         ->orWhere('keterangan', 'like', "%$search%");
+            return $query->where('bulan', 'like', "%$search%");
         })
         ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
         ->paginate($perPage);
@@ -44,6 +43,13 @@ class LaporanLabaRugiController extends Controller
                 $excelfilename = time() . $request->file('gambar')->getClientOriginalName();
                 $request->file('gambar')->move(public_path('images/accounting/labarugi'), $excelfilename);
                 $validatedata['gambar'] = $excelfilename;
+            }
+
+            // Cek kombinasi unik bulan dan perusahaan
+            $exists = LaporanLabaRugi::where('bulan', $validatedata['bulan'])->exists();
+    
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
             }
     
             LaporanLabaRugi::create($validatedata);
@@ -87,6 +93,14 @@ class LaporanLabaRugiController extends Controller
             $request->file('file_excel')->move(public_path('files/accounting/labarugi'), $excelfilename);
             $validatedata['file_excel'] = $excelfilename;
         }
+
+        // Cek kombinasi unik bulan dan perusahaan
+        $exists = LaporanLabaRugi::where('bulan', $validatedata['bulan'])
+                ->where('id_labarugi', '!=', $labarugi->id_labarugi)->exists();
+
+            if ($exists) {
+                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
+            }
 
         $labarugi->update($validatedata);
 
