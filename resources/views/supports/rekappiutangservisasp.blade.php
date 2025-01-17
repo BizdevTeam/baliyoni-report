@@ -150,7 +150,7 @@
         </div>
         <div class="mx-auto bg-white p-6 mt-3 rounded-lg shadow">
             <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Diagram</h1>
-            <div class="mt-6 items-center text-center mx-auto">
+            <div class="mt-6 items-center text-center mx-auto h-[600px] w-[600px]">
                 <canvas id="chart"></canvas>
             </div>
             <button onclick="exportToPDF()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
@@ -223,56 +223,28 @@
 
     var chartData = @json($chartData);
 
+    var chartData = @json($chartData);
+
 var ctx = document.getElementById('chart').getContext('2d');
-var barChart = new Chart(ctx, {
-    type: 'pie',
-    data: {
-        labels: chartData.labels, // Label bulan
-        datasets: chartData.datasets, // Dataset total penjualan
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: {
-                position: 'top', // Posisi legenda
-            labels: {
-                font :{
-                size: 20,
-                weight : 'bold',
-                    }, //
-                }, //
-             }, //
-            tooltip: {
-                callbacks: {
-                    label: function(tooltipItem) {
-                        let value = tooltipItem.raw; // Ambil data nilai
-                        return tooltipItem.dataset.text + ' : ' + value.toLocaleString(); // Format angka
-                    },
+    var pieChart = new Chart(ctx, {
+        type: 'pie', 
+        data: chartData, 
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
                 },
-            },
-        },
-        scales: {
-            x: {
-                title: {
-                    display: true,
-                    text: 'Pelaksana', // Label sumbu X
-                },
-            },
-            y: {
-                beginAtZero: true,
-                title: {
-                    display: true,
-                    text: 'Nilai Piutang (Rp)', // Label sumbu Y
-                },
-                ticks: {
-                    callback: function(value) {
-                        return value.toLocaleString(); // Format angka
-                    },
-                },
-            },
-        },
-    },
-});
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            return tooltipItem.label + ': ' + tooltipItem.raw.toLocaleString(); // Menampilkan data dengan format angka
+                        }
+                    }
+                }
+            }
+        }
+    });
 
     async function exportToPDF() {
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;

@@ -276,11 +276,11 @@
         .filter(item => item.bulan && item.kas && item.hutang && item.piutang && item.stok)
         .map(item => `
             <tr>
-                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.bulan}</td>
-                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.kas}</td>
-                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.hutang}</td>
-                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.piutang}</td>
-                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.stok}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.bulan}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.kas}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.hutang}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.piutang}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.stok}</td>
             </tr>
         `).join('');
 

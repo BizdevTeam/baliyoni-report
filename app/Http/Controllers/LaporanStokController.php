@@ -44,7 +44,6 @@ class LaporanStokController extends Controller
             'labels' => $labels, // Labels untuk chart
             'datasets' => [
                 [
-                    'label' => 'Grafik Laporan Nilai Stok', // Nama dataset
                     'text' => 'Total Nilai Stok', // Nama dataset
                     'data' => $data, // Data untuk chart
                     'backgroundColor' => $backgroundColors, // Warna batang random
@@ -156,41 +155,33 @@ class LaporanStokController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
 
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Stok|Halaman {PAGENO}');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Procurements|Halaman {PAGENO}');
 
             // Buat konten tabel dengan gaya CSS yang lebih ketat
-            $tableHTMLContent = "
-                <h1 style='text-align:center; font-size: 16px; margin-top: 50px;'>Laporan Stok</h1>
-                <h2 style='text-align:center; font-size: 12px; margin: 5px 0;'>Data Rekapitulasi</h2>
-                <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
-                    <thead>
-                        <tr style='background-color: #f2f2f2;'>
-                            <th style='border: 1px solid #000; padding: 5px;'>Bulan/Tahun</th>
-                            <th style='border: 1px solid #000; padding: 5px;'>Total Nilai Stok (Rp)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {$tableHTML}
-                    </tbody>
-                </table>
+            $htmlContent = "
+            <div style='gap: 100px; width: 100%;'>
+                <div style='width: 30%; float: left; padding-right: 20px;'>
+                    <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Tabel Data</h2>
+                    <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
+                        <thead>
+                            <tr style='background-color: #f2f2f2;'>
+                                <th style='border: 1px solid #000; padding: 1px;'>Bulan</th>
+                                <th style='border: 1px solid #000; padding: 2px;'>Total Nilai Stok (Rp)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {$tableHTML}
+                        </tbody>
+                    </table>
+                </div>
+                <div style='width: 65%; text-align:center; margin-left: 20px;'>
+                    <h2 style='font-size: 14px; margin-bottom: 10px;'>Grafik Laporan Stok</h2>
+                    <img src='{$chartBase64}' style='width: 100%; height: auto;' alt='Grafik Laporan' />
+                </div>
+            </div>
             ";
-
-            // Tambahkan konten tabel ke PDF
-            $mpdf->WriteHTML($tableHTMLContent);
-
-            // Tambahkan pemisah halaman
-            $mpdf->AddPage();
-
-            // Tambahkan halaman baru dengan konten grafik
-            if (!empty($chartBase64)) {
-                $chartHTMLContent = "
-                    <h1 style='text-align:center; font-size: 16px; margin: 10px 0;'>Grafik Laporan Stok</h1>
-                    <div style='text-align: center; margin: 10px 0;'>
-                        <img src='{$chartBase64}' alt='Chart' style='max-width: 90%; height: auto;' />
-                    </div>
-                ";
-                $mpdf->WriteHTML($chartHTMLContent);
-            }
+            // Tambahkan konten ke PDF
+            $mpdf->WriteHTML($htmlContent);
 
             // Return PDF sebagai respon download
             return response($mpdf->Output('', 'S'), 200)

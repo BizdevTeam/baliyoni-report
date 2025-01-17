@@ -76,8 +76,8 @@
             <table class="table-auto w-full border-collapse border border-gray-300" id="data-table">
                 <thead class="bg-gray-200">
                     <tr>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Bulan/Tahun</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Total Nilai Stok</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Total Pembelian </th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -113,7 +113,7 @@
                                     @method('PUT')
                                     <div class="space-y-4">
                                         <div>
-                                            <label for="bulan" class="block text-sm font-medium">Bulan/Tahun</label>
+                                            <label for="bulan" class="block text-sm font-medium">Bulan</label>
                                             <input type="month" name="bulan" class="w-full p-2 border rounded" value="{{ $laporanoutlet->bulan }}" required>
                                         </div>
                                         <div>
@@ -155,7 +155,7 @@
             @csrf
             <div class="space-y-4">
                 <div>
-                    <label for="bulan" class="block text-sm font-medium">Bulan/Tahun</label>
+                    <label for="bulan" class="block text-sm font-medium">Bulan</label>
                     <input type="month" name="bulan" class="w-full p-2 border rounded" required>
                 </div>
                 <div>
@@ -201,57 +201,48 @@
 
     var chartData = @json($chartData);
 
-var ctx = document.getElementById('chart').getContext('2d');
-var barChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: chartData.labels, // Label bulan
-        datasets: chartData.datasets, // Dataset total penjualan
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: {
-                position: 'top', // Posisi legenda
-            labels: {
-                font :{
-                size: 20,
-                weight : 'bold',
-                    }, //
-                }, //
-             }, //
-            tooltip: {
-                callbacks: {
-                    label: function(tooltipItem) {
-                        let value = tooltipItem.raw; // Ambil data nilai
-                        return tooltipItem.dataset.text + ' : ' + value.toLocaleString(); // Format angka
+    var ctx = document.getElementById('chart').getContext('2d');
+    var barChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: chartData.labels, // Label bulan
+            datasets: chartData.datasets, // Dataset total penjualan
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false, // Sembunyikan legenda
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            let value = tooltipItem.raw; // Ambil data nilai
+                            return tooltipItem.dataset.text + ': ' + value.toLocaleString(); // Format angka
+                        },
+                    },
+                },
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: false, // Sembunyikan label sumbu X
+                    },
+                },
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: false, // Sembunyikan label sumbu Y
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return value.toLocaleString(); // Format angka
+                        },
                     },
                 },
             },
         },
-        scales: {
-            x: {
-                title: {
-                    display: true,
-                    text: 'Bulan/Tahun', // Label sumbu X
-                },
-            },
-            y: {
-                beginAtZero: true,
-                title: {
-                    display: true,
-                    text: 'Total Pembelian (Rp)', // Label sumbu Y
-                },
-                ticks: {
-                    callback: function(value) {
-                        return value.toLocaleString(); // Format angka
-                    },
-                },
-            },
-        },
-    },
-});
-
+    });
     async function exportToPDF() {
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
     if (!csrfToken) {

@@ -45,11 +45,8 @@ class LaporanSamitraController extends Controller
             'labels' => $labels, // Labels untuk chart
             'datasets' => [
                 [
-                    'label' => 'Grafik Laporan Pengiriman Samitra', // Nama dataset
                     'data' => $data, // Data untuk chart
                     'backgroundColor' => $backgroundColors, // Warna batang random
-                    'borderColor' => $borderColors,        // Warna border random
-                    'borderWidth' => 1,                    // Ketebalan border
                 ],
             ],
         ];
@@ -145,7 +142,7 @@ class LaporanSamitraController extends Controller
             'orientation' => 'L', // Landscape orientation
             'margin_left' => 10,
             'margin_right' => 10,
-            'margin_top' => 14, // Kurangi margin atas
+            'margin_top' => 35, // Kurangi margin atas
             'margin_bottom' => 10, // Kurangi margin bawah
             'format' => 'A4', // Ukuran kertas A4
         ]);
@@ -159,38 +156,33 @@ class LaporanSamitraController extends Controller
         ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
 
         // Tambahkan footer ke PDF
-        $mpdf->SetFooter('{DATE j-m-Y}|Laporan Pengiriman Samitra|Halaman {PAGENO}');
+        $mpdf->SetFooter('{DATE j-m-Y}|Laporan Supports|Halaman {PAGENO}');
 
-        // Buat konten tabel dengan gaya CSS yang lebih ketat
-        $tableHTMLContent = "
-            <h1 style='text-align:center; font-size: 16px; margin-top: 32px;'>Laporan Pengiriman Samitra</h1>
-            <h2 style='text-align:center; font-size: 12px; margin: 5px 0;'>Data Rekapitulasi</h2>
-            <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
-                <thead>
-                    <tr style='background-color: #f2f2f2;'>
-                        <th style='border: 1px solid #000; padding: 5px;'>Bulan/Tahun</th>
-                        <th style='border: 1px solid #000; padding: 5px;'>Total Pengiriman (Rp)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {$tableHTML}
-                </tbody>
-            </table>
+        // Konten HTML
+        $htmlContent = "
+        <div style='gap: 100px; width: 100%;'>
+            <div style='width: 30%; float: left; padding-right: 20px;'>
+                <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Tabel Data</h2>
+                <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
+                    <thead>
+                        <tr style='background-color: #f2f2f2;'>
+                            <th style='border: 1px solid #000; padding: 1px;'>Bulan</th>
+                            <th style='border: 1px solid #000; padding: 2px;'>Total Pengiriman (Rp)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {$tableHTML}
+                    </tbody>
+                </table>
+            </div>
+            <div style='width: 65%; text-align:center; margin-left: 20px;'>
+                <h2 style='font-size: 14px; margin-bottom: 10px;'>Grafik Laporan Pengiriman Samitra</h2>
+                <img src='{$chartBase64}' style='width: 100%; height: auto;' alt='Grafik Penjualan' />
+            </div>
+        </div>
         ";
-
-        // Tambahkan konten tabel ke PDF
-        $mpdf->WriteHTML($tableHTMLContent);
-
-        // Tambahkan halaman baru hanya jika konten chart tersedia
-        if (!empty($chartBase64)) {
-            $chartHTMLContent = "
-                <h1 style='text-align:center; font-size: 16px; margin: 10px 0;'>Grafik Laporan Pengiriman Samitra</h1>
-                <div style='text-align: center; margin: 10px 0;'>
-                    <img src='{$chartBase64}' alt='Chart' style='max-width: 90%; height: auto;' />
-                </div>
-            ";
-            $mpdf->WriteHTML($chartHTMLContent);
-        }
+        // Tambahkan konten ke PDF
+        $mpdf->WriteHTML($htmlContent);
 
         // Return PDF sebagai respon download
         return response($mpdf->Output('', 'S'), 200)
@@ -202,7 +194,6 @@ class LaporanSamitraController extends Controller
         return response()->json(['success' => false, 'message' => 'Gagal mengekspor PDF.'], 500);
     }
 }
-
 
     public function destroy(LaporanSamitra $laporansamitra)
     {

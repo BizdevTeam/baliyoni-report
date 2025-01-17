@@ -28,12 +28,6 @@ class LaporanTerlambatController extends Controller
             })
             ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
             ->paginate($perPage);
-        $laporantelats = LaporanTerlambat::query()
-        ->when($search, function ($query, $search) {
-            return $query->where('bulan', 'LIKE', "%$search%");
-        })
-        ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
-        ->paginate($perPage);
 
         // Hitung total untuk masing-masing kategori
         $totalPenjualan = $laporanterlambats->sum('total_terlambat');
@@ -73,7 +67,8 @@ class LaporanTerlambatController extends Controller
             ]);
 
             // Cek kombinasi unik bulan dan nama
-            $exists = LaporanTerlambat::where('nama', $validatedata['nama'])
+            $exists = LaporanTerlambat::where('bulan', $validatedata['bulan'])
+            ->where('nama', $validatedata['nama'])
             ->exists();
 
             if ($exists) {
@@ -92,10 +87,6 @@ class LaporanTerlambatController extends Controller
             ]);
             return redirect()->route('laporanterlambat.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
-    }
-
-    public function update(Request $request, LaporanTerlambat $laporanterlambat)
-    {
         try {
             $validatedata = $request->validate([
                 'bulan' => 'required|date_format:Y-m',
@@ -104,20 +95,48 @@ class LaporanTerlambatController extends Controller
             ]);
     
             // Cek kombinasi unik bulan dan perusahaan
+            $exists = LaporanTerlambat::where('nama', $validatedata['nama'])->exists();
+    
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data Already Exists.');
+            }
+    
+            LaporanTerlambat::create($validatedata);
+    
+            return redirect()->route('laporanterlambat.index')->with('success', 'Data Berhasil Ditambahkan');
+        } catch (\Exception $e) {
+            Log::error('Error Storing Laporan Terlambat: ' . $e->getMessage());
+            return redirect()->route('laporanterlambat.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
+        }
+    }
+
+    public function update(Request $request, LaporanTerlambat $laporanterlambat)
+    {
+        try {
+            // Validasi input
+            $validatedata = $request->validate([
+                'bulan' => 'required|date_format:Y-m',
+                'nama' => 'required|string',
+                'total_terlambat' => 'required|integer|min:0',
+            ]);
+            
+            // Cek kombinasi unik bulan dan nama
             $exists = LaporanTerlambat::where('nama', $validatedata['nama'])
-                ->where('id_terlambat', '!=', $laporanterlambat->id_terlambat)
-                ->exists();
+                ->where('id_izin', '!=', $laporanterlambat->id_izin)->exists();
 
             if ($exists) {
                 return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
             }
     
+            // Update data
             $laporanterlambat->update($validatedata);
     
-            return redirect()->route('laporanterlambat.index')->with('success', 'Data Berhasil Ditambah');
+            // Redirect dengan pesan sukses
+            return redirect()->route('laporanterlambat.index')->with('success', 'Data berhasil diperbarui.');
         } catch (\Exception $e) {
-            Log::error('Error Storing Laporan Terlambat data: ' . $e->getMessage());
-            return redirect()->route('laporanterlambat.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
+            // Tangani error umum dan log untuk debugging
+            Log::error('Error updating Laporan Terlambat: ' . $e->getMessage());
+            return redirect()->route('laporanterlambat.index')->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
     
@@ -161,42 +180,33 @@ class LaporanTerlambatController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Laporan Terlambat|Halaman {PAGENO}');
-    
-            // Buat konten tabel dengan gaya CSS yang lebih ketat
-            $tableHTMLContent = "
-                <h1 style='text-align:center; font-size: 16px; margin-top: 50px;'>Laporan Terlambat</h1>
-                <h2 style='text-align:center; font-size: 12px; margin: 5px 0;'>Data Rekapitulasi</h2>
-                <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
-                    <thead>
-                        <tr style='background-color: #f2f2f2;'>
-                            <th style='border: 1px solid #000; padding: 5px;'>Bulan/Tahun</th>
-                            <th style='border: 1px solid #000; padding: 5px;'>Nama Karyawan</th>
-                            <th style='border: 1px solid #000; padding: 5px;'>Total Terlambat</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {$tableHTML}
-                    </tbody>
-                </table>
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA|Halaman {PAGENO}');
+            
+            $htmlContent = "
+            <div style='gap: 100px; width: 100%;'>
+                <div style='width: 30%; float: left; padding-right: 20px;'>
+                    <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Tabel Data</h2>
+                    <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
+                        <thead>
+                            <tr style='background-color: #f2f2f2;'>
+                                <th style='border: 1px solid #000; padding: 1px;'>Bulan</th>
+                                <th style='border: 1px solid #000; padding: 2px;'>Nama Karyawan</th>
+                                <th style='border: 1px solid #000; padding: 2px;'>Total Terlambat</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {$tableHTML}
+                        </tbody>
+                    </table>
+                </div>
+                <div style='width: 65%; text-align:center; margin-left: 20px;'>
+                    <h2 style='font-size: 14px; margin-bottom: 10px;'>Grafik Laporan Terlambat</h2>
+                    <img src='{$chartBase64}' style='width: 100%; height: auto;' alt='Grafik Laporan' />
+                </div>
+            </div>
             ";
-    
-            // Tambahkan konten tabel ke PDF
-            $mpdf->WriteHTML($tableHTMLContent);
-    
-            // Tambahkan pemisah halaman
-            $mpdf->AddPage();
-    
-            // Tambahkan halaman baru dengan konten grafik
-            if (!empty($chartBase64)) {
-                $chartHTMLContent = "
-                    <h1 style='text-align:center; font-size: 16px; margin: 10px 0;'>Grafik Laporan Terlambat</h1>
-                    <div style='text-align: center; margin: 10px 0;'>
-                        <img src='{$chartBase64}' alt='Chart' style='max-width: 90%; height: auto;' />
-                    </div>
-                ";
-                $mpdf->WriteHTML($chartHTMLContent);
-            }
+            // Tambahkan konten ke PDF
+            $mpdf->WriteHTML($htmlContent);
     
             // Return PDF sebagai respon download
             return response($mpdf->Output('', 'S'), 200)->header('Content-Type', 'application/pdf')->header('Content-Disposition', 'attachment; filename="laporan_rekap_penjualan_perusahaan.pdf"');
@@ -224,4 +234,6 @@ class LaporanTerlambatController extends Controller
     
         return response()->json($data);
     }
+
 }
+

@@ -211,57 +211,48 @@
 
     var chartData = @json($chartData);
 
-var ctx = document.getElementById('chart').getContext('2d');
-var barChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: chartData.labels, // Label bulan
-        datasets: chartData.datasets, // Dataset total penjualan
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: {
-                position: 'top', // Posisi legenda
-            labels: {
-                font :{
-                size: 20,
-                weight : 'bold',
-                    }, //
-                }, //
-             }, //
-            tooltip: {
-                callbacks: {
-                    label: function(tooltipItem) {
-                        let value = tooltipItem.raw; // Ambil data nilai
-                        return tooltipItem.dataset.label + ': ' + value.toLocaleString(); // Format angka
+    var ctx = document.getElementById('chart').getContext('2d');
+    var barChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: chartData.labels, // Label bulan
+            datasets: chartData.datasets, // Dataset total penjualan
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false, // Sembunyikan legenda
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            let value = tooltipItem.raw; // Ambil data nilai
+                            return tooltipItem.dataset.text + ': ' + value.toLocaleString(); // Format angka
+                        },
+                    },
+                },
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: false, // Sembunyikan label sumbu X
+                    },
+                },
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: false, // Sembunyikan label sumbu Y
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return value.toLocaleString(); // Format angka
+                        },
                     },
                 },
             },
         },
-        scales: {
-            x: {
-                title: {
-                    display: true,
-                    text: 'Bulan', // Label sumbu X
-                },
-            },
-            y: {
-                beginAtZero: true,
-                title: {
-                    display: true,
-                    text: 'Total Penjualan (Rp)', // Label sumbu Y
-                },
-                ticks: {
-                    callback: function(value) {
-                        return value.toLocaleString(); // Format angka
-                    },
-                },
-            },
-        },
-    },
-});
-
+    });
     async function exportToPDF() {
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
     if (!csrfToken) {
