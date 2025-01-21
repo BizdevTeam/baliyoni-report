@@ -204,11 +204,36 @@ class RekapPenjualanController extends Controller
             return redirect()->route('rekappenjualan.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
     }
-    public function getRekapPenjualanData()
-    {
-        $data = RekapPenjualan::all(['bulan','total_penjualan']);
+    public function showChart(Request $request)
+{
+    $search = $request->input('search');
     
-        return response()->json($data);
+    $rekappenjualans = RekapPenjualan::query()
+    ->when($search, function ($query, $search) {
+        return $query->where('bulan', 'LIKE', "%$search%");
+    })
+    ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC'); // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
+
+    // Format label sesuai kebutuhan
+    $labels = $rekappenjualans->pluck('bulan')->toArray();
+    $data = $rekappenjualans->pluck('total_penjualan')->toArray();
+    $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data);
+
+    return response()->json([
+        'labels' => $labels,
+        'datasets' => [
+            [
+                'label' => 'Total Paket',
+                'data' => $data,
+                'backgroundColor' => $backgroundColors,
+            ],
+        ],
+    ]);
+}
+    
+    private function getRandomRGBAA($opacity = 0.7)
+    {
+        return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
     }
 
 }

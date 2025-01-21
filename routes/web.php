@@ -191,6 +191,14 @@ Route::middleware(['web'])->group(function () {
     });
 });
 
+// Route untuk menampilkan view
+
+// Route untuk mengambil data chart
+Route::get('/admin/chart-data', [LaporanPaketAdministrasiController::class, 'showChart'])->name('admin.chart.data');
+Route::get('/adminsakit/chart-data', [LaporanSakitController::class, 'showChart'])->name('adminsakit.chart.data');
+Route::get('/adminpenjualan/chart-data', [RekapPenjualanController::class, 'showChart'])->name('adminpenjualan.chart.data');
+Route::get('/adminpp/chart-data', [RekapPenjualanPerusahaanController::class, 'showChart'])->name('adminpp.chart.data');
+
 
 Route::middleware(['web'])->group(function () {
 
@@ -208,6 +216,7 @@ Route::middleware(['guest'])->group(function () {
 // Authenticated routes
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin', [AdminController::class, 'index'])->name('layouts.admin')->middleware('UserAccess:superadmin');
+    Route::get('/admin/laporan-paket-administrasi', [LaporanPaketAdministrasiController::class, 'index'])->name('admin.laporan.paket.administrasi');
     Route::get('/admin/marketing', [AdminController::class, 'marketing'])->name('layouts.marketing')->middleware('UserAccess:marketing');
     Route::get('/admin/it', [AdminController::class, 'it'])->name('layouts.it')->middleware('UserAccess:it');
     Route::get('/admin/accounting', [AdminController::class, 'accounting'])->name('layouts.accounting')->middleware('UserAccess:accounting');
@@ -216,4 +225,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/spi', [AdminController::class, 'spi'])->name('layouts.spi')->middleware('UserAccess:spi');
     Route::get('/admin/support', [AdminController::class, 'support'])->name('layouts.support')->middleware('UserAccess:support');
     Route::get('/logout', [SessionController::class, 'logout'])->name('logout');
+
 });
+

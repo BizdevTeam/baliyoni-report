@@ -54,7 +54,7 @@ class LaporanPaketAdministrasiController extends Controller
             ],
         ];
         
-        return view('marketings.laporanpaketadministrasi', compact('laporanpaketadministrasis', 'chartData'));    
+        return view('marketings.laporanpaketadministrasi',  compact('laporanpaketadministrasis', 'chartData'));    
     }
 
     public function store(Request $request)
@@ -232,33 +232,35 @@ class LaporanPaketAdministrasiController extends Controller
             return redirect()->route('laporanpaketadministrasi.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
     }
-    
-    public function getChartData()
-    {
-        $laporanpaketadministrasis = LaporanPaketAdministrasi::query()
-            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
-            ->get();
-    
-        $labels = $laporanpaketadministrasis->pluck('website')->toArray();
-        $data = $laporanpaketadministrasis->pluck('total_paket')->toArray();
-        dd($labels, $data);
-    
-        return response()->json([
-            'success' => true,
-            'data' => [
-                
-                'labels' => $labels,
-                'datasets' => [
-                    [
-                        'label' => 'Grafik Laporan Paket Administrasi',
-                        'data' => $data,
-                        'backgroundColor' => array_map(fn() => sprintf('rgba(%d, %d, %d, 0.7)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255)), $data),
-                    ],
-                ],
-            ],
-        ]);
-    }
-    
 
+    public function showChart()
+{
+    // Ambil data dari database
+    $laporanpaketadministrasis = LaporanPaketAdministrasi::orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')->get();
+
+    // Siapkan data untuk chart
+    $labels = $laporanpaketadministrasis->pluck('website')->toArray();
+    $data = $laporanpaketadministrasis->pluck('total_paket')->toArray();
+    $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data);
+
+    $chartData = [
+        'labels' => $labels,
+        'datasets' => [
+            [
+                'label' => 'Total Paket',
+                'data' => $data,
+                'backgroundColor' => $backgroundColors,
+            ],
+        ],
+    ];
+
+    // Kembalikan data dalam format JSON
+    return response()->json($chartData);
+}
+
+private function getRandomRGBAA($opacity = 0.7)
+{
+    return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
+}
 }
 

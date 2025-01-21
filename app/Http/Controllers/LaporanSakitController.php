@@ -228,12 +228,34 @@ class LaporanSakitController extends Controller
         }
     }
 
-    public function getRekapPenjualaPerusahaannData()
+    public function showChart()
     {
-        $data = LaporanSakit::all(['bulan','nama','total_sakit']);
+        // Ambil data dari database
+        $laporansakits = LaporanSakit::orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')->get();
     
-        return response()->json($data);
+        // Siapkan data untuk chart
+        $labels = $laporansakits->pluck('nama')->toArray();
+        $data = $laporansakits->pluck('total_sakit')->toArray();
+        $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data);
+    
+        $chartData = [
+            'labels' => $labels,
+            'datasets' => [
+                [
+                    'label' => 'Total Sakit',
+                    'data' => $data,
+                    'backgroundColor' => $backgroundColors,
+                ],
+            ],
+        ];
+    
+        // Kembalikan data dalam format JSON
+        return response()->json($chartData);
     }
-
+    
+    private function getRandomRGBAA($opacity = 0.7)
+    {
+        return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
+    }
 }
 

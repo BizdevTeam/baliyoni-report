@@ -248,11 +248,34 @@ class RekapPenjualanPerusahaanController extends Controller
         }
     }
 
-    public function getRekapPenjualaPerusahaannData()
+    public function showChart()
     {
-        $data = RekapPenjualanPerusahaan::all(['bulan','perusahaan','total_penjualan']);
+        // Ambil data dari database
+        $rekappenjualanperusahaans = RekapPenjualanPerusahaan::orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')->get();
     
-        return response()->json($data);
+        // Siapkan data untuk chart
+        $labels = $rekappenjualanperusahaans->pluck('perusahaan')->toArray();
+        $data = $rekappenjualanperusahaans->pluck('total_penjualan')->toArray();
+        $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data);
+    
+        $chartData = [
+            'labels' => $labels,
+            'datasets' => [
+                [
+                    'label' => 'Total Paket',
+                    'data' => $data,
+                    'backgroundColor' => $backgroundColors,
+                ],
+            ],
+        ];
+    
+        // Kembalikan data dalam format JSON
+        return response()->json($chartData);
+    }
+    
+    private function getRandomRGBAA($opacity = 0.7)
+    {
+        return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
     }
 
 }
