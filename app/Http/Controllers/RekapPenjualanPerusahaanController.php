@@ -37,9 +37,11 @@ class RekapPenjualanPerusahaanController extends Controller
             return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
         }
         
-        $labels = $rekappenjualanperusahaans->pluck('perusahaan')->toArray();
+        $labels = $rekappenjualanperusahaans->map(function($item) {
+            $formattedDate = \Carbon\Carbon::parse($item->bulan)->translatedFormat('F - Y');
+            return $item->perusahaan . ' - ' . $formattedDate;
+        })->toArray();
         $data = $rekappenjualanperusahaans->pluck('total_penjualan')->toArray();
-        
         // Generate random colors for each data item
         $backgroundColors = array_map(fn() => getRandomRGBA(), $data);
         

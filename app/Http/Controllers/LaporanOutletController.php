@@ -34,7 +34,9 @@ class LaporanOutletController extends Controller
             return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
         }
         
-        $labels = $laporanoutlets->pluck('bulan')->toArray();
+        $labels = $laporanoutlets->pluck('bulan')->map(function ($date) {
+            return \Carbon\Carbon::parse($date)->translatedFormat('F - Y');
+        })->toArray();        
         $data = $laporanoutlets->pluck('total_pembelian')->toArray();
         
         // Generate random colors for each data item

@@ -68,10 +68,10 @@
 <script>
     // Fungsi untuk memuat data awal grafik saat halaman pertama kali dibuka
     function loadInitialChartData() {
-        fetchChartData('{{ route("adminpenjualan.chart.data") }}', 'chartp');
-        fetchChartData('{{ route("adminpp.chart.data") }}', 'chartpp');
-        fetchChartData('{{ route("admin.chart.data") }}', 'chartl');
-        fetchChartData('{{ route("adminsakit.chart.data") }}', 'charts');
+        fetchChartData('{{ route("adminpenjualan.chart.data") }}', 'chartp', 'Bulan');
+        fetchChartData('{{ route("adminpp.chart.data") }}', 'chartpp', 'Perusahaan');
+        fetchChartData('{{ route("admin.chart.data") }}', 'chartl', 'Nilai Paket');
+        fetchChartData('{{ route("adminsakit.chart.data") }}', 'charts', 'Nama Karyawan');
     }
 
     // Memanggil fungsi loadInitialChartData saat halaman dimuat
@@ -94,7 +94,7 @@
 });
 
 
-    function fetchChartData(url, canvasId) {
+    function fetchChartData(url, canvasId, title) {
         fetch(url)
             .then(response => response.json())
             .then(chartData => {
@@ -111,10 +111,10 @@
                     options: {
                         responsive: true,
                         plugins: {
-                            legend: { display: true },
+                            legend: { display: false },
                         },
                         scales: {
-                            x: { title: { display: true, text: 'Bulan' }},
+                            x: { title: { display: true, text: title }},
                             y: { beginAtZero: true },
                         },
                     },

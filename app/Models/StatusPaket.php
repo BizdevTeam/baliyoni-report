@@ -24,8 +24,7 @@ class StatusPaket extends Model
     // Kolom yang dapat diisi menggunakan metode mass assignment
     public function getBulanFormattedAttribute()
     {
-        return Carbon::parse($this->bulan)->format('m/Y');
+        return Carbon::parse($this->bulan)->translatedFormat('F - Y');
     }
-
     
 }

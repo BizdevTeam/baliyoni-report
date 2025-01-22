@@ -36,7 +36,10 @@ class LaporanPaketAdministrasiController extends Controller
             return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
         }
         
-        $labels = $laporanpaketadministrasis->pluck('website')->toArray();
+        $labels = $laporanpaketadministrasis->map(function($item) {
+            $formattedDate = \Carbon\Carbon::parse($item->bulan)->translatedFormat('F - Y');
+            return $item->perusahaan . ' - ' . $formattedDate;
+        })->toArray();
         $data = $laporanpaketadministrasis->pluck('total_paket')->toArray();
         
         // Generate random colors for each data item

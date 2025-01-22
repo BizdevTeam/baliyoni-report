@@ -64,6 +64,9 @@ Route::middleware(['web'])->group(function () {
             Route::get('bizdevdata/{id_bizdevdata}/edit', [ItBizdevDataController::class, 'edit'])->name('bizdevdata.edit');
             Route::put('bizdevdata/{id_bizdevdata}/update', [ItBizdevDataController::class, 'update'])->name('bizdevdata.update');
             Route::delete('bizdevdata/{id_bizdevdata}/destroy', [ItBizdevDataController::class, 'destroy'])->name('bizdevdata.destroy');
+            Route::post('bizdevdata/export-pdf', [ItBizdevDataController::class, 'exportPDF'])
+            ->name('it.bizdevdata.exportPDF');
+
         });
     });
 
@@ -148,7 +151,6 @@ Route::middleware(['web'])->group(function () {
         Route::post('rekappiutangservisasp/export-pdf', [RekapPiutangServisAspController::class, 'exportPDF'])
         ->name('supports.rekappiutangservisasp.exportPDF');
 
-
         Route::resource('laporansamitra', LaporanSamitraController::class);
         Route::post('laporansamitra/export-pdf', [LaporanSamitraController::class, 'exportPDF'])
             ->name('supports.laporansamitra.exportPDF');
@@ -189,7 +191,19 @@ Route::middleware(['web'])->group(function () {
         Route::resource('laporanijasa', LaporanIjasaController::class);
     //Route untuk laporan ijasa hrga
     });
+
+    Route::prefix('spi')->group(function () {
+        Route::resource('laporanspi', LaporanSPIController::class);
+        Route::post('laporanspi/export-pdf', [LaporanSPIController::class, 'exportPDF'])
+            ->name('spi.laporanspi.exportPDF');
+        route::resource("laporanspiti", controller: laporanSPITiController::class);
+        Route::post('laporanspiti/export-pdf', [laporanSPITiController::class, 'exportPDF'])
+            ->name('spi.laporanspiti.exportPDF');
+
+    });
 });
+
+
 
 // Route untuk menampilkan view
 
@@ -199,13 +213,6 @@ Route::get('/adminsakit/chart-data', [LaporanSakitController::class, 'showChart'
 Route::get('/adminpenjualan/chart-data', [RekapPenjualanController::class, 'showChart'])->name('adminpenjualan.chart.data');
 Route::get('/adminpp/chart-data', [RekapPenjualanPerusahaanController::class, 'showChart'])->name('adminpp.chart.data');
 
-
-Route::middleware(['web'])->group(function () {
-
-    //spi
-    Route::resource('laporanspi', LaporanSPIController::class);
-    route::resource("laporanspiti", controller: laporanSPITiController::class);
-});
 
 Route::middleware(['guest'])->group(function () {
     // Guest routes for login

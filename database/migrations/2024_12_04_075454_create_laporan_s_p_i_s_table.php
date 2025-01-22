@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('laporan_spis', function (Blueprint $table) {
             $table->id("id_spi");
-            $table->string('bulan_tahun'); // Contoh: '08 / 2024'
+            $table->string('bulan'); // Contoh: '08 / 2024'
             $table->string('judul');
             $table->string('aspek');
             $table->text('masalah')->nullable();

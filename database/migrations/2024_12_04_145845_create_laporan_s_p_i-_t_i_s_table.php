@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('laporanspiti', function (Blueprint $table) {
             $table->id('id_spiti');
-            $table->string('bulan_tahun'); // Contoh: '08 / 2024'
+            $table->string('bulan'); // Contoh: '08 / 2024'
             $table->string('judul');
             $table->string('aspek');
             $table->text('masalah')->nullable();
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('laporan_s_p_i-_t_i_s');
+        Schema::dropIfExists('laporanspiti');
     }
 };

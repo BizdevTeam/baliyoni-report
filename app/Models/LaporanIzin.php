@@ -18,6 +18,6 @@ class LaporanIzin extends Model
     // Menambahkan accessor untuk bulan dengan format 'mm/yyyy'
     public function getBulanFormattedAttribute()
     {
-        return Carbon::parse($this->bulan)->format('m/Y');
+        return Carbon::parse($this->bulan)->translatedFormat('F - Y');
     }
 }

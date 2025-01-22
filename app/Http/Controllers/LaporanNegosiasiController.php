@@ -34,7 +34,9 @@ class LaporanNegosiasiController extends Controller
             return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
         }
         
-        $labels = $laporannegosiasis->pluck('bulan')->toArray();
+        $labels = $laporannegosiasis->pluck('bulan')->map(function ($date) {
+            return \Carbon\Carbon::parse($date)->translatedFormat('F - Y');
+        })->toArray();   
         $data = $laporannegosiasis->pluck('total_negosiasi')->toArray();
         
         // Generate random colors for each data item

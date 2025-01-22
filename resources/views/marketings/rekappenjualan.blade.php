@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -244,7 +244,8 @@
         },
     });
 
-    async function exportToPDF() {
+    // JavaScript Function
+async function exportToPDF() {
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
     if (!csrfToken) {
         alert('CSRF token tidak ditemukan. Pastikan meta tag CSRF disertakan.');
@@ -271,14 +272,6 @@
 
     const pdfTable = tableContent;
 
-    const chartCanvas = document.querySelector('#chart');
-    if (!chartCanvas) {
-        alert('Elemen canvas grafik tidak ditemukan.');
-        return;
-    }
-
-    const chartBase64 = chartCanvas.toDataURL();
-
     try {
         const response = await fetch('/marketings/rekappenjualan/export-pdf', {
             method: 'POST',
@@ -287,12 +280,11 @@
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                table: pdfTable,
-                chart: chartBase64,
+                table: pdfTable
             }),
         });
 
-    if (response.ok) {
+        if (response.ok) {
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -309,6 +301,7 @@
         alert('Terjadi kesalahan saat mengekspor PDF.');
     }
 }
+
 
 </script>
 </html>

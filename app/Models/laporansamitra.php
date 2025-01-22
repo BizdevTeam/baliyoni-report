@@ -15,7 +15,7 @@ class LaporanSamitra extends Model
 
     public function getBulanFormattedAttribute()
     {
-        return Carbon::parse($this->bulan)->format('m/Y');
+        return Carbon::parse($this->bulan)->translatedFormat('F - Y');
     }
 
     // Menambahkan accessor untuk kas, hutang, piutang, stok dengan format Rp

@@ -15,10 +15,12 @@ class RekapPenjualan extends Model
     protected $primaryKey = 'id_rp'; // Primary key custom
 
     protected $fillable = ['bulan', 'total_penjualan'];
+    
     public function getBulanFormattedAttribute()
     {
-        return Carbon::parse($this->bulan)->format('m-Y');
+        return Carbon::parse($this->bulan)->translatedFormat('F - Y');
     }
+    
 
     // Menambahkan accessor untuk kas, hutang, piutang, stok dengan format Rp
     public function getTotalPenjualanFormattedAttribute()
