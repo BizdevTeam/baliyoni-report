@@ -35,6 +35,7 @@ use App\Http\Controllers\laporanSPITiController;
 use App\Http\Controllers\LaporanDetransController;
 use App\Http\Controllers\LaporanHoldingController;
 use App\Http\Controllers\LaporanOutletController;
+use App\Http\Controllers\LaporanBizdevController;
 
 Route::middleware(['web'])->group(function () {
     // Accounting
@@ -66,9 +67,9 @@ Route::middleware(['web'])->group(function () {
             Route::delete('bizdevdata/{id_bizdevdata}/destroy', [ItBizdevDataController::class, 'destroy'])->name('bizdevdata.destroy');
             Route::post('bizdevdata/export-pdf', [ItBizdevDataController::class, 'exportPDF'])
             ->name('it.bizdevdata.exportPDF');
-
         });
     });
+
 
     // Menampilkan halaman laporan paket administrasi
     Route::prefix('marketings')->group(function () {
@@ -109,8 +110,11 @@ Route::middleware(['web'])->group(function () {
 
     });
 
-
-
+    Route::prefix('it')->group(function () {
+        Route::resource('laporanbizdev', LaporanBizdevController::class);
+        Route::post('laporanbizdev/export-pdf', [LaporanBizdevController::class, 'exportPDF'])
+            ->name('it.laporanbizdev.exportPDF');
+    });
     // PROCUREMENT
     Route::prefix('procurements')->group(function () {
         

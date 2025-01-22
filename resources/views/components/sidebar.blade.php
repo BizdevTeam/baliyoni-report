@@ -243,7 +243,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('bizdevbulanan.index') }}"
+                        <a href="{{ route('laporanbizdev.index') }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/LaporanPaketAdministrasi.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Bizdev</span>
@@ -333,6 +333,15 @@
                     </li>
                 </ul>
             </li>
+            <div class="home">
+                <li class="group hover:text-white menu-item">
+                    <a href="/admin"
+                        class="flex items-center space-x-3 px-4 py-2 rounded-md transition">
+                        <img src="{{ asset ("images/ask.svg") }}" class="w-5 h-5">
+                        <span class="menu-label">Tanya Jawab</span>
+                    </a>
+                </li>
+                </div>
             <li class="relative mb-24">
                 <form method="post" action="{{ route("logout") }}">
                 @csrf
@@ -522,7 +531,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('bizdevbulanan.index') }}"
+                        <a href="{{ route('laporanbizdev.index') }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/LaporanPaketAdministrasi.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Bizdev</span>
