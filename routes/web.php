@@ -36,6 +36,7 @@ use App\Http\Controllers\LaporanDetransController;
 use App\Http\Controllers\LaporanHoldingController;
 use App\Http\Controllers\LaporanOutletController;
 use App\Http\Controllers\LaporanBizdevController;
+use App\Http\Controllers\QuestionController;
 
 Route::middleware(['web'])->group(function () {
     // Accounting
@@ -57,6 +58,8 @@ Route::middleware(['web'])->group(function () {
     Route::prefix('admin/it')->group(function () {
         Route::resource('instagram', ItMultimediaInstagramController::class);
         Route::resource('tiktok', ItMultimediaTiktokController::class);
+        Route::post('tiktok/export-pdf', [ItMultimediaTiktokController::class, 'exportPDF'])
+            ->name('it.tiktok.exportPDF');
         Route::resource('bizdevbulanan', ItBizdevBulananController::class);
         Route::prefix('bizdevbulanan/{bizdevbulanan_id}')->group(function () {
             Route::get('bizdevdata', [ItBizdevDataController::class, 'index'])->name('bizdevdata.index');
@@ -192,8 +195,11 @@ Route::middleware(['web'])->group(function () {
 
 
         Route::resource('laporanptbos', LaporanPtBosController::class);
+        Route::post('laporanptbos/export-pdf', [LaporanPtBosController::class, 'exportPDF'])
+            ->name('hrga.laporanptbos.exportPDF');
         Route::resource('laporanijasa', LaporanIjasaController::class);
-    //Route untuk laporan ijasa hrga
+        Route::post('laporanijasa/export-pdf', [LaporanIjasaController::class, 'exportPDF'])
+            ->name('hrga.laporanijasa.exportPDF');
     });
 
     Route::prefix('spi')->group(function () {
@@ -203,8 +209,18 @@ Route::middleware(['web'])->group(function () {
         route::resource("laporanspiti", controller: laporanSPITiController::class);
         Route::post('laporanspiti/export-pdf', [laporanSPITiController::class, 'exportPDF'])
             ->name('spi.laporanspiti.exportPDF');
-
     });
+
+    Route::prefix('ask')->group(function () {
+        Route::resource('questions', QuestionController::class); // CRUD lengkap
+        Route::post('/questions/{id}/answer', [QuestionController::class, 'storeAnswer'])->name('answers.store'); // Rute tambahan untuk jawaban
+        Route::put('/questions/{id}', [QuestionController::class, 'update'])->name('questions.update');
+        Route::put('/answers/{id}', [QuestionController::class, 'updateAnswer'])->name('answers.update');
+        Route::delete('/questions/{id}', [QuestionController::class, 'destroy'])->name('questions.destroy');
+        Route::delete('/answers/{id}', [QuestionController::class, 'destroyAnswer'])->name('answers.destroy');
+        
+    });
+
 });
 
 

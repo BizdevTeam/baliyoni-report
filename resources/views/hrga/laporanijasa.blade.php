@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Laporan iJASA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -72,7 +73,7 @@
 
         <!-- Event Table -->
         <div class="overflow-x-auto bg-white shadow-md">
-            <table class="table-auto w-full border-collapse border border-gray-300">
+            <table class="table-auto w-full border-collapse border border-gray-300" id="data-table">
                 <thead class="bg-gray-200">
                     <tr>
                         <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
@@ -163,6 +164,9 @@
             {{ $laporanijasas->links('pagination::tailwind') }}
             </div>
         </div>
+        <button onclick="exportToPDF()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mt-4">
+            Ekspor ke PDF
+        </button>
     </div>
 </div>
 </div>
@@ -236,5 +240,74 @@
             modal.classList.add('hidden'); // Menyembunyikan modal
         });
     });
+
+    async function exportToPDF() {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    if (!csrfToken) {
+        alert('CSRF token tidak ditemukan. Pastikan meta tag CSRF disertakan.');
+        return;
+    }
+
+    // Ambil data dari tabel
+    const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
+        const cells = row.querySelectorAll('td');
+        return {
+                tanggal: cells[0]?.innerText.trim() || '',
+                jam: cells[1]?.innerText.trim() || '',
+                permasalahan: cells[2]?.innerText.trim() || '',
+                impact: cells[3]?.innerText.trim() || '',
+                troubleshooting: cells[4]?.innerText.trim() || '',
+                resolve_tanggal: cells[5]?.innerText.trim() || '',
+                resolve_jam: cells[6]?.innerText.trim() || '',
+        };
+    });
+
+    const tableContent = items
+        .filter(item => item.tanggal && item.jam)
+        .map(item => `
+            <tr>
+                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.tanggal}</td>
+                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.jam}</td>
+                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.permasalahan}</td>
+                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.impact}</td>
+                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.troubleshooting}</td>
+                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.resolve_tanggal}</td>
+                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.resolve_jam}</td>
+            </tr>
+        `).join('');
+
+    const pdfTable = tableContent;
+
+    try {
+        const response = await fetch('/hrga/laporanijasa/export-pdf', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                table: pdfTable
+            }),
+        });
+
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'laporanijasa.pdf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        } else {
+            alert('Gagal mengekspor PDF.');
+        }
+    } catch (error) {
+        console.error('Error exporting to PDF:', error);
+        alert('Terjadi kesalahan saat mengekspor PDF.');
+    }
+}
+
+
 </script>
 </html>

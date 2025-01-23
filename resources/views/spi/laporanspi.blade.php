@@ -252,7 +252,7 @@ async function exportToPDF() {
         return {
                 bulan: cells[0]?.innerText.trim() || '',
                 judul: cells[1]?.innerText.trim() || '',
-                aspek: cells[2]?.innerText.trim() || '',
+                aspek: cells[2] ?.innerText.trim() || '',
                 masalah: cells[3]?.innerText.trim() || '',
                 solusi: cells[4]?.innerText.trim() || '',
                 implementasi: cells[5]?.innerText.trim() || '',

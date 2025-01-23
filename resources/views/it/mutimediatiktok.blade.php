@@ -152,6 +152,9 @@
                 {{ $itmultimediatiktoks->links('pagination::tailwind') }}
             </div>
         </div>
+        <button id="export-pdf" class="bg-red-600 text-white px-3 py-2 rounded shadow-md hover:shadow-lg transition duration-300 ease-in-out">
+            Export to PDF
+        </button>        
     </div>
     </div>
 </div>
@@ -184,7 +187,9 @@
 </div>
 
 </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
 <script>
+
     // Mengatur tombol untuk membuka modal add
     document.querySelector('[data-modal-target="#addEventModal"]').addEventListener('click', function() {
         const modal = document.querySelector('#addEventModal');
@@ -208,5 +213,84 @@
             modal.classList.add('hidden'); // Menyembunyikan modal
         });
     });
+    document.getElementById('export-pdf').addEventListener('click', function () {
+    // Salin elemen tabel untuk dimanipulasi
+    const tableElement = document.querySelector('.overflow-x-auto table');
+    let clonedTable = tableElement.cloneNode(true);
+
+    // Hapus kolom gambar dari tabel duplikat
+    clonedTable.querySelectorAll('tr').forEach(row => {
+        let imageCell = row.children[1];  // Asumsikan kolom gambar di indeks ke-1
+        if (imageCell) {
+            row.removeChild(imageCell);
+        }
+    });
+
+    // Buat konten HTML untuk PDF
+    let htmlContent = `
+        <div style='width: 100%;'>
+            <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Tabel Data</h2>
+            <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
+                <thead>
+                    <tr style='background-color: #f2f2f2;'>
+                        <th style='border: 1px solid #000; padding: 1px;'>Bulan</th>
+                        <th style='border: 1px solid #000; padding: 2px;'>Total Penjualan (Rp)</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+
+    clonedTable.querySelectorAll('tbody tr').forEach(row => {
+        let bulan = row.children[0].innerText;
+        let keterangan = row.children[1].innerText;
+
+        htmlContent += `
+            <tr>
+                <td style='border: 1px solid #000; padding: 1px; text-align: center;'>${bulan}</td>
+                <td style='border: 1px solid #000; padding: 1px;'>${keterangan}</td>
+            </tr>`;
+    });
+
+    htmlContent += `</tbody>
+            </table>
+        </div>`;
+
+    // Menambahkan gambar di bawah tabel
+    document.querySelectorAll('.overflow-x-auto table tbody tr').forEach(row => {
+        let imageElement = row.children[1]?.querySelector('img');
+        if (imageElement) {
+            htmlContent += `
+                <div style='text-align: center; margin-top: 20px;'>
+                    <img src='${imageElement.src}' style='width: 100%; height: auto;'>
+                </div>`;
+        }
+    });
+
+    // Header dan Footer
+    let headerImagePath = '{{ asset ("images/HEADER.png") }}'; // Sesuaikan path header
+    let header = `
+        <div style='position: absolute; top: 0; left: 0; width: 100%; height: auto; z-index: -1;'>
+            <img src='${headerImagePath}' style='width: 100%; height: auto;' />
+        </div>
+    `;
+
+    let footer = `
+        <div style='text-align: center; font-size: 12px; margin-top: 20px;'>
+            Dicetak pada: ${new Date().toLocaleDateString()} | Laporan Marketing | Halaman <span class='page'></span> dari <span class='topage'></span>
+        </div>
+    `;
+
+    // Opsi PDF
+    const options = {
+        margin: [35, 10, 10, 10], // [top, left, bottom, right]
+        filename: 'laporan_rekap_penjualan.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+    };
+
+    // Konversi HTML ke PDF dengan header dan footer
+    html2pdf().set(options).from(header + htmlContent + footer).save();
+});
 </script>
 </html>

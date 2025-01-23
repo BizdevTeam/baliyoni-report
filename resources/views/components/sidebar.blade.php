@@ -335,7 +335,7 @@
             </li>
             <div class="home">
                 <li class="group hover:text-white menu-item">
-                    <a href="/admin"
+                    <a href="{{ route("questions.index") }}"
                         class="flex items-center space-x-3 px-4 py-2 rounded-md transition">
                         <img src="{{ asset ("images/ask.svg") }}" class="w-5 h-5">
                         <span class="menu-label">Tanya Jawab</span>

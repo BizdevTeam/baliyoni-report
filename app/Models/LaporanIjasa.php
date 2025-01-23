@@ -25,4 +25,15 @@ class LaporanIjasa extends Model
     {
         return $this->resolve_tanggal ? Carbon::parse($this->resolve_tanggal)->format('d/m/y') : '-';
     }
+
+    public function setJamAttribute($value)
+    {
+        $this->attributes['jam'] = Carbon::createFromFormat('H:i', $value)->format('H:i:s');
+    }
+    public function setResolveJamAttribute($value)
+    {
+        $this->attributes['resolve_jam'] = Carbon::createFromFormat('H:i', $value)->format('H:i:s');
+    }
+
+
 }

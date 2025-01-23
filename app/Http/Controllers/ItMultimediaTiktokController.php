@@ -15,12 +15,12 @@ class ItMultimediaTiktokController extends Controller
         $search = $request->input('search');
 
         $itmultimediatiktoks = ItMultimediaTiktok::query()
-        ->when($search, function($query, $search) {
-            return $query->where('bulan', 'like', "%$search%")
-                         ->orWhere('keterangan', 'like', "%$search%");
-        })
-        ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
-        ->paginate($perPage);
+            ->when($search, function ($query, $search) {
+                return $query->where('bulan', 'like', "%$search%")
+                    ->orWhere('keterangan', 'like', "%$search%");
+            })
+            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
+            ->paginate($perPage);
         return view('it.mutimediatiktok', compact('itmultimediatiktoks'));
     }
 
@@ -41,7 +41,7 @@ class ItMultimediaTiktokController extends Controller
 
             // Cek kombinasi unik bulan dan perusahaan
             $exists = ItMultimediaTiktok::where('bulan', $validatedata['bulan'])->exists();
-    
+
             if ($exists) {
                 return redirect()->back()->with('error', 'Data Already Exists.');
             }
@@ -108,4 +108,23 @@ class ItMultimediaTiktokController extends Controller
             return redirect()->route('tiktok.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
     }
+
+    public function exportPdfData(Request $request)
+    {
+        try {
+            $itmultimediatiktoks = ItMultimediaTiktok::query()
+                ->when($request->input('search'), function ($query, $search) {
+                    return $query->where('bulan', 'like', "%$search%")
+                        ->orWhere('keterangan', 'like', "%$search%");
+                })
+                ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
+                ->get();
+
+            return response()->json($itmultimediatiktoks);
+        } catch (\Exception $e) {
+            Log::error('Error fetching data for PDF export: ' . $e->getMessage());
+            return response()->json(['error' => 'Terjadi Kesalahan: ' . $e->getMessage()], 500);
+        }
+    }
+
 }
