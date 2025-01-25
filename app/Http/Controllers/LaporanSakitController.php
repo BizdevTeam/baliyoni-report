@@ -162,7 +162,7 @@ class LaporanSakitController extends Controller
             }
     
             // Buat instance mPDF dengan konfigurasi
-            $mpdf = new \Mpdf\Mpdf([
+            $mpdf = new Mpdf([
                 'orientation' => 'L', // Landscape orientation
                 'margin_left' => 10,
                 'margin_right' => 10,

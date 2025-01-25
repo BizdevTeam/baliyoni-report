@@ -36,8 +36,10 @@ class LaporanHoldingController extends Controller
             return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
         }
         
-        $labels = $laporanholdings->pluck('perusahaan')->toArray();
-        $data = $laporanholdings->pluck('nilai')->toArray();
+        $labels = $laporanholdings->map(function($item) {
+            $formattedDate = \Carbon\Carbon::parse($item->bulan)->translatedFormat('F - Y');
+            return $item->perusahaan . ' - ' . $formattedDate;
+        })->toArray();        $data = $laporanholdings->pluck('nilai')->toArray();
         
         // Generate random colors for each data item
         $backgroundColors = array_map(fn() => getRandomRGBA(), $data);
@@ -240,6 +242,47 @@ class LaporanHoldingController extends Controller
     
         return response()->json($data);
     }
+
+    public function showChart(Request $request)
+    {
+        $search = $request->input('search');
+
+        // Ambil data dari database
+        $laporanholdings = LaporanHolding::query()
+        ->when($search, function ($query, $search) {
+            return $query->where('bulan', 'LIKE', "%$search%");
+        })
+        ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Order by year (desc) and month (asc)
+        ->get();  
+
+        // Siapkan data untuk chart
+        $labels = $laporanholdings->map(function($item) {
+            $formattedDate = \Carbon\Carbon::parse($item->bulan)->translatedFormat('F - Y');
+            return $item->perusahaan . ' - ' . $formattedDate;
+        })->toArray();
+        $data = $laporanholdings->pluck('nilai')->toArray();
+        $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data);
+    
+        $chartData = [
+            'labels' => $labels,
+            'datasets' => [
+                [
+                    'label' => 'Total Paket',
+                    'data' => $data,
+                    'backgroundColor' => $backgroundColors,
+                ],
+            ],
+        ];
+    
+        // Kembalikan data dalam format JSON
+        return response()->json($chartData);
+    }
+    
+    private function getRandomRGBAA($opacity = 0.7)
+    {
+        return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
+    }
+
 
 }
 

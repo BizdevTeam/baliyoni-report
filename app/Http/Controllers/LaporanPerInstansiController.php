@@ -243,12 +243,37 @@ class LaporanPerInstansiController extends Controller
             return redirect()->route('laporanperinstansi.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
     }
-    public function getLaporanPaketAdministrasiData()
+    public function showChart()
     {
-        $data = LaporanPerInstansi::all(['bulan','instansi','nilai']);
+        // Ambil data dari database
+        $laporanperinstansis = LaporanPerInstansi::orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')->get();
     
-        return response()->json($data);
+        // Siapkan data untuk chart
+        $labels = $laporanperinstansis->map(function($item) {
+            $formattedDate = \Carbon\Carbon::parse($item->bulan)->translatedFormat('F - Y');
+            return $item->instansi . ' - ' . $formattedDate;
+        })->toArray();
+        $data = $laporanperinstansis->pluck('nilai')->toArray();
+        $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data);
+    
+        $chartData = [
+            'labels' => $labels,
+            'datasets' => [
+                [
+                    'label' => 'Total Paket',
+                    'data' => $data,
+                    'backgroundColor' => $backgroundColors,
+                ],
+            ],
+        ];
+    
+        // Kembalikan data dalam format JSON
+        return response()->json($chartData);
     }
-
+    
+    private function getRandomRGBAA($opacity = 0.7)
+    {
+        return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
+    }
 }
 

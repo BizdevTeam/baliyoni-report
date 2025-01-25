@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rule;
 
+
 class RekapPenjualanPerusahaanController extends Controller
 {
     // Show the view
@@ -250,13 +251,23 @@ class RekapPenjualanPerusahaanController extends Controller
         }
     }
 
-    public function showChart()
+    public function showChart(Request $request)
     {
+        $search = $request->input('search');
+
         // Ambil data dari database
-        $rekappenjualanperusahaans = RekapPenjualanPerusahaan::orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')->get();
-    
+        $rekappenjualanperusahaans = RekapPenjualanPerusahaan::query()
+        ->when($search, function ($query, $search) {
+            return $query->where('bulan', 'LIKE', "%$search%");
+        })
+        ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Order by year (desc) and month (asc)
+        ->get();  
+
         // Siapkan data untuk chart
-        $labels = $rekappenjualanperusahaans->pluck('perusahaan')->toArray();
+        $labels = $rekappenjualanperusahaans->map(function($item) {
+            $formattedDate = \Carbon\Carbon::parse($item->bulan)->translatedFormat('F - Y');
+            return $item->perusahaan . ' - ' . $formattedDate;
+        })->toArray();
         $data = $rekappenjualanperusahaans->pluck('total_penjualan')->toArray();
         $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data);
     

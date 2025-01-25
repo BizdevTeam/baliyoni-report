@@ -34,10 +34,16 @@ class RekapPenjualanController extends Controller
         function getRandomRGBA($opacity = 0.7) {
             return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
         }
+        $rekappenjualans->map(function ($item) {
+            $item->total_penjualan_formatted = 'Rp ' . number_format($item->total_penjualan, 0, ',', '.');
+            return $item;
+        });
         
-        $labels = $rekappenjualans->pluck('bulan')->toArray();
+        $labels = $rekappenjualans->map(function($item) {
+            $formattedDate = \Carbon\Carbon::parse($item->bulan)->translatedFormat('F - Y');
+            return $formattedDate;
+        })->toArray();
         $data = $rekappenjualans->pluck('total_penjualan')->toArray();
-        
         // Generate random colors for each data item
         $backgroundColors = array_map(fn() => getRandomRGBA(), $data);
         
@@ -45,7 +51,7 @@ class RekapPenjualanController extends Controller
             'labels' => $labels, // Labels untuk chart
             'datasets' => [
                 [
-                    'label' => 'Grafik Rekap Penjualan', // Nama dataset
+                    'text' => 'Total Penjualan', // Nama dataset
                     'data' => $data, // Data untuk chart
                     'backgroundColor' => $backgroundColors, // Warna batang random
                 ],
@@ -77,7 +83,6 @@ class RekapPenjualanController extends Controller
             return redirect()->route('rekappenjualan.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
     }
-
     public function update(Request $request, RekapPenjualan $rekappenjualan)
     {
         try {
@@ -121,16 +126,21 @@ class RekapPenjualanController extends Controller
             // Validasi input
             $data = $request->validate([
                 'table' => 'required|string',
+                'chart' => 'required|string',
             ]);
     
             // Ambil data dari request
             $tableHTML = trim($data['table']);
+            $chartBase64 = trim($data['chart']);
     
-            // Validasi isi tabel untuk mencegah halaman kosong
+            // Validasi isi tabel dan chart untuk mencegah halaman kosong
             if (empty($tableHTML)) {
                 return response()->json(['success' => false, 'message' => 'Data tabel kosong.'], 400);
             }
-    
+            if (empty($chartBase64)) {
+                return response()->json(['success' => false, 'message' => 'Data grafik kosong.'], 400);
+            }
+            
             // Buat instance mPDF dengan konfigurasi
             $mpdf = new \Mpdf\Mpdf([
                 'orientation' => 'L', // Landscape orientation
@@ -154,7 +164,8 @@ class RekapPenjualanController extends Controller
     
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "
-                <div style='width: 100%;'>
+            <div style='gap: 100px; width: 100%;'>
+                <div style='width: 30%; float: left; padding-right: 20px;'>
                     <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Tabel Data</h2>
                     <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                         <thead>
@@ -168,8 +179,13 @@ class RekapPenjualanController extends Controller
                         </tbody>
                     </table>
                 </div>
+                <div style='width: 65%; text-align:center; margin-left: 20px;'>
+                    <h2 style='font-size: 14px; margin-bottom: 10px;'>Grafik Laporan Penjualan Perusahaan</h2>
+                    <img src='{$chartBase64}' style='width: 100%; height: auto;' alt='Grafik Laporan' />
+                </div>
+            </div>
             ";
-    
+    // 
             // Tambahkan konten ke PDF
             $mpdf->WriteHTML($htmlContent);
     
@@ -184,7 +200,6 @@ class RekapPenjualanController extends Controller
         }
     }
     
-
     public function destroy(RekapPenjualan $rekappenjualan)
     {
         try {
@@ -196,32 +211,45 @@ class RekapPenjualanController extends Controller
         }
     }
 
-public function showChart(Request $request)
-{
-    $search = $request->input('search');
+    public function showChart(Request $request)
+    {
+        $search = $request->input('search');
     
-    $rekappenjualans = RekapPenjualan::query()
-    ->when($search, function ($query, $search) {
-        return $query->where('bulan', 'LIKE', "%$search%");
-    })
-    ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC'); // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
-
-    // Format label sesuai kebutuhan
-    $labels = $rekappenjualans->pluck('bulan')->toArray();
-    $data = $rekappenjualans->pluck('total_penjualan')->toArray();
-    $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data);
-
-    return response()->json([
-        'labels' => $labels,
-        'datasets' => [
-            [
-                'label' => 'Total Paket',
-                'data' => $data,
-                'backgroundColor' => $backgroundColors,
+        // Query RekapPenjualan with optional search filter
+        $rekappenjualans = RekapPenjualan::query()
+            ->when($search, function ($query, $search) {
+                return $query->where('bulan', 'LIKE', "%$search%");
+            })
+            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Order by year (desc) and month (asc)
+            ->get(); // Fetch results as a collection
+        
+            $rekappenjualans->map(function ($item) {
+                $item->total_penjualan_formatted = 'Rp ' . number_format($item->total_penjualan, 0, ',', '.');
+                return $item;
+            });
+    
+        // Format labels as "Month - Year"
+        $labels = $rekappenjualans->map(function ($item) {
+            return \Carbon\Carbon::parse($item->bulan)->translatedFormat('F - Y');
+        })->toArray();
+    
+        // Numeric data for the chart
+        $data = $rekappenjualans->pluck('total_penjualan')->toArray();
+    
+        // Generate random background colors for each data point
+        $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data);
+    
+        return response()->json([
+            'labels' => $labels, // Properly formatted labels
+            'datasets' => [
+                [
+                    'label' => 'Total Penjualan', // Label for the dataset
+                    'data' => $data, // Numeric data for chart rendering
+                    'backgroundColor' => $backgroundColors, // Random colors
+                ],
             ],
-        ],
-    ]);
-}
+        ]);
+    }
     
     private function getRandomRGBAA($opacity = 0.7)
     {

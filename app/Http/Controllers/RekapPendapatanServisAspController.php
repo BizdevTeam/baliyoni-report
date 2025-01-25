@@ -254,5 +254,44 @@ class RekapPendapatanServisAspController extends Controller
         return response()->json($data);
     }
 
+    public function showChart(Request $request)
+{
+    $search = $request->input('search');
+
+    // Ambil data dari database
+    $rekappendapatanservisasps = RekapPendapatanServisAsp::query()
+        ->when($search, function ($query, $search) {
+            return $query->where('bulan', 'LIKE', "%$search%");
+        })
+        ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Order by year (desc) and month (asc)
+        ->get();  
+
+    // Siapkan data untuk chart
+    $labels = $rekappendapatanservisasps->pluck('pelaksana')->toArray(); // Nama pelaksana
+    $data = $rekappendapatanservisasps->pluck('nilai_pendapatan')->toArray(); // Nilai pendapatan
+    $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data); // Warna acak untuk pie chart
+
+    // Format data untuk Pie Chart
+    $chartData = [
+        'labels' => $labels,
+        'datasets' => [
+            [
+                'label' => 'Grafik Rekap Pendapatan Servis ASP',
+                'data' => $data,
+                'backgroundColor' => $backgroundColors,
+            ],
+        ],
+    ];
+
+    // Kembalikan data dalam format JSON
+    return response()->json($chartData);
+}
+
+private function getRandomRGBAA($opacity = 0.7)
+{
+    return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
+}
+
+
 }
 

@@ -34,7 +34,9 @@ class LaporanSamitraController extends Controller
             return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
         }
         
-        $labels = $laporansamitras->pluck('bulan')->toArray();
+        $labels = $laporansamitras->map(function ($item) {
+            return \Carbon\Carbon::parse($item->bulan)->translatedFormat('F - Y');
+        })->toArray();        
         $data = $laporansamitras->pluck('total_pengiriman')->toArray();
         
         // Generate random colors for each data item
@@ -212,5 +214,44 @@ class LaporanSamitraController extends Controller
         return response()->json($data);
     }
 
+    public function showChart(Request $request)
+    {
+        $search = $request->input('search');
+
+        // Ambil data dari database
+        $laporansamitras = LaporanSamitra::query()
+        ->when($search, function ($query, $search) {
+            return $query->where('bulan', 'LIKE', "%$search%");
+        })
+        ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Order by year (desc) and month (asc)
+        ->get();  
+
+        // Siapkan data untuk chart
+        $labels = $laporansamitras->map(function ($item) {
+            return \Carbon\Carbon::parse($item->bulan)->translatedFormat('F - Y');
+        })->toArray();
+    
+        $data = $laporansamitras->pluck('total_pengiriman')->toArray();
+        $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data);
+    
+        $chartData = [
+            'labels' => $labels,
+            'datasets' => [
+                [
+                    'label' => 'Total Paket',
+                    'data' => $data,
+                    'backgroundColor' => $backgroundColors,
+                ],
+            ],
+        ];
+    
+        // Kembalikan data dalam format JSON
+        return response()->json($chartData);
+    }
+    
+    private function getRandomRGBAA($opacity = 0.7)
+    {
+        return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
+    }
 }
 

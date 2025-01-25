@@ -9,14 +9,12 @@ use App\Http\Controllers\LaporanCutiController;
 use App\Http\Controllers\LaporanIzinController;
 use App\Http\Controllers\LaporanStokController;
 use App\Http\Controllers\StatusPaketController;
-use App\Http\Controllers\ItBizdevDataController;
 use App\Http\Controllers\LaporanIjasaController;
 use App\Http\Controllers\LaporanPtBosController;
 use App\Http\Controllers\LaporanRasioController;
 use App\Http\Controllers\LaporanSakitController;
 use App\Http\Controllers\LaporanNeracaController;
 use App\Http\Controllers\RekapPenjualanController;
-use App\Http\Controllers\ItBizdevBulananController;
 use App\Http\Controllers\LaporanLabaRugiController;
 use App\Http\Controllers\LaporanNegosiasiController;
 use App\Http\Controllers\LaporanTerlambatController;
@@ -54,24 +52,21 @@ Route::middleware(['web'])->group(function () {
         ->name('accounting.aruskas.exportPDF');
     });
 
-    // IT
-    Route::prefix('admin/it')->group(function () {
-        Route::resource('instagram', ItMultimediaInstagramController::class);
-        Route::resource('tiktok', ItMultimediaTiktokController::class);
-        Route::post('tiktok/export-pdf', [ItMultimediaTiktokController::class, 'exportPDF'])
-            ->name('it.tiktok.exportPDF');
-        Route::resource('bizdevbulanan', ItBizdevBulananController::class);
-        Route::prefix('bizdevbulanan/{bizdevbulanan_id}')->group(function () {
-            Route::get('bizdevdata', [ItBizdevDataController::class, 'index'])->name('bizdevdata.index');
-            Route::get('bizdevdata/create', [ItBizdevDataController::class, 'create'])->name('bizdevdata.create');
-            Route::post('bizdevdata/store', [ItBizdevDataController::class, 'store'])->name('bizdevdata.store');
-            Route::get('bizdevdata/{id_bizdevdata}/edit', [ItBizdevDataController::class, 'edit'])->name('bizdevdata.edit');
-            Route::put('bizdevdata/{id_bizdevdata}/update', [ItBizdevDataController::class, 'update'])->name('bizdevdata.update');
-            Route::delete('bizdevdata/{id_bizdevdata}/destroy', [ItBizdevDataController::class, 'destroy'])->name('bizdevdata.destroy');
-            Route::post('bizdevdata/export-pdf', [ItBizdevDataController::class, 'exportPDF'])
-            ->name('it.bizdevdata.exportPDF');
-        });
-    });
+    // // IT
+    // // Route::prefix('it')->group(function () {
+   
+    // //     Route::resource('bizdevbulanan', ItBizdevBulananController::class);
+    // //     Route::prefix('bizdevbulanan/{bizdevbulanan_id}')->group(function () {
+    // //         Route::get('bizdevdata', [ItBizdevDataController::class, 'index'])->name('bizdevdata.index');
+    // //         Route::get('bizdevdata/create', [ItBizdevDataController::class, 'create'])->name('bizdevdata.create');
+    // //         Route::post('bizdevdata/store', [ItBizdevDataController::class, 'store'])->name('bizdevdata.store');
+    // //         Route::get('bizdevdata/{id_bizdevdata}/edit', [ItBizdevDataController::class, 'edit'])->name('bizdevdata.edit');
+    // //         Route::put('bizdevdata/{id_bizdevdata}/update', [ItBizdevDataController::class, 'update'])->name('bizdevdata.update');
+    // //         Route::delete('bizdevdata/{id_bizdevdata}/destroy', [ItBizdevDataController::class, 'destroy'])->name('bizdevdata.destroy');
+    // //         Route::post('bizdevdata/export-pdf', [ItBizdevDataController::class, 'exportPDF'])
+    // //         ->name('it.bizdevdata.exportPDF');
+    // //     });
+    // });
 
 
     // Menampilkan halaman laporan paket administrasi
@@ -117,6 +112,10 @@ Route::middleware(['web'])->group(function () {
         Route::resource('laporanbizdev', LaporanBizdevController::class);
         Route::post('laporanbizdev/export-pdf', [LaporanBizdevController::class, 'exportPDF'])
             ->name('it.laporanbizdev.exportPDF');
+        Route::resource('instagram', ItMultimediaInstagramController::class);
+        Route::resource('tiktok', ItMultimediaTiktokController::class);
+        Route::post('tiktok/export-pdf', [ItMultimediaTiktokController::class, 'exportPDF'])
+            ->name('it.tiktok.exportPDF');
     });
     // PROCUREMENT
     Route::prefix('procurements')->group(function () {
@@ -229,9 +228,28 @@ Route::middleware(['web'])->group(function () {
 
 // Route untuk mengambil data chart
 Route::get('/admin/chart-data', [LaporanPaketAdministrasiController::class, 'showChart'])->name('admin.chart.data');
-Route::get('/adminsakit/chart-data', [LaporanSakitController::class, 'showChart'])->name('adminsakit.chart.data');
 Route::get('/adminpenjualan/chart-data', [RekapPenjualanController::class, 'showChart'])->name('adminpenjualan.chart.data');
 Route::get('/adminpp/chart-data', [RekapPenjualanPerusahaanController::class, 'showChart'])->name('adminpp.chart.data');
+Route::get('/adminstatuspaket/chart-data', [StatusPaketController::class, 'showChart'])->name('adminstatuspaket.chart.data');
+Route::get('/adminperinstansi/chart-data', [LaporanPerInstansiController::class, 'showChart'])->name('adminperinstansi.chart.data');
+Route::get('/adminholding/chart-data', [LaporanHoldingController::class, 'showChart'])->name('adminholding.chart.data');
+Route::get('/adminstok/chart-data', [LaporanStokController::class, 'showChart'])->name('adminstok.chart.data');
+Route::get('/adminoutlet/chart-data', [LaporanOutletController::class, 'showChart'])->name('adminoutlet.chart.data');
+Route::get('/adminnegosiasi/chart-data', [LaporanNegosiasiController::class, 'showChart'])->name('adminnegosiasi.chart.data');
+Route::get( '/adminpendapatanpengirimanbali/chart-data', [LaporanSamitraController::class, 'showChart'])->name('adminpendapatanpengirimanbali.chart.data');
+Route::get( '/adminpendapatanpengirimanluarbali/chart-data', [LaporanDetransController::class, 'showChart'])->name('adminpendapatanpengirimanluarbali.chart.data');
+Route::get( '/adminpendapatanservisasp/chart-data', [RekapPendapatanServisAspController::class, 'showChart'])->name('adminpendapatanservisasp.chart.data');
+Route::get( '/adminpiutangservisasp/chart-data', [RekapPiutangServisAspController::class, 'showChart'])->name('adminpiutangservisasp.chart.data');
+
+Route::get('/adminsakit/chart-data', [LaporanSakitController::class, 'showChart'])->name('adminsakit.chart.data');
+Route::get('/adminizin/chart-data', [LaporanIzinController::class, 'showChart'])->name('adminizin.chart.data');
+Route::get('/admincuti/chart-data', [LaporanCutiController::class, 'showChart'])->name('admincuti.chart.data');
+Route::get('adminterlambat/chart-data', [LaporanTerlambatController::class, 'showChart'])->name('adminterlambat.chart.data');
+
+
+
+
+
 
 
 Route::middleware(['guest'])->group(function () {

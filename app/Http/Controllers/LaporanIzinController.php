@@ -162,7 +162,7 @@ class LaporanIzinController extends Controller
             }
     
             // Buat instance mPDF dengan konfigurasi
-            $mpdf = new \Mpdf\Mpdf([
+            $mpdf = new Mpdf([
                 'orientation' => 'L', // Landscape orientation
                 'margin_left' => 10,
                 'margin_right' => 10,
@@ -233,6 +233,36 @@ class LaporanIzinController extends Controller
         $data = LaporanIzin::all(['bulan','nama','total_izin']);
     
         return response()->json($data);
+    }
+
+    public function showChart()
+    {
+        // Ambil data dari database
+        $laporanizins = LaporanIzin::orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')->get();
+    
+        // Siapkan data untuk chart
+        $labels = $laporanizins->pluck('nama')->toArray();
+        $data = $laporanizins->pluck('total_izin')->toArray();
+        $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data);
+    
+        $chartData = [
+            'labels' => $labels,
+            'datasets' => [
+                [
+                    'label' => 'Total Sakit',
+                    'data' => $data,
+                    'backgroundColor' => $backgroundColors,
+                ],
+            ],
+        ];
+    
+        // Kembalikan data dalam format JSON
+        return response()->json($chartData);
+    }
+    
+    private function getRandomRGBAA($opacity = 0.7)
+    {
+        return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
     }
 
 }

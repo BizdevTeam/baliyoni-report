@@ -211,5 +211,38 @@ class LaporanStokController extends Controller
         return response()->json($data);
     }
 
+    public function showChart(Request $request)
+    {
+
+        $search = $request->input('search');
+    
+        $laporanstoks = LaporanStok::query()
+        ->when($search, function ($query, $search) {
+            return $query->where('bulan', 'LIKE', "%$search%");
+        })
+        ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC'); // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
+    
+        // Format label sesuai kebutuhan
+        $labels = $laporanstoks->pluck('bulan')->toArray();
+        $data = $laporanstoks->pluck('stok')->toArray();
+        $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data);
+    
+        return response()->json([
+            'labels' => $labels,
+            'datasets' => [
+                [
+                    'label' => 'Nilai Paket',
+                    'data' => $data,
+                    'backgroundColor' => $backgroundColors,
+                ],
+            ],
+        ]);
+    }
+
+    private function getRandomRGBAA($opacity = 0.7)
+    {
+        return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
+    }
+
 }
 

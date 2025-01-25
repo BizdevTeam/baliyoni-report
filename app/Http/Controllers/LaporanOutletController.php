@@ -215,4 +215,38 @@ class LaporanOutletController extends Controller
         return response()->json($data);
     }
 
+    public function showChart(Request $request)
+    {
+
+        $search = $request->input('search');
+    
+        $laporanoutlets = LaporanOutlet::query()
+        ->when($search, function ($query, $search) {
+            return $query->where('bulan', 'LIKE', "%$search%");
+        })
+        ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC'); // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
+    
+        // Format label sesuai kebutuhan
+        $labels = $laporanoutlets->pluck('bulan')->map(function ($date) {
+            return \Carbon\Carbon::parse($date)->translatedFormat('F - Y');
+        })->toArray();      
+        $data = $laporanoutlets->pluck('total_pembelian')->toArray();
+        $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data);
+    
+        return response()->json([
+            'labels' => $labels,
+            'datasets' => [
+                [
+                    'label' => 'Nilai Paket',
+                    'data' => $data,
+                    'backgroundColor' => $backgroundColors,
+                ],
+            ],
+        ]);
+    }
+
+    private function getRandomRGBAA($opacity = 0.7)
+    {
+        return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
+    }
 }

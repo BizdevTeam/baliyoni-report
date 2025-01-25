@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Multimedia Tiktok</title>
     <script src="https://cdn.tailwindcss.com"></script>
     @vite('resources/css/app.css')
@@ -75,7 +76,7 @@
 
         <!-- Event Table -->
         <div class="overflow-x-auto bg-white shadow-md rounded-lg">
-            <table class="table-auto w-full border-collapse border border-gray-300">
+            <table class="table-auto w-full border-collapse border border-gray-300" id="table">
                 <thead class="bg-gray-200">
                     <tr>
                         <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
@@ -111,6 +112,10 @@
                                         Delete
                                     </button>
                                 </form>
+                                <!-- Export to PDF Button -->
+                                <button id="export-pdf" class="bg-red-600 text-white px-3 py-2 rounded shadow-md hover:shadow-lg transition duration-300 ease-in-out">
+                                    Export to PDF
+                                </button>   
                             </td>
                         </tr>
 
@@ -151,10 +156,7 @@
             <div class="m-4">
                 {{ $itmultimediatiktoks->links('pagination::tailwind') }}
             </div>
-        </div>
-        <button id="export-pdf" class="bg-red-600 text-white px-3 py-2 rounded shadow-md hover:shadow-lg transition duration-300 ease-in-out">
-            Export to PDF
-        </button>        
+        </div>     
     </div>
     </div>
 </div>
@@ -213,84 +215,68 @@
             modal.classList.add('hidden'); // Menyembunyikan modal
         });
     });
+
     document.getElementById('export-pdf').addEventListener('click', function () {
-    // Salin elemen tabel untuk dimanipulasi
-    const tableElement = document.querySelector('.overflow-x-auto table');
-    let clonedTable = tableElement.cloneNode(true);
+    // Pastikan elemen tabel tersedia
+    let tableElement = document.querySelector('.overflow-x-auto table');
 
-    // Hapus kolom gambar dari tabel duplikat
-    clonedTable.querySelectorAll('tr').forEach(row => {
-        let imageCell = row.children[1];  // Asumsikan kolom gambar di indeks ke-1
-        if (imageCell) {
-            row.removeChild(imageCell);
+    if (!tableElement) {
+        alert('Tabel tidak ditemukan.');
+        return;
+    }
+
+    let tableContent = tableElement.outerHTML;
+
+    // Pastikan tabel tidak kosong
+    if (!tableContent.trim()) {
+        alert('Tabel kosong, tidak dapat mengekspor PDF.');
+        return;
+    }
+
+    let images = Array.from(document.querySelectorAll('.overflow-x-auto img')).map(img => img.src);
+
+    // Pastikan CSRF token tersedia
+    let csrfToken = document.querySelector('meta[name="csrf-token"]');
+    if (!csrfToken) {
+        alert('CSRF token tidak ditemukan.');
+        return;
+    }
+
+    fetch('it/multimediatiktok/export-pdf', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken.getAttribute('content')
+        },
+        body: JSON.stringify({
+            table: tableContent,
+            images: images.length > 0 ? images : null
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Gagal mengekspor PDF');
         }
-    });
-
-    // Buat konten HTML untuk PDF
-    let htmlContent = `
-        <div style='width: 100%;'>
-            <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Tabel Data</h2>
-            <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
-                <thead>
-                    <tr style='background-color: #f2f2f2;'>
-                        <th style='border: 1px solid #000; padding: 1px;'>Bulan</th>
-                        <th style='border: 1px solid #000; padding: 2px;'>Total Penjualan (Rp)</th>
-                    </tr>
-                </thead>
-                <tbody>`;
-
-    clonedTable.querySelectorAll('tbody tr').forEach(row => {
-        let bulan = row.children[0].innerText;
-        let keterangan = row.children[1].innerText;
-
-        htmlContent += `
-            <tr>
-                <td style='border: 1px solid #000; padding: 1px; text-align: center;'>${bulan}</td>
-                <td style='border: 1px solid #000; padding: 1px;'>${keterangan}</td>
-            </tr>`;
-    });
-
-    htmlContent += `</tbody>
-            </table>
-        </div>`;
-
-    // Menambahkan gambar di bawah tabel
-    document.querySelectorAll('.overflow-x-auto table tbody tr').forEach(row => {
-        let imageElement = row.children[1]?.querySelector('img');
-        if (imageElement) {
-            htmlContent += `
-                <div style='text-align: center; margin-top: 20px;'>
-                    <img src='${imageElement.src}' style='width: 100%; height: auto;'>
-                </div>`;
+        return response.blob();
+    })
+    .then(blob => {
+        if (blob.size === 0) {
+            alert('PDF kosong. Periksa kembali isi tabel.');
+            return;
         }
+        let url = window.URL.createObjectURL(blob);
+        let a = document.createElement('a');
+        a.href = url;
+        a.download = 'laporan_multimedia_tiktok.pdf';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    })
+    .catch(error => {
+        console.error('Error saat mengekspor PDF:', error);
+        alert('Terjadi kesalahan saat mengekspor PDF.');
     });
-
-    // Header dan Footer
-    let headerImagePath = '{{ asset ("images/HEADER.png") }}'; // Sesuaikan path header
-    let header = `
-        <div style='position: absolute; top: 0; left: 0; width: 100%; height: auto; z-index: -1;'>
-            <img src='${headerImagePath}' style='width: 100%; height: auto;' />
-        </div>
-    `;
-
-    let footer = `
-        <div style='text-align: center; font-size: 12px; margin-top: 20px;'>
-            Dicetak pada: ${new Date().toLocaleDateString()} | Laporan Marketing | Halaman <span class='page'></span> dari <span class='topage'></span>
-        </div>
-    `;
-
-    // Opsi PDF
-    const options = {
-        margin: [35, 10, 10, 10], // [top, left, bottom, right]
-        filename: 'laporan_rekap_penjualan.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
-        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-    };
-
-    // Konversi HTML ke PDF dengan header dan footer
-    html2pdf().set(options).from(header + htmlContent + footer).save();
 });
+
 </script>
 </html>
