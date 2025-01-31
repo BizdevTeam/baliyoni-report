@@ -40,6 +40,8 @@ Route::middleware(['web'])->group(function () {
     // Accounting
     Route::prefix('accounting')->group(function () {
         Route::resource('labarugi', LaporanLabaRugiController::class);
+        Route::post('labarugi/export-pdf', [LaporanLabaRugiController::class, 'exportPDF'])
+        ->name('labarugi.exportPDF');
         Route::resource('neraca', LaporanNeracaController::class);
         Route::resource('rasio', LaporanRasioController::class);
         Route::resource('taxplaning', LaporanTaxPlaningController::class);
@@ -50,24 +52,8 @@ Route::middleware(['web'])->group(function () {
         Route::resource('aruskas', ArusKasController::class);
         Route::post('aruskas/export-pdf', [ArusKasController::class, 'exportPDF'])
         ->name('accounting.aruskas.exportPDF');
+    
     });
-
-    // // IT
-    // // Route::prefix('it')->group(function () {
-   
-    // //     Route::resource('bizdevbulanan', ItBizdevBulananController::class);
-    // //     Route::prefix('bizdevbulanan/{bizdevbulanan_id}')->group(function () {
-    // //         Route::get('bizdevdata', [ItBizdevDataController::class, 'index'])->name('bizdevdata.index');
-    // //         Route::get('bizdevdata/create', [ItBizdevDataController::class, 'create'])->name('bizdevdata.create');
-    // //         Route::post('bizdevdata/store', [ItBizdevDataController::class, 'store'])->name('bizdevdata.store');
-    // //         Route::get('bizdevdata/{id_bizdevdata}/edit', [ItBizdevDataController::class, 'edit'])->name('bizdevdata.edit');
-    // //         Route::put('bizdevdata/{id_bizdevdata}/update', [ItBizdevDataController::class, 'update'])->name('bizdevdata.update');
-    // //         Route::delete('bizdevdata/{id_bizdevdata}/destroy', [ItBizdevDataController::class, 'destroy'])->name('bizdevdata.destroy');
-    // //         Route::post('bizdevdata/export-pdf', [ItBizdevDataController::class, 'exportPDF'])
-    // //         ->name('it.bizdevdata.exportPDF');
-    // //     });
-    // });
-
 
     // Menampilkan halaman laporan paket administrasi
     Route::prefix('marketings')->group(function () {
@@ -214,14 +200,13 @@ Route::middleware(['web'])->group(function () {
     });
 
     Route::prefix('ask')->group(function () {
-        Route::resource('questions', QuestionController::class); // CRUD lengkap
-        Route::post('/questions/{id}/answer', [QuestionController::class, 'storeAnswer'])->name('answers.store'); // Rute tambahan untuk jawaban
-        Route::put('/questions/{id}', [QuestionController::class, 'update'])->name('questions.update');
+        // CRUD lengkap untuk pertanyaan
+        Route::resource('questions', QuestionController::class);
+        Route::post('/questions/{id}/answer', [QuestionController::class, 'storeAnswer'])->name('answers.store');
         Route::put('/answers/{id}', [QuestionController::class, 'updateAnswer'])->name('answers.update');
-        Route::delete('/questions/{id}', [QuestionController::class, 'destroy'])->name('questions.destroy');
         Route::delete('/answers/{id}', [QuestionController::class, 'destroyAnswer'])->name('answers.destroy');
-        
     });
+    
 
 });
 
@@ -252,10 +237,8 @@ Route::get('adminterlambat/chart-data', [LaporanTerlambatController::class, 'sho
 Route::get('/adminkhps/chart-data', [KHPSController::class, 'showChart'])->name('adminkhps.chart.data');
 Route::get('/adminak/chart-data', [ArusKasController::class, 'showChart'])->name('adminak.chart.data');
 Route::get('/adminptbos', [LaporanPtBosController::class, 'adminView'])->name('adminptbos.admin');
-Route::get('/adminijasa', [LaporanIjasaController::class, 'adminView'])->name('adminptbos.admin');
-Route::get('/adminbizdev', [LaporanBizdevController::class, 'adminView'])->name('adminptbos.admin');
-
-
+Route::get('/adminijasa', [LaporanIjasaController::class, 'adminView'])->name('adminijasa.admin');
+Route::get('/adminbizdev', [LaporanBizdevController::class, 'adminView'])->name('adminbizdev.admin');
 
 Route::middleware(['guest'])->group(function () {
     // Guest routes for login
