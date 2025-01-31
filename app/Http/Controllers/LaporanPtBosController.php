@@ -15,16 +15,22 @@ class LaporanPtBosController extends Controller
     {
         $perPage = $request->input('per_page', 12);
         $search = $request->input('search');
-
+    
         $laporanptboss = LaporanPtBos::query()
             ->when($search, function ($query, $search) {
                 return $query->where('bulan', 'LIKE', "%$search%");
             })
             ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
             ->paginate($perPage);
-        
+    
+        if ($request->ajax()) {
+            return response()->json(['laporanptboss' => $laporanptboss]);
+        }
+    
         return view('hrga.laporanptbos', compact('laporanptboss'));
     }
+    
+    
 
     public function store(Request $request)
     {
@@ -150,4 +156,5 @@ class LaporanPtBosController extends Controller
 
         return redirect()->route('laporanptbos.index')->with('success', 'Data Berhaisil Dihapus');
     }
+
 }

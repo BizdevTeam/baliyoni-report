@@ -77,7 +77,6 @@
                 <thead class="bg-gray-200">
                     <tr>
                         <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Judul</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Aspek</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Masalah</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Solusi</th>
@@ -89,7 +88,6 @@
                     @foreach ($laporanspis as $laporanspi)
                         <tr class="hover:bg-gray-100">
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanspi->bulan_formatted }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanspi->judul }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanspi->aspek }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanspi->masalah }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanspi->solusi }}</td>
@@ -123,11 +121,6 @@
                                         <div>
                                             <label for="bulan" class="block text-sm font-medium">Bulan</label>
                                             <input type="month" name="bulan" class="w-full p-2 border rounded" value="{{ $laporanspi->bulan }}" required>
-                                        </div>
-                                        <div>
-                                            <label for="judul" class="block text-sm font-medium">Judul</label>
-                                            <textarea name="judul" class="w-full p-2 border rounded" rows="1"
-                                                required>{{ $laporanspi->judul }}</textarea>
                                         </div>
                                         <div>
                                             <label for="aspek" class="block text-sm font-medium">Aspek</label>
@@ -182,10 +175,6 @@
                 <div>
                     <label for="bulan" class="block text-sm font-medium">Bulan</label>
                     <input type="month" name="bulan" class="w-full p-2 border rounded" required>
-                </div>
-                <div>
-                    <label for="judul" class="block text-sm font-medium">Judul</label>
-                    <input type="text" name="judul" class="w-full p-2 border rounded">
                 </div>
                 <div>
                     <label for="aspek" class="block text-sm font-medium">Aspek</label>
@@ -251,11 +240,10 @@ async function exportToPDF() {
         const cells = row.querySelectorAll('td');
         return {
                 bulan: cells[0]?.innerText.trim() || '',
-                judul: cells[1]?.innerText.trim() || '',
-                aspek: cells[2] ?.innerText.trim() || '',
-                masalah: cells[3]?.innerText.trim() || '',
-                solusi: cells[4]?.innerText.trim() || '',
-                implementasi: cells[5]?.innerText.trim() || '',
+                aspek: cells[1] ?.innerText.trim() || '',
+                masalah: cells[2]?.innerText.trim() || '',
+                solusi: cells[3]?.innerText.trim() || '',
+                implementasi: cells[4]?.innerText.trim() || '',
         };
     });
 
@@ -264,7 +252,6 @@ async function exportToPDF() {
         .map(item => `
             <tr>
                     <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.bulan}</td>
-                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.judul}</td>
                     <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.aspek}</td>
                     <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.masalah}</td>
                     <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.solusi}</td>

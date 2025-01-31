@@ -63,30 +63,32 @@
                                         @csrf
                                         @method('PUT')
                                         <textarea name="question" class="w-full border rounded p-2" required>{{ $question->question }}</textarea>
-                                        <button type="submit" class="mt-2 bg-green-600 text-white py-1 px-4 rounded">Save</button>
+                                        <button type="submit" class="mt-2 bg-green-600 text-white py-1 px-4 rounded">Simpan</button>
                                     </form>
 
                                     <!-- Edit Question Button -->
-                                    <div class="flex justify-end w-full">
-                                        <button onclick="toggleForm('edit-question-{{ $question->id }}')" class="flex-wrap bg-blue-600 text-white py-1 px-4 rounded mr-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                                <path fill="currentColor" d="M6 22q-.825 0-1.412-.587T4 20V4q0-.825.588-1.412T6 2h8l6 6v3q-.575.125-1.075.4t-.925.7l-6 5.975V22zm8 0v-3.075l5.525-5.5q.225-.225.5-.325t.55-.1q.3 0 .575.113t.5.337l.925.925q.2.225.313.5t.112.55t-.1.563t-.325.512l-5.5 5.5zm6.575-5.6l.925-.975l-.925-.925l-.95.95zM13 9h5l-5-5l5 5l-5-5z" /></svg>
-                                        </button>
+                                    <div class="flex justify-end w-full gap-2">
+                                        <button onclick="toggleForm('edit-question-{{ $question->id }}')" class="flex items-center gap-2 bg-blue-600 text-white py-2 px-4 rounded">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                                <path fill="currentColor" d="M6 22q-.825 0-1.412-.587T4 20V4q0-.825.588-1.412T6 2h8l6 6v3q-.575.125-1.075.4t-.925.7l-6 5.975V22zm8 0v-3.075l5.525-5.5q.225-.225.5-.325t.55-.1q.3 0 .575.113t.5.337l.925.925q.2.225.313.5t.112.55t-.1.563t-.325.512l-5.5 5.5zm6.575-5.6l.925-.975l-.925-.925l-.95.95zM13 9h5l-5-5l5 5l-5-5z"/>
+                                            </svg>
+                                            <span class="hidden sm:inline">Edit Jawaban</span>                                        </button>
                                         <form method="POST" action="{{ route('questions.destroy', $question->id) }}">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="bg-red-600 text-white py-1 px-4 rounded">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                                    <path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z" /></svg> </button>
+                                            <button type="submit" class="flex items-center gap-2 bg-red-600 text-white py-2 px-4  rounded">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                                    <path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z"/>
+                                                </svg>
+                                                <span class="hidden sm:inline">Hapus Pertanyaan</span>
                                         </form>
                                     </div>
                                 </div>
 
                                 <!-- Toggle button to show/hide answers -->
-                                <div class="flex justify-between items-center mt-4">
-                                    <button onclick="toggleAnswerSection('answers-{{ $question->id }}')" class=" text-white py-1 px-4 rounded">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                            <path fill="#0000000" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5M12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5s5 2.24 5 5s-2.24 5-5 5m0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3s3-1.34 3-3s-1.34-3-3-3" /></svg>
+                                <div class="flex justify-start items-center mt-4">
+                                    <button onclick="toggleAnswerSection('answers-{{ $question->id }}')" class=" flex text-red-600 content-end end-0 text-end font-semibold hover:underline">
+                                        Tampilkan Jawaban                                    
                                     </button>
                                 </div>
 
@@ -95,9 +97,25 @@
                                     <form method="POST" action="{{ route('answers.store', $question->id) }}" class="mt-8">
                                         @csrf
                                         <div class="relative flex items-center border rounded p-2">
-                                            <input type="text" name="answer" placeholder="Add an answer..." class="flex-1 border-none focus:outline-none p-2" required>
-                                            <button type="submit" class="bg-red-600 text-white py-2 px-4 rounded ml-2">
-                                                Add Answer
+                                            <input type="text" name="answer" placeholder="Tambahkan Jawaban..." class="flex-1 border-none focus:outline-none p-2" required>
+                                            <button type="submit" class=" flex items-center justify-center bg-red-600 text-white py-2 px-4 rounded ml-2">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                                    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                        <path stroke-dasharray="64" stroke-dashoffset="64" d="M13 3l6 6v12h-14v-18h8">
+                                                            <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0"/>
+                                                        </path>
+                                                        <path stroke-dasharray="14" stroke-dashoffset="14" stroke-width="1" d="M12.5 3v5.5h6.5">
+                                                            <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.7s" dur="0.2s" values="14;0"/>
+                                                        </path>
+                                                        <path stroke-dasharray="8" stroke-dashoffset="8" d="M9 14h6">
+                                                            <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.9s" dur="0.2s" values="8;0"/>
+                                                        </path>
+                                                        <path stroke-dasharray="8" stroke-dashoffset="8" d="M12 11v6">
+                                                            <animate fill="freeze" attributeName="stroke-dashoffset" begin="1.1s" dur="0.2s" values="8;0"/>
+                                                        </path>
+                                                    </g>
+                                                </svg>
+                                                Tambah Pertanyaan
                                             </button>
                                         </div>
                                     </form>
@@ -107,7 +125,7 @@
                                         @foreach ($question->answers as $answer)
                                         <div class="flex flex-wrap  p-2 bg-gray-100 rounded mb-2">
                                             <div class="block w-full">
-                                                <p class="block text-sm text-gray-700"><strong>Answer:</strong> {{ $answer->answer }}</p>
+                                                <p class="block text-sm text-gray-700"><strong>Jawaban:</strong> {{ $answer->answer }}</p>
                                             </div>
                                             <!-- Edit Answer Button -->
 
@@ -131,17 +149,36 @@
                                                 </div>
                                             </form>
 
-                                            <div class="flex justify-end w-full">
-                                                <button onclick="toggleForm('edit-answer-{{ $answer->id }}')" class="flex-wrap bg-blue-600 text-white py-1 px-4 rounded mb-2 mr-2">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                                        <path fill="currentColor" d="M6 22q-.825 0-1.412-.587T4 20V4q0-.825.588-1.412T6 2h8l6 6v3q-.575.125-1.075.4t-.925.7l-6 5.975V22zm8 0v-3.075l5.525-5.5q.225-.225.5-.325t.55-.1q.3 0 .575.113t.5.337l.925.925q.2.225.313.5t.112.55t-.1.563t-.325.512l-5.5 5.5zm6.575-5.6l.925-.975l-.925-.925l-.95.95zM13 9h5l-5-5l5 5l-5-5z" /></svg>
+                                            <div class="flex justify-end w-full gap-2">
+                                                <!-- Edit Button -->
+                                                <button 
+                                                    onclick="toggleForm('edit-answer-{{ $answer->id }}')" 
+                                                    class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors duration-200 py-2 px-4 "
+                                                >
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                                        <path fill="currentColor" d="M6 22q-.825 0-1.412-.587T4 20V4q0-.825.588-1.412T6 2h8l6 6v3q-.575.125-1.075.4t-.925.7l-6 5.975V22zm8 0v-3.075l5.525-5.5q.225-.225.5-.325t.55-.1q.3 0 .575.113t.5.337l.925.925q.2.225.313.5t.112.55t-.1.563t-.325.512l-5.5 5.5zm6.575-5.6l.925-.975l-.925-.925l-.95.95zM13 9h5l-5-5l5 5l-5-5z"/>
+                                                    </svg>
+                                                    <span class="hidden sm:inline">Edit Jawaban</span>
                                                 </button>
-                                                <form method="POST" action="{{ route('answers.destroy', $answer->id) }}">
+                                            
+                                                <!-- Delete Form -->
+                                                <form 
+                                                    method="POST" 
+                                                    action="{{ route('answers.destroy', $answer->id) }}"
+                                                    class="m-0"
+                                                >
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="bg-red-600 text-white py-1 px-4 rounded">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                                            <path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z" /></svg> </button>
+                                                    <button 
+                                                        type="submit" 
+                                                        class="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded transition-colors duration-200"
+                                                        onclick="return confirm('Apakah Anda yakin ingin menghapus jawaban ini?')"
+                                                    >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                                            <path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z"/>
+                                                        </svg>
+                                                        <span class="hidden sm:inline">Hapus Jawaban</span>
+                                                    </button>
                                                 </form>
                                             </div>
                                         </div>
@@ -163,8 +200,13 @@
                                 <div>
                                     <label for="asked_by" class="block text-sm font-medium">Asked By :</label>
                                     <select name="asked_by" id="asked_by" class="w-full border rounded p-2" required>
-                                        <option value="Divisi A">Divisi A</option>
-                                        <option value="Divisi B">Divisi B</option>
+                                        <option value="Divisi Marketing">Divisi Marketing</option>
+                                        <option value="Divisi Procurement">Divisi Procurement</option>
+                                        <option value="Divisi Support">Divisi Support</option>
+                                        <option value="Divisi Accounting">Divisi Accounting</option>
+                                        <option value="Divisi IT">Divisi IT</option>
+                                        <option value="Divisi HRGA">Divisi HRGA</option>
+                                        <option value="Divisi SPI">Divisi SPI</option>
                                     </select>
                                 </div>
                                 <div>
@@ -178,7 +220,27 @@
                                     <label for="created_at" class="block text-sm font-medium">Tanggal & Waktu:</label>
                                     <input type="text" name="created_at" id="created_at" class="w-full border rounded p-2" readonly>
                                 </div>
-                                <button type="submit" class="mt-4 w-full bg-red-600 text-white py-2 rounded">Add Question</button>
+                                <div class="flex justify-end w-full gap-2">
+                                    <button type="submit" class="mt-4 w-full bg-red-600 text-white py-2 rounded flex items-center justify-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                            <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                <path stroke-dasharray="64" stroke-dashoffset="64" d="M13 3l6 6v12h-14v-18h8">
+                                                    <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0"/>
+                                                </path>
+                                                <path stroke-dasharray="14" stroke-dashoffset="14" stroke-width="1" d="M12.5 3v5.5h6.5">
+                                                    <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.7s" dur="0.2s" values="14;0"/>
+                                                </path>
+                                                <path stroke-dasharray="8" stroke-dashoffset="8" d="M9 14h6">
+                                                    <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.9s" dur="0.2s" values="8;0"/>
+                                                </path>
+                                                <path stroke-dasharray="8" stroke-dashoffset="8" d="M12 11v6">
+                                                    <animate fill="freeze" attributeName="stroke-dashoffset" begin="1.1s" dur="0.2s" values="8;0"/>
+                                                </path>
+                                            </g>
+                                        </svg>
+                                        Tambah Pertanyaan
+                                    </button>
+                                </div>
                             </form>
                         </div>
 

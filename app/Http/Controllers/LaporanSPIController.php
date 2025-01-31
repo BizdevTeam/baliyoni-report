@@ -24,6 +24,10 @@ class LaporanSPIController extends Controller
             ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
             ->paginate($perPage);
 
+            if ($request->ajax()) {
+                return response()->json(['laporanspis' => $laporanspis]);
+            }
+
         return view('spi.laporanspi', compact('laporanspis'));    }
 
     public function store(Request $request)
@@ -31,7 +35,6 @@ class LaporanSPIController extends Controller
         try {
             $validatedata = $request->validate([
                 'bulan' => 'required|date_format:Y-m',
-                'judul' => 'required',
                 'aspek' => 'required',
                 'masalah' => 'required',
                 'solusi' => 'required',
@@ -60,7 +63,6 @@ class LaporanSPIController extends Controller
             // Validasi input
             $validatedData = $request->validate([
                 'bulan' => 'required|date_format:Y-m',
-                'judul' => 'required',
                 'aspek' => 'required',
                 'masalah' => 'required',
                 'solusi' => 'required',
@@ -131,7 +133,6 @@ class LaporanSPIController extends Controller
                         <thead>
                             <tr style='background-color: #f2f2f2;'>
                             <th style='border: 1px solid #000; padding: 1px;'>Bulan</th>
-                            <th style='border: 1px solid #000; padding: 2px;'>Judul</th>
                             <th style='border: 1px solid #000; padding: 2px;'>Aspek</th>
                             <th style='border: 1px solid #000; padding: 2px;'>Masalah</th>
                             <th style='border: 1px solid #000; padding: 2px;'>Solusi</th>

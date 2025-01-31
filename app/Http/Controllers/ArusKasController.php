@@ -183,10 +183,34 @@ class ArusKasController extends Controller
             return redirect()->route('aruskas.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
     }
-    public function getKashutangpiutangstokData()
-    {
-        $data = ArusKas::all(['kas_masuk', 'kas_keluar']);
-    
-        return response()->json($data);
+
+    public function showChart(Request $request)
+    { 
+        $search = $request->input('search');
+
+        // Query untuk mencari berdasarkan tahun dan bulan
+        $aruskass = ArusKas::query()
+            ->when($search, function ($query, $search) {
+                return $query->where('bulan', 'LIKE', "%$search%");
+            })
+            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
+            ->get();
+
+        // Hitung total untuk masing-masing kategori
+        $totalKas = $aruskass->sum('kas_masuk');
+        $totalHutang = $aruskass->sum('kas_keluar');
+
+        // Siapkan data untuk chart
+        $chartData = [
+            'labels' => ['Kas Masuk', 'Kas Keluar'],
+            'datasets' => [
+                [
+                    'data' => [$totalKas, $totalHutang],
+                    'backgroundColor' => ['#FF6384', '#36A2EB'], // Warna untuk pie chart
+                    'hoverBackgroundColor' => ['#FF4757', '#3B8BEB'],
+                ],
+            ],
+        ];
+        return response()->json($chartData);
     }
 }

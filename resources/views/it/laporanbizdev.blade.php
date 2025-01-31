@@ -127,22 +127,22 @@
                                             <input type="month" name="bulan" class="w-full p-2 border rounded" value="{{ $laporanbizdev->bulan }}" required>
                                         </div>
                                         <div>
-                                            <label for="aplikasi" class="block text-sm font-medium">Judul</label>
+                                            <label for="aplikasi" class="block text-sm font-medium">Aplikasi</label>
                                             <textarea name="aplikasi" class="w-full p-2 border rounded" rows="1"
                                                 required>{{ $laporanbizdev->aplikasi }}</textarea>
                                         </div>
                                         <div>
-                                            <label for="kondisi_bulanlalu" class="block text-sm font-medium">Aspek</label>
+                                            <label for="kondisi_bulanlalu" class="block text-sm font-medium">Kondisi Bulan Lalu</label>
                                             <textarea name="kondisi_bulanlalu" class="w-full p-2 border rounded" rows="1"
                                                 required>{{ $laporanbizdev->kondisi_bulanlalu }}</textarea>
                                         </div>
                                         <div>
-                                            <label for="kondisi_bulanini" class="block text-sm font-medium">Masalah</label>
+                                            <label for="kondisi_bulanini" class="block text-sm font-medium">Kondisi Bulan Ini</label>
                                             <textarea name="kondisi_bulanini" class="w-full p-2 border rounded" rows="1"
                                                 required>{{ $laporanbizdev->kondisi_bulanini }}</textarea>
                                         </div>
                                         <div>
-                                            <label for="update" class="block text-sm font-medium">Solusi</label>
+                                            <label for="update" class="block text-sm font-medium">Update</label>
                                             <textarea name="update" class="w-full p-2 border rounded" rows="1"
                                                 required>{{ $laporanbizdev->update }}</textarea>
                                         </div>
@@ -192,19 +192,19 @@
                     <input type="month" name="bulan" class="w-full p-2 border rounded" required>
                 </div>
                 <div>
-                    <label for="aplikasi" class="block text-sm font-medium">Judul</label>
+                    <label for="aplikasi" class="block text-sm font-medium">Aplikasi</label>
                     <input type="text" name="aplikasi" class="w-full p-2 border rounded">
                 </div>
                 <div>
-                    <label for="kondisi_bulanlalu" class="block text-sm font-medium">Aspek</label>
+                    <label for="kondisi_bulanlalu" class="block text-sm font-medium">Kondisi Bulan Lalu</label>
                     <input type="text" name="kondisi_bulanlalu" class="w-full p-2 border rounded">
                 </div>
                 <div>
-                    <label for="kondisi_bulanini" class="block text-sm font-medium">Masalah</label>
+                    <label for="kondisi_bulanini" class="block text-sm font-medium">Kondisi Bulan Ini</label>
                     <textarea name="kondisi_bulanini" class="w-full p-2 border rounded" rows="1"></textarea>
                 </div>
                 <div>
-                    <label for="update" class="block text-sm font-medium">Solusi</label>
+                    <label for="update" class="block text-sm font-medium">Update</label>
                     <textarea name="update" class="w-full p-2 border rounded" rows="1" required></textarea>
                 </div>
                 <div>

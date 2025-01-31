@@ -190,11 +190,36 @@ class KHPSController extends Controller
             return redirect()->route('khps.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
     }
-    public function getKashutangpiutangstokData()
-    {
-        $data = KasHutangPiutang::all(['kas', 'hutang', 'piutang', 'stok']);
-    
-        return response()->json($data);
+    public function showChart(Request $request)
+    { 
+        $search = $request->input('search');
+
+        // Query untuk mencari berdasarkan tahun dan bulan
+        $kashutangpiutangstoks = KasHutangPiutang::query()
+            ->when($search, function ($query, $search) {
+                return $query->where('bulan', 'LIKE', "%$search%");
+            })
+            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
+            ->get();
+
+        // Hitung total untuk masing-masing kategori
+        $totalKas = $kashutangpiutangstoks->sum('kas');
+        $totalHutang = $kashutangpiutangstoks->sum('hutang');
+        $totalPiutang = $kashutangpiutangstoks->sum('piutang');
+        $totalStok = $kashutangpiutangstoks->sum('stok');
+
+        // Siapkan data untuk chart
+        $chartData = [
+            'labels' => ['Kas', 'Hutang', 'Piutang', 'Stok'],
+            'datasets' => [
+                [
+                    'data' => [$totalKas, $totalHutang, $totalPiutang, $totalStok],
+                    'backgroundColor' => ['#FF6384', '#36A2EB', '#FFCE56', '#2ab952'], // Warna untuk pie chart
+                    'hoverBackgroundColor' => ['#FF4757', '#3B8BEB', '#FFD700', '#00a623'],
+                ],
+            ],
+        ];
+        return response()->json($chartData);
     }
 
 }

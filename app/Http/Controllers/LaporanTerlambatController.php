@@ -228,12 +228,36 @@ class LaporanTerlambatController extends Controller
         }
     }
 
-    public function getRekapPenjualaPerusahaannData()
+    public function showChart()
     {
-        $data = LaporanTerlambat::all(['bulan','nama','total_terlambat']);
+        // Ambil data dari database
+        $laporanterlambats = LaporanTerlambat::orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')->get();
     
-        return response()->json($data);
+        // Siapkan data untuk chart
+        $labels = $laporanterlambats->pluck('nama')->toArray();
+        $data = $laporanterlambats->pluck('total_terlambat')->toArray();
+        $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data);
+    
+        $chartData = [
+            'labels' => $labels,
+            'datasets' => [
+                [
+                    'label' => 'Total Terlambat',
+                    'data' => $data,
+                    'backgroundColor' => $backgroundColors,
+                ],
+            ],
+        ];
+    
+        // Kembalikan data dalam format JSON
+        return response()->json($chartData);
     }
+    
+    private function getRandomRGBAA($opacity = 0.7)
+    {
+        return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
+    }
+
 
 }
 

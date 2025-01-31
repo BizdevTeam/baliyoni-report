@@ -29,7 +29,7 @@
     @vite('resources/js/app.js')
 </head>
 
-<body class="bg-gray-100 hold-transition sidebar-mini layout-fixed">
+<body class="bg-white hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
         <!-- Sidebar -->
         <x-sidebar class="w-64 h-screen fixed bg-gray-800 text-white z-10" />
@@ -42,7 +42,7 @@
         <div id="admincontent" class="content-wrapper ml-64 p-4 bg-white duration-300">
             <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan Rekap Penjualan</h1>
 
-            <div class="flex items-center justify-end transition-all duration-500 mb-4">
+            <div class="flex items-center justify-end transition-all duration-500 mt-4 mb-4">
                 <!-- Search -->
                 <form method="GET" action="{{ route('rekappenjualan.index') }}" class="flex items-center gap-2">
                     <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
@@ -162,13 +162,29 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="flex justify-center items-center mt-2 mb-4 p-4 bg-gray-50 rounded-lg">
+                        <!-- Dropdown untuk memilih jumlah data per halaman -->
+                        <div class="flex items-center">
+                            <label for="perPage" class="mr-2 text-sm text-gray-600">Tampilkan</label>
+                            <select 
+                                id="perPage" 
+                                class="p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                onchange="changePerPage(this.value)">
+                                <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
+                                <option value="12" {{ request('per_page') == 12 || !request('per_page') ? 'selected' : '' }}>12</option>
+                                <option value="24" {{ request('per_page') == 24 ? 'selected' : '' }}>24</option>
+                            </select>
+                            <span class="ml-2 text-sm text-gray-600">data per halaman</span>
+                        </div>
+                    </div>
+
                     <div class="m-4">
                         {{ $rekappenjualans->links('pagination::tailwind') }}
                     </div>
                 </div>
             </div>
             <div id="formChart" class="visible">
-            <div class="flex flex-col mx-auto bg-white p-6 mt-3 rounded-lg shadow-xl border border-grey-500">
+            <div class="flex flex-col mx-auto bg-white p-6 mt-4 rounded-lg shadow-xl border border-grey-500">
             <h1 class="text-4xl font-bold text-red-600 mb-4 font-montserrat text-start">Diagram</h1>
 
             <div class="mt-6 self-center w-full h-[750px] flex justify-center">
@@ -180,9 +196,7 @@
                 </button>
             </div>
         </div>
-            </div>
-
-            
+    </div>
 
         <!-- Modal untuk Add Event -->
         <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden"
@@ -364,6 +378,23 @@ async function exportToPDF() {
     }
 }
 
+function changePerPage(value) {
+    const url = new URL(window.location.href);
+    url.searchParams.set('per_page', value);
+    window.location.href = url.toString();
+}
+
+function changePerPage(value) {
+    const url = new URL(window.location.href);
+    const searchParams = new URLSearchParams(url.search);
+    
+    searchParams.set('per_page', value);
+    if (!searchParams.has('page')) {
+        searchParams.set('page', 1);
+    }
+    
+    window.location.href = url.pathname + '?' + searchParams.toString();
+}
 
 </script>
 

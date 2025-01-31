@@ -23,6 +23,10 @@ class LaporanIjasaController extends Controller
         })
         ->orderBy('tanggal', 'DESC')
         ->paginate($perPage);
+
+        if ($request->ajax()) {
+            return response()->json(['laporanijasas' => $laporanijasas]);
+        }
     
     return view('hrga.laporanijasa', compact('laporanijasas'));
     }

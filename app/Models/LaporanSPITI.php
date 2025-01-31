@@ -9,7 +9,7 @@ class LaporanSPITI extends Model
 {
      protected $table = "laporanspiti";
     protected $primaryKey = "id_spiti";
-    protected $fillable = ["bulan","judul","aspek","masalah","solusi","implementasi"];
+    protected $fillable = ["bulan","aspek","masalah","solusi","implementasi"];
 
     public function getBulanFormattedAttribute()
     {

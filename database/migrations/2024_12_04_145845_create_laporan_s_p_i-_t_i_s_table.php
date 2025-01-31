@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('laporanspiti', function (Blueprint $table) {
             $table->id('id_spiti');
             $table->string('bulan'); // Contoh: '08 / 2024'
-            $table->string('judul');
             $table->string('aspek');
             $table->text('masalah')->nullable();
             $table->text('solusi')->nullable();

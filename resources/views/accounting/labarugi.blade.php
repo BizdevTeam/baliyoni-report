@@ -144,8 +144,6 @@
                                 </td>
                             </tr>
 
-
-
                             <!-- Modal for Edit Event -->
                             <div class="fixed z-50 overflow-y-auto inset-0 backdrop-blur-sm bg-black bg-opacity-70 w-full flex items-center justify-center hidden" id="editEventModal{{ $laporanlabarugi->id_labarugi }}">
                                 <div class="bg-white w-[30%] h-[90%] p-6 rounded shadow-lg animate-slide-down transform transition-transform duration-500 ease-out">
@@ -162,8 +160,8 @@
                                                 <label for="gambar" class="block text-sm font-medium">Thumbnail</label>
                                                 <input type="file" name="gambar" class="w-full p-2 border rounded">
                                                 <div class="mt-2">
-                                                    <img src="{{ asset('images/accounting/labarugi/' . $laporanlabarugi->gambar) }}" alt="Event Image" class="h-16">
-                                                </div>
+                                                    <img src="images/accounting/labarugi/{{ $laporanlabarugi->gambar }}" alt="Event Image" class="h-16">
+                                                </div>
                                             </div>
                                             <div>
                                                 <label for="file_excel" class="block text-sm font-medium">File Excel</label>

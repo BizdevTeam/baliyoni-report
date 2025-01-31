@@ -25,7 +25,8 @@ class RekapPenjualanController extends Controller
                 return $query->where('bulan', 'LIKE', "%$search%");
             })
             ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
-            ->paginate($perPage);
+            ->paginate($perPage)
+            ->withQueryString();
 
         // Hitung total untuk masing-masing kategori
         $totalPenjualan = $rekappenjualans->sum('total_penjualan');
@@ -180,7 +181,7 @@ class RekapPenjualanController extends Controller
                     </table>
                 </div>
                 <div style='width: 65%; text-align:center; margin-left: 20px;'>
-                    <h2 style='font-size: 14px; margin-bottom: 10px;'>Grafik Laporan Penjualan Perusahaan</h2>
+                    <h2 style='font-size: 14px; margin-bottom: 10px;'>Grafik Laporan Penjualan</h2>
                     <img src='{$chartBase64}' style='width: 100%; height: auto;' alt='Grafik Laporan' />
                 </div>
             </div>

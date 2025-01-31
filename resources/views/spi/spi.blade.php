@@ -87,9 +87,6 @@
                                     data-aos-easing="ease-out-sine">Bulan</th>
                                 <th class="px-6 py-3 text-center border-b " data-aos="fade-right"
                                     data-aos-duration="400"
-                                    data-aos-easing="ease-out-sine">Judul</th>
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right"
-                                    data-aos-duration="400"
                                     data-aos-easing="ease-out-sine">Aspek</th>
                                 <th class="px-6 py-3 text-center border-b " data-aos="fade-right"
                                     data-aos-duration="400"
@@ -112,9 +109,6 @@
                                 <td class="px-6 py-4 text-center text-pretty border-b" data-aos="fade-right"
                                     data-aos-duration="400"
                                     data-aos-easing="ease-out-sine">{{ $laporanspi->bulan_tahun }}</td>
-                                <td class="px-6 py-4 text-center text-pretty border-b " data-aos="fade-right"
-                                    data-aos-duration="400"
-                                    data-aos-easing="ease-out-sine">{{ $laporanspi->judul }}</td>
                                 <td class="px-6 py-4 text-center text-pre   tty border-b" data-aos="fade-right"
                                     data-aos-duration="400"
                                     data-aos-easing="ease-out-sine">{{ $laporanspi->aspek }}</td>
@@ -161,11 +155,6 @@
                                                 <label for="bulan_tahun" class="block text-sm font-medium">Bulan</label>
                                                 <input type="month" name="bulan_tahun" class="w-full p-2 border rounded"
                                                     value="{{ $laporanspi->bulan_tahun }}" required>
-                                            </div>
-                                            <div>
-                                                <label for="judul" class="block text-sm font-medium">Judul</label>
-                                                <textarea name="judul" class="w-full p-2 border rounded" rows="1"
-                                                    required>{{ $laporanspi->judul }}</textarea>
                                             </div>
                                             <div>
                                                 <label for="aspek" class="block text-sm font-medium">Aspek</label>
@@ -223,10 +212,6 @@
                     <div>
                         <label for="bulan_tahun" class="block text-sm font-medium">Bulan</label>
                         <input type="month" name="bulan_tahun" class="w-full p-2 border rounded" required>
-                    </div>
-                    <div>
-                        <label for="judul" class="block text-sm font-medium">Judul</label>
-                        <input type="text" name="judul" class="w-full p-2 border rounded">
                     </div>
                     <div>
                         <label for="aspek" class="block text-sm font-medium">Aspek</label>
@@ -304,7 +289,6 @@
             const cells = row.querySelectorAll('td');
             return {
                 bulan_tahun: cells[0]?.innerText.trim() || '',
-                judul: cells[1]?.innerText.trim() || '',
                 aspek: cells[2]?.innerText.trim() || '',
                 masalah: cells[3]?.innerText.trim() || '',
                 solusi: cells[4]?.innerText.trim() || '',
@@ -313,11 +297,10 @@
         });
 
         const tableContent = items
-            .filter(item => item.bulan_tahun && item.judul && item.aspek && item.masalah && item.solusi && item.implementasi)
+            .filter(item => item.bulan_tahun  && item.aspek && item.masalah && item.solusi && item.implementasi)
             .map(item => `
                 <tr>
                     <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.bulan_tahun}</td>
-                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.judul}</td>
                     <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.aspek}</td>
                     <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.masalah}</td>
                     <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.solusi}</td>

@@ -24,6 +24,10 @@ class LaporanBizdevController extends Controller
             ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
             ->paginate($perPage);
 
+            if ($request->ajax()) {
+                return response()->json(['laporanbizdevs' => $laporanbizdevs]);
+            }
+
         return view('it.laporanbizdev', compact('laporanbizdevs'));    }
 
     public function store(Request $request)

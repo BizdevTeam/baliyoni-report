@@ -196,6 +196,9 @@ Route::middleware(['web'])->group(function () {
         Route::resource('laporanptbos', LaporanPtBosController::class);
         Route::post('laporanptbos/export-pdf', [LaporanPtBosController::class, 'exportPDF'])
             ->name('hrga.laporanptbos.exportPDF');
+        Route::post('laporanptbos/table', [LaporanPtBosController::class, 'table'])
+            ->name('hrga.laporanptbos.table');
+
         Route::resource('laporanijasa', LaporanIjasaController::class);
         Route::post('laporanijasa/export-pdf', [LaporanIjasaController::class, 'exportPDF'])
             ->name('hrga.laporanijasa.exportPDF');
@@ -246,9 +249,11 @@ Route::get('/adminizin/chart-data', [LaporanIzinController::class, 'showChart'])
 Route::get('/admincuti/chart-data', [LaporanCutiController::class, 'showChart'])->name('admincuti.chart.data');
 Route::get('adminterlambat/chart-data', [LaporanTerlambatController::class, 'showChart'])->name('adminterlambat.chart.data');
 
-
-
-
+Route::get('/adminkhps/chart-data', [KHPSController::class, 'showChart'])->name('adminkhps.chart.data');
+Route::get('/adminak/chart-data', [ArusKasController::class, 'showChart'])->name('adminak.chart.data');
+Route::get('/adminptbos', [LaporanPtBosController::class, 'adminView'])->name('adminptbos.admin');
+Route::get('/adminijasa', [LaporanIjasaController::class, 'adminView'])->name('adminptbos.admin');
+Route::get('/adminbizdev', [LaporanBizdevController::class, 'adminView'])->name('adminptbos.admin');
 
 
 
