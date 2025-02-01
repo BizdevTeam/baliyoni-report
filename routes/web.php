@@ -98,7 +98,9 @@ Route::middleware(['web'])->group(function () {
         Route::resource('laporanbizdev', LaporanBizdevController::class);
         Route::post('laporanbizdev/export-pdf', [LaporanBizdevController::class, 'exportPDF'])
             ->name('it.laporanbizdev.exportPDF');
-        Route::resource('instagram', ItMultimediaInstagramController::class);
+        Route::resource('multimediainstagram', ItMultimediaInstagramController::class);
+        Route::post('multimediainstagram/export-pdf', [ItMultimediaInstagramController::class, 'exportPDF'])
+        ->name('multimediainstagram.exportPDF');
         Route::resource('tiktok', ItMultimediaTiktokController::class);
         Route::post('tiktok/export-pdf', [ItMultimediaTiktokController::class, 'exportPDF'])
             ->name('it.tiktok.exportPDF');

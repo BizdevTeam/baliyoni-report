@@ -48,14 +48,14 @@ class ItMultimediaInstagramController extends Controller
 
             ItMultimediaInstagram::create($validatedata);
 
-            return redirect()->route('instagram.index')->with('success', 'Data Berhasil Ditambahkan');
+            return redirect()->route('multimediainstagram.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
             Log::error('Error storing Instagram data: ' . $e->getMessage());
-            return redirect()->route('instagram.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
+            return redirect()->route('multimediainstagram.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
     }
 
-    public function update(Request $request, ItMultimediaInstagram $instagram)
+    public function update(Request $request, ItMultimediaInstagram $multimediainstagram)
     {
         try {
             $validatedata = $request->validate([
@@ -65,7 +65,7 @@ class ItMultimediaInstagramController extends Controller
             ]);
 
             if ($request->hasFile('gambar')) {
-                $destination = "images/it/multimediainstagram/" . $instagram->gambar;
+                $destination = "images/it/multimediainstagram/" . $multimediainstagram->gambar;
                 if (File::exists($destination)) {
                     File::delete($destination);
                 }
@@ -77,35 +77,101 @@ class ItMultimediaInstagramController extends Controller
 
             // Cek kombinasi unik bulan dan perusahaan
             $exists = ItMultimediaInstagram::where('bulan', $validatedata['bulan'])
-                ->where('id_instagram', '!=', $instagram->id_instagram)->exists();
+                ->where('id_instagram', '!=', $multimediainstagram->id_instagram)->exists();
 
             if ($exists) {
                 return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
             }
 
-            $instagram->update($validatedata);
+            $multimediainstagram->update($validatedata);
 
-            return redirect()->route('instagram.index')->with('success', 'Data Berhasil Diupdate');
+            return redirect()->route('multimediainstagram.index')->with('success', 'Data Berhasil Diupdate');
         } catch (\Exception $e) {
             Log::error('Error updating Instagram data: ' . $e->getMessage());
-            return redirect()->route('instagram.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
+            return redirect()->route('multimediainstagram.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
     }
 
-    public function destroy(ItMultimediaInstagram $instagram)
+    public function destroy(ItMultimediaInstagram $multimediainstagram)
     {
         try {
-            $destination = "images/it/multimediainstagram/" . $instagram->gambar;
+            $destination = "images/it/multimediainstagram/" . $multimediainstagram->gambar;
             if (File::exists($destination)) {
                 File::delete($destination);
             }
 
-            $instagram->delete();
+            $multimediainstagram->delete();
 
-            return redirect()->route('instagram.index')->with('success', 'Data Berhasil Dihapus');
+            return redirect()->route('multimediainstagram.index')->with('success', 'Data Berhasil Dihapus');
         } catch (\Exception $e) {
             Log::error('Error deleting Instagram data: ' . $e->getMessage());
-            return redirect()->route('instagram.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
+            return redirect()->route('multimediainstagram.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
+        }
+    }
+
+    public function exportPDF(Request $request)
+    {
+        try {
+            // Validasi input bulan
+            $validatedata = $request->validate([
+                'bulan' => 'required|date_format:Y-m',
+            ]);
+    
+            // Ambil data laporan berdasarkan bulan yang dipilih
+            $laporan = ItMultimediaInstagram::where('bulan', $validatedata['bulan'])->first();
+    
+            if (!$laporan) {
+                return redirect()->back()->with('error', 'Data tidak ditemukan.');
+            }
+    
+            // Inisialisasi mPDF
+            $mpdf = new \Mpdf\Mpdf([
+                'orientation' => 'L', // Landscape orientation
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 35, // Tambahkan margin atas untuk header teks
+                'margin_bottom' => 20, // Kurangi margin bawah
+                'format' => 'A4', // Ukuran kertas A4
+            ]);
+    
+            // Tambahkan gambar sebagai header tanpa margin
+            $headerImagePath = public_path('images/HEADER.png'); // Sesuaikan path header
+            $mpdf->SetHTMLHeader("
+                <div style='position: absolute; top: 0; left: 0; width: 100%; height: auto; z-index: -1;'>
+                    <img src='{$headerImagePath}' alt='Header' style='width: 100%; height: auto;' />
+                </div>
+            ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
+    
+            // Tambahkan footer ke PDF
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan IT - Multimedia Instagram|Halaman {PAGENO}');
+    
+            // Cek apakah ada gambar yang di-upload
+            $imageHTML = '';
+            if (!empty($laporan->gambar) && file_exists(public_path("images/it/multimediainstagram/{$laporan->gambar}"))) {
+                $imagePath = public_path("images/it/multimediainstagram/{$laporan->gambar}");
+                $imageHTML = "<img src='{$imagePath}' style='width: 100%; height: auto;' />";
+            } else {
+                $imageHTML = "<p style='text-align: center; color: red; font-weight: bold;'>Gambar tidak tersedia</p>";
+            }
+    
+            // Konten PDF
+            $htmlContent = "
+                <div style='text-align: center;'>
+                    {$imageHTML}
+                </div>
+            ";
+    
+            // Tambahkan konten ke PDF
+            $mpdf->WriteHTML($htmlContent);
+    
+            // Output PDF
+            return response($mpdf->Output("laporan_multimedia_instagram{$laporan->bulan}.pdf", 'D'))
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename="Laporan_Laba_Rugi.pdf"');
+    
+        } catch (\Exception $e) {
+            Log::error('Error exporting PDF: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal mengekspor PDF: ' . $e->getMessage());
         }
     }
 }

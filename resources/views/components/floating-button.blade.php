@@ -1,8 +1,8 @@
 <!-- Floating Button untuk Grid -->
 <div class="fixed bottom-6 right-6 z-50">
-  <button id="floatingGridButton" class="justify-center rounded-full w-20 h-20 bg-gradient-to-r font-medium from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-4 py-3 shadow-lg hover:shadow-xl transition duration-300 ease-in-out transform hover:scale-105 flex items-center gap-2">
-    <svg class="justify-center items-center" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
-      <path fill="currentColor" d="M3 21h8v-8H3m2 2h4v4H5m-2-8h8V3H3m2 2h4v4H5m8-6v8h8V3m-2 6h-4V5h4m-1 11h3v2h-3v3h-2v-3h-3v-2h3v-3h2Z" />
+  <button id="floatingGridButton" class="justify-center rounded-full w-20 h-20 bg-transparent font-medium text-white px-4 py-3 hover:shadow-xl transition duration-300 ease-in-out transform hover:scale-105 flex items-center gap-2">
+    <svg class="justify-center items-center animated transition-colors duration-300" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+      <path class="fill-current text-red-600" d="M3 21h8v-8H3m2 2h4v4H5m-2-8h8V3H3m2 2h4v4H5m8-6v8h8V3m-2 6h-4V5h4m-1 11h3v2h-3v3h-2v-3h-3v-2h3v-3h2Z" />
     </svg>
   </button>
 </div>
@@ -129,3 +129,23 @@ function setGrid(columns, refresh = true) {
     document.getElementById('dropdownMenu').classList.add('hidden');
 }
 </script>
+
+<style>
+  svg {
+      transition: transform 0.3s ease-in-out;
+  }
+  
+  svg:hover {
+      transform: scale(1.2);
+  }
+
+  @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+  }
+
+  .animated {
+      animation: pulse 1.5s infinite;
+  }
+</style>
