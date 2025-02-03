@@ -230,7 +230,6 @@
                 </div>
             </div>
             
-
             <!-- Modal untuk Add Event -->
             <div class="fixed z-50 overflow-y-auto inset-0 backdrop-blur-sm bg-black bg-opacity-70 w-full flex items-center justify-center hidden" id="addEventModal">
                 <div class="bg-white w-[30%] h-[80%] p-6 rounded shadow-lg animate-slide-down transform transition-transform duration-500 ease-out">

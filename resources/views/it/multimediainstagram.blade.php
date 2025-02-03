@@ -113,11 +113,6 @@
                                             Delete
                                         </button>
                                     </form>
-                                    <!-- Export Button -->
-                                    <button onclick="exportToPDF()" class="bg-red-600 text-white px-3 py-2 rounded" data-modal-target="#editEventModal{{ $itmultimediainstagram->id_instagram }}">
-                                        <i class="fa fa-print"></i>
-                                        Export
-                                    </button>
                                 </td>
                             </tr>
 
@@ -251,68 +246,5 @@
         });
     });
 
-    async function exportToPDF() {
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-    if (!csrfToken) {
-        alert('CSRF token tidak ditemukan. Pastikan meta tag CSRF disertakan.');
-        return;
-    }
-
-    // Ambil data dari tabel
-    const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
-        const cells = row.querySelectorAll('td');
-        return {
-            bulan: cells[0]?.innerText.trim() || '',
-            keterangan: cells[1]?.innerText.trim() || '',
-        };
-    });
-
-    const tableContent = items
-        .filter(item => item.bulan && item.keterangan)
-        .map(item => `
-            <tr>
-                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.bulan}</td>            
-                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.keterangan}</td>
-            </tr>
-        `).join('');
-
-    const pdfTable = tableContent;
-
-    const imagePath = document.querySelector('#gambar')?.src;
-    if (!imagePath) {
-        alert('Gambar tidak ditemukan.');
-        return;
-    }
-
-try {
-    const response = await fetch('/it/multimediainstagram/export-pdf', {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': csrfToken,
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            table: pdfTable,
-            gambar: imagePath,
-        }),
-    });
-
-    if (response.ok) {
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'laporan_multimedia_IG.pdf';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        } else {
-            alert('Gagal mengekspor PDF.');
-        }
-    } catch (error) {
-        console.error('Error exporting to PDF:', error);
-        alert('Terjadi kesalahan saat mengekspor PDF.');
-    }
-}
 </script>
 </html>

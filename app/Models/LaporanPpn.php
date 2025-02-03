@@ -13,6 +13,7 @@ class LaporanPpn extends Model
 
     public function getBulanFormattedAttribute()
     {
-        return Carbon::parse($this->bulan)->format('m/Y');
+        return Carbon::parse($this->bulan)->translatedFormat('F - Y');
     }
+
 }

@@ -113,40 +113,30 @@ class ItMultimediaTiktokController extends Controller
     public function exportPDF(Request $request)
     {
         try {
-            // Validasi input
-            $data = $request->validate([
-                'table' => 'required|string',
-                'images' => 'nullable|array',
+            // Validasi input bulan
+            $validatedata = $request->validate([
+                'bulan' => 'required|date_format:Y-m',
             ]);
-
-            $tableHTML = trim($data['table']);
-            $imageSources = $data['images'] ?? [];
-
-            // Validasi isi tabel untuk mencegah halaman kosong
-            if (empty($tableHTML)) {
-                return response()->json(['success' => false, 'message' => 'Data tabel kosong.'], 400);
+    
+            // Ambil data laporan berdasarkan bulan yang dipilih
+            $laporan = ItMultimediaTiktok::where('bulan', $validatedata['bulan'])->first();
+    
+            if (!$laporan) {
+                return redirect()->back()->with('error', 'Data tidak ditemukan.');
             }
-            if (empty($imageSources)) {
-                return response()->json(['success' => false, 'message' => 'Data gambar kosong.'], 400);
-            }
-            if (!isset($data['images']) || !is_array($data['images'])) {
-                $imageSources = [];
-            } else {
-                $imageSources = $data['images'];
-            }
-
-            // Buat instance mPDF dengan konfigurasi
+    
+            // Inisialisasi mPDF
             $mpdf = new \Mpdf\Mpdf([
                 'orientation' => 'L', // Landscape orientation
                 'margin_left' => 10,
                 'margin_right' => 10,
                 'margin_top' => 35, // Tambahkan margin atas untuk header teks
-                'margin_bottom' => 15, // Margin bawah
-                'format' => 'A4',
+                'margin_bottom' => 20, // Kurangi margin bawah
+                'format' => 'A4', // Ukuran kertas A4
             ]);
-
-            // Path gambar header
-            $headerImagePath = public_path('images/HEADER.png'); // Sesuaikan path
+    
+            // Tambahkan gambar sebagai header tanpa margin
+            $headerImagePath = public_path('images/HEADER.png'); // Sesuaikan path header
             $mpdf->SetHTMLHeader("
                 <div style='position: absolute; top: 0; left: 0; width: 100%; height: auto; z-index: -1;'>
                     <img src='{$headerImagePath}' alt='Header' style='width: 100%; height: auto;' />
@@ -154,51 +144,35 @@ class ItMultimediaTiktokController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Marketing|Halaman {PAGENO}');
-
-            // Konten tabel untuk PDF
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan IT - Multimedia Tiktok|Halaman {PAGENO}');
+    
+            // Cek apakah ada gambar yang di-upload
+            $imageHTML = '';
+            if (!empty($laporan->gambar) && file_exists(public_path("images/it/multimediatiktok/{$laporan->gambar}"))) {
+                $imagePath = public_path("images/it/multimediatiktok/{$laporan->gambar}");
+                $imageHTML = "<img src='{$imagePath}' style='width: 100%; height: auto;' />";
+            } else {
+                $imageHTML = "<p style='text-align: center; color: red; font-weight: bold;'>Gambar tidak tersedia</p>";
+            }
+    
+            // Konten PDF
             $htmlContent = "
-                <div style='width: 100%;'>
-                    <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Tabel Data</h2>
-                    <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
-                        <thead>
-                            <tr style='background-color: #f2f2f2;'>
-                                <th style='border: 1px solid #000; padding: 5px;'>Bulan</th>
-                                <th style='border: 1px solid #000; padding: 5px;'>Total Penjualan (Rp)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {$tableHTML}
-                        </tbody>
-                    </table>
+                <div style='text-align: center;'>
+                    {$imageHTML}
                 </div>
             ";
-
-            // Tambahkan gambar di bawah tabel jika ada
-            if (!empty($imageSources)) {
-                foreach ($imageSources as $image) {
-                    $htmlContent .= "
-                        <div style='text-align: center; margin-top: 20px;'>
-                            <img src='{$image}' style='width: 100%; height: auto;'>
-                        </div>
-                    ";
-                }
-            }
-
+    
             // Tambahkan konten ke PDF
             $mpdf->WriteHTML($htmlContent);
-
-            // Return PDF sebagai respon download
-          return response($mpdf->Output('', 'S'), 200)
+    
+            // Output PDF
+            return response($mpdf->Output("laporan_multimedia_tiktok{$laporan->bulan}.pdf", 'D'))
                 ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'attachment; filename=\"laporan_tiktok.pdf\"');
+                ->header('Content-Disposition', 'attachment; filename="Laporan_Laba_Rugi.pdf"');
+    
         } catch (\Exception $e) {
-            // Log error jika terjadi masalah
             Log::error('Error exporting PDF: ' . $e->getMessage());
-            Log::info('Isi tabel: ' . $tableHTML);
-            Log::info('Jumlah gambar: ' . count($imageSources));
-            return response()->json(['success' => false, 'message' => 'Gagal mengekspor PDF.'], 500);
+            return redirect()->back()->with('error', 'Gagal mengekspor PDF: ' . $e->getMessage());
         }
     }
-
 }

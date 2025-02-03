@@ -136,4 +136,70 @@ class LaporanPpnController extends Controller
             return redirect()->route('laporanppn.index')->with('error', 'Terjadi kesalahan saat menghapus data: ' . $e->getMessage());
         }
     }
+    public function exportPDF(Request $request)
+    {
+        try {
+            // Validasi input bulan
+            $validatedata = $request->validate([
+                'bulan' => 'required|date_format:Y-m',
+            ]);
+    
+            // Ambil data laporan berdasarkan bulan yang dipilih
+            $laporan = LaporanPpn::where('bulan', $validatedata['bulan'])->first();
+    
+            if (!$laporan) {
+                return redirect()->back()->with('error', 'Data tidak ditemukan.');
+            }
+    
+            // Inisialisasi mPDF
+            $mpdf = new \Mpdf\Mpdf([
+                'orientation' => 'L', // Landscape orientation
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 35, // Tambahkan margin atas untuk header teks
+                'margin_bottom' => 20, // Kurangi margin bawah
+                'format' => 'A4', // Ukuran kertas A4
+            ]);
+    
+            // Tambahkan thumbnail sebagai header tanpa margin
+            $headerImagePath = public_path('images/HEADER.png'); // Sesuaikan path header
+            $mpdf->SetHTMLHeader("
+                <div style='position: absolute; top: 0; left: 0; width: 100%; height: auto; z-index: -1;'>
+                    <img src='{$headerImagePath}' alt='Header' style='width: 100%; height: auto;' />
+                </div>
+            ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
+    
+            // Tambahkan footer ke PDF
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Accounting - PPN |Halaman {PAGENO}');
+    
+            // Cek apakah ada thumbnail yang di-upload
+            $imageHTML = '';
+            if (!empty($laporan->thumbnail) && file_exists(public_path("images/accounting/ppn/{$laporan->thumbnail}"))) {
+                $imagePath = public_path("images/accounting/ppn/{$laporan->thumbnail}");
+                $imageHTML = "<img src='{$imagePath}' style='width: 100%; height: auto;' />";
+            } else {
+                $imageHTML = "<p style='text-align: center; color: red; font-weight: bold;'>Gambar tidak tersedia</p>";
+            }
+    
+            // Konten PDF
+            $htmlContent = "
+                <div style='text-align: center;'>
+                    {$imageHTML}
+                </div>
+            ";
+    
+            // Tambahkan konten ke PDF
+            $mpdf->WriteHTML($htmlContent);
+    
+            // Output PDF
+            return response($mpdf->Output("Laporan_PPn_{$laporan->bulan}.pdf", 'D'))
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename="Laporan_PPN.pdf"');
+    
+        } catch (\Exception $e) {
+            Log::error('Error exporting PDF: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal mengekspor PDF: ' . $e->getMessage());
+        }
+    }
+
 }

@@ -128,6 +128,7 @@ function setGrid(columns, refresh = true) {
     document.getElementById('gridModal').classList.add('hidden');
     document.getElementById('dropdownMenu').classList.add('hidden');
 }
+
 </script>
 
 <style>

@@ -42,10 +42,23 @@ Route::middleware(['web'])->group(function () {
         Route::resource('labarugi', LaporanLabaRugiController::class);
         Route::post('labarugi/export-pdf', [LaporanLabaRugiController::class, 'exportPDF'])
         ->name('labarugi.exportPDF');
+
         Route::resource('neraca', LaporanNeracaController::class);
+        Route::post('neraca/export-pdf', [LaporanNeracaController::class, 'exportPDF'])
+        ->name('neraca.exportPDF');
+
         Route::resource('rasio', LaporanRasioController::class);
+        Route::post('rasio/export-pdf', [LaporanRasioController::class, 'exportPDF'])
+        ->name('rasio.exportPDF');
+
         Route::resource('taxplaning', LaporanTaxPlaningController::class);
+        Route::post('taxplaning/export-pdf', [LaporanTaxPlaningController::class, 'exportPDF'])
+        ->name('taxplaning.exportPDF');
+
         Route::resource('laporanppn', LaporanPpnController::class);
+        Route::post('laporanppn/export-pdf', [LaporanPpnController::class, 'exportPDF'])
+        ->name('laporanppn.exportPDF');
+
         Route::resource('khps', KHPSController::class);
         Route::post('khps/export-pdf', [KHPSController::class, 'exportPDF'])->name('accounting.khps.exportPDF');
         Route::get('khps/data', [KHPSController::class, 'getKashutangpiutangstokData'])->name('accounting.khps.data');
@@ -102,8 +115,8 @@ Route::middleware(['web'])->group(function () {
         Route::post('multimediainstagram/export-pdf', [ItMultimediaInstagramController::class, 'exportPDF'])
         ->name('multimediainstagram.exportPDF');
         Route::resource('tiktok', ItMultimediaTiktokController::class);
-        Route::post('tiktok/export-pdf', [ItMultimediaTiktokController::class, 'exportPDF'])
-            ->name('it.tiktok.exportPDF');
+        Route::post('multimediatiktok/export-pdf', [ItMultimediaTiktokController::class, 'exportPDF'])
+        ->name('multimediatiktok.exportPDF');
     });
     // PROCUREMENT
     Route::prefix('procurements')->group(function () {

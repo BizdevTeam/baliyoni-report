@@ -133,4 +133,69 @@ class LaporanNeracaController extends Controller
             return redirect()->route('neraca.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
     }
+    public function exportPDF(Request $request)
+    {
+        try {
+            // Validasi input bulan
+            $validatedata = $request->validate([
+                'bulan' => 'required|date_format:Y-m',
+            ]);
+    
+            // Ambil data laporan berdasarkan bulan yang dipilih
+            $laporan = LaporanNeraca::where('bulan', $validatedata['bulan'])->first();
+    
+            if (!$laporan) {
+                return redirect()->back()->with('error', 'Data tidak ditemukan.');
+            }
+    
+            // Inisialisasi mPDF
+            $mpdf = new \Mpdf\Mpdf([
+                'orientation' => 'L', // Landscape orientation
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 35, // Tambahkan margin atas untuk header teks
+                'margin_bottom' => 20, // Kurangi margin bawah
+                'format' => 'A4', // Ukuran kertas A4
+            ]);
+    
+            // Tambahkan gambar sebagai header tanpa margin
+            $headerImagePath = public_path('images/HEADER.png'); // Sesuaikan path header
+            $mpdf->SetHTMLHeader("
+                <div style='position: absolute; top: 0; left: 0; width: 100%; height: auto; z-index: -1;'>
+                    <img src='{$headerImagePath}' alt='Header' style='width: 100%; height: auto;' />
+                </div>
+            ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
+    
+            // Tambahkan footer ke PDF
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Accounting - Neraca |Halaman {PAGENO}');
+    
+            // Cek apakah ada gambar yang di-upload
+            $imageHTML = '';
+            if (!empty($laporan->gambar) && file_exists(public_path("images/accounting/neraca/{$laporan->gambar}"))) {
+                $imagePath = public_path("images/accounting/neraca/{$laporan->gambar}");
+                $imageHTML = "<img src='{$imagePath}' style='width: 100%; height: auto;' />";
+            } else {
+                $imageHTML = "<p style='text-align: center; color: red; font-weight: bold;'>Gambar tidak tersedia</p>";
+            }
+    
+            // Konten PDF
+            $htmlContent = "
+                <div style='text-align: center;'>
+                    {$imageHTML}
+                </div>
+            ";
+    
+            // Tambahkan konten ke PDF
+            $mpdf->WriteHTML($htmlContent);
+    
+            // Output PDF
+            return response($mpdf->Output("Laporan_Neraca_{$laporan->bulan}.pdf", 'D'))
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename="Laporan_Neraca.pdf"');
+    
+        } catch (\Exception $e) {
+            Log::error('Error exporting PDF: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal mengekspor PDF: ' . $e->getMessage());
+        }
+    }
 }

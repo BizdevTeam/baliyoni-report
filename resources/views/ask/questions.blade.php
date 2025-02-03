@@ -200,6 +200,9 @@
                                 <div>
                                     <label for="asked_by" class="block text-sm font-medium">Asked By :</label>
                                     <select name="asked_by" id="asked_by" class="w-full border rounded p-2" required>
+                                        <option value="Divisi Marketing">Pimpinan</option>
+                                        <option value="Divisi Marketing">SPI Operasional</option>
+                                        <option value="Divisi Marketing">SPI IT</option>
                                         <option value="Divisi Marketing">Divisi Marketing</option>
                                         <option value="Divisi Procurement">Divisi Procurement</option>
                                         <option value="Divisi Support">Divisi Support</option>
@@ -212,8 +215,16 @@
                                 <div>
                                     <label for="asked_to" class="block text-sm font-medium">Asked To:</label>
                                     <select name="asked_to" id="asked_to" class="w-full border rounded p-2" required>
-                                        <option value="Divisi C">Divisi C</option>
-                                        <option value="Divisi D">Divisi D</option>
+                                        <option value="Divisi Marketing">Pimpinan</option>
+                                        <option value="Divisi Marketing">SPI Operasional</option>
+                                        <option value="Divisi Marketing">SPI IT</option>
+                                        <option value="Divisi Marketing">Divisi Marketing</option>
+                                        <option value="Divisi Procurement">Divisi Procurement</option>
+                                        <option value="Divisi Support">Divisi Support</option>
+                                        <option value="Divisi Accounting">Divisi Accounting</option>
+                                        <option value="Divisi IT">Divisi IT</option>
+                                        <option value="Divisi HRGA">Divisi HRGA</option>
+                                        <option value="Divisi SPI">Divisi SPI</option>
                                     </select>
                                 </div>
                                 <div>

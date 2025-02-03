@@ -119,26 +119,29 @@
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Rekap Pendapatan Servis ASP</h1>
             <div class="bg-white shadow-md rounded-lg p-6">
-                <canvas id="chartlrp" class="mx-auto h-[600px] w-[600px]"></canvas>
+                <div class="w-full h-full max-w-[600px] max-h-[600px] mx-auto"> <!-- Container pembatas -->
+                    <canvas id="chartlrp" class="w-full h-full"></canvas>
+                </div>
             </div>
             <div class="flex justify-end mt-4">
                 <a href="{{ route("rekappendapatanservisasp.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Rekap Pendapatan Servis ASP →</a>
             </div>
         </div>
-
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Rekap Piutang Servis ASP</h1>
             <div class="bg-white shadow-md rounded-lg p-6">
-                <canvas id="chartlrps" class="mx-auto h-[600px] w-[600px]"></canvas>
+                <div class="w-full h-full max-w-[600px] max-h-[600px] mx-auto"> <!-- Container pembatas -->
+                    <canvas id="chartlrps" class="w-full h-full"></canvas>
+                </div>
             </div>
             <div class="flex justify-end mt-4">
-                <a href="{{ route("rekappiutangservisasp.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Rekap Piutang Servis ASP →</a>
+                <a href="{{ route('rekappiutangservisasp.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Rekap Piutang Servis ASP →</a>
             </div>
         </div>
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Rekap Pendapatan Pengiriman Daerah Bali</h1>
             <div class="bg-white shadow-md rounded-lg p-6">
-                <canvas id="chartrpdb" class="mx-auto w-full h-96"></canvas>
+                <canvas id="chartrpdb" class="w-full h-96"></canvas>
             </div>
             <div class="flex justify-end mt-4">
                 <a href="{{ route("laporansamitra.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Rekap Pendapatan Pengiriman Daerah Bali →</a>
@@ -147,7 +150,7 @@
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Rekap Pendapatan Pengiriman Luar Bali</h1>
             <div class="bg-white shadow-md rounded-lg p-6">
-                <canvas id="chartrplb" class="mx-auto w-full h-96"></canvas>
+                <canvas id="chartrplb" class="w-full h-96"></canvas>
             </div>
             <div class="flex justify-end mt-4">
                 <a href="{{ route("laporandetrans.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Rekap Pendapatan Pengiriman Luar Bali →</a>
@@ -197,23 +200,25 @@
          <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Tabel Laporan PT BOS</h1>
             <div class="bg-white shadow-md rounded-lg p-6">
-                <table id="adminptbos" class="table-auto w-full border-collapse border border-gray-300">
-                    <thead>
-                        <tr>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Pekerjaan</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Kondisi Bulan Lalu</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Kondisi Bulan Ini</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Update</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Rencana Implementasi</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+                <div class="max-w-[600px] md:max-w-none mx-auto md:mx-0 overflow-x-auto"> <!-- Responsive container -->
+                    <table id="adminptbos" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
+                        <thead>
+                            <tr>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Pekerjaan</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Kondisi Bulan Lalu</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Kondisi Bulan Ini</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Update</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Rencana Implementasi</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("laporanptbos.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan PT BOS →</a>
+                    <a href="{{ route('laporanptbos.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan PT BOS →</a>
                 </div>
             </div>
         </div>
@@ -221,7 +226,8 @@
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Tabel Laporan iJASA</h1>
             <div class="bg-white shadow-md rounded-lg p-6">
-                <table id="adminijasa" class="table-auto w-full border-collapse border border-gray-300">
+                <div class="max-w-[600px] md:max-w-none mx-auto md:mx-0 overflow-x-auto"> <!-- Responsive container -->
+                    <table id="adminijasa" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
                     <thead>
                         <tr>
                             <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
@@ -236,6 +242,7 @@
                     <tbody>
                     </tbody>
                 </table>
+                </div>
                 <div class="flex justify-end mt-4">
                     <a href="{{ route("laporanijasa.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan iJASA →</a>
                 </div>
@@ -247,7 +254,9 @@
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Kas Hutang Piutang Stok</h1>
             <div class="bg-white shadow-md rounded-lg p-6">
-                <canvas id="chartkhps" class="mx-auto h-[600px] w-[600px]"></canvas>
+                <div class="w-full h-full max-w-[600px] max-h-[600px] mx-auto"> <!-- Container pembatas -->
+                    <canvas id="chartkhps" class="w-full h-full"></canvas>
+                </div>
             </div>
             <div class="flex justify-end mt-4">
                 <a href="{{ route("khps.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Kas Hutang Piutang Stok →</a>
@@ -257,7 +266,9 @@
     <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Arus Kas</h1>
             <div class="bg-white shadow-md rounded-lg p-6">
-                <canvas id="chartak" class="mx-auto h-[600px] w-[600px]"></canvas>
+                <div class="w-full h-full max-w-[600px] max-h-[600px] mx-auto"> <!-- Container pembatas -->
+                <canvas id="chartak" class="w-full h-full"></canvas>
+                </div>
             </div>
             <div class="flex justify-end mt-4">
                 <a href="{{ route("khps.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Arus Kas →</a>
@@ -268,23 +279,25 @@
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Tabel Laporan Bizdev</h1>
             <div class="bg-white shadow-md rounded-lg p-6">
-                <table id="adminbizdev" class="table-auto w-full border-collapse border border-gray-300">
-                    <thead>
-                        <tr>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Aplikasi</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Kondisi Bulan Lalu</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Kondisi Bulan Ini</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Update</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Rencana Implementasi</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+                <div class="max-w-[600px] md:max-w-none mx-auto md:mx-0 overflow-x-auto"> <!-- Container pembatas dan scroll -->
+                    <table id="adminbizdev" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
+                        <thead>
+                            <tr>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Aplikasi</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Kondisi Bulan Lalu</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Kondisi Bulan Ini</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Update</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Rencana Implementasi</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("laporanbizdev.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Bizdev →</a>
+                    <a href="{{ route('laporanbizdev.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Bizdev →</a>
                 </div>
             </div>
         </div>
@@ -293,7 +306,8 @@
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Tabel Laporan SPI Operasional</h1>
             <div class="bg-white shadow-md rounded-lg p-6">
-                <table id="adminspi" class="table-auto w-full border-collapse border border-gray-300">
+                <div class="max-w-[600px] md:max-w-none mx-auto md:mx-0 overflow-x-auto"> <!-- Container pembatas dan scroll -->
+                <table id="adminspi" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
                     <thead>
                         <tr>
                             <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
@@ -306,6 +320,7 @@
                     <tbody>
                     </tbody>
                 </table>
+                </div>
                 <div class="flex justify-end mt-4">
                     <a href="{{ route("laporanspi.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan SPI Operasional →</a>
                 </div>
@@ -313,9 +328,10 @@
         </div>
         <!-- LAPORAN SPI IT-->
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
-            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Tabel Laporan SPI Operasional</h1>
+            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Tabel Laporan SPI IT</h1>
             <div class="bg-white shadow-md rounded-lg p-6">
-                <table id="adminspiti" class="table-auto w-full border-collapse border border-gray-300">
+                <div class="max-w-[600px] md:max-w-none mx-auto md:mx-0 overflow-x-auto"> <!-- Container pembatas dan scroll -->
+                <table id="adminspiti" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
                     <thead>
                         <tr>
                             <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
@@ -328,6 +344,7 @@
                     <tbody>
                     </tbody>
                 </table>
+                </div>
                 <div class="flex justify-end mt-4">
                     <a href="{{ route("laporanspiti.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan SPI IT →</a>
                 </div>

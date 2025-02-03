@@ -168,7 +168,7 @@ class LaporanLabaRugiController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Accounting - Laba Rugi|Halaman {PAGENO}');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Accounting - Laba Rugi |Halaman {PAGENO}');
     
             // Cek apakah ada gambar yang di-upload
             $imageHTML = '';
