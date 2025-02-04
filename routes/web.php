@@ -201,8 +201,10 @@ Route::middleware(['web'])->group(function () {
             ->name('hrga.laporanptbos.table');
 
         Route::resource('laporanijasa', LaporanIjasaController::class);
+        // Route::post('laporanijasa/export-pdf', [LaporanIjasaController::class, 'exportPDF'])
+        //     ->name('laporanijasa.exportPDF');
         Route::post('laporanijasa/export-pdf', [LaporanIjasaController::class, 'exportPDF'])
-            ->name('hrga.laporanijasa.exportPDF');
+        ->name('laporanijasa.exportPDF');
     });
 
     Route::prefix('spi')->group(function () {

@@ -83,6 +83,7 @@
                         <th class="border border-gray-300 px-4 py-2 text-center">Troubleshooting</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Resolve Tanggal</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Resolve Jam</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Gambar</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Action</th>
                     </tr>
                 </thead>
@@ -96,6 +97,19 @@
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanijasa->troubleshooting }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanijasa->resolve_formatted }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ \Carbon\Carbon::parse($laporanijasa->resolve_jam)->format('h:i A') }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">
+                                @if ($laporanijasa->gambar)
+                                    @php
+                                        $gambarPaths = json_decode($laporanijasa->gambar, true);
+                                    @endphp
+                            
+                                    @foreach ($gambarPaths as $gambar)
+                                        <a href="{{ Storage::url($gambar) }}" target="_blank" class="text-blue-500 hover:underline">View</a><br>
+                                    @endforeach
+                                @else
+                                    <span class="text-red-500">No Image</span>
+                                @endif
+                            </td>                            
                             <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
                                 <!-- Edit Button -->
                                 <button class="bg-red-600 text-white px-3 py-2 rounded" data-modal-target="#editEventModal{{ $laporanijasa->id_ijasa }}">
@@ -104,7 +118,7 @@
                                 </button>
                                 <!-- Delete Form -->
                                 <form method="POST" action="{{ route('laporanijasa.destroy', $laporanijasa->id_ijasa) }}">
-                                    @csrf
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @csrf
                                     @method('DELETE')
                                     <button class="bg-red-600 text-white px-3 py-2 rounded" onclick="return confirm('Are you sure to delete?')">
                                         <i class="fa fa-trash"></i>
@@ -149,6 +163,13 @@
                                             <label for="resolve_jam" class="block text-sm font-medium">Resolve Jam</label>
                                             <input type="time" name="resolve_jam" class="w-full p-2 border rounded" value="{{ $laporanijasa->resolve_jam }}" required>
                                         </div>
+                                        <div>
+                                            <label for="gambar" class="block text-sm font-medium">Gambar</label>
+                                            <input type="file" name="gambar" class="w-full p-2 border rounded">
+                                            <div class="mt-2">
+                                                <img src="{{ asset('images/hrga/laporanijasa/' . $laporanijasa->gambar) }}" class="h-16">
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="mt-4 flex justify-end gap-2">
                                         <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
@@ -171,7 +192,7 @@
 </div>
 </div>
 
-    <!-- Modal untuk Add Event -->
+<!-- Modal untuk Add Event -->
 <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">
     <div class="bg-white w-1/2 p-6 rounded shadow-lg">
         <h3 class="text-xl font-semibold mb-4">Add New Data</h3>
@@ -206,6 +227,11 @@
                     <label for="resolve_jam" class="block text-sm font-medium">Resolve Jam</label>
                     <input type="time" name="resolve_jam" class="w-full p-2 border rounded" required>
                 </div>
+                <div>
+                    <label for="gambar" class="block text-sm font-medium">Gambar</label>
+                    <input type="file" name="gambar[]" class="w-full p-2 border rounded" multiple accept="image/*">
+                    <p class="text-sm text-gray-500">Maksimal 10 gambar</p>
+                </div>                
             </div>
             <div class="mt-4 flex justify-end gap-2">
                 <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
