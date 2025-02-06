@@ -20,7 +20,6 @@
                 $table->string('troubleshooting');
                 $table->date('resolve_tanggal');
                 $table->time('resolve_jam');
-                $table->longText('gambar');
                 $table->timestamps();
             });
         }

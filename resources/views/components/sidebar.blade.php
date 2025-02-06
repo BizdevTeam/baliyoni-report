@@ -249,6 +249,13 @@
                             <span class="ml-2">Laporan Bizdev</span>
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ route('laporanbizdevgambar.index') }}"
+                            class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
+                            <img src="{{ asset("icon/LaporanPaketAdministrasi.svg") }}" class="w-5 h-5">
+                            <span class="ml-2">Laporan Bizdev Gambar</span>
+                        </a>
+                    </li>
                 </ul>
             </li>
 
@@ -274,6 +281,13 @@
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/ijasa.svg") }}" class="w-5 h-5">
                             <span class="ml-2">iJASA</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route("ijasagambar.index") }}"
+                            class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
+                            <img src="{{ asset("icon/ijasa.svg") }}" class="w-5 h-5">
+                            <span class="ml-2">iJASA Gambar</span>
                         </a>
                     </li>
                     <li>

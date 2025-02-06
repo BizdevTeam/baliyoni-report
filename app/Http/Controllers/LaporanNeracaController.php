@@ -21,6 +21,10 @@ class LaporanNeracaController extends Controller
         })
         ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
         ->paginate($perPage);
+
+        if ($request->ajax()) {
+            return response()->json(['laporanneracas' => $laporanneracas]);
+        }
         return view('accounting.neraca', compact('laporanneracas'));
     }
 
@@ -46,13 +50,6 @@ class LaporanNeracaController extends Controller
                 $validatedata['gambar'] = $excelfilename;
             }
             
-            // Cek kombinasi unik bulan dan perusahaan
-            $exists = LaporanNeraca::where('bulan', $validatedata['bulan'])->exists();
-        
-            if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
-            }
-    
             LaporanNeraca::create($validatedata);
     
             return redirect()->route('neraca.index')->with('success', 'Data Berhasil Ditambahkan!');
@@ -95,14 +92,6 @@ class LaporanNeracaController extends Controller
                 $validatedata['file_excel'] = $excelfilename;
             }
 
-            // Cek kombinasi unik bulan dan perusahaan
-            $exists = LaporanNeraca::where('bulan', $validatedata['bulan'])
-            ->where('id_neraca', '!=', $neraca->id_neraca)->exists();
-
-            if ($exists) {
-                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
-            }
-
             $neraca->update($validatedata);
 
             return redirect()->route('neraca.index')->with('success', 'Data Telah Diupdate');
@@ -142,9 +131,9 @@ class LaporanNeracaController extends Controller
             ]);
     
             // Ambil data laporan berdasarkan bulan yang dipilih
-            $laporan = LaporanNeraca::where('bulan', $validatedata['bulan'])->first();
+            $laporans = LaporanNeraca::where('bulan', $validatedata['bulan'])->get();
     
-            if (!$laporan) {
+            if (!$laporans) {
                 return redirect()->back()->with('error', 'Data tidak ditemukan.');
             }
     
@@ -169,25 +158,30 @@ class LaporanNeracaController extends Controller
             // Tambahkan footer ke PDF
             $mpdf->SetFooter('{DATE j-m-Y}|Laporan Accounting - Neraca |Halaman {PAGENO}');
     
-            // Cek apakah ada gambar yang di-upload
-            $imageHTML = '';
-            if (!empty($laporan->gambar) && file_exists(public_path("images/accounting/neraca/{$laporan->gambar}"))) {
-                $imagePath = public_path("images/accounting/neraca/{$laporan->gambar}");
-                $imageHTML = "<img src='{$imagePath}' style='width: 100%; height: auto;' />";
-            } else {
-                $imageHTML = "<p style='text-align: center; color: red; font-weight: bold;'>Gambar tidak tersedia</p>";
+            // Loop melalui setiap laporan dan tambahkan ke PDF
+            foreach ($laporans as $index => $laporan) {
+                $imageHTML = '';
+    
+                if (!empty($laporan->gambar) && file_exists(public_path("images/accounting/neraca/{$laporan->gambar}"))) {
+                    $imagePath = public_path("images/accounting/neraca/{$laporan->gambar}");
+                    $imageHTML = "<img src='{$imagePath}' style='width: auto; max-height: 500px; display: block; margin: auto;' />";
+                } else {
+                    $imageHTML = "<p style='text-align: center; color: red; font-weight: bold;'>Gambar tidak tersedia</p>";
+                }
+    
+                // Konten untuk setiap laporan
+                $htmlContent = "
+            <div style='text-align: center; top: 0; margin: 0; padding: 0;'>
+                {$imageHTML}
+                    <h3 style='margin: 0; padding: 0;'>Laporan Bulan {$laporan->bulan}</h3>
+                    <h3 style='margin: 0; padding: 0;'>Laporan Bulan {$laporan->bulan_formatted}</h3>
+            </div>
+
+                ";
+    
+                // Tambahkan ke PDF
+                $mpdf->WriteHTML($htmlContent);
             }
-    
-            // Konten PDF
-            $htmlContent = "
-                <div style='text-align: center;'>
-                    {$imageHTML}
-                </div>
-            ";
-    
-            // Tambahkan konten ke PDF
-            $mpdf->WriteHTML($htmlContent);
-    
             // Output PDF
             return response($mpdf->Output("Laporan_Neraca_{$laporan->bulan}.pdf", 'D'))
                 ->header('Content-Type', 'application/pdf')

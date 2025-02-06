@@ -27,6 +27,22 @@ return new class extends Migration
                 'PT. ELKA SOLUTION NUSANTARA',
                 'CV. ARINDAH',
                 'ARFALINDO',
+                'PT. Bali Unggul Sejahtera',
+                'CV. Dana Rasa',
+                'CV. Lagaan Saketi',
+                'CV. Bali Jakti Informatik',
+                'CV. Bali Lingga Komputer',
+                'CV. Artsolution',
+                'PT. Bali Lingga Saka Gumi',
+                'CV. Sahabat Utama',
+                'CV. N & b Net Access',
+                'PT. Elka Solution Nusantara',
+                'CV. Arindah',
+                'Arfalindo',
+                'PT. Arisma Smart Solution',
+                'PT. Integrasi Jasa Nusantara',
+                'CV. Dana Rasa',
+                'CV. Elka Mandiri'
             ]);
             $table->bigInteger('total_penjualan');
             $table->timestamps();

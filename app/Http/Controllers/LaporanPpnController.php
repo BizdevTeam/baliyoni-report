@@ -51,13 +51,6 @@ class LaporanPpnController extends Controller
                 $validatedata['thumbnail'] = $fileName;
             }
 
-            // Cek kombinasi unik bulan dan perusahaan
-            $exists = LaporanPpn::where('bulan', $validatedata['bulan'])->exists();
-            
-            if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
-            }
-
             LaporanPpn::create($validatedata);
             return redirect()->route('laporanppn.index')->with('success', 'Data berhasil ditambahkan!');
 
@@ -99,14 +92,6 @@ class LaporanPpnController extends Controller
                 $validatedata['file'] = $fileName;
             }
 
-            // Cek kombinasi unik bulan dan perusahaan
-            $exists = LaporanPpn::where('bulan', $validatedata['bulan'])
-            ->where('id_laporanppn', '!=', $laporanppn->id_laporanppn)->exists();
-
-            if ($exists) {
-                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
-            }
-
             $laporanppn->update($validatedata);
             
             return redirect()->route('laporanppn.index')->with('success', 'Data berhasil diubah!');
@@ -145,9 +130,9 @@ class LaporanPpnController extends Controller
             ]);
     
             // Ambil data laporan berdasarkan bulan yang dipilih
-            $laporan = LaporanPpn::where('bulan', $validatedata['bulan'])->first();
+            $laporans = LaporanPpn::where('bulan', $validatedata['bulan'])->get();
     
-            if (!$laporan) {
+            if (!$laporans) {
                 return redirect()->back()->with('error', 'Data tidak ditemukan.');
             }
     
@@ -172,24 +157,30 @@ class LaporanPpnController extends Controller
             // Tambahkan footer ke PDF
             $mpdf->SetFooter('{DATE j-m-Y}|Laporan Accounting - PPN |Halaman {PAGENO}');
     
-            // Cek apakah ada thumbnail yang di-upload
+           // Loop melalui setiap laporan dan tambahkan ke PDF
+           foreach ($laporans as $index => $laporan) {
             $imageHTML = '';
+
             if (!empty($laporan->thumbnail) && file_exists(public_path("images/accounting/ppn/{$laporan->thumbnail}"))) {
                 $imagePath = public_path("images/accounting/ppn/{$laporan->thumbnail}");
-                $imageHTML = "<img src='{$imagePath}' style='width: 100%; height: auto;' />";
+                $imageHTML = "<img src='{$imagePath}' style='width: auto; max-height: 500px; display: block; margin: auto;' />";
             } else {
                 $imageHTML = "<p style='text-align: center; color: red; font-weight: bold;'>Gambar tidak tersedia</p>";
             }
-    
-            // Konten PDF
+
+            // Konten untuk setiap laporan
             $htmlContent = "
-                <div style='text-align: center;'>
-                    {$imageHTML}
-                </div>
+        <div style='text-align: center; top: 0; margin: 0; padding: 0;'>
+            {$imageHTML}
+                <h3 style='margin: 0; padding: 0;'>Laporan Bulan {$laporan->bulan}</h3>
+                <h3 style='margin: 0; padding: 0;'>Laporan Bulan {$laporan->bulan_formatted}</h3>
+        </div>
+
             ";
-    
-            // Tambahkan konten ke PDF
+
+            // Tambahkan ke PDF
             $mpdf->WriteHTML($htmlContent);
+        }
     
             // Output PDF
             return response($mpdf->Output("Laporan_PPn_{$laporan->bulan}.pdf", 'D'))

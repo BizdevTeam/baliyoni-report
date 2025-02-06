@@ -40,13 +40,6 @@ class ItMultimediaTiktokController extends Controller
                 $validatedata['gambar'] = $filename;
             }
 
-            // Cek kombinasi unik bulan dan perusahaan
-            $exists = ItMultimediaTiktok::where('bulan', $validatedata['bulan'])->exists();
-
-            if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
-            }
-
             ItMultimediaTiktok::create($validatedata);
 
             return redirect()->route('tiktok.index')->with('success', 'Data Berhasil Ditambahkan');
@@ -74,14 +67,6 @@ class ItMultimediaTiktokController extends Controller
                 $filename = time() . $request->file('gambar')->getClientOriginalName();
                 $request->file('gambar')->move(public_path('images/it/multimediatiktok'), $filename);
                 $validatedata['gambar'] = $filename;
-            }
-
-            // Cek kombinasi unik bulan dan perusahaan
-            $exists = ItMultimediaTiktok::where('bulan', $validatedata['bulan'])
-                ->where('id_tiktok', '!=', $tiktok->id_tiktok)->exists();
-
-            if ($exists) {
-                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
             }
 
             $tiktok->update($validatedata);
@@ -118,57 +103,62 @@ class ItMultimediaTiktokController extends Controller
                 'bulan' => 'required|date_format:Y-m',
             ]);
     
-            // Ambil data laporan berdasarkan bulan yang dipilih
-            $laporan = ItMultimediaTiktok::where('bulan', $validatedata['bulan'])->first();
+            // Ambil semua data laporan berdasarkan bulan yang dipilih
+            $laporans = ItMultimediaTiktok::where('bulan', $validatedata['bulan'])->get();
     
-            if (!$laporan) {
+            if ($laporans->isEmpty()) {
                 return redirect()->back()->with('error', 'Data tidak ditemukan.');
             }
     
             // Inisialisasi mPDF
             $mpdf = new \Mpdf\Mpdf([
-                'orientation' => 'L', // Landscape orientation
+                'orientation' => 'L',
                 'margin_left' => 10,
                 'margin_right' => 10,
-                'margin_top' => 35, // Tambahkan margin atas untuk header teks
-                'margin_bottom' => 20, // Kurangi margin bawah
-                'format' => 'A4', // Ukuran kertas A4
+                'margin_top' => 35,
+                'margin_bottom' => 20,
+                'format' => 'A4',
             ]);
     
-            // Tambahkan gambar sebagai header tanpa margin
-            $headerImagePath = public_path('images/HEADER.png'); // Sesuaikan path header
+            // Tambahkan header
+            $headerImagePath = public_path('images/HEADER.png');
             $mpdf->SetHTMLHeader("
                 <div style='position: absolute; top: 0; left: 0; width: 100%; height: auto; z-index: -1;'>
                     <img src='{$headerImagePath}' alt='Header' style='width: 100%; height: auto;' />
                 </div>
-            ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
+            ", 'O');
     
-            // Tambahkan footer ke PDF
+            // Tambahkan footer
             $mpdf->SetFooter('{DATE j-m-Y}|Laporan IT - Multimedia Tiktok|Halaman {PAGENO}');
     
-            // Cek apakah ada gambar yang di-upload
-            $imageHTML = '';
-            if (!empty($laporan->gambar) && file_exists(public_path("images/it/multimediatiktok/{$laporan->gambar}"))) {
-                $imagePath = public_path("images/it/multimediatiktok/{$laporan->gambar}");
-                $imageHTML = "<img src='{$imagePath}' style='width: 100%; height: auto;' />";
-            } else {
-                $imageHTML = "<p style='text-align: center; color: red; font-weight: bold;'>Gambar tidak tersedia</p>";
+            // Loop melalui setiap laporan dan tambahkan ke PDF
+            foreach ($laporans as $index => $laporan) {
+                $imageHTML = '';
+    
+                if (!empty($laporan->gambar) && file_exists(public_path("images/it/multimediatiktok/{$laporan->gambar}"))) {
+                    $imagePath = public_path("images/it/multimediatiktok/{$laporan->gambar}");
+                    $imageHTML = "<img src='{$imagePath}' style='width: auto; max-height: 500px; display: block; margin: auto;' />";
+                } else {
+                    $imageHTML = "<p style='text-align: center; color: red; font-weight: bold;'>Gambar tidak tersedia</p>";
+                }
+    
+                // Konten untuk setiap laporan
+                $htmlContent = "
+            <div style='text-align: center; top: 0; margin: 0; padding: 0;'>
+                {$imageHTML}
+                    <h3 style='margin: 0; padding: 0;'>Laporan Bulan {$laporan->bulan}</h3>
+                    <h3 style='margin: 0; padding: 0;'>Laporan Bulan {$laporan->bulan_formatted}</h3>
+            </div>
+
+                ";
+    
+                // Tambahkan ke PDF
+                $mpdf->WriteHTML($htmlContent);
             }
-    
-            // Konten PDF
-            $htmlContent = "
-                <div style='text-align: center;'>
-                    {$imageHTML}
-                </div>
-            ";
-    
-            // Tambahkan konten ke PDF
-            $mpdf->WriteHTML($htmlContent);
-    
             // Output PDF
-            return response($mpdf->Output("laporan_multimedia_tiktok{$laporan->bulan}.pdf", 'D'))
+            return response($mpdf->Output("laporan_multimedia_tiktok_{$laporan->bulan}.pdf", 'D'))
                 ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'attachment; filename="Laporan_Laba_Rugi.pdf"');
+                ->header('Content-Disposition', 'attachment; filename="laporan_multimedia_tiktok.pdf"');
     
         } catch (\Exception $e) {
             Log::error('Error exporting PDF: ' . $e->getMessage());

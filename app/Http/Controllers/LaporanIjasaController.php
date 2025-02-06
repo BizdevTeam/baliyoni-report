@@ -44,23 +44,9 @@ class LaporanIjasaController extends Controller
                 'troubleshooting' => 'required|string',
                 'resolve_tanggal' => 'required|date',
                 'resolve_jam' => 'required|date_format:H:i',
-                'gambar.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048' // Max 2MB per gambar
             ]);
 
-            $gambarPaths = [];
-
-            if ($request->hasFile('gambar')) {
-                foreach ($request->file('gambar') as $gambar) {
-                    $filename = time() . '_' . $gambar->getClientOriginalName();
-                    $path = $gambar->storeAs('images/hrga/laporanijasa', $filename, 'public');
-                    $gambarPaths[] = $path;
-                }
-            }
-
-            // Simpan laporan beserta gambar dalam format JSON
-            $laporan = LaporanIjasa::create(array_merge($validatedata, [
-                'gambar' => json_encode($gambarPaths)
-            ]));
+            LaporanIjasa::create($validatedata);
 
             return redirect()->route('laporanijasa.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
@@ -80,31 +66,9 @@ class LaporanIjasaController extends Controller
                 'troubleshooting' => 'required|string',
                 'resolve_tanggal' => 'required|date',
                 'resolve_jam' => 'required|date_format:H:i',
-                'gambar.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
             ]);
-
-            $gambarPaths = json_decode($laporanijasa->gambar, true) ?? [];
-
-            if ($request->hasFile('gambar')) {
-                // Hapus gambar lama
-                foreach ($gambarPaths as $oldImage) {
-                    if (Storage::disk('public')->exists($oldImage)) {
-                        Storage::disk('public')->delete($oldImage);
-                    }
-                }
-
-                // Simpan gambar baru
-                $gambarPaths = [];
-                foreach ($request->file('gambar') as $gambar) {
-                    $filename = time() . '_' . $gambar->getClientOriginalName();
-                    $path = $gambar->storeAs('images/hrga/laporanijasa', $filename, 'public');
-                    $gambarPaths[] = $path;
-                }
-            }
-
-            $laporanijasa->update(array_merge($validatedata, [
-                'gambar' => json_encode($gambarPaths)
-            ]));
+            
+            $laporanijasa->update($validatedata);
 
             return redirect()->route('laporanijasa.index')->with('success', 'Data Berhasil Diupdate');
         } catch (\Exception $e) {
@@ -120,7 +84,6 @@ class LaporanIjasaController extends Controller
         ]);
 
         $tableHTML = trim($data['table']);
-        $laporan = LaporanIjasa::all();
 
         if (empty($tableHTML)) {
             return response()->json(['success' => false, 'message' => 'Data tabel kosong.'], 400);
@@ -144,23 +107,6 @@ class LaporanIjasaController extends Controller
         // Tambahkan footer ke PDF
         $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA - iJASA|Halaman {PAGENO}');
 
-        $imageHTML = '';
-        foreach ($laporan as $item) {
-            if (!empty($item->gambar)) {
-                $gambarPaths = json_decode($item->gambar, true);
-                if (is_array($gambarPaths)) {
-                    foreach ($gambarPaths as $path) {
-                        $imagePath = public_path("storage/{$path}");
-                        if (file_exists($imagePath)) {
-                            $imageHTML .= "<div style='text-align: center;'><img src='{$imagePath}' style='width: 100%; height: auto;'/></div>";
-                        } else {
-                            $imageHTML .= "<p style='text-align: center; color: red; font-weight: bold;'>Gambar tidak tersedia</p>";
-                        }
-                    }
-                }
-            }
-        }
-
         $htmlContent = "
             <div style='width: 100%;'>
                 <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Tabel Data</h2>
@@ -181,9 +127,6 @@ class LaporanIjasaController extends Controller
                     </tbody>
                 </table>
             </div>
-            <div style='text-align: center;'>
-                {$imageHTML}
-            </div>
         ";
 
         $mpdf->WriteHTML($htmlContent);
@@ -199,21 +142,10 @@ class LaporanIjasaController extends Controller
 
     public function destroy(LaporanIjasa $laporanijasa)
     {
-        try {
-            $gambarPaths = json_decode($laporanijasa->gambar, true) ?? [];
-
-            foreach ($gambarPaths as $image) {
-                if (Storage::disk('public')->exists($image)) {
-                    Storage::disk('public')->delete($image);
-                }
-            }
 
             $laporanijasa->delete();
 
             return redirect()->route('laporanijasa.index')->with('success', 'Data Berhasil Dihapus');
-        } catch (\Exception $e) {
-            Log::error('Error deleting Ijasa data: ' . $e->getMessage());
-            return redirect()->route('laporanijasa.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
-        }
+ 
     }
 }

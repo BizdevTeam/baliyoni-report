@@ -122,10 +122,11 @@
                                             <label for="perusahaan" class="block text-sm font-medium">Pilih Perusahaan</label>
                                             <select name="perusahaan" class="w-full p-2 border rounded" required>
                                                 <option value="PT. Baliyoni Saguna" {{ $laporanholding->perusahaan == 'PT. Baliyoni Saguna' ? 'selected' : '' }}>PT. Baliyoni Saguna</option>
-                                                <option value="CV. ELKA MANDIRI" {{ $laporanholding->perusahaan == 'CV. ELKA MANDIRI' ? 'selected' : '' }}>CV. ELKA MANDIRI</option>
-                                                <option value="PT. NABA TECHNOLOGY SOLUTIONS" {{ $laporanholding->perusahaan == 'PT. NABA TECHNOLOGY SOLUTIONS' ? 'selected' : '' }}>PT. NABA TECHNOLOGY SOLUTIONS</option>
-                                                <option value="CV. BHIRMA TEKNIK" {{ $laporanholding->perusahaan == 'CV. BHIRMA TEKNIK' ? 'selected' : '' }}>CV. BHIRMA TEKNIK</option>
-                                                <option value="PT. DWI SRIKANDI NUSANTARA" {{ $laporanholding->perusahaan == 'PT. DWI SRIKANDI NUSANTARA' ? 'selected' : '' }}>PT. DWI SRIKANDI NUSANTARA</option>
+                                                <option value="CV. Elka Mandiri" {{ $laporanholding->perusahaan == 'CV. ELKA MANDIRI' ? 'selected' : '' }}>CV. Elka Mandiri</option>
+                                                <option value="PT. Naba Technology Solutions" {{ $laporanholding->perusahaan == 'PT. NABA TECHNOLOGY SOLUTIONS' ? 'selected' : '' }}>PT. Naba Technology Solutions</option>
+                                                <option value="CV. Bhirma Teknik" {{ $laporanholding->perusahaan == 'CV. BHIRMA TEKNIK' ? 'selected' : '' }}>CV. Bhirma Teknik</option>
+                                                <option value="PT. Dwi Srikandi Nusantara" {{ $laporanholding->perusahaan == 'PT. DWI SRIKANDI NUSANTARA' ? 'selected' : '' }}>PT. Dwi Srikandi Nusantara</option>
+                                                <option value="PT. Dwi Srikandi Indonesia" {{ $laporanholding->perusahaan == 'PT. DWI SRIKANDI NUSANTARA' ? 'selected' : '' }}>PT. Dwi Srikandi Indonesia</option>
                                             </select>
                                         </div>
                                         <div>
@@ -174,10 +175,11 @@
                     <label for="perusahaan" class="block text-sm font-medium">Pilih Perusahaan</label>
                     <select name="perusahaan" class="w-full p-2 border rounded" required>
                         <option value="PT. Baliyoni Saguna">PT. Baliyoni Saguna</option>
-                        <option value="CV. ELKA MANDIRI">CV. ELKA MANDIRI</option>
-                        <option value="PT. NABA TECHNOLOGY SOLUTIONS">PT. NABA TECHNOLOGY SOLUTIONS</option>
-                        <option value="CV. BHIRMA TEKNIK">CV. BHIRMA TEKNIK</option>
-                        <option value="PT. DWI SRIKANDI NUSANTARA">PT. DWI SRIKANDI NUSANTARA</option>
+                        <option value="CV. Elka Mandiri">CV. Elka Mandiri</option>
+                        <option value="PT. Naba Technology Solutions">PT. Naba Technology Solutions</option>
+                        <option value="CV. Bhirma Teknik">CV. Bhirma Teknik</option>
+                        <option value="PT. Dwi Srikandi Nusantara">PT. Dwi Srikandi Nusantara</option>
+                        <option value="PT. Dwi Srikandi Indonesia">PT. Dwi Srikandi Indonesia</option>
                     </select>
                 </div>
                 <div>

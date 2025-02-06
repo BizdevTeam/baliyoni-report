@@ -35,6 +35,8 @@ use App\Http\Controllers\LaporanHoldingController;
 use App\Http\Controllers\LaporanOutletController;
 use App\Http\Controllers\LaporanBizdevController;
 use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\LaporanBizdevGambarController;
+use App\Http\Controllers\IjasaGambarController;
 
 Route::middleware(['web'])->group(function () {
     // Accounting
@@ -111,12 +113,19 @@ Route::middleware(['web'])->group(function () {
         Route::resource('laporanbizdev', LaporanBizdevController::class);
         Route::post('laporanbizdev/export-pdf', [LaporanBizdevController::class, 'exportPDF'])
             ->name('it.laporanbizdev.exportPDF');
+            
+        Route::resource('laporanbizdevgambar', LaporanBizdevGambarController::class);
+        Route::post('laporanbizdevgambar/export-pdf', [LaporanBizdevGambarController::class, 'exportPDF'])
+            ->name('laporanbizdevgambar.exportPDF');
+
         Route::resource('multimediainstagram', ItMultimediaInstagramController::class);
         Route::post('multimediainstagram/export-pdf', [ItMultimediaInstagramController::class, 'exportPDF'])
         ->name('multimediainstagram.exportPDF');
+
         Route::resource('tiktok', ItMultimediaTiktokController::class);
         Route::post('multimediatiktok/export-pdf', [ItMultimediaTiktokController::class, 'exportPDF'])
         ->name('multimediatiktok.exportPDF');
+        
     });
     // PROCUREMENT
     Route::prefix('procurements')->group(function () {
@@ -201,10 +210,12 @@ Route::middleware(['web'])->group(function () {
             ->name('hrga.laporanptbos.table');
 
         Route::resource('laporanijasa', LaporanIjasaController::class);
-        // Route::post('laporanijasa/export-pdf', [LaporanIjasaController::class, 'exportPDF'])
-        //     ->name('laporanijasa.exportPDF');
         Route::post('laporanijasa/export-pdf', [LaporanIjasaController::class, 'exportPDF'])
         ->name('laporanijasa.exportPDF');
+
+        Route::resource('ijasagambar', IjasaGambarController::class);
+        Route::post('ijasagambar/export-pdf', [IjasaGambarController::class, 'exportPDF'])
+        ->name('ijasagambar.exportPDF');
     });
 
     Route::prefix('spi')->group(function () {
@@ -241,6 +252,7 @@ Route::get('/adminholding/chart-data', [LaporanHoldingController::class, 'showCh
 Route::get('/adminstok/chart-data', [LaporanStokController::class, 'showChart'])->name('adminstok.chart.data');
 Route::get('/adminoutlet/chart-data', [LaporanOutletController::class, 'showChart'])->name('adminoutlet.chart.data');
 Route::get('/adminnegosiasi/chart-data', [LaporanNegosiasiController::class, 'showChart'])->name('adminnegosiasi.chart.data');
+
 Route::get( '/adminpendapatanpengirimanbali/chart-data', [LaporanSamitraController::class, 'showChart'])->name('adminpendapatanpengirimanbali.chart.data');
 Route::get( '/adminpendapatanpengirimanluarbali/chart-data', [LaporanDetransController::class, 'showChart'])->name('adminpendapatanpengirimanluarbali.chart.data');
 Route::get( '/adminpendapatanservisasp/chart-data', [RekapPendapatanServisAspController::class, 'showChart'])->name('adminpendapatanservisasp.chart.data');
@@ -252,6 +264,8 @@ Route::get('/admincuti/chart-data', [LaporanCutiController::class, 'showChart'])
 Route::get('adminterlambat/chart-data', [LaporanTerlambatController::class, 'showChart'])->name('adminterlambat.chart.data');
 
 Route::get('/adminkhps/chart-data', [KHPSController::class, 'showChart'])->name('adminkhps.chart.data');
+Route::get('/adminlabarugi/gambar', [LaporanLabaRugiController::class, 'getGambar'])->name('adminlabarugi.gambar');
+
 Route::get('/adminak/chart-data', [ArusKasController::class, 'showChart'])->name('adminak.chart.data');
 Route::get('/adminptbos', [LaporanPtBosController::class, 'adminView'])->name('adminptbos.admin');
 Route::get('/adminijasa', [LaporanIjasaController::class, 'adminView'])->name('adminijasa.admin');

@@ -45,13 +45,6 @@ class LaporanTaxPlaningController extends Controller
                 $request->file('gambar')->move(public_path('images/accounting/taxplaning'), $filename);
                 $validatedata['gambar'] = $filename;
             }
-
-            // Cek kombinasi unik bulan dan perusahaan
-            $exists = LaporanTaxPlaning::where('bulan', $validatedata['bulan'])->exists();
-                    
-            if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
-            }
     
             LaporanTaxPlaning::create($validatedata);
     
@@ -95,14 +88,6 @@ class LaporanTaxPlaningController extends Controller
                 $validatedata['file_excel'] = $excelfilename;
             }
 
-            // Cek kombinasi unik bulan dan perusahaan
-            $exists = LaporanTaxPlaning::where('bulan', $validatedata['bulan'])
-            ->where('id_taxplaning', '!=', $taxplaning->id_taxplaning)->exists();
-
-            if ($exists) {
-                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
-            }
-
             $taxplaning->update($validatedata);
 
             return redirect()->route('taxplaning.index')->with('success', 'Data Telah Diupdate');
@@ -142,9 +127,9 @@ class LaporanTaxPlaningController extends Controller
             ]);
     
             // Ambil data laporan berdasarkan bulan yang dipilih
-            $laporan = LaporanTaxPlaning::where('bulan', $validatedata['bulan'])->first();
+            $laporans = LaporanTaxPlaning::where('bulan', $validatedata['bulan'])->get();
     
-            if (!$laporan) {
+            if (!$laporans) {
                 return redirect()->back()->with('error', 'Data tidak ditemukan.');
             }
     
@@ -169,25 +154,29 @@ class LaporanTaxPlaningController extends Controller
             // Tambahkan footer ke PDF
             $mpdf->SetFooter('{DATE j-m-Y}|Laporan Accounting - Tax Planning |Halaman {PAGENO}');
     
-            // Cek apakah ada gambar yang di-upload
-            $imageHTML = '';
-            if (!empty($laporan->gambar) && file_exists(public_path("images/accounting/taxplaning/{$laporan->gambar}"))) {
-                $imagePath = public_path("images/accounting/taxplaning/{$laporan->gambar}");
-                $imageHTML = "<img src='{$imagePath}' style='width: 100%; height: auto;' />";
-            } else {
-                $imageHTML = "<p style='text-align: center; color: red; font-weight: bold;'>Gambar tidak tersedia</p>";
-            }
+            // Loop melalui setiap laporan dan tambahkan ke PDF
+            foreach ($laporans as $index => $laporan) {
+                $imageHTML = '';
     
-            // Konten PDF
-            $htmlContent = "
-                <div style='text-align: center;'>
-                    {$imageHTML}
-                </div>
-            ";
+                if (!empty($laporan->gambar) && file_exists(public_path("images/accounting/taxplaning/{$laporan->gambar}"))) {
+                    $imagePath = public_path("images/accounting/taxplaning/{$laporan->gambar}");
+                    $imageHTML = "<img src='{$imagePath}' style='width: auto; max-height: 500px; display: block; margin: auto;' />";
+                } else {
+                    $imageHTML = "<p style='text-align: center; color: red; font-weight: bold;'>Gambar tidak tersedia</p>";
+                }
     
-            // Tambahkan konten ke PDF
-            $mpdf->WriteHTML($htmlContent);
-    
+                // Konten untuk setiap laporan
+                $htmlContent = "
+            <div style='text-align: center; top: 0; margin: 0; padding: 0;'>
+                {$imageHTML}
+                    <h3 style='margin: 0; padding: 0;'>Laporan Bulan {$laporan->bulan}</h3>
+                    <h3 style='margin: 0; padding: 0;'>Laporan Bulan {$laporan->bulan_formatted}</h3>
+            </div>
+
+                ";
+           // Tambahkan ke PDF
+           $mpdf->WriteHTML($htmlContent);
+        }
             // Output PDF
             return response($mpdf->Output("Laporan_Tax Planning_{$laporan->bulan}.pdf", 'D'))
                 ->header('Content-Type', 'application/pdf')

@@ -275,6 +275,71 @@
             </div>
         </div>
 
+         <!-- Laba Rugi -->
+        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Laporan Laba Rugi</h1>
+        
+            <!-- Container untuk menampilkan gambar -->
+            <div id="image-container" class="flex flex-wrap gap-4 justify-center"></div>
+        
+            <div class="flex justify-end mt-4">
+                <a href="{{ route('labarugi.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">
+                    Laporan Laba Rugi →
+                </a>
+            </div>
+        </div>  
+
+        <!-- LAPORAN LABA RUGI -->
+        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Laporan Laba Rugi</h1>
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <div class="max-w-[600px] md:max-w-none mx-auto md:mx-0 overflow-x-auto"> <!-- Container pembatas dan scroll -->
+                    <table id="adminlabarugi" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
+                        <thead>
+                            <tr>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">File</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="flex justify-end mt-4">
+                    <a href="{{ route('labarugi.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Laba Rugi →</a>
+                </div>
+            </div>
+            <!-- Modal Gambar -->
+            <div id="imageModal" class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-80 hidden">
+                <img id="modalImage" class="mx-auto my-auto object-center max-w-full max-h-[90vh] rounded-lg shadow-lg">
+            </div>
+        </div>
+
+
+        <!-- LAPORAN NERACA -->
+        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Laporan Neraca</h1>
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <div class="max-w-[600px] md:max-w-none mx-auto md:mx-0 overflow-x-auto"> <!-- Container pembatas dan scroll -->
+                    <table id="adminneraca" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
+                        <thead>
+                            <tr>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">File</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="flex justify-end mt-4">
+                    <a href="{{ route('neraca.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Neraca →</a>
+                </div>
+            </div>
+        </div>
+
         <!-- LAPORAN IT -->
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Tabel Laporan Bizdev</h1>
@@ -600,10 +665,10 @@
                     let tableBody = $("#adminijasa tbody");
                     tableBody.empty(); // Kosongkan tabel sebelum menambahkan data baru
 
-                    if (response.laporanijasas.data.length === 0) {
+                    if (response.laporanneracas.data.length === 0) {
                         tableBody.append(`<tr><td colspan="7" class="text-center p-4">Data tidak ditemukan</td></tr>`);
                     } else {
-                        response.laporanijasas.data.forEach(function(item) {
+                        response.laporanneracas.data.forEach(function(item) {
                             let row = `
                             <tr>
                                 <td class="border border-gray-300 px-4 py-2 text-center">${item.tanggal}</td>
@@ -695,6 +760,114 @@
             fetchLaporanBizdev(searchValue);
         });
     });
+
+    
+    //tabel laporan NERACA
+    $(document).ready(function() {
+        function fetchLaporanNeraca(search = '') {
+            $.ajax({
+                url: "{{ route('neraca.index') }}"
+                , type: "GET"
+                , data: {
+                    search: search
+                }, // Kirim parameter search ke server
+                dataType: "json"
+                , success: function(response) {
+                    let tableBody = $("#adminneraca tbody");
+                    tableBody.empty(); // Kosongkan tabel sebelum menambahkan data baru
+
+                    if (response.laporanneracas.data.length === 0) {
+                        tableBody.append(`<tr><td colspan="7" class="text-center p-4">Data tidak ditemukan</td></tr>`);
+                    } else {
+                        response.laporanneracas.data.forEach(function(item) {
+                            let row = `
+                            <tr>
+                                <td class="border border-gray-300 px-4 py-2 text-center">${item.bulan}</td>
+                                <td class="border border-gray-300 px-4 py-2 text-center">${item.gambar}</td>
+                                <td class="border border-gray-300 px-4 py-2 text-center">${item.keterangan}</td>
+                            </tr>
+                        `;
+                            tableBody.append(row);
+                        });
+                    }
+                }
+                , error: function(xhr, status, error) {
+                    console.error("Error fetching data:", error);
+                }
+            });
+        }
+
+        // Jalankan fungsi saat halaman dimuat
+        fetchLaporanNeraca();
+
+        // Event listener untuk form pencarian
+        $("#chartFilterForm").on("submit", function(e) {
+            e.preventDefault(); // Mencegah form melakukan reload halaman
+            let searchValue = $("#searchInput").val();
+            fetchLaporanNeraca(searchValue);
+        });
+    });
+
+    $(document).ready(function() {
+    function fetchLaporanLabaRugi(search = '') {
+        $.ajax({
+            url: "{{ route('labarugi.index') }}",
+            type: "GET",
+            data: { search: search },
+            dataType: "json",
+            success: function(response) {
+                let tableBody = $("#adminlabarugi tbody");
+                tableBody.empty(); // Kosongkan tabel sebelum menambahkan data baru
+
+                if (response.laporanlabarugis.data.length === 0) {
+                    tableBody.append(`<tr><td colspan="3" class="text-center p-4">Data tidak ditemukan</td></tr>`);
+                } else {
+                    response.laporanlabarugis.data.forEach(function(item, index) {
+                        let row = `
+                            <tr>
+                                <td class="border border-gray-300 px-4 py-2 text-center">${item.bulan}</td>
+                                <td class="border border-gray-300 px-4 py-2 text-center">
+                                    <img src="${item.gambar_url}" alt="Laporan Gambar" class="w-20 h-20 object-cover rounded-lg shadow-md cursor-pointer item-center justify-center" data-index="${index}">
+                                </td>
+                                <td class="border border-gray-300 px-4 py-2 text-center">${item.keterangan}</td>
+                            </tr>
+                        `;
+                        tableBody.append(row);
+                    });
+
+                    // Event listener untuk memperbesar gambar saat diklik
+                    $(".cursor-pointer").on("click", function(e) {
+                        let imgSrc = $(this).attr("src");
+                        $("#modalImage").attr("src", imgSrc);
+                        $("#imageModal").fadeIn();
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Error fetching data:", error);
+            }
+        });
+    }
+
+    // Jalankan fungsi saat halaman dimuat
+    fetchLaporanLabaRugi();
+
+    // Event listener untuk form pencarian
+    $("#chartFilterForm").on("submit", function(e) {
+        e.preventDefault(); // Mencegah form melakukan reload halaman
+        let searchValue = $("#searchInput").val();
+        fetchLaporanLabaRugi(searchValue);
+    });
+
+    // Event untuk menutup modal saat klik di luar gambar
+    $("#imageModal").on("click", function(e) {
+        if (!$(e.target).closest("#modalImage").length) {
+            $(this).fadeOut();
+        }
+    });
+});
+
+
 
     //tabel laporan SPI OPERASIONAL
     $(document).ready(function() {
@@ -811,6 +984,44 @@
             fetchLaporanSPITI(searchValue);
         });
     });
+
+    $(document).ready(function () {
+    fetchImages();
+});
+
+function fetchImages() {
+    $.ajax({
+        url: "{{ route('adminlabarugi.gambar') }}", // Route yang diperbaiki
+        type: "GET",
+        
+        dataType: "json",
+        success: function (data) {
+            const container = $("#image-container");
+            container.empty();
+
+            if (data.length === 0) {
+                container.html(`<div class="w-full text-center py-4">
+                                  <span class="text-gray-500 text-lg">Tidak ada gambar tersedia</span>
+                                </div>`);
+                return;
+            }
+
+            data.forEach(item => {
+                if (item.gambar) {
+                    let img = `<img src="${item.gambar}" 
+             alt="Thumbnail" 
+             class="w-48 h-48 object-cover rounded-lg shadow-lg cursor-pointer hover:scale-105 transition-transform">`;                    container.append(img);
+                }
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", status, error);
+            console.error("Detail:", xhr.responseText);
+            $("#image-container").html(`<div class="text-red-500">Gagal memuat gambar</div>`);
+        }
+    });
+}
+
 
 </script>
 

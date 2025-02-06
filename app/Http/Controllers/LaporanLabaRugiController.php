@@ -14,15 +14,30 @@ class LaporanLabaRugiController extends Controller
     {
         $perPage = $request->input('per_page', 12);
         $search = $request->input('search');
-
+    
         $laporanlabarugis = LaporanLabaRugi::query()
-        ->when($search, function($query, $search) {
-            return $query->where('bulan', 'like', "%$search%");
-        })
-        ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
-        ->paginate($perPage);
+            ->when($search, function ($query, $search) {
+                return $query->where('bulan', 'like', "%$search%");
+            })
+            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
+            ->paginate($perPage);
+    
+        // Ubah path gambar agar dapat diakses dari frontend
+        $laporanlabarugis->getCollection()->transform(function ($item) {
+            $item->gambar_url = !empty($item->gambar) && file_exists(public_path("images/accounting/labarugi/{$item->gambar}"))
+                ? asset("images/accounting/labarugi/{$item->gambar}")
+                : asset("images/no-image.png"); // Placeholder jika tidak ada gambar
+    
+            return $item;
+        });
+    
+        if ($request->ajax()) {
+            return response()->json(['laporanlabarugis' => $laporanlabarugis]);
+        }
+    
         return view('accounting.labarugi', compact('laporanlabarugis'));
     }
+    
 
     public function store(Request $request)
     {
@@ -46,13 +61,6 @@ class LaporanLabaRugiController extends Controller
                 $validatedata['gambar'] = $excelfilename;
             }
 
-            // Cek kombinasi unik bulan dan perusahaan
-            $exists = LaporanLabaRugi::where('bulan', $validatedata['bulan'])->exists();
-    
-            if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
-            }
-    
             LaporanLabaRugi::create($validatedata);
     
             return redirect()->route('labarugi.index')->with('success', 'Data Berhasil Ditambahkan!');
@@ -95,14 +103,6 @@ class LaporanLabaRugiController extends Controller
             $validatedata['file_excel'] = $excelfilename;
         }
 
-        // Cek kombinasi unik bulan dan perusahaan
-        $exists = LaporanLabaRugi::where('bulan', $validatedata['bulan'])
-                ->where('id_labarugi', '!=', $labarugi->id_labarugi)->exists();
-
-            if ($exists) {
-                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
-            }
-
         $labarugi->update($validatedata);
 
         return redirect()->route('labarugi.index')->with('success', 'Data Telah Diupdate');
@@ -143,9 +143,9 @@ class LaporanLabaRugiController extends Controller
             ]);
     
             // Ambil data laporan berdasarkan bulan yang dipilih
-            $laporan = LaporanLabaRugi::where('bulan', $validatedata['bulan'])->first();
+            $laporans = LaporanLabaRugi::where('bulan', $validatedata['bulan'])->get();
     
-            if (!$laporan) {
+            if (!$laporans) {
                 return redirect()->back()->with('error', 'Data tidak ditemukan.');
             }
     
@@ -170,24 +170,30 @@ class LaporanLabaRugiController extends Controller
             // Tambahkan footer ke PDF
             $mpdf->SetFooter('{DATE j-m-Y}|Laporan Accounting - Laba Rugi |Halaman {PAGENO}');
     
-            // Cek apakah ada gambar yang di-upload
-            $imageHTML = '';
-            if (!empty($laporan->gambar) && file_exists(public_path("images/accounting/labarugi/{$laporan->gambar}"))) {
-                $imagePath = public_path("images/accounting/labarugi/{$laporan->gambar}");
-                $imageHTML = "<img src='{$imagePath}' style='width: 100%; height: auto;' />";
-            } else {
-                $imageHTML = "<p style='text-align: center; color: red; font-weight: bold;'>Gambar tidak tersedia</p>";
+            // Loop melalui setiap laporan dan tambahkan ke PDF
+            foreach ($laporans as $index => $laporan) {
+                $imageHTML = '';
+    
+                if (!empty($laporan->gambar) && file_exists(public_path("images/accounting/labarugi/{$laporan->gambar}"))) {
+                    $imagePath = public_path("images/accounting/labarugi/{$laporan->gambar}");
+                    $imageHTML = "<img src='{$imagePath}' style='width: auto; max-height: 500px; display: block; margin: auto;' />";
+                } else {
+                    $imageHTML = "<p style='text-align: center; color: red; font-weight: bold;'>Gambar tidak tersedia</p>";
+                }
+    
+                // Konten untuk setiap laporan
+                $htmlContent = "
+            <div style='text-align: center; top: 0; margin: 0; padding: 0;'>
+                {$imageHTML}
+                    <h3 style='margin: 0; padding: 0;'>Laporan Bulan {$laporan->bulan}</h3>
+                    <h3 style='margin: 0; padding: 0;'>Laporan Bulan {$laporan->bulan_formatted}</h3>
+            </div>
+
+                ";
+    
+                // Tambahkan ke PDF
+                $mpdf->WriteHTML($htmlContent);
             }
-    
-            // Konten PDF
-            $htmlContent = "
-                <div style='text-align: center;'>
-                    {$imageHTML}
-                </div>
-            ";
-    
-            // Tambahkan konten ke PDF
-            $mpdf->WriteHTML($htmlContent);
     
             // Output PDF
             return response($mpdf->Output("Laporan_Laba_Rugi_{$laporan->bulan}.pdf", 'D'))
@@ -199,5 +205,39 @@ class LaporanLabaRugiController extends Controller
             return redirect()->back()->with('error', 'Gagal mengekspor PDF: ' . $e->getMessage());
         }
     }
-    
+// Controller
+public function getGambar(Request $request)
+{
+    try {
+        $search = $request->input('search');
+
+        $images = LaporanLabaRugi::select('gambar')
+            ->whereNotNull('gambar')
+            ->when($search, function ($query, $search) {
+                return $query->where('bulan', 'like', "%$search%");
+            })
+            ->get()
+            ->map(function ($item) {
+                // Pastikan gambar tidak kosong dan benar-benar ada di direktori
+                $imagePath = public_path('images/accounting/labarugi/'.$item->gambar);
+
+                if (!empty($item->gambar) && file_exists($imagePath)) {
+                    return [
+                        'gambar' => asset('images/accounting/labarugi/'.$item->gambar) // Path yang benar
+                    ];
+                }
+
+                return [
+                    'gambar' => asset('images/no-image.png') // Placeholder jika gambar tidak ditemukan
+                ];
+            });
+
+        return response()->json($images);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+}
+
+
+
 }

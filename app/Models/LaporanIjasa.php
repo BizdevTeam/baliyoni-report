@@ -13,7 +13,7 @@ class LaporanIjasa extends Model
 
     protected $primaryKey = 'id_ijasa'; // Primary key custom
 
-    protected $fillable = ['tanggal', 'jam', 'permasalahan', 'impact', 'troubleshooting', 'resolve_tanggal', 'resolve_jam','gambar'];
+    protected $fillable = ['tanggal', 'jam', 'permasalahan', 'impact', 'troubleshooting', 'resolve_tanggal', 'resolve_jam'];
 
     // Menambahkan accessor untuk tanggal dengan format 'd/m/y'
     public function getTanggalFormattedAttribute()

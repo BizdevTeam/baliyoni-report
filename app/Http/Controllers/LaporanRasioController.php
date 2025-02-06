@@ -45,13 +45,6 @@ class LaporanRasioController extends Controller
                 $request->file('gambar')->move(public_path('images/accounting/rasio'), $excelfilename);
                 $validatedata['gambar'] = $excelfilename;
             }
-
-            // Cek kombinasi unik bulan dan perusahaan
-            $exists = LaporanRasio::where('bulan', $validatedata['bulan'])->exists();
-            
-            if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
-            }
     
             LaporanRasio::create($validatedata);
     
@@ -95,14 +88,6 @@ class LaporanRasioController extends Controller
             $validatedata['file_excel'] = $excelfilename;
         }
 
-        // Cek kombinasi unik bulan dan perusahaan
-        $exists = LaporanRasio::where('bulan', $validatedata['bulan'])
-            ->where('id_rasio', '!=', $rasio->id_rasio)->exists();
-
-            if ($exists) {
-                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
-            }
-
         $rasio->update($validatedata);
 
         return redirect()->route('rasio.index')->with('success', 'Data Telah Diupdate');
@@ -134,61 +119,67 @@ class LaporanRasioController extends Controller
         }
     }
 
-    public function exportPDF(Request $request)
-    {
-        try {
-            // Validasi input bulan
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
-            ]);
-    
-            // Ambil data laporan berdasarkan bulan yang dipilih
-            $laporan = LaporanRasio::where('bulan', $validatedata['bulan'])->first();
-    
-            if (!$laporan) {
-                return redirect()->back()->with('error', 'Data tidak ditemukan.');
-            }
-    
-            // Inisialisasi mPDF
-            $mpdf = new \Mpdf\Mpdf([
-                'orientation' => 'L', // Landscape orientation
-                'margin_left' => 10,
-                'margin_right' => 10,
-                'margin_top' => 35, // Tambahkan margin atas untuk header teks
-                'margin_bottom' => 20, // Kurangi margin bawah
-                'format' => 'A4', // Ukuran kertas A4
-            ]);
-    
-            // Tambahkan gambar sebagai header tanpa margin
-            $headerImagePath = public_path('images/HEADER.png'); // Sesuaikan path header
-            $mpdf->SetHTMLHeader("
-                <div style='position: absolute; top: 0; left: 0; width: 100%; height: auto; z-index: -1;'>
-                    <img src='{$headerImagePath}' alt='Header' style='width: 100%; height: auto;' />
-                </div>
-            ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
-    
-            // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Accounting - Rasio |Halaman {PAGENO}');
-    
-            // Cek apakah ada gambar yang di-upload
+            public function exportPDF(Request $request)
+            {
+                try {
+                    // Validasi input bulan
+                    $validatedata = $request->validate([
+                        'bulan' => 'required|date_format:Y-m',
+                    ]);
+            
+        // Ambil data laporan berdasarkan bulan yang dipilih
+        $laporans = LaporanRasio::where('bulan', $validatedata['bulan'])->get();
+            
+        if (!$laporans) {
+            return redirect()->back()->with('error', 'Data tidak ditemukan.');
+        }
+
+        // Inisialisasi mPDF
+        $mpdf = new \Mpdf\Mpdf([
+            'orientation' => 'L', // Landscape orientation
+            'margin_left' => 10,
+            'margin_right' => 10,
+            'margin_top' => 35, // Tambahkan margin atas untuk header teks
+            'margin_bottom' => 20, // Kurangi margin bawah
+            'format' => 'A4', // Ukuran kertas A4
+        ]);
+
+        // Tambahkan gambar sebagai header tanpa margin
+        $headerImagePath = public_path('images/HEADER.png'); // Sesuaikan path header
+        $mpdf->SetHTMLHeader("
+            <div style='position: absolute; top: 0; left: 0; width: 100%; height: auto; z-index: -1;'>
+                <img src='{$headerImagePath}' alt='Header' style='width: 100%; height: auto;' />
+            </div>
+        ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
+
+        // Tambahkan footer ke PDF
+        $mpdf->SetFooter('{DATE j-m-Y}|Laporan Accounting - Rasio |Halaman {PAGENO}');
+
+        // Loop melalui setiap laporan dan tambahkan ke PDF
+        foreach ($laporans as $index => $laporan) {
             $imageHTML = '';
+
             if (!empty($laporan->gambar) && file_exists(public_path("images/accounting/rasio/{$laporan->gambar}"))) {
                 $imagePath = public_path("images/accounting/rasio/{$laporan->gambar}");
-                $imageHTML = "<img src='{$imagePath}' style='width: 100%; height: auto;' />";
+                $imageHTML = "<img src='{$imagePath}' style='width: auto; max-height: 500px; display: block; margin: auto;' />";
             } else {
                 $imageHTML = "<p style='text-align: center; color: red; font-weight: bold;'>Gambar tidak tersedia</p>";
             }
-    
-            // Konten PDF
+
+            // Konten untuk setiap laporan
             $htmlContent = "
-                <div style='text-align: center;'>
-                    {$imageHTML}
-                </div>
+        <div style='text-align: center; top: 0; margin: 0; padding: 0;'>
+            {$imageHTML}
+                <h3 style='margin: 0; padding: 0;'>Laporan Bulan {$laporan->bulan}</h3>
+                <h3 style='margin: 0; padding: 0;'>Laporan Bulan {$laporan->bulan_formatted}</h3>
+        </div>
+
             ";
-    
-            // Tambahkan konten ke PDF
+
+            // Tambahkan ke PDF
             $mpdf->WriteHTML($htmlContent);
-    
+        }
+            
             // Output PDF
             return response($mpdf->Output("Laporan_Rasio_{$laporan->bulan}.pdf", 'D'))
                 ->header('Content-Type', 'application/pdf')

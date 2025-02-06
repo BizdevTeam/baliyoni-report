@@ -67,10 +67,11 @@ class LaporanHoldingController extends Controller
                     'required',
                     Rule::in([
                         'PT. Baliyoni Saguna',
-                        'CV. ELKA MANDIRI',
-                        'PT. NABA TECHNOLOGY SOLUTIONS',
-                        'CV. BHIRMA TEKNIK',
-                        'PT. DWI SRIKANDI NUSANTARA'
+                        'CV. Elka Mandiri',
+                        'PT. Naba Technology Solutions',
+                        'CV. Bhirma Teknik',
+                        'PT. Dwi Srikandi Nusantara',
+                        'PT. Dwi Srikandi Indonesia'
                     ]),
                 ],
                 'nilai' => 'required|integer|min:0',
@@ -106,10 +107,11 @@ class LaporanHoldingController extends Controller
                 'required',
                 Rule::in([
                     'PT. Baliyoni Saguna',
-                    'CV. ELKA MANDIRI',
-                    'PT. NABA TECHNOLOGY SOLUTIONS',
-                    'CV. BHIRMA TEKNIK',
-                    'PT. DWI SRIKANDI NUSANTARA'
+                    'CV. Elka Mandiri',
+                    'PT. Naba Technology Solutions',
+                    'CV. Bhirma Teknik',
+                    'PT. Dwi Srikandi Nusantara',
+                    'PT. Dwi Srikandi Indonesia'
                 ]),
             ],
                 'nilai' => 'required|integer|min:0',

@@ -133,18 +133,23 @@
                                         <div>
                                             <label for="perusahaan" class="block text-sm font-medium">Pilih Perusahaan</label>
                                             <select name="perusahaan" class="w-full p-2 border rounded" required>
-                                                <option value="PT. BALI UNGGUL SEJAHTERA" {{ $rekappenjualanperusahaan->perusahaan == 'PT. BALI UNGGUL SEJAHTERA' ? 'selected' : '' }}>PT. BALI UNGGUL SEJAHTERA</option>
-                                                <option value="CV. DANA RASA" {{ $rekappenjualanperusahaan->perusahaan == 'CV. DANA RASA' ? 'selected' : '' }}>CV. DANA RASA</option>
-                                                <option value="CV. LAGAAN SAKETI" {{ $rekappenjualanperusahaan->perusahaan == 'CV. LAGAAN SAKETI' ? 'selected' : '' }}>CV. LAGAAN SAKETI</option>
-                                                <option value="CV. BALI JAKTI INFORMATIK" {{ $rekappenjualanperusahaan->perusahaan == 'CV. BALI JAKTI INFORMATIK' ? 'selected' : '' }}>CV. BALI JAKTI INFORMATIK</option>
-                                                <option value="CV. BALI LINGGA KOMPUTER" {{ $rekappenjualanperusahaan->perusahaan == 'CV. BALI LINGGA KOMPUTER' ? 'selected' : '' }}>CV. BALI LINGGA KOMPUTER</option>
-                                                <option value="CV. ARTSOLUTION" {{ $rekappenjualanperusahaan->perusahaan == 'CV. ARTSOLUTION' ? 'selected' : '' }}>CV. ARTSOLUTION</option>
-                                                <option value="PT. BALI LINGGA SAKA GUMI" {{ $rekappenjualanperusahaan->perusahaan == 'PT. BALI LINGGA SAKA GUMI' ? 'selected' : '' }}>PT. BALI LINGGA SAKA GUMI</option>
-                                                <option value="CV. SAHABAT UTAMA" {{ $rekappenjualanperusahaan->perusahaan == 'CV. SAHABAT UTAMA' ? 'selected' : '' }}>CV. SAHABAT UTAMA</option>
-                                                <option value="CV. N & b NET ACCESS" {{ $rekappenjualanperusahaan->perusahaan == 'CV. N & b NET ACCESS' ? 'selected' : '' }}>CV. N & b NET ACCESS</option>
-                                                <option value="PT. ELKA SOLUTION NUSANTARA" {{ $rekappenjualanperusahaan->perusahaan == 'PT. ELKA SOLUTION NUSANTARA' ? 'selected' : '' }}>PT. ELKA SOLUTION NUSANTARA</option>
-                                                <option value="CV. ARINDAH" {{ $rekappenjualanperusahaan->perusahaan == 'CV. ARINDAH' ? 'selected' : '' }}>CV. ARINDAH</option>
-                                                <option value="ARFALINDO" {{ $rekappenjualanperusahaan->perusahaan == 'ARFALINDO' ? 'selected' : '' }}>ARFALINDO</option>                                            
+                                                <option value="PT. Bali Unggul Sejahtera" {{ $rekappenjualanperusahaan->perusahaan == 'PT. Bali Unggul Sejahtera' ? 'selected' : '' }}>PT. Bali Unggul Sejahtera</option>
+                                                <option value="CV. Dana Rasa" {{ $rekappenjualanperusahaan->perusahaan == 'CV. Dana Rasa' ? 'selected' : '' }}>CV. Dana Rasa</option>
+                                                <option value="CV. Lagaan Saketi" {{ $rekappenjualanperusahaan->perusahaan == 'CV. Lagaan Saketi' ? 'selected' : '' }}>CV. Lagaan Saketi</option>
+                                                <option value="CV. Bali Jakti Informatik" {{ $rekappenjualanperusahaan->perusahaan == 'CV. Bali Jakti Informatik' ? 'selected' : '' }}>CV. Bali Jakti Informatik</option>
+                                                <option value="CV. Bali Lingga Komputer" {{ $rekappenjualanperusahaan->perusahaan == 'CV. Bali Lingga Komputer' ? 'selected' : '' }}>CV. Bali Lingga Komputer</option>
+                                                <option value="CV. Artsolution" {{ $rekappenjualanperusahaan->perusahaan == 'CV. Artsolution' ? 'selected' : '' }}>CV. Artsolution</option>
+                                                <option value="PT. Bali Lingga Saka Gumi" {{ $rekappenjualanperusahaan->perusahaan == 'PT. Bali Lingga Saka Gumi' ? 'selected' : '' }}>PT. Bali Lingga Saka Gumi</option>
+                                                <option value="CV. Sahabat Utama" {{ $rekappenjualanperusahaan->perusahaan == 'CV. Sahabat Utama' ? 'selected' : '' }}>CV. Sahabat Utama</option>
+                                                <option value="CV. N & B Net Access" {{ $rekappenjualanperusahaan->perusahaan == 'CV. N & B Net Access' ? 'selected' : '' }}>CV. N & B Net Access</option>
+                                                <option value="PT. Elka Solution Nusantara" {{ $rekappenjualanperusahaan->perusahaan == 'PT. Elka Solution Nusantara' ? 'selected' : '' }}>PT. Elka Solution Nusantara</option>
+                                                <option value="CV. Arindah" {{ $rekappenjualanperusahaan->perusahaan == 'CV. Arindah' ? 'selected' : '' }}>CV. Arindah</option>
+                                                <option value="Arfalindo" {{ $rekappenjualanperusahaan->perusahaan == 'Arfalindo' ? 'selected' : '' }}>Arfalindo</option>
+                                                <option value="PT. Arisma Smart Solution" {{ $rekappenjualanperusahaan->perusahaan == 'PT. Arisma Smart Solution' ? 'selected' : '' }}>PT. Arisma Smart Solution</option>
+                                                <option value="PT. Integrasi Jasa Nusantara" {{ $rekappenjualanperusahaan->perusahaan == 'PT. Integrasi Jasa Nusantara' ? 'selected' : '' }}>PT. Integrasi Jasa Nusantara</option>
+                                                <option value="CV. Dana Rasa" {{ $rekappenjualanperusahaan->perusahaan == 'CV. Dana Rasa' ? 'selected' : '' }}>CV. Dana Rasa</option>
+                                                <option value="CV. Elka Mandiri" {{ $rekappenjualanperusahaan->perusahaan == 'CV. Elka Mandiri' ? 'selected' : '' }}>CV. Elka Mandiri</option>
+                                                <option value="PT. Bali Unggul Sejahtera" {{ $rekappenjualanperusahaan->perusahaan == 'PT. Bali Unggul Sejahtera' ? 'selected' : '' }}>PT. Bali Unggul Sejahtera</option>
                                             </select>
                                         </div>
                                         <div>
@@ -199,7 +204,7 @@
 </div>
 </div>
 
-    <!-- Modal untuk Add Event -->
+<!-- Modal untuk Add Event -->
 <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">
     <div class="bg-white w-1/2 p-6 rounded shadow-lg">
         <h3 class="text-xl font-semibold mb-4">Add New Data</h3>
@@ -213,18 +218,24 @@
                 <div>
                     <label for="perusahaan" class="block text-sm font-medium">Pilih Perusahaan</label>
                     <select name="perusahaan" class="w-full p-2 border rounded" required>
-                        <option value="PT. BALI UNGGUL SEJAHTERA">PT. BALI UNGGUL SEJAHTERA</option>
-                        <option value="CV. DANA RASA">CV. DANA RASA</option>
-                        <option value="CV. LAGAAN SAKETI">CV. LAGAAN SAKETI</option>
-                        <option value="CV. BALI JAKTI INFORMATIK">CV. BALI JAKTI INFORMATIK</option>
-                        <option value="CV. BALI LINGGA KOMPUTER">CV. BALI LINGGA KOMPUTER</option>
-                        <option value="CV. ARTSOLUTION">CV. ARTSOLUTION</option>
-                        <option value="PT. BALI LINGGA SAKA GUMI">PT. BALI LINGGA SAKA GUMI</option>
-                        <option value="CV. SAHABAT UTAMA">CV. SAHABAT UTAMA</option>
-                        <option value="CV. N & b NET ACCESS">CV. N & b NET ACCESS</option>
-                        <option value="PT. ELKA SOLUTION NUSANTARA">PT. ELKA SOLUTION NUSANTARA</option>
-                        <option value="CV. ARINDAH">CV. ARINDAH</option>
-                        <option value="ARFALINDO">ARFALINDO</option>
+                        <option value="PT. Bali Unggul Sejahtera">PT. Bali Unggul Sejahtera</option>
+                        <option value="CV. Dana Rasa">CV. Dana Rasa</option>
+                        <option value="CV. Lagaan Saketi">CV. Lagaan Saketi</option>
+                        <option value="CV. Bali Jakti Informatik">CV. Bali Jakti Informatik</option>
+                        <option value="CV. Bali Lingga Komputer">CV. Bali Lingga Komputer</option>
+                        <option value="CV. Artsolution">CV. Artsolution</option>
+                        <option value="PT. Bali Lingga Saka Gumi">PT. Bali Lingga Saka Gumi</option>
+                        <option value="CV. Sahabat Utama">CV. Sahabat Utama</option>
+                        <option value="CV. N & B Net Access">CV. N & B Net Access</option>
+                        <option value="PT. Elka Solution Nusantara">PT. Elka Solution Nusantara</option>
+                        <option value="CV. Arindah">CV. Arindah</option>
+                        <option value="Arfalindo">Arfalindo</option>
+                        <option value="PT. Arisma Smart Solution">PT. Arisma Smart Solution</option>
+                        <option value="PT. Integrasi Jasa Nusantara">PT. Integrasi Jasa Nusantara</option>
+                        <option value="CV. Dana Rasa">CV. Dana Rasa</option>
+                        <option value="CV. Elka Mandiri">CV. Elka Mandiri</option>
+                        <option value="PT. Bali Unggul Sejahtera">PT. Bali Unggul Sejahtera</option>
+                        
                     </select>
                 </div>
                 <div>

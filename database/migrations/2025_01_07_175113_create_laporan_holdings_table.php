@@ -16,10 +16,12 @@ return new class extends Migration
             $table->string('bulan');
             $table->enum('perusahaan', [
                 'PT. Baliyoni Saguna',
-                'CV. ELKA MANDIRI',
-                'PT. NABA TECHNOLOGY SOLUTIONS',
-                'CV. BHIRMA TEKNIK',
-                'PT. DWI SRIKANDI NUSANTARA'
+                'CV. Elka Mandiri',
+                'PT. Naba Technology Solutions',
+                'CV. Bhirma Teknik',
+                'PT. Dwi Srikandi Nusantara',
+                'PT. Dwi Srikandi Indonesia'
+
             ]);
             $table->bigInteger('nilai');
             $table->timestamps();

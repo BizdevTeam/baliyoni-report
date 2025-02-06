@@ -21,6 +21,8 @@ class ItMultimediaInstagram extends Model
     {
         return Carbon::parse($this->bulan)->translatedFormat('F - Y');
     }
+    protected $appends = ['bulan_formatted'];
+
 
 
 }
