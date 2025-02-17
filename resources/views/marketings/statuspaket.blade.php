@@ -35,7 +35,7 @@
         <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
 
          <!-- Main Content -->
-         <div id="admincontent" class="content-wrapper ml-64 p-4 bg-white duration-300">
+         <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
             <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan Status Paket</h1>
 
             <div class="flex items-center justify-end transition-all duration-500 mt-8 mb-4">

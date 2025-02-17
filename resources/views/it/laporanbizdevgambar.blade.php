@@ -38,42 +38,48 @@
             <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
 
             <!-- Main Content -->
-            <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
-                <div class="mx-auto bg-white p-6 rounded-lg shadow">
-                    <h1 class="text-2xl font-bold text-red-600 mb-2 font-montserrat">Laporan Bizdev Gambar</h1>
+        <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
+            <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan Bizdev Gambar</h1>
 
-            <!-- Action Buttons -->
-            <div class="flex items-center mb-4 gap-2">
+            <div class="flex items-center justify-end transition-all duration-500 mt-8 p-4">
+                <!-- Search -->
                 <form method="GET" action="{{ route('laporanbizdevgambar.index') }}" class="flex items-center gap-2">
                     <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
-                        <input 
-                            type="month" 
-                            name="search" 
-                            placeholder="Search by Month" 
-                            value="{{ request('search') }}" 
-                            class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" 
-                        />
+                        <input type="month" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}"
+                            class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
                     </div>
-                    <button type="submit" class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm" aria-label="Search">
-                        Search
+
+                    <button type="submit"
+                        class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm mr-2"
+                        aria-label="Search">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="40" stroke-dashoffset="40" d="M10.76 13.24c-2.34 -2.34 -2.34 -6.14 0 -8.49c2.34 -2.34 6.14 -2.34 8.49 0c2.34 2.34 2.34 6.14 0 8.49c-2.34 2.34 -6.14 2.34 -8.49 0Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.5s" values="40;0"/></path><path stroke-dasharray="12" stroke-dashoffset="12" d="M10.5 13.5l-7.5 7.5"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.5s" dur="0.2s" values="12;0"/></path></g></svg>
                     </button>
                 </form>
-                <button class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm" data-modal-target="#addEventModal">
-                    Add New
-                </button>
+                <button
+                    class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm mr-2"
+                    data-modal-target="#addEventModal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="64" stroke-dashoffset="64" d="M13 3l6 6v12h-14v-18h8"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0"/></path><path stroke-dasharray="14" stroke-dashoffset="14" stroke-width="1" d="M12.5 3v5.5h6.5"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.7s" dur="0.2s" values="14;0"/></path><path stroke-dasharray="8" stroke-dashoffset="8" d="M9 14h6"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.9s" dur="0.2s" values="8;0"/></path><path stroke-dasharray="8" stroke-dashoffset="8" d="M12 11v6"><animate fill="freeze" attributeName="stroke-dashoffset" begin="1.1s" dur="0.2s" values="8;0"/></path></g></svg>
+        </button>
+            <button id="toggleFormButton"
+                    class="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-4 py-2 rounded shadow-md hover:shadow-lg transition duration-300 mr-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="64" stroke-dashoffset="64" d="M12 3c4.97 0 9 4.03 9 9c0 4.97 -4.03 9 -9 9c-4.97 0 -9 -4.03 -9 -9c0 -4.97 4.03 -9 9 -9Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0"/></path><path stroke-dasharray="6" stroke-dashoffset="6" d="M12 14l-3 -3M12 14l3 -3"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.7s" dur="0.3s" values="6;0"/></path></g></svg>
+            </button>
             </div>
 
-            <!-- Success Message -->
-            @if (session('success'))
-                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">
-                    {{ session('success') }}
-                </div>
-            @endif
-            @if (session('error'))
-                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
-                    {{ session('error') }}
-                </div>
-            @endif
+            <div id="formContainer" class="visible">
+                <div class="mx-auto bg-white p-6 rounded-lg shadow">
+
+                    <!-- Success Message -->
+                    @if (session('success'))
+                    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">
+                        {{ session('success') }}
+                    </div>
+                    @endif
+                    @if (session('error'))
+                    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
+                        {{ session('error') }}
+                    </div>
+                    @endif
 
             <!-- Event Table -->
             <div class="overflow-x-auto bg-white shadow-md">
@@ -91,26 +97,26 @@
                             <tr class="hover:bg-gray-100">
                                 <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanbizdevgambar->bulan_formatted }}</td>
                                 <td class="border border-gray-300 px-4 py-2 text-center">
+                                    <div class="relative hover:scale-[1.5] transition-transform duration-300">
                                     @if ($laporanbizdevgambar->gambar)
-                                        <img src="{{ asset('images/it/laporanbizdevgambar/' . $laporanbizdevgambar->gambar) }}" alt="Eror Image" class="h-16 mx-auto">
+                                    <img src="{{ asset('images/it/laporanbizdevgambar/' . $laporanbizdevgambar->gambar) }}" alt="Eror Image" class=" shadow-md hover:shadow-xl rounded-md transition-shadow duration-300 h-16 mx-auto object-cover cursor-pointer" onclick="openModal('{{ asset('images/it/laporanbizdevgambar/' . $laporanbizdevgambar->gambar) }}')">
                                     @else
                                         <img src="{{ asset('images/no_image.png') }}" alt="Default Image" class="h-16 mx-auto">
                                     @endif
+                                </div>
                                 </td>
-                                <td class="border border-gray-300 px-4 py-2">{{ $laporanbizdevgambar->keterangan }}</td>
+                                <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanbizdevgambar->keterangan }}</td>
                                 <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
                                     <!-- Edit Button -->
-                                    <button class="bg-red-600 text-white px-3 py-2 rounded" data-modal-target="#editEventModal{{ $laporanbizdevgambar->id_laporan_bizdev_gambar }}">
+                                    <button class="bg-transparent text-red-600 px-3 py-2 rounded" data-modal-target="#editEventModal{{ $laporanbizdevgambar->id_laporan_bizdev_gambar }}">
                                         <i class="fa fa-pen"></i>
-                                        Edit
                                     </button>
                                     <!-- Delete Form -->
                                     <form method="POST" action="{{ route('laporanbizdevgambar.destroy', $laporanbizdevgambar->id_laporan_bizdev_gambar) }}">
                                         @csrf
                                         @method('DELETE')
-                                        <button class="bg-red-600 text-white px-3 py-2 rounded hover:bg-red-600" onclick="return confirm('Are you sure to delete?')">
+                                        <button class="bg-transparent-600 text-red-600 px-3 py-2 rounded" onclick="return confirm('Are you sure to delete?')">
                                             <i class="fa fa-trash"></i>
-                                            Delete
                                         </button>
                                     </form>
                                 </td>
@@ -185,6 +191,23 @@
                         </div>
                     </div>
                 </div>
+                <!-- Pagination -->
+                <div class="flex justify-center items-center mt-2 mb-4 p-4 bg-gray-50 rounded-lg">
+                    <!-- Dropdown untuk memilih jumlah data per halaman -->
+                    <div class="flex items-center">
+                        <label for="perPage" class="mr-2 text-sm text-gray-600">Tampilkan</label>
+                        <select 
+                            id="perPage" 
+                            class="p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            onchange="changePerPage(this.value)">
+                            <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
+                            <option value="12" {{ request('per_page') == 12 || !request('per_page') ? 'selected' : '' }}>12</option>
+                            <option value="24" {{ request('per_page') == 24 ? 'selected' : '' }}>24</option>
+                        </select>
+                        <span class="ml-2 text-sm text-gray-600">data per halaman</span>
+                    </div>
+                </div>
+
                 <div class="m-4">
                     {{ $laporanbizdevgambars->links('pagination::tailwind') }}
                 </div>
@@ -220,8 +243,24 @@
         </div>
     </div>
 
+              <!-- modal for image -->
+              <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-70 hidden justify-center items-center z-50">
+                <div class="relative">
+                    <img id="modalImage" src="" alt="Full Image" class=" max-w-full max-h-[90vh] rounded-md shadow-lg">
+                    <button onclick="closeModal()" class="absolute top-2 right-2 bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white p-3 rounded-full shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm">✖</button>
+                </div>
+            </div>
+
     </body>
 <script>
+     //toogle form
+     const toggleFormButton = document.getElementById('toggleFormButton');
+        const formContainer = document.getElementById('formContainer');
+
+        toggleFormButton.addEventListener('click', () => {
+            formContainer.classList.toggle('hidden');
+        });
+
     // Mengatur tombol untuk membuka modal add
     document.querySelector('[data-modal-target="#addEventModal"]').addEventListener('click', function() {
         const modal = document.querySelector('#addEventModal');
@@ -245,6 +284,40 @@
             modal.classList.add('hidden'); // Menyembunyikan modal
         });
     });
+
+    
+//modal img
+function openModal(imageSrc) {
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        modalImage.src = imageSrc;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('imageModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+    
+function changePerPage(value) {
+    const url = new URL(window.location.href);
+    url.searchParams.set('per_page', value);
+    window.location.href = url.toString();
+}
+
+function changePerPage(value) {
+    const url = new URL(window.location.href);
+    const searchParams = new URLSearchParams(url.search);
+    
+    searchParams.set('per_page', value);
+    if (!searchParams.has('page')) {
+        searchParams.set('page', 1);
+    }
+    
+    window.location.href = url.pathname + '?' + searchParams.toString();
+}
 
 </script>
 </html>

@@ -12,21 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('laporan_holdings', function (Blueprint $table) {
-            $table->id('id_holding');
-            $table->string('bulan');
-            $table->enum('perusahaan', [
-                'PT. Baliyoni Saguna',
-                'CV. Elka Mandiri',
-                'PT. Naba Technology Solutions',
-                'CV. Bhirma Teknik',
-                'PT. Dwi Srikandi Nusantara',
-                'PT. Dwi Srikandi Indonesia'
-
-            ]);
+            $table->id(); // ID otomatis dibuat dengan nama 'id'
+            $table->string('bulan'); // Bisa juga pakai date_format
+            $table->foreignId('perusahaan_id')->constrained('perusahaans')->onDelete('cascade');
             $table->bigInteger('nilai');
             $table->timestamps();
-
-            $table->unique(['bulan', 'perusahaan']);
+            
+            // Mencegah duplikasi data bulan dan perusahaan
+            $table->unique(['bulan', 'perusahaan_id']);
         });
     }
 

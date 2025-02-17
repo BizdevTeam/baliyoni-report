@@ -48,7 +48,7 @@ class LaporanIzinController extends Controller
             'datasets' => [
                 [
                     'label' => 'Grafik Laporan Sakit', // Nama dataset
-                    'text' => 'Total Sakit', // Nama dataset
+                    'text' => 'Total Izin', // Nama dataset
                     'data' => $data, // Data untuk chart
                     'backgroundColor' => $backgroundColors, // Warna batang random
                 ],

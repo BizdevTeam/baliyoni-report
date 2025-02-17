@@ -22,6 +22,15 @@ class LaporanNeracaController extends Controller
         ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
         ->paginate($perPage);
 
+            // Ubah path gambar agar dapat diakses dari frontend
+            $laporanneracas->getCollection()->transform(function ($item) {
+                $item->gambar_url = !empty($item->gambar) && file_exists(public_path("images/accounting/neraca/{$item->gambar}"))
+                    ? asset("images/accounting/neraca/{$item->gambar}")
+                    : asset("images/no-image.png"); // Placeholder jika tidak ada gambar
+        
+                return $item;
+            });
+
         if ($request->ajax()) {
             return response()->json(['laporanneracas' => $laporanneracas]);
         }
@@ -34,7 +43,7 @@ class LaporanNeracaController extends Controller
             $validatedata = $request->validate([
                 'bulan' => 'required|date_format:Y-m',
                 'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550',
-                'file_excel' => 'required|mimes:xlsx,xls|max:2048',
+                'file_excel' => '   mimes:xlsx,xls|max:2048',
                 'keterangan' => 'required|string|max:255'
             ]);
     
@@ -62,7 +71,7 @@ class LaporanNeracaController extends Controller
     public function update(Request $request, LaporanNeraca $neraca)
     {
         try {
-            $fileRules = $neraca->file_excel ? 'nullable|mimes:xlsx,xls|max:2048' : 'required|mimes:xlsx,xls|max:2048';
+            $fileRules = $neraca->file_excel ? 'nullable|mimes:xlsx,xls|max:2048' : 'mimes:xlsx,xls|max:2048';
             $validatedata = $request->validate([
                 'bulan' => 'required|date_format:Y-m',
                 'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550',
@@ -192,4 +201,36 @@ class LaporanNeracaController extends Controller
             return redirect()->back()->with('error', 'Gagal mengekspor PDF: ' . $e->getMessage());
         }
     }
+
+    public function getGambar(Request $request)
+{
+    try {
+        $search = $request->input('search');
+
+        $images = LaporanNeraca::select('gambar')
+            ->whereNotNull('gambar')
+            ->when($search, function ($query, $search) {
+                return $query->where('bulan', 'like', "%$search%");
+            })
+            ->get()
+            ->map(function ($item) {
+                // Pastikan gambar tidak kosong dan benar-benar ada di direktori
+                $imagePath = public_path('images/accounting/neraca/'.$item->gambar);
+
+                if (!empty($item->gambar) && file_exists($imagePath)) {
+                    return [
+                        'gambar' => asset('images/accounting/neraca/'.$item->gambar) // Path yang benar
+                    ];
+                }
+
+                return [
+                    'gambar' => asset('images/no-image.png') // Placeholder jika gambar tidak ditemukan
+                ];
+            });
+
+        return response()->json($images);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+}
 }

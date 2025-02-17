@@ -21,6 +21,20 @@ class LaporanTaxPlaningController extends Controller
         })
         ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
         ->paginate($perPage);
+
+              // Ubah path gambar agar dapat diakses dari frontend
+              $laporantaxplanings->getCollection()->transform(function ($item) {
+                $item->gambar_url = !empty($item->gambar) && file_exists(public_path("images/accounting/taxplaning/{$item->gambar}"))
+                    ? asset("images/accounting/taxplaning/{$item->gambar}")
+                    : asset("images/no-image.png"); // Placeholder jika tidak ada gambar
+        
+                return $item;
+            });
+        
+            if ($request->ajax()) {
+                return response()->json(['laporantaxplanings' => $laporantaxplanings]);
+            }
+
         return view('accounting.taxplaning', compact('laporantaxplanings'));
     }
 
@@ -30,7 +44,7 @@ class LaporanTaxPlaningController extends Controller
             $validatedata = $request->validate([
                 'bulan' => 'required|date_format:Y-m',
                 'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550',
-                'file_excel' => 'required|mimes:xlsx,xls|max:2048',
+                'file_excel' => 'mimes:xlsx,xls|max:2048',
                 'keterangan' => 'required|string|max:255'
             ]);
     
@@ -58,7 +72,7 @@ class LaporanTaxPlaningController extends Controller
     public function update(Request $request, LaporanTaxPlaning $taxplaning)
     {
         try {
-            $fileRules = $taxplaning->file_excel ? 'nullable|mimes:xlsx,xls|max:2048' : 'required|mimes:xlsx,xls|max:2048';
+            $fileRules = $taxplaning->file_excel ? 'nullable|mimes:xlsx,xls|max:2048' : 'mimes:xlsx,xls|max:2048';
             $validatedata = $request->validate([
                 'bulan' => 'required|date_format:Y-m',
                 'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550',

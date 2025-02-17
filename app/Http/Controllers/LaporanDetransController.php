@@ -7,68 +7,90 @@ use App\Models\LaporanDetrans;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Mpdf\Mpdf;
+use Illuminate\Validation\Rule;
 
 
 class LaporanDetransController extends Controller
 {
     public function index(Request $request)
-    { 
-        $perPage = $request->input('per_page', 12);
-        $search = $request->input('search');
+{ 
+    $perPage = $request->input('per_page', 12);
+    $search = $request->input('search');
 
-        #$query = KasHutangPiutang::query();
+    $laporandetrans = LaporanDetrans::query()
+        ->when($search, function ($query, $search) {
+            return $query->where('bulan', 'LIKE', "%$search%");
+        })
+        ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
+        ->paginate($perPage);
 
-        // Query untuk mencari berdasarkan tahun dan bulan
-        $laporandetrans = LaporanDetrans::query()
-            ->when($search, function ($query, $search) {
-                return $query->where('bulan', 'LIKE', "%$search%");
-            })
-            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
-            ->paginate($perPage);
-
-        // Hitung total untuk masing-masing kategori
-        $totalPenjualan = $laporandetrans->sum('total_pengiriman');
-
-        // Siapkan data untuk chart
-        function getRandomRGBA($opacity = 0.7) {
-            return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
+    // Calculate total (if needed)
+    $totalPengiriman = $laporandetrans->sum('total_pengiriman');
+    $months = $laporandetrans->sortBy('bulan')->map(function ($item) {
+        return \Carbon\Carbon::parse($item->bulan)->translatedFormat('F - Y');
+    })->unique()->values()->toArray();
+    
+    // Kelompokkan data berdasarkan pelaksana dan bulan
+    $groupedData = [];
+    foreach ($laporandetrans as $item) {
+        $month = \Carbon\Carbon::parse($item->bulan)->translatedFormat('F - Y');
+        $groupedData[$item->pelaksana][$month] = $item->total_pengiriman;
+    }
+    
+    // Siapkan warna untuk setiap pelaksana
+    $colorMap = [
+        'Pengiriman Daerah Bali (SAMITRA)' => 'rgba(255, 0, 0, 0.7)',
+        'Pengiriman Luar Daerah (DETRANS)' => 'rgba(0, 0, 0, 0.7)',
+    ];
+    $defaultColor = 'rgba(128, 128, 128, 0.7)';
+    
+    // Bangun datasets
+    $datasets = [];
+    foreach ($groupedData as $pelaksana => $monthData) {
+        $data = [];
+        foreach ($months as $month) {
+            $data[] = $monthData[$month] ?? 0; // Isi 0 jika data bulan tidak ada
         }
         
-        $labels = $laporandetrans->map(function ($item) {
-            return \Carbon\Carbon::parse($item->bulan)->translatedFormat('F - Y');
-        })->toArray();        $data = $laporandetrans->pluck('total_pengiriman')->toArray();
-        
-        // Generate random colors for each data item
-        $backgroundColors = array_map(fn() => getRandomRGBA(), $data);
-        $borderColors = array_map(fn() => getRandomRGBA(1.0), $data);
-        
-        $chartData = [
-            'labels' => $labels, // Labels untuk chart
-            'datasets' => [
-                [
-                    'text' => 'Total Nilai Pengiriman Detrans', // Nama dataset
-                    'data' => $data, // Data untuk chart
-                    'backgroundColor' => $backgroundColors, // Warna batang random
-                ],
-            ],
+        $datasets[] = [
+            'label' => $pelaksana,
+            'data' => $data,
+            'backgroundColor' => $colorMap[$pelaksana] ?? $defaultColor,
         ];
-        
-        return view('supports.laporandetrans', compact('laporandetrans', 'chartData'));    }
+    }
+    
+    $chartData = [
+        'labels' => $months,
+        'datasets' => $datasets,
+    ];
+
+    return view('supports.laporandetrans', compact('laporandetrans', 'chartData'));
+}
 
     public function store(Request $request)
     {
         try {
             $validatedata = $request->validate([
                 'bulan' => 'required|date_format:Y-m',
+                'pelaksana' => [
+                    'required',
+                    Rule::in([
+                        'Pengiriman Daerah Bali (SAMITRA)',
+                        'Pengiriman Luar Daerah (DETRANS)',
+                    ]),
+                ],
                 'total_pengiriman' => 'required|integer|min:0',
             ]);
 
-            // Cek kombinasi unik bulan dan perusahaan
-            $exists = LaporanDetrans::where('bulan', $validatedata['bulan'])->exists();
-            
-            if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
-            }
+       // Cek kombinasi unik bulan dan perusahaan
+       $exists = LaporanDetrans::where('bulan', $validatedata['bulan'])
+       ->where('pelaksana', $validatedata['pelaksana'])
+       ->exists();
+
+       if ($exists) {
+           return redirect()->back()->with('error', 'Data Already Exists.');
+       }
+
     
             LaporanDetrans::create($validatedata);
     
@@ -85,16 +107,25 @@ class LaporanDetransController extends Controller
             // Validasi input
             $validatedata = $request->validate([
                 'bulan' => 'required|date_format:Y-m',
+                'pelaksana' => [
+                    'required',
+                    Rule::in([
+                        'Pengiriman Daerah Bali (SAMITRA)',
+                        'Pengiriman Luar Daerah (DETRANS)',
+                    ]),
+                ],
                 'total_pengiriman' => 'required|integer|min:0',
             ]);
 
-            // Cek kombinasi unik bulan dan perusahaan
-            $exists = LaporanDetrans::where('bulan', $validatedata['bulan'])
-                ->where('id_detrans', '!=', $laporandetran->id_detrans)->exists();
+          // Cek kombinasi unik bulan dan perusahaan
+          $exists = LaporanDetrans::where('bulan', $validatedata['bulan'])
+          ->where('pelaksana', $validatedata['pelaksana'])
+          ->where('id_detrans', '!=', $laporandetran->id_detrans)->exists();
 
-            if ($exists) {
-                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
-            }
+          if ($exists) {
+              return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
+          }
+  
 
             // Update data
             $laporandetran->update($validatedata);
@@ -167,6 +198,7 @@ class LaporanDetransController extends Controller
                     <thead>
                         <tr style='background-color: #f2f2f2;'>
                             <th style='border: 1px solid #000; padding: 1px;'>Bulan</th>
+                            <th style='border: 1px solid #000; padding: 1px;'>Pelaksana</th>
                             <th style='border: 1px solid #000; padding: 2px;'>Total Pengiriman (Rp)</th>
                         </tr>
                     </thead>

@@ -10,13 +10,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class RekapPenjualanPerusahaan extends Model
 {
     use HasFactory;
+
     protected $table = 'rekap_penjualan_perusahaans';
-    protected $primaryKey = 'id_rpp'; // Primary key custom
-    protected $fillable = [
-        'bulan', 
-        'perusahaan',     
-        'total_penjualan',        
-    ];
+    protected $fillable = ['bulan', 'perusahaan_id', 'total_penjualan'];
+
+    public function perusahaan()
+    {
+        return $this->belongsTo(Perusahaan::class, 'perusahaan_id', 'id');
+    }
     // Menambahkan accessor untuk bulan dengan format 'mm/yyyy'
     public function getBulanFormattedAttribute()
     {

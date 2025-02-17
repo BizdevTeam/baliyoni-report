@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\RekapPenjualanPerusahaan;
+use App\Models\Perusahaan;
 use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
 use Illuminate\Support\Facades\DB;
@@ -16,16 +17,18 @@ class RekapPenjualanPerusahaanController extends Controller
     // Show the view
     public function index(Request $request)
     { 
+        $perusahaans = Perusahaan::all();
+
         $perPage = $request->input('per_page', 12);
         $search = $request->input('search');
 
-        #$query = KasHutangPiutang::query();
-
         // Query untuk mencari berdasarkan tahun dan bulan
-        $rekappenjualanperusahaans = RekapPenjualanPerusahaan::query()
-            ->when($search, function ($query, $search) {
-                return $query->where('bulan', 'LIKE', "%$search%")
-                             ->orWhere('perusahaan', 'like', "%$search%");
+        $rekappenjualanperusahaans = RekapPenjualanPerusahaan::with('perusahaan')
+        ->when($search, function ($query, $search) {
+            return $query->where('bulan', 'LIKE', "%$search%")
+                         ->orWhereHas('perusahaan', function ($q) use ($search) {
+                             $q->where('nama_perusahaan', 'LIKE', "%$search%");
+                         });
             })
             ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
             ->paginate($perPage);
@@ -40,7 +43,7 @@ class RekapPenjualanPerusahaanController extends Controller
         
         $labels = $rekappenjualanperusahaans->map(function($item) {
             $formattedDate = \Carbon\Carbon::parse($item->bulan)->translatedFormat('F - Y');
-            return $item->perusahaan . ' - ' . $formattedDate;
+            return $item->perusahaan->nama_perusahaan. ' - ' . $formattedDate;
         })->toArray();
         $data = $rekappenjualanperusahaans->pluck('total_penjualan')->toArray();
         // Generate random colors for each data item
@@ -58,126 +61,65 @@ class RekapPenjualanPerusahaanController extends Controller
             ],
         ];
         
-        return view('marketings.rekappenjualanperusahaan', compact('rekappenjualanperusahaans', 'chartData'));    }
+        return view('marketings.rekappenjualanperusahaan', compact('rekappenjualanperusahaans', 'chartData', 'perusahaans'));    }
 
-    public function store(Request $request)
-    {
-        try {
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
-                'perusahaan' => [
-                    'required',
-                    Rule::in([
-                        'PT. BALI UNGGUL SEJAHTERA',
-                        'CV. DANA RASA',
-                        'CV. LAGAAN SAKETI',
-                        'CV. BALI JAKTI INFORMATIK',
-                        'CV. BALI LINGGA KOMPUTER',
-                        'CV. ARTSOLUTION',
-                        'PT. BALI LINGGA SAKA GUMI',
-                        'CV. SAHABAT UTAMA',
-                        'CV. N & b NET ACCESS',
-                        'PT. ELKA SOLUTION NUSANTARA',
-                        'CV. ARINDAH',
-                        'ARFALINDO',
-                        'PT. Bali Unggul Sejahtera',
-                        'CV. Dana Rasa',
-                        'CV. Lagaan Saketi',
-                        'CV. Bali Jakti Informatik',
-                        'CV. Bali Lingga Komputer',
-                        'CV. Artsolution',
-                        'PT. Bali Lingga Saka Gumi',
-                        'CV. Sahabat Utama',
-                        'CV. N & b Net Access',
-                        'PT. Elka Solution Nusantara',
-                        'CV. Arindah',
-                        'Arfalindo',
-                        'PT. Arisma Smart Solution',
-                        'PT. Integrasi Jasa Nusantara',
-                        'CV. Dana Rasa',
-                        'CV. Elka Mandiri'
-                    ]),
-                ],
-                'total_penjualan' => 'required|integer|min:0',
-            ]);
-
-            // Cek kombinasi unik bulan dan perusahaan
-            $exists = RekapPenjualanPerusahaan::where('bulan', $validatedata['bulan'])
-            ->where('perusahaan', $validatedata['perusahaan'])
-            ->exists();
-
-            if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
+        public function store(Request $request)
+        {
+            try {
+                $request->validate([
+                    'bulan' => 'required|date_format:Y-m',
+                    'perusahaan_id' => 'required|exists:perusahaans,id',
+                    'total_penjualan' => 'required|integer|min:0',
+                ]);
+    
+                // Cek kombinasi unik bulan dan perusahaan_id
+                $exists = RekapPenjualanPerusahaan::where('bulan', $request->bulan)
+                    ->where('perusahaan_id', $request->perusahaan_id)
+                    ->exists();
+    
+                if ($exists) {
+                    return redirect()->back()->with('error', 'Data untuk bulan dan perusahaan ini sudah ada');
+                }
+    
+                RekapPenjualanPerusahaan::create([
+                    'bulan' => $request->bulan,
+                    'perusahaan_id' => $request->perusahaan_id,
+                    'total_penjualan' => $request->total_penjualan,
+                ]);
+    
+                return redirect()->route('rekappenjualanperusahaan.index')->with('success', 'Data Berhasil Ditambahkan');
+            } catch (\Exception $e) {
+                Log::error('Error Storing Laporan Holding Data: ' . $e->getMessage());
+                return redirect()->route('rekappenjualanperusahaan.index')->with('error', 'Terjadi Kesalahan: ' . $e->getMessage());
             }
-    
-            RekapPenjualanPerusahaan::create($validatedata);
-    
-            return redirect()->route('rekappenjualanperusahaan.index')->with('success', 'Data Berhasil Ditambahkan');
-        } catch (\Exception $e) {
-            // Logging untuk debug
-            Log::error('Error Storing Rekap Penjualan Data:', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'input' => $request->all(),
-            ]);
-            return redirect()->route('rekappenjualanperusahaan.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
-    }
+    
 
     public function update(Request $request, RekapPenjualanPerusahaan $rekappenjualanperusahaan)
     {
         try {
             // Validasi input
-            $validatedData = $request->validate([
+            $request->validate([
                 'bulan' => 'required|date_format:Y-m',
-                'perusahaan' => [
-                'required',
-                Rule::in([
-                    'PT. BALI UNGGUL SEJAHTERA',
-                    'CV. DANA RASA',
-                    'CV. LAGAAN SAKETI',
-                    'CV. BALI JAKTI INFORMATIK',
-                    'CV. BALI LINGGA KOMPUTER',
-                    'CV. ARTSOLUTION',
-                    'PT. BALI LINGGA SAKA GUMI',
-                    'CV. SAHABAT UTAMA',
-                    'CV. N & b NET ACCESS',
-                    'PT. ELKA SOLUTION NUSANTARA',
-                    'CV. ARINDAH',
-                    'ARFALINDO',
-                    'PT. Bali Unggul Sejahtera',
-                    'CV. Dana Rasa',
-                    'CV. Lagaan Saketi',
-                    'CV. Bali Jakti Informatik',
-                    'CV. Bali Lingga Komputer',
-                    'CV. Artsolution',
-                    'PT. Bali Lingga Saka Gumi',
-                    'CV. Sahabat Utama',
-                    'CV. N & b Net Access',
-                    'PT. Elka Solution Nusantara',
-                    'CV. Arindah',
-                    'Arfalindo',
-                    'PT. Arisma Smart Solution',
-                    'PT. Integrasi Jasa Nusantara',
-                    'CV. Dana Rasa',
-                    'CV. Elka Mandiri'
-                ]),
-            ],
-
+                'perusahaan_id' => 'required|exists:perusahaans,id',
                 'total_penjualan' => 'required|integer|min:0',
             ]);
 
-            $exists = RekapPenjualanPerusahaan::where('bulan', $validatedData['bulan'])
-                ->where('perusahaan', $validatedData['perusahaan'])
-                ->where('total_penjualan', $validatedData['total_penjualan'])
-                ->where('id_rpp', '!=', $rekappenjualanperusahaan->id_rpp)->exists();
+            $exists = RekapPenjualanPerusahaan::where('bulan', $request->bulan)
+                ->where('perusahaan_id', $request->perusahaan_id)
+                ->where('id', '!=', $rekappenjualanperusahaan->id) // Menggunakan model binding
+                ->exists();
 
             if ($exists) {
                 return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
             }
     
             // Update data
-            $rekappenjualanperusahaan->update($validatedData);
+            $rekappenjualanperusahaan->update([
+                'bulan' => $request->bulan,
+                'perusahaan_id' => $request->perusahaan_id,
+                'total_penjualan' => $request->total_penjualan,
+            ]);
     
             // Redirect dengan pesan sukses
             return redirect()->route('rekappenjualanperusahaan.index')->with('success', 'Data berhasil diperbarui.');
@@ -298,7 +240,7 @@ class RekapPenjualanPerusahaanController extends Controller
         // Siapkan data untuk chart
         $labels = $rekappenjualanperusahaans->map(function($item) {
             $formattedDate = \Carbon\Carbon::parse($item->bulan)->translatedFormat('F - Y');
-            return $item->perusahaan . ' - ' . $formattedDate;
+            return $item->perusahaan->nama_perusahaan . ' - ' . $formattedDate;
         })->toArray();
         $data = $rekappenjualanperusahaans->pluck('total_penjualan')->toArray();
         $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data);

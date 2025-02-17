@@ -37,6 +37,7 @@ use App\Http\Controllers\LaporanBizdevController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\LaporanBizdevGambarController;
 use App\Http\Controllers\IjasaGambarController;
+use App\Http\Controllers\PerusahaanController;
 
 Route::middleware(['web'])->group(function () {
     // Accounting
@@ -79,13 +80,6 @@ Route::middleware(['web'])->group(function () {
             ->name('marketings.rekappenjualan.data');
         Route::delete('rekappenjualan/{rp}', [RekapPenjualanController::class, 'destroy']);
 
-        Route::resource('rekappenjualanperusahaan', RekapPenjualanPerusahaanController::class);
-        Route::post('rekappenjualanperusahaan/export-pdf', [RekapPenjualanPerusahaanController::class, 'exportPDF'])
-            ->name('marketings.rekappenjualanperusahaan.exportPDF');
-        Route::get('rekappenjualanperusahaan/data', [RekapPenjualanPerusahaanController::class, 'getRekapPenjualaPerusahaannData'])
-            ->name('marketings.rekappenjualanperusahaan.data');
-        Route::delete('rekappenjualanperusahaan/{rp}', [RekapPenjualanPerusahaanController::class, 'destroy']);
-
         Route::resource('laporanpaketadministrasi', LaporanPaketAdministrasiController::class);
         Route::post('laporanpaketadministrasi/export-pdf', [LaporanPaketAdministrasiController::class, 'exportPDF'])
             ->name('marketings.laporanpaketadministrasi.exportPDF');
@@ -106,6 +100,10 @@ Route::middleware(['web'])->group(function () {
         Route::get('laporanperinstansi/data', [LaporanPerInstansiController::class, 'getLaporanPerinstansiData'])
             ->name('marketings.laporanperinstansi.data');
         Route::delete('laporanperinstansi/{rp}', [LaporanPerInstansiController::class, 'destroy']);
+        
+        Route::resource('perusahaan', PerusahaanController::class);
+        Route::delete('perusahaan/{rp}', [PerusahaanController::class, 'destroy']);
+
 
     });
 
@@ -127,15 +125,29 @@ Route::middleware(['web'])->group(function () {
         ->name('multimediatiktok.exportPDF');
         
     });
+
+    Route::prefix('procurements')->group(function () {
+        Route::get('laporanholding', [LaporanHoldingController::class, 'index'])->name('laporanholding.index');
+        Route::post('laporanholding', [LaporanHoldingController::class, 'store'])->name('laporanholding.store');
+        Route::put('laporanholding/{laporanholding}', [LaporanHoldingController::class, 'update'])->name('laporanholding.update');
+        Route::delete('laporanholding/{laporanholding}', [LaporanHoldingController::class, 'destroy'])->name('laporanholding.destroy');
+        Route::post('laporanholding/export-pdf', [LaporanHoldingController::class, 'exportPDF'])->name('laporanholding.exportPDF');
+        Route::get('laporanholding/data', [LaporanHoldingController::class, 'getLaporanHoldingData'])->name('laporanholding.data');
+        Route::get('laporanholding/chart', [LaporanHoldingController::class, 'showChart'])->name('laporanholding.chart');
+    });
+
+    Route::prefix('marketings')->group(function () {
+        Route::get('rekappenjualanperusahaan', [RekapPenjualanPerusahaanController::class, 'index'])->name('rekappenjualanperusahaan.index');
+        Route::post('rekappenjualanperusahaan', [RekapPenjualanPerusahaanController::class, 'store'])->name('rekappenjualanperusahaan.store');
+        Route::put('rekappenjualanperusahaan/{rekappenjualanperusahaan}', [RekapPenjualanPerusahaanController::class, 'update'])->name('rekappenjualanperusahaan.update');
+        Route::delete('rekappenjualanperusahaan/{rekappenjualanperusahaan}', [RekapPenjualanPerusahaanController::class, 'destroy'])->name('rekappenjualanperusahaan.destroy');
+        Route::post('rekappenjualanperusahaan/export-pdf', [RekapPenjualanPerusahaanController::class, 'exportPDF'])->name('rekappenjualanperusahaan.exportPDF');
+        Route::get('rekappenjualanperusahaan/data', [RekapPenjualanPerusahaanController::class, 'getRekapPenjualaPerusahaannData'])->name('rekappenjualanperusahaan.data');
+        Route::get('rekappenjualanperusahaan/chart', [RekapPenjualanPerusahaanController::class, 'showChart'])->name('rekappenjualanperusahaan.chart');
+    });
+
     // PROCUREMENT
     Route::prefix('procurements')->group(function () {
-        
-        Route::resource('laporanholding', LaporanHoldingController::class);
-        Route::get('laporanholding/data', [LaporanHoldingController::class, 'getLaporanStokData'])
-            ->name('procurements.laporanholding.data');
-        Route::post('laporanholding/export-pdf', [LaporanHoldingController::class, 'exportPDF'])
-            ->name('procurements.laporanholding.exportPDF');
-        Route::delete('laporanholding/{rp}', [LaporanHoldingController::class, 'destroy']);
 
 
         Route::resource('laporanstok', LaporanStokController::class);
@@ -233,8 +245,12 @@ Route::middleware(['web'])->group(function () {
         Route::post('/questions/{id}/answer', [QuestionController::class, 'storeAnswer'])->name('answers.store');
         Route::put('/answers/{id}', [QuestionController::class, 'updateAnswer'])->name('answers.update');
         Route::delete('/answers/{id}', [QuestionController::class, 'destroyAnswer'])->name('answers.destroy');
+        Route::patch('/questions/{id}/toggle-close', [QuestionController::class, 'toggleClose'])->name('questions.toggle-close');
     });
     
+    Route::get('/rekap-penjualan', [PerusahaanController::class, 'penjualanPerusahaan'])->name('rekap.penjualan');
+    Route::get('/laporan-holding', [PerusahaanController::class, 'laporanHolding'])->name('laporan.holding');
+    Route::resource('perusahaan', PerusahaanController::class);
 
 });
 

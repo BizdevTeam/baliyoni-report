@@ -3,27 +3,35 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class LaporanHolding extends Model
 {
     use HasFactory;
-    protected $table = 'laporan_holdings'; // Nama tabel
 
-    protected $primaryKey = 'id_holding'; // Primary key custom
+    protected $table = 'laporan_holdings'; // Sesuaikan dengan nama tabel
 
-    protected $fillable = ['bulan', 'perusahaan', 'nilai'];
+    protected $fillable = [
+        'bulan',
+        'perusahaan_id',
+        'nilai',
+    ];
+    
 
-    // Menambahkan accessor untuk bulan dengan format 'mm/yyyy'
-    public function getBulanFormattedAttribute()
+    // Relasi ke model Perusahaan
+    public function perusahaan()
     {
-        return Carbon::parse($this->bulan)->translatedFormat('F - Y');
+        return $this->belongsTo(Perusahaan::class, 'perusahaan_id', 'id');
     }
 
-    // Menambahkan accessor dengan format Rp
     public function getNilaiFormattedAttribute()
     {
         return 'Rp ' . number_format($this->nilai, 0, ',', '.');
+    }
+
+    public function getBulanFormattedAttribute()
+    {
+        return Carbon::parse($this->bulan)->translatedFormat('F - Y');
     }
 }

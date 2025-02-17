@@ -11,7 +11,11 @@ class LaporanDetrans extends Model
 
     protected $table = 'laporan_detrans';
     protected $primaryKey = 'id_detrans'; // Primary key custom
-    protected $fillable = ['bulan', 'total_pengiriman'];
+    protected $fillable = [
+    'bulan', 
+    'pelaksana',
+    'total_pengiriman',
+];
 
     public function getBulanFormattedAttribute()
     {

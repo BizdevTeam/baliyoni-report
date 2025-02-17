@@ -35,14 +35,14 @@
         <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
 
             <!-- Main Content -->
-        <div id="admincontent" class="content-wrapper ml-64 p-4 bg-white duration-300">
+        <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
             <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan Rekap Penjualan Perusahaan</h1>
 
             <div class="flex items-center justify-end transition-all duration-500 mt-8 mb-4">
                 <!-- Search -->
                 <form method="GET" action="{{ route('rekappenjualan.index') }}" class="flex items-center gap-2">
                     <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
-                        <input type="text" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}"
+                        <input type="month" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}"
                             class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
                     </div>
 
@@ -98,16 +98,16 @@
                     @foreach ($rekappenjualanperusahaans as $rekappenjualanperusahaan)
                         <tr class="hover:bg-gray-100">
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $rekappenjualanperusahaan->bulan_formatted }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $rekappenjualanperusahaan->perusahaan }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $rekappenjualanperusahaan->perusahaan->nama_perusahaan }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $rekappenjualanperusahaan->total_penjualan_formatted }}</td>
                             <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
                                 <!-- Edit Button -->
-                                <button class="bg-red-600 text-white px-3 py-2 rounded" data-modal-target="#editEventModal{{ $rekappenjualanperusahaan->id_rpp }}">
+                                <button class="bg-red-600 text-white px-3 py-2 rounded" data-modal-target="#editEventModal{{ $rekappenjualanperusahaan->id }}">
                                     <i class="fa fa-pen"></i>
                                     Edit
                                 </button>
                                 <!-- Delete Form -->
-                                <form method="POST" action="{{ route('rekappenjualanperusahaan.destroy', $rekappenjualanperusahaan->id_rpp) }}">
+                                <form method="POST" action="{{ route('rekappenjualanperusahaan.destroy', $rekappenjualanperusahaan->id) }}">
                                     @csrf
                                     @method('DELETE')
                                     <button class="bg-red-600 text-white px-3 py-2 rounded" onclick="return confirm('Are you sure to delete?')">
@@ -119,10 +119,10 @@
                         </tr>
                         
                         <!-- Modal for Edit Event -->
-                        <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="editEventModal{{ $rekappenjualanperusahaan->id_rpp }}">
+                        <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="editEventModal{{ $rekappenjualanperusahaan->id }}">
                             <div class="bg-white w-1/2 p-6 rounded shadow-lg">
                                 <h3 class="text-xl font-semibold mb-4">Edit Data</h3>
-                                <form method="POST" action="{{ route('rekappenjualanperusahaan.update', $rekappenjualanperusahaan->id_rpp) }}" enctype="multipart/form-data">
+                                <form method="POST" action="{{ route('rekappenjualanperusahaan.update', $rekappenjualanperusahaan->id) }}" enctype="multipart/form-data">
                                     @csrf
                                     @method('PUT')
                                     <div class="space-y-4">
@@ -131,27 +131,16 @@
                                             <input type="month" name="bulan" class="w-full p-2 border rounded" value="{{ $rekappenjualanperusahaan->bulan }}" required>
                                         </div>
                                         <div>
-                                            <label for="perusahaan" class="block text-sm font-medium">Pilih Perusahaan</label>
-                                            <select name="perusahaan" class="w-full p-2 border rounded" required>
-                                                <option value="PT. Bali Unggul Sejahtera" {{ $rekappenjualanperusahaan->perusahaan == 'PT. Bali Unggul Sejahtera' ? 'selected' : '' }}>PT. Bali Unggul Sejahtera</option>
-                                                <option value="CV. Dana Rasa" {{ $rekappenjualanperusahaan->perusahaan == 'CV. Dana Rasa' ? 'selected' : '' }}>CV. Dana Rasa</option>
-                                                <option value="CV. Lagaan Saketi" {{ $rekappenjualanperusahaan->perusahaan == 'CV. Lagaan Saketi' ? 'selected' : '' }}>CV. Lagaan Saketi</option>
-                                                <option value="CV. Bali Jakti Informatik" {{ $rekappenjualanperusahaan->perusahaan == 'CV. Bali Jakti Informatik' ? 'selected' : '' }}>CV. Bali Jakti Informatik</option>
-                                                <option value="CV. Bali Lingga Komputer" {{ $rekappenjualanperusahaan->perusahaan == 'CV. Bali Lingga Komputer' ? 'selected' : '' }}>CV. Bali Lingga Komputer</option>
-                                                <option value="CV. Artsolution" {{ $rekappenjualanperusahaan->perusahaan == 'CV. Artsolution' ? 'selected' : '' }}>CV. Artsolution</option>
-                                                <option value="PT. Bali Lingga Saka Gumi" {{ $rekappenjualanperusahaan->perusahaan == 'PT. Bali Lingga Saka Gumi' ? 'selected' : '' }}>PT. Bali Lingga Saka Gumi</option>
-                                                <option value="CV. Sahabat Utama" {{ $rekappenjualanperusahaan->perusahaan == 'CV. Sahabat Utama' ? 'selected' : '' }}>CV. Sahabat Utama</option>
-                                                <option value="CV. N & B Net Access" {{ $rekappenjualanperusahaan->perusahaan == 'CV. N & B Net Access' ? 'selected' : '' }}>CV. N & B Net Access</option>
-                                                <option value="PT. Elka Solution Nusantara" {{ $rekappenjualanperusahaan->perusahaan == 'PT. Elka Solution Nusantara' ? 'selected' : '' }}>PT. Elka Solution Nusantara</option>
-                                                <option value="CV. Arindah" {{ $rekappenjualanperusahaan->perusahaan == 'CV. Arindah' ? 'selected' : '' }}>CV. Arindah</option>
-                                                <option value="Arfalindo" {{ $rekappenjualanperusahaan->perusahaan == 'Arfalindo' ? 'selected' : '' }}>Arfalindo</option>
-                                                <option value="PT. Arisma Smart Solution" {{ $rekappenjualanperusahaan->perusahaan == 'PT. Arisma Smart Solution' ? 'selected' : '' }}>PT. Arisma Smart Solution</option>
-                                                <option value="PT. Integrasi Jasa Nusantara" {{ $rekappenjualanperusahaan->perusahaan == 'PT. Integrasi Jasa Nusantara' ? 'selected' : '' }}>PT. Integrasi Jasa Nusantara</option>
-                                                <option value="CV. Dana Rasa" {{ $rekappenjualanperusahaan->perusahaan == 'CV. Dana Rasa' ? 'selected' : '' }}>CV. Dana Rasa</option>
-                                                <option value="CV. Elka Mandiri" {{ $rekappenjualanperusahaan->perusahaan == 'CV. Elka Mandiri' ? 'selected' : '' }}>CV. Elka Mandiri</option>
-                                                <option value="PT. Bali Unggul Sejahtera" {{ $rekappenjualanperusahaan->perusahaan == 'PT. Bali Unggul Sejahtera' ? 'selected' : '' }}>PT. Bali Unggul Sejahtera</option>
-                                            </select>
-                                        </div>
+                                            <label for="perusahaan_id" class="block text-sm font-medium">Pilih Perusahaan</label>
+                                            <select name="perusahaan_id" class="w-full p-2 border rounded" required>
+                                                @foreach ($perusahaans as $perusahaan)
+                                                <option value="{{ $perusahaan->id }}" 
+                                                    {{ $rekappenjualanperusahaan->perusahaan_id == $perusahaan->id ? 'selected' : '' }}>
+                                                    {{ $perusahaan->nama_perusahaan }}
+                                                </option>                                                
+                                                @endforeach
+                                            </select>  
+                                        </div>                                        
                                         <div>
                                             <label for="total_penjualan" class="block text-sm font-medium">Total Penjualan</label>
                                             <input type="number" name="total_penjualan" class="w-full p-2 border rounded" value="{{ $rekappenjualanperusahaan->total_penjualan }}" required>
@@ -216,28 +205,15 @@
                     <input type="month" name="bulan" class="w-full p-2 border rounded" required>
                 </div>
                 <div>
-                    <label for="perusahaan" class="block text-sm font-medium">Pilih Perusahaan</label>
-                    <select name="perusahaan" class="w-full p-2 border rounded" required>
-                        <option value="PT. Bali Unggul Sejahtera">PT. Bali Unggul Sejahtera</option>
-                        <option value="CV. Dana Rasa">CV. Dana Rasa</option>
-                        <option value="CV. Lagaan Saketi">CV. Lagaan Saketi</option>
-                        <option value="CV. Bali Jakti Informatik">CV. Bali Jakti Informatik</option>
-                        <option value="CV. Bali Lingga Komputer">CV. Bali Lingga Komputer</option>
-                        <option value="CV. Artsolution">CV. Artsolution</option>
-                        <option value="PT. Bali Lingga Saka Gumi">PT. Bali Lingga Saka Gumi</option>
-                        <option value="CV. Sahabat Utama">CV. Sahabat Utama</option>
-                        <option value="CV. N & B Net Access">CV. N & B Net Access</option>
-                        <option value="PT. Elka Solution Nusantara">PT. Elka Solution Nusantara</option>
-                        <option value="CV. Arindah">CV. Arindah</option>
-                        <option value="Arfalindo">Arfalindo</option>
-                        <option value="PT. Arisma Smart Solution">PT. Arisma Smart Solution</option>
-                        <option value="PT. Integrasi Jasa Nusantara">PT. Integrasi Jasa Nusantara</option>
-                        <option value="CV. Dana Rasa">CV. Dana Rasa</option>
-                        <option value="CV. Elka Mandiri">CV. Elka Mandiri</option>
-                        <option value="PT. Bali Unggul Sejahtera">PT. Bali Unggul Sejahtera</option>
-                        
-                    </select>
-                </div>
+                    <label for="perusahaan_id" class="block text-sm font-medium">Pilih Perusahaan</label>
+                    <select name="perusahaan_id" class="w-full p-2 border rounded" required>
+                        @foreach ($perusahaans as $perusahaan)
+                            <option value="{{ $perusahaan->id }}">
+                                {{ $perusahaan->nama_perusahaan }}
+                            </option>
+                        @endforeach
+                    </select>   
+                </div>                
                 <div>
                     <label for="total_penjualan" class="block text-sm font-medium">Total Penjualan</label>
                     <input type="number" name="total_penjualan" class="w-full p-2 border rounded" required>

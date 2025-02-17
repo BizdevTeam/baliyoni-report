@@ -23,6 +23,20 @@ class LaporanPpnController extends Controller
         })
         ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
         ->paginate($perPage);
+
+              // Ubah path thumbnail agar dapat diakses dari frontend
+        $laporanppns->getCollection()->transform(function ($item) {
+            $item->gambar_url = !empty($item->thumbnail) && file_exists(public_path("images/accounting/ppn/{$item->thumbnail}"))
+                ? asset("images/accounting/ppn/{$item->thumbnail}")
+                : asset("images/no-image.png"); // Placeholder jika tidak ada thumbnail
+        
+                return $item;
+            });
+        
+            if ($request->ajax()) {
+                return response()->json(['laporanppns' => $laporanppns]);
+            }
+
         return view('accounting.laporanppn', compact('laporanppns'));
     }
 
@@ -35,7 +49,7 @@ class LaporanPpnController extends Controller
             $validatedata = $request->validate([
                 'bulan' => 'required|date_format:Y-m',
                 'thumbnail' => 'image|mimes:jpeg,png,jpg,gif|max:2550',
-                'file' => 'required|mimes:xlsx,xls|max:2048',
+                'file' => 'mimes:xlsx,xls|max:2048',
                 'keterangan' => 'required|string',
             ]);
 

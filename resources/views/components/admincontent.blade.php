@@ -1,12 +1,12 @@
 <div id="admincontent" class="content-wrapper ml-72 p-4 transition-all duration-300">
     <!-- Grafik Laporan Paket Administrasi -->
-    <div class="p-4">
-        <h1 class="text-4xl font-bold text-red-600">Dash<span class="text-red-600">board</span></h1>
+    <div class="p-4 ">
+        <h1 class="mt-10 text-4xl font-bold text-red-600">Dash<span class="text-red-600">board</span></h1>
         <div class="flex justify-end mb-4">
 
             <form id="chartFilterForm" method="GET" action="#" class="flex items-center justify-end gap-2">
                 <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
-                    <input type="text" id="searchInput" name="search" placeholder="Search YYYY - MM" value="{{ request('search') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
+                    <input type="month" id="searchInput" name="search" placeholder="Search YYYY - MM" value="{{ request('search') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
                 </div>
                 <button type="submit" class="justify-end bg-gradient-to-r font-medium from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm" aria-label="Search">
                     Search
@@ -275,20 +275,6 @@
             </div>
         </div>
 
-         <!-- Laba Rugi -->
-        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
-            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Laporan Laba Rugi</h1>
-        
-            <!-- Container untuk menampilkan gambar -->
-            <div id="image-container" class="flex flex-wrap gap-4 justify-center"></div>
-        
-            <div class="flex justify-end mt-4">
-                <a href="{{ route('labarugi.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">
-                    Laporan Laba Rugi →
-                </a>
-            </div>
-        </div>  
-
         <!-- LAPORAN LABA RUGI -->
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Laporan Laba Rugi</h1>
@@ -311,8 +297,8 @@
                 </div>
             </div>
             <!-- Modal Gambar -->
-            <div id="imageModal" class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-80 hidden">
-                <img id="modalImage" class="mx-auto my-auto object-center max-w-full max-h-[90vh] rounded-lg shadow-lg">
+            <div id="imageModal" class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-80 hidden z-50">
+                <img id="modalImage" class="mx-auto my-auto object-center max-w-full max-h-[90vh] rounded-lg shadow-lg z-50">
             </div>
         </div>
 
@@ -338,7 +324,92 @@
                     <a href="{{ route('neraca.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Neraca →</a>
                 </div>
             </div>
-        </div>
+                  <!-- Modal Gambar -->
+                  <div id="imageModal" class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-80 hidden z-50">
+                    <img id="modalImage" class="mx-auto my-auto object-center max-w-full max-h-[90vh] rounded-lg shadow-lg z-50">
+                </div>
+             </div>
+
+        <!-- LAPORAN RASIO -->
+        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Laporan Rasio</h1>
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <div class="max-w-[600px] md:max-w-none mx-auto md:mx-0 overflow-x-auto"> <!-- Container pembatas dan scroll -->
+                    <table id="adminrasio" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
+                        <thead>
+                            <tr>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">File</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="flex justify-end mt-4">
+                    <a href="{{ route('rasio.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Neraca →</a>
+                </div>
+            </div>
+                  <!-- Modal Gambar -->
+                  <div id="imageModal" class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-80 hidden z-50">
+                    <img id="modalImage" class="mx-auto my-auto object-center max-w-full max-h-[90vh] rounded-lg shadow-lg z-50">
+                </div>
+             </div>
+
+        <!-- LAPORAN PPN -->
+        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Laporan PPN</h1>
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <div class="max-w-[600px] md:max-w-none mx-auto md:mx-0 overflow-x-auto"> <!-- Container pembatas dan scroll -->
+                    <table id="adminppn" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
+                        <thead>
+                            <tr>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">File</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="flex justify-end mt-4">
+                    <a href="{{ route('laporanppn.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Neraca →</a>
+                </div>
+            </div>
+                  <!-- Modal Gambar -->
+                  <div id="imageModal" class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-80 hidden z-50">
+                    <img id="modalImage" class="mx-auto my-auto object-center max-w-full max-h-[90vh] rounded-lg shadow-lg z-50">
+                </div>
+             </div>
+
+        <!-- LAPORAN TAX PLANNING -->
+        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Laporan Tax Planning</h1>
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <div class="max-w-[600px] md:max-w-none mx-auto md:mx-0 overflow-x-auto"> <!-- Container pembatas dan scroll -->
+                    <table id="admintaxplanning" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
+                        <thead>
+                            <tr>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">File</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="flex justify-end mt-4">
+                    <a href="{{ route('taxplaning.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Neraca →</a>
+                </div>
+            </div>
+                  <!-- Modal Gambar -->
+                  <div id="imageModal" class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-80 hidden z-50">
+                    <img id="modalImage" class="mx-auto my-auto object-center max-w-full max-h-[90vh] rounded-lg shadow-lg z-50">
+                </div>
+             </div>
 
         <!-- LAPORAN IT -->
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
@@ -761,37 +832,43 @@
         });
     });
 
-    
-    //tabel laporan NERACA
+    //laporan laba rugi
     $(document).ready(function() {
         function fetchLaporanNeraca(search = '') {
             $.ajax({
-                url: "{{ route('neraca.index') }}"
-                , type: "GET"
-                , data: {
-                    search: search
-                }, // Kirim parameter search ke server
-                dataType: "json"
-                , success: function(response) {
+                url: "{{ route('neraca.index') }}",
+                type: "GET",
+                data: { search: search },
+                dataType: "json",
+                success: function(response) {
                     let tableBody = $("#adminneraca tbody");
-                    tableBody.empty(); // Kosongkan tabel sebelum menambahkan data baru
+                    tableBody.empty(); // Clear table before adding new data
 
                     if (response.laporanneracas.data.length === 0) {
-                        tableBody.append(`<tr><td colspan="7" class="text-center p-4">Data tidak ditemukan</td></tr>`);
+                        tableBody.append(`<tr><td colspan="3" class="text-center p-4">Data tidak ditemukan</td></tr>`);
                     } else {
-                        response.laporanneracas.data.forEach(function(item) {
+                        response.laporanneracas.data.forEach(function(item, index) {
                             let row = `
-                            <tr>
-                                <td class="border border-gray-300 px-4 py-2 text-center">${item.bulan}</td>
-                                <td class="border border-gray-300 px-4 py-2 text-center">${item.gambar}</td>
-                                <td class="border border-gray-300 px-4 py-2 text-center">${item.keterangan}</td>
-                            </tr>
-                        `;
+                                <tr>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.bulan}</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">
+                                        <img src="${item.gambar_url}" alt="Laporan Gambar" class="w-20 h-20 object-cover rounded-lg shadow-md cursor-pointer block mx-auto" data-index="${index}">
+                                    </td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.keterangan}</td>
+                                </tr>
+                            `;
                             tableBody.append(row);
                         });
+
+                        // Event listener for enlarging the image on click
+                        $(".cursor-pointer").on("click", function(e) {
+                            let imgSrc = $(this).attr("src");
+                            $("#modalImage").attr("src", imgSrc);
+                            $("#imageModal").fadeIn();
+                        });
                     }
-                }
-                , error: function(xhr, status, error) {
+                },
+                error: function(xhr, status, error) {
                     console.error("Error fetching data:", error);
                 }
             });
@@ -806,67 +883,255 @@
             let searchValue = $("#searchInput").val();
             fetchLaporanNeraca(searchValue);
         });
-    });
 
-    $(document).ready(function() {
-    function fetchLaporanLabaRugi(search = '') {
-        $.ajax({
-            url: "{{ route('labarugi.index') }}",
-            type: "GET",
-            data: { search: search },
-            dataType: "json",
-            success: function(response) {
-                let tableBody = $("#adminlabarugi tbody");
-                tableBody.empty(); // Kosongkan tabel sebelum menambahkan data baru
-
-                if (response.laporanlabarugis.data.length === 0) {
-                    tableBody.append(`<tr><td colspan="3" class="text-center p-4">Data tidak ditemukan</td></tr>`);
-                } else {
-                    response.laporanlabarugis.data.forEach(function(item, index) {
-                        let row = `
-                            <tr>
-                                <td class="border border-gray-300 px-4 py-2 text-center">${item.bulan}</td>
-                                <td class="border border-gray-300 px-4 py-2 text-center">
-                                    <img src="${item.gambar_url}" alt="Laporan Gambar" class="w-20 h-20 object-cover rounded-lg shadow-md cursor-pointer item-center justify-center" data-index="${index}">
-                                </td>
-                                <td class="border border-gray-300 px-4 py-2 text-center">${item.keterangan}</td>
-                            </tr>
-                        `;
-                        tableBody.append(row);
-                    });
-
-                    // Event listener untuk memperbesar gambar saat diklik
-                    $(".cursor-pointer").on("click", function(e) {
-                        let imgSrc = $(this).attr("src");
-                        $("#modalImage").attr("src", imgSrc);
-                        $("#imageModal").fadeIn();
-                    });
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error("Error fetching data:", error);
+        // Event untuk menutup modal saat klik di luar gambar
+        $("#imageModal").on("click", function(e) {
+            if (!$(e.target).closest("#modalImage").length) {
+                $(this).fadeOut();
             }
         });
-    }
-
-    // Jalankan fungsi saat halaman dimuat
-    fetchLaporanLabaRugi();
-
-    // Event listener untuk form pencarian
-    $("#chartFilterForm").on("submit", function(e) {
-        e.preventDefault(); // Mencegah form melakukan reload halaman
-        let searchValue = $("#searchInput").val();
-        fetchLaporanLabaRugi(searchValue);
     });
 
-    // Event untuk menutup modal saat klik di luar gambar
-    $("#imageModal").on("click", function(e) {
-        if (!$(e.target).closest("#modalImage").length) {
-            $(this).fadeOut();
+
+    //laporan laba rugi
+        $(document).ready(function() {
+        function fetchLaporanLabaRugi(search = '') {
+            $.ajax({
+                url: "{{ route('labarugi.index') }}",
+                type: "GET",
+                data: { search: search },
+                dataType: "json",
+                success: function(response) {
+                    let tableBody = $("#adminlabarugi tbody");
+                    tableBody.empty(); // Clear table before adding new data
+
+                    if (response.laporanlabarugis.data.length === 0) {
+                        tableBody.append(`<tr><td colspan="3" class="text-center p-4">Data tidak ditemukan</td></tr>`);
+                    } else {
+                        response.laporanlabarugis.data.forEach(function(item, index) {
+                            let row = `
+                                <tr>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.bulan}</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">
+                                        <img src="${item.gambar_url}" alt="Laporan Gambar" class="w-20 h-20 object-cover rounded-lg shadow-md cursor-pointer block mx-auto" data-index="${index}">
+                                    </td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.keterangan}</td>
+                                </tr>
+                            `;
+                            tableBody.append(row);
+                        });
+
+                        // Event listener for enlarging the image on click
+                        $(".cursor-pointer").on("click", function(e) {
+                            let imgSrc = $(this).attr("src");
+                            $("#modalImage").attr("src", imgSrc);
+                            $("#imageModal").fadeIn();
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error fetching data:", error);
+                }
+            });
         }
-    });
-});
 
+        // Jalankan fungsi saat halaman dimuat
+        fetchLaporanLabaRugi();
+
+        // Event listener untuk form pencarian
+        $("#chartFilterForm").on("submit", function(e) {
+            e.preventDefault(); // Mencegah form melakukan reload halaman
+            let searchValue = $("#searchInput").val();
+            fetchLaporanLabaRugi(searchValue);
+        });
+
+        // Event untuk menutup modal saat klik di luar gambar
+        $("#imageModal").on("click", function(e) {
+            if (!$(e.target).closest("#modalImage").length) {
+                $(this).fadeOut();
+            }
+        });
+    });
+
+    //laporan rasio
+        $(document).ready(function() {
+        function fetchLaporanRasio(search = '') {
+            $.ajax({
+                url: "{{ route('rasio.index') }}",
+                type: "GET",
+                data: { search: search },
+                dataType: "json",
+                success: function(response) {
+                    let tableBody = $("#adminrasio tbody");
+                    tableBody.empty(); // Clear table before adding new data
+
+                    if (response.laporanrasios.data.length === 0) {
+                        tableBody.append(`<tr><td colspan="3" class="text-center p-4">Data tidak ditemukan</td></tr>`);
+                    } else {
+                        response.laporanrasios.data.forEach(function(item, index) {
+                            let row = `
+                                <tr>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.bulan}</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">
+                                        <img src="${item.gambar_url}" alt="Laporan Gambar" class="w-20 h-20 object-cover rounded-lg shadow-md cursor-pointer block mx-auto" data-index="${index}">
+                                    </td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.keterangan}</td>
+                                </tr>
+                            `;
+                            tableBody.append(row);
+                        });
+
+                        // Event listener for enlarging the image on click
+                        $(".cursor-pointer").on("click", function(e) {
+                            let imgSrc = $(this).attr("src");
+                            $("#modalImage").attr("src", imgSrc);
+                            $("#imageModal").fadeIn();
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error fetching data:", error);
+                }
+            });
+        }
+
+        // Jalankan fungsi saat halaman dimuat
+        fetchLaporanRasio();
+
+        // Event listener untuk form pencarian
+        $("#chartFilterForm").on("submit", function(e) {
+            e.preventDefault(); // Mencegah form melakukan reload halaman
+            let searchValue = $("#searchInput").val();
+            fetchLaporanRasio(searchValue);
+        });
+
+        // Event untuk menutup modal saat klik di luar gambar
+        $("#imageModal").on("click", function(e) {
+            if (!$(e.target).closest("#modalImage").length) {
+                $(this).fadeOut();
+            }
+        });
+    });
+
+    //laporan ppn
+        $(document).ready(function() {
+        function fetchLaporanPPn(search = '') {
+            $.ajax({
+                url: "{{ route('laporanppn.index') }}",
+                type: "GET",
+                data: { search: search },
+                dataType: "json",
+                success: function(response) {
+                    let tableBody = $("#adminppn tbody");
+                    tableBody.empty(); // Clear table before adding new data
+
+                    if (response.laporanppns.data.length === 0) {
+                        tableBody.append(`<tr><td colspan="3" class="text-center p-4">Data tidak ditemukan</td></tr>`);
+                    } else {
+                        response.laporanppns.data.forEach(function(item, index) {
+                            let row = `
+                                <tr>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.bulan}</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">
+                                        <img src="${item.gambar_url}" alt="Laporan Gambar" class="w-20 h-20 object-cover rounded-lg shadow-md cursor-pointer block mx-auto" data-index="${index}">
+                                    </td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.keterangan}</td>
+                                </tr>
+                            `;
+                            tableBody.append(row);
+                        });
+
+                        // Event listener for enlarging the image on click
+                        $(".cursor-pointer").on("click", function(e) {
+                            let imgSrc = $(this).attr("src");
+                            $("#modalImage").attr("src", imgSrc);
+                            $("#imageModal").fadeIn();
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error fetching data:", error);
+                }
+            });
+        }
+
+        // Jalankan fungsi saat halaman dimuat
+        fetchLaporanPPn();
+
+        // Event listener untuk form pencarian
+        $("#chartFilterForm").on("submit", function(e) {
+            e.preventDefault(); // Mencegah form melakukan reload halaman
+            let searchValue = $("#searchInput").val();
+            fetchLaporanPPn(searchValue);
+        });
+
+        // Event untuk menutup modal saat klik di luar gambar
+        $("#imageModal").on("click", function(e) {
+            if (!$(e.target).closest("#modalImage").length) {
+                $(this).fadeOut();
+            }
+        });
+    });
+
+    //laporan tax planning
+        $(document).ready(function() {
+        function fetchLaporanTaxPlanning(search = '') {
+            $.ajax({
+                url: "{{ route('taxplaning.index') }}",
+                type: "GET",
+                data: { search: search },
+                dataType: "json",
+                success: function(response) {
+                    let tableBody = $("#admintaxplanning tbody");
+                    tableBody.empty(); // Clear table before adding new data
+
+                    if (response.laporantaxplanings.data.length === 0) {
+                        tableBody.append(`<tr><td colspan="3" class="text-center p-4">Data tidak ditemukan</td></tr>`);
+                    } else {
+                        response.laporantaxplanings.data.forEach(function(item, index) {
+                            let row = `
+                                <tr>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.bulan}</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">
+                                        <img src="${item.gambar_url}" alt="Laporan Gambar" class="w-20 h-20 object-cover rounded-lg shadow-md cursor-pointer block mx-auto" data-index="${index}">
+                                    </td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.keterangan}</td>
+                                </tr>
+                            `;
+                            tableBody.append(row);
+                        });
+
+                        // Event listener for enlarging the image on click
+                        $(".cursor-pointer").on("click", function(e) {
+                            let imgSrc = $(this).attr("src");
+                            $("#modalImage").attr("src", imgSrc);
+                            $("#imageModal").fadeIn();
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error fetching data:", error);
+                }
+            });
+        }
+
+        // Jalankan fungsi saat halaman dimuat
+        fetchLaporanTaxPlanning();
+
+        // Event listener untuk form pencarian
+        $("#chartFilterForm").on("submit", function(e) {
+            e.preventDefault(); // Mencegah form melakukan reload halaman
+            let searchValue = $("#searchInput").val();
+            fetchLaporanTaxPlanning(searchValue);
+        });
+
+        // Event untuk menutup modal saat klik di luar gambar
+        $("#imageModal").on("click", function(e) {
+            if (!$(e.target).closest("#modalImage").length) {
+                $(this).fadeOut();
+            }
+        });
+    });
 
 
     //tabel laporan SPI OPERASIONAL
@@ -1000,7 +1265,7 @@ function fetchImages() {
             container.empty();
 
             if (data.length === 0) {
-                container.html(`<div class="w-full text-center py-4">
+                container.html(`<div class="w-full text-center items-center align-center py-4">
                                   <span class="text-gray-500 text-lg">Tidak ada gambar tersedia</span>
                                 </div>`);
                 return;
@@ -1008,9 +1273,12 @@ function fetchImages() {
 
             data.forEach(item => {
                 if (item.gambar) {
-                    let img = `<img src="${item.gambar}" 
-             alt="Thumbnail" 
-             class="w-48 h-48 object-cover rounded-lg shadow-lg cursor-pointer hover:scale-105 transition-transform">`;                    container.append(img);
+                    let img = `<div class="flex justify-center items-center"> <!-- Tambahkan div wrapper untuk centering -->
+                                <img src="${item.gambar}" 
+                                    alt="Thumbnail" 
+                                    class="w-48 h-48 object-cover rounded-lg shadow-lg cursor-pointer hover:scale-105 transition-transform mx-auto">
+                            </div>`;
+                    container.append(img);
                 }
             });
         },
@@ -1020,8 +1288,8 @@ function fetchImages() {
             $("#image-container").html(`<div class="text-red-500">Gagal memuat gambar</div>`);
         }
     });
-}
 
+}
 
 </script>
 

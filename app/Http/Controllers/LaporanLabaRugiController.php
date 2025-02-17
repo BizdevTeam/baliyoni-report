@@ -45,7 +45,7 @@ class LaporanLabaRugiController extends Controller
             $validatedata = $request->validate([
                 'bulan' => 'required|date_format:Y-m',
                 'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550',
-                'file_excel' => 'required|mimes:xlsx,xls|max:2048',
+                'file_excel' => 'mimes:xlsx,xls|max:2048',
                 'keterangan' => 'required|string|max:255'
             ]);
     
@@ -73,7 +73,7 @@ class LaporanLabaRugiController extends Controller
     public function update(Request $request, LaporanLabaRugi $labarugi)
     {
         try {
-            $fileRules = $labarugi->file_excel ? 'nullable|mimes:xlsx,xls|max:2048' : 'required|mimes:xlsx,xls|max:2048';
+            $fileRules = $labarugi->file_excel ? 'nullable|mimes:xlsx,xls|max:2048' : 'mimes:xlsx,xls|max:2048';
         $validatedata = $request->validate([
             'bulan' => 'required|date_format:Y-m',
             'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550',

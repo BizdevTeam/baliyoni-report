@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('laporan_detrans', function (Blueprint $table) {
             $table->id('id_detrans');
             $table->string('bulan');
+            $table->string('pelaksana');
             $table->bigInteger('total_pengiriman'); // Default value untuk menghindari nilai null
             $table->timestamps();
 
-            $table->unique(['bulan']);
         });
     }
 
