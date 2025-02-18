@@ -6,9 +6,12 @@ use App\Models\IjasaGambar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use App\Traits\DateValidationTrait;
 
 class IjasaGambarController extends Controller
 {
+    use DateValidationTrait;
+
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 12);
@@ -27,19 +30,24 @@ class IjasaGambarController extends Controller
     public function store(Request $request)
     {
         try {
-            $validatedata = $request->validate([
+            $validateData = $request->validate([
                 'bulan' => 'required|date_format:Y-m',
                 'keterangan' => 'required|string|max:255',
                 'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550'
             ]);
 
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validateData['bulan'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
+
             if ($request->hasFile('gambar')) {
                 $filename = time() . $request->file('gambar')->getClientOriginalName();
                 $request->file('gambar')->move(public_path('images/hrga/ijasagambar'), $filename);
-                $validatedata['gambar'] = $filename;
+                $validateData['gambar'] = $filename;
             }
 
-            IjasaGambar::create($validatedata);
+            IjasaGambar::create($validateData);
 
             return redirect()->route('ijasagambar.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
@@ -51,7 +59,7 @@ class IjasaGambarController extends Controller
     public function update(Request $request, IjasaGambar $ijasagambar)
     {
         try {
-            $validatedata = $request->validate([
+            $validateData = $request->validate([
                 'bulan' => 'required|date_format:Y-m',
                 'keterangan' => 'required|string|max:255',
                 'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550'
@@ -65,10 +73,10 @@ class IjasaGambarController extends Controller
 
                 $filename = time() . $request->file('gambar')->getClientOriginalName();
                 $request->file('gambar')->move(public_path('images/hrga/ijasagambar'), $filename);
-                $validatedata['gambar'] = $filename;
+                $validateData['gambar'] = $filename;
             }
 
-            $ijasagambar->update($validatedata);
+            $ijasagambar->update($validateData);
 
             return redirect()->route('ijasagambar.index')->with('success', 'Data Berhasil Diupdate');
         } catch (\Exception $e) {
@@ -98,12 +106,12 @@ class IjasaGambarController extends Controller
     {
         try {
             // Validasi input bulan
-            $validatedata = $request->validate([
+            $validateData = $request->validate([
                 'bulan' => 'required|date_format:Y-m',
             ]);
     
             // Ambil semua data laporan berdasarkan bulan yang dipilih
-            $laporans = IjasaGambar::where('bulan', $validatedata['bulan'])->get();
+            $laporans = IjasaGambar::where('bulan', $validateData['bulan'])->get();
     
             if ($laporans->isEmpty()) {
                 return redirect()->back()->with('error', 'Data tidak ditemukan.');
@@ -156,7 +164,7 @@ class IjasaGambarController extends Controller
             }
     
             // Output PDF
-            return response($mpdf->Output("laporan_ijasa_gambar_{$validatedata['bulan']}.pdf", 'D'))
+            return response($mpdf->Output("laporan_ijasa_gambar_{$validateData['bulan']}.pdf", 'D'))
                 ->header('Content-Type', 'application/pdf')
                 ->header('Content-Disposition', 'attachment; filename="laporan_ijasa_gambar.pdf"');
     

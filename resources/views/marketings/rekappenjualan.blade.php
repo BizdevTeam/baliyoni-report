@@ -41,7 +41,7 @@
         <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
             <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan Rekap Penjualan</h1>
 
-            <div class="flex items-center justify-end transition-all duration-500 mt-8 mb-4">
+            <div class="flex items-center justify-end transition-all duration-500 mt-8 mb-4 p-4">
                 <!-- Search -->
                 <form method="GET" action="{{ route('rekappenjualan.index') }}" class="flex items-center gap-2">
                     <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
@@ -251,7 +251,7 @@
             id="addEventModal">
             <div class="bg-white w-1/2 p-6 rounded shadow-lg">
                 <h3 class="text-xl font-semibold mb-4">Add New Data</h3>
-                <form method="POST" action="{{ route('rekappenjualan.store') }}" enctype="multipart/form-data">
+                <form id="form-penjualan" method="POST" action="{{ route('rekappenjualan.store') }}" enctype="multipart/form-data">
                     @csrf
                     <div class="space-y-4">
                         <div>
@@ -274,7 +274,6 @@
 
 </body>
 <script>
-    
         //toogle form
         const toggleFormButton = document.getElementById('toggleFormButton');
             const formContainer = document.getElementById('formContainer');

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ArusKasController;
+use App\Http\Controllers\ExportAllController;
 use App\Http\Controllers\LaporanPpnController;
 use App\Http\Controllers\LaporanCutiController;
 use App\Http\Controllers\LaporanIzinController;
@@ -95,8 +96,8 @@ Route::middleware(['web'])->group(function () {
         Route::delete('statuspaket/{rp}', [StatusPaketController::class, 'destroy']);
 
         Route::resource('laporanperinstansi', LaporanPerInstansiController::class);
-        Route::post('laporanperinstansi/export-pdf', [LaporanPerInstansiController::class, 'exportPDF'])
-            ->name('marketings.laporanperinstansi.exportPDF');
+    Route::post('laporanperinstansi/export-pdf', [LaporanPerInstansiController::class, 'exportPDF'])
+        ->name('marketings.laporanperinstansi.exportPDF');
         Route::get('laporanperinstansi/data', [LaporanPerInstansiController::class, 'getLaporanPerinstansiData'])
             ->name('marketings.laporanperinstansi.data');
         Route::delete('laporanperinstansi/{rp}', [LaporanPerInstansiController::class, 'destroy']);
@@ -251,6 +252,8 @@ Route::middleware(['web'])->group(function () {
     Route::get('/rekap-penjualan', [PerusahaanController::class, 'penjualanPerusahaan'])->name('rekap.penjualan');
     Route::get('/laporan-holding', [PerusahaanController::class, 'laporanHolding'])->name('laporan.holding');
     Route::resource('perusahaan', PerusahaanController::class);
+
+    Route::post('/exportall',[ExportAllController::class,'exportAll'])->name('exportall');
 
 });
 

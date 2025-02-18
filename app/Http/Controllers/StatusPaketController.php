@@ -34,7 +34,10 @@ class StatusPaketController extends Controller
             return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
         }
         
-        $labels = $statuspakets->pluck('status')->toArray();
+        $labels = $statuspakets->map(function($item) {
+            $formattedDate = \Carbon\Carbon::parse($item->bulan)->translatedFormat('F - Y');
+            return $item->status . ' - ' . $formattedDate;
+        })->toArray();
         $data = $statuspakets->pluck('total_paket')->toArray();
         
         // Generate random colors for each data item

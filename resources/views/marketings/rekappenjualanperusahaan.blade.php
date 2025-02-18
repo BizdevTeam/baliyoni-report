@@ -315,6 +315,7 @@
             },
         },
     });
+    
     async function exportToPDF() {
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
     if (!csrfToken) {

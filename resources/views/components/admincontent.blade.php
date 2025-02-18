@@ -486,11 +486,84 @@
                 </div>
             </div>
         </div>
-
-
     </div>
 </div>
 </div>
+
+<!-- Floating Button -->
+<button onclick="toggleModal()" class="fixed bottom-48 right-6 w-20 h-20 justify-center rounded-full bg-red-600 font-medium text-white px-4 py-3 hover:shadow-xl transition duration-300 ease-in-out transform hover:scale-105 flex items-center gap-2">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+        <mask id="lineMdCloudAltPrintFilledLoop0">
+            <g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                <path stroke-dasharray="64" stroke-dashoffset="64" d="M7 19h11c2.21 0 4 -1.79 4 -4c0 -2.21 -1.79 -4 -4 -4h-1v-1c0 -2.76 -2.24 -5 -5 -5c-2.42 0 -4.44 1.72 -4.9 4h-0.1c-2.76 0 -5 2.24 -5 5c0 2.76 2.24 5 5 5Z">
+                    <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0" />
+                    <set fill="freeze" attributeName="opacity" begin="0.7s" to="0" />
+                </path>
+                <g fill="#fff" stroke="none" opacity="0">
+                    <circle cx="12" cy="10" r="6">
+                        <animate attributeName="cx" begin="0.7s" dur="30s" repeatCount="indefinite" values="12;11;12;13;12" />
+                    </circle>
+                    <rect width="9" height="8" x="8" y="12" />
+                    <rect width="15" height="12" x="1" y="8" rx="6">
+                        <animate attributeName="x" begin="0.7s" dur="21s" repeatCount="indefinite" values="1;0;1;2;1" />
+                    </rect>
+                    <rect width="13" height="10" x="10" y="10" rx="5">
+                        <animate attributeName="x" begin="0.7s" dur="17s" repeatCount="indefinite" values="10;9;10;11;10" />
+                    </rect>
+                    <set fill="freeze" attributeName="opacity" begin="0.7s" to="1" />
+                </g>
+                <g fill="#000" fill-opacity="0" stroke="none">
+                    <circle cx="12" cy="10" r="4">
+                        <animate attributeName="cx" begin="0.7s" dur="30s" repeatCount="indefinite" values="12;11;12;13;12" />
+                    </circle>
+                    <rect width="9" height="6" x="8" y="12" />
+                    <rect width="11" height="8" x="3" y="10" rx="4">
+                        <animate attributeName="x" begin="0.7s" dur="21s" repeatCount="indefinite" values="3;2;3;4;3" />
+                    </rect>
+                    <rect width="9" height="6" x="12" y="12" rx="3">
+                        <animate attributeName="x" begin="0.7s" dur="17s" repeatCount="indefinite" values="12;11;12;13;12" />
+                    </rect>
+                    <set fill="freeze" attributeName="fill-opacity" begin="0.7s" to="1" />
+                    <animate fill="freeze" attributeName="opacity" begin="0.7s" dur="0.5s" values="1;0" />
+                </g>
+                <g stroke="none">
+                    <path fill="#fff" d="M6 11h12v0h-12z">
+                        <animate fill="freeze" attributeName="d" begin="1.3s" dur="0.22s" values="M6 11h12v0h-12z;M6 11h12v11h-12z" />
+                    </path>
+                    <path fill="#000" d="M8 13h8v0h-8z">
+                        <animate fill="freeze" attributeName="d" begin="1.34s" dur="0.14s" values="M8 13h8v0h-8z;M8 13h8v7h-8z" />
+                    </path>
+                    <path fill="#fff" fill-opacity="0" d="M9 12h6v1H9zM9 14h6v1H9zM9 16h6v1H9zM9 18h6v1H9z">
+                        <animate fill="freeze" attributeName="fill-opacity" begin="1.4s" dur="0.1s" values="0;1" />
+                        <animateMotion begin="1.5s" calcMode="linear" dur="1.5s" path="M0 0v2" repeatCount="indefinite" />
+                    </path>
+                </g>
+            </g>
+        </mask>
+        <rect width="30" height="30" fill="currentColor" mask="url(#lineMdCloudAltPrintFilledLoop0)" />
+    </svg>
+</button>
+
+<!-- Modal -->
+<div id="exportModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden">
+    <div class="bg-white rounded-lg p-6 shadow-lg w-96">
+        <h2 class="text-xl font-bold mb-4">Export PDF</h2>
+
+        <form action="{{ route('exportall') }}" method="post">
+            @csrf
+            <!-- Range Month Input -->
+            <label for="month-range" class="block text-sm font-medium text-gray-700">Pilih Bulan</label>
+            <input name="search" type="month" id="month-range" class="w-full border rounded p-2 mt-2">
+            
+            <!-- Action Buttons -->
+            <div class="flex justify-end mt-4 gap-2">
+                <button onclick="toggleModal()" class="bg-gray-500 text-white py-2 px-4 rounded">Batal</button>
+                <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded">Export</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -530,8 +603,6 @@
         //laporan ACCOUNTING
         fetchChartPieData('{{ route("adminkhps.chart.data") }}', 'chartkhps', 'Nilai Pendapatan ');
         fetchChartPieData('{{ route("adminak.chart.data") }}', 'chartak', 'Nilai Piutang ');
-
-
     }
 
     // Memanggil fungsi loadInitialChartData saat halaman dimuat
@@ -1290,6 +1361,58 @@ function fetchImages() {
     });
 
 }
+
+
+// Fungsi untuk menampilkan atau menyembunyikan modal
+function toggleModal() {
+    const modal = document.getElementById('exportModal');
+    modal.classList.toggle('hidden');
+}
+
+// Fungsi untuk melakukan export PDF ke semua route dengan range bulan yang dipilih
+function exportPDF() {
+    const selectedMonth = document.getElementById('month-range').value;
+    
+    if (!selectedMonth) {
+        alert("Silakan pilih bulan terlebih dahulu!");
+        return;
+    }
+
+    // Kirim permintaan export ke semua endpoint secara bersamaan
+    const routes = [
+        '{{ route("marketings.rekappenjualan.exportPDF") }}',
+        '{{ route("marketings.laporanpaketadministrasi.exportPDF") }}',
+        '{{ route("marketings.statuspaket.exportPDF") }}',
+        '{{ route("marketings.laporanperinstansi.exportPDF") }}'
+    ];
+
+    routes.forEach(route => {
+        fetch(route, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ month: selectedMonth })
+        })
+        .then(response => response.blob())  // Ambil file dalam bentuk blob
+        .then(blob => {
+            // Buat URL download
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `export_${route.split('/').pop()}.pdf`;  // Nama file berdasarkan route
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        })
+        .catch(error => console.error('Error exporting:', error));
+    });
+
+    // Sembunyikan modal setelah submit
+    toggleModal();
+}
+
 
 </script>
 

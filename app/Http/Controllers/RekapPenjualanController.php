@@ -8,9 +8,13 @@ use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use App\Traits\DateValidationTrait;
+use Amenadiel\JpGraph\Graph;
+use Amenadiel\JpGraph\Plot;
 
 class RekapPenjualanController extends Controller
 {
+    use DateValidationTrait;
     // Show the view
     public function index(Request $request)
     { 
@@ -61,29 +65,34 @@ class RekapPenjualanController extends Controller
         
         return view('marketings.rekappenjualan', compact('rekappenjualans', 'chartData'));    }
 
+        
     public function store(Request $request)
     {
         try {
-            $validatedata = $request->validate([
+            $validatedData = $request->validate([
                 'bulan' => 'required|date_format:Y-m',
                 'total_penjualan' => 'required|integer|min:0',
             ]);
 
-            // Cek kombinasi unik bulan dan perusahaan
-            $exists = RekapPenjualan::where('bulan', $validatedata['bulan'])->exists();
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['bulan'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
+
+            $exists = RekapPenjualan::where('bulan', $validatedData['bulan'])->exists();
 
             if ($exists) {
                 return redirect()->back()->with('error', 'Data Already Exists.');
             }
-    
-            RekapPenjualan::create($validatedata);
-    
+
+            RekapPenjualan::create($validatedData);
             return redirect()->route('rekappenjualan.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
             Log::error('Error Storing Rekap Penjualan Data: ' . $e->getMessage());
-            return redirect()->route('rekappenjualan.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
+            return redirect()->route('rekappenjualan.index')->with('error', 'Terjadi Kesalahan: ' . $e->getMessage());
         }
     }
+        
     public function update(Request $request, RekapPenjualan $rekappenjualan)
     {
         try {

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Q&A</title>
+    <title>FAQ</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @vite('resources/css/app.css')
@@ -34,21 +34,21 @@
         <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
 
         <!-- Main Content -->
-        <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300">
+        <div id="admincontent" class="content-wrapper ml-64 p-4 bg-gray-100 duration-300 mt-14">
             <div class="mx-auto bg-white p-6 rounded-lg shadow">
                 <div class="p-6">
                     <div class="relative font-sans before:absolute before:w-full before:h-full before:inset-0 before:bg-black before:opacity-50 before:z-10">
                         <img src="https://readymadeui.com/cardImg.webp" alt="Banner Image" class="absolute inset-0 w-full h-full object-cover" />
-                        <div class="min-h-[350px] relative z-50 h-full max-w-6xl mx-auto flex flex-col justify-center items-center text-center text-white p-6">
-                            <h2 class="sm:text-4xl text-2xl font-bold">Sesi Tanya Jawab</h2>
+                        <div class="min-h-[350px] relative z-40 h-full max-w-[1500px] mx-auto flex flex-col justify-center items-center text-center text-white p-6">
+                            <h2 class="text-[100px] font-bold">FAQ</h2>
                             <p class="sm:text-lg text-base text-center">Rapat Bulanan Baliyoni</p>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-[40px]">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-[40px] items-center justify-center">
                         <!-- List Questions -->
 
-                        <div>
+                        <div id="questionId" class=" items-center">
                             @foreach ($questions as $question)
                             <div class="p-4 border rounded mb-4 shadow">
                                 <div class="flex flex-wrap">
@@ -72,7 +72,7 @@
                                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                                                 <path fill="currentColor" d="M6 22q-.825 0-1.412-.587T4 20V4q0-.825.588-1.412T6 2h8l6 6v3q-.575.125-1.075.4t-.925.7l-6 5.975V22zm8 0v-3.075l5.525-5.5q.225-.225.5-.325t.55-.1q.3 0 .575.113t.5.337l.925.925q.2.225.313.5t.112.55t-.1.563t-.325.512l-5.5 5.5zm6.575-5.6l.925-.975l-.925-.925l-.95.95zM13 9h5l-5-5l5 5l-5-5z"/>
                                             </svg>
-                                            <span class="hidden sm:inline">Edit Jawaban</span>                                        </button>
+                                        </button>
                                         <form method="POST" action="{{ route('questions.destroy', $question->id) }}">
                                             @csrf
                                             @method('DELETE')
@@ -80,7 +80,6 @@
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                                                     <path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z"/>
                                                 </svg>
-                                                <span class="hidden sm:inline">Hapus Pertanyaan</span>
                                         </form>
                                     </div>
                                 </div>
@@ -158,7 +157,6 @@
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                                                         <path fill="currentColor" d="M6 22q-.825 0-1.412-.587T4 20V4q0-.825.588-1.412T6 2h8l6 6v3q-.575.125-1.075.4t-.925.7l-6 5.975V22zm8 0v-3.075l5.525-5.5q.225-.225.5-.325t.55-.1q.3 0 .575.113t.5.337l.925.925q.2.225.313.5t.112.55t-.1.563t-.325.512l-5.5 5.5zm6.575-5.6l.925-.975l-.925-.925l-.95.95zM13 9h5l-5-5l5 5l-5-5z"/>
                                                     </svg>
-                                                    <span class="hidden sm:inline">Edit Jawaban</span>
                                                 </button>
                                             
                                                 <!-- Delete Form -->
@@ -177,7 +175,6 @@
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                                                             <path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z"/>
                                                         </svg>
-                                                        <span class="hidden sm:inline">Hapus Jawaban</span>
                                                     </button>
                                                 </form>
                                             </div>
@@ -189,71 +186,87 @@
                             @endforeach
                         </div>
 
-                        <!-- Form Add Question -->
-                        <div class="p-6 border rounded-lg shadow max-h-96 overflow-auto">
-                            <form method="POST" action="{{ route('questions.store') }}">
+                         <!-- Floating Action Button -->
+                    <button onclick="openModal()" class="w-[100px] h-[100px] fixed bottom-8 right-8 bg-red-600 text-white p-4 rounded-full shadow-lg hover:bg-red-700 transition-all flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                    </button>
+                         {{-- <!-- Floating Action Button -->
+                    <button id="toggleQuestion" class="w-[100px] h-[100px] fixed bottom-36 right-8 bg-red-600 text-white p-4 rounded-full shadow-lg hover:bg-red-700 transition-all flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24"><g fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="64" stroke-dashoffset="64" d="M12 3c4.97 0 9 4.03 9 9c0 4.97 -4.03 9 -9 9c-4.97 0 -9 -4.03 -9 -9c0 -4.97 4.03 -9 9 -9Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0"/></path><path fill="none" stroke-dasharray="16" stroke-dashoffset="16" d="M9 10c0 -1.66 1.34 -3 3 -3c1.66 0 3 1.34 3 3c0 0.98 -0.47 1.85 -1.2 2.4c-0.73 0.55 -1.3 0.6 -1.8 1.6"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.6s" dur="0.2s" values="16;0"/></path><path fill="none" stroke-dasharray="2" stroke-dashoffset="2" d="M12 17v0.01"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.8s" dur="0.2s" values="2;0"/></path><animate fill="freeze" attributeName="fill-opacity" begin="1.1s" dur="0.15s" values="0;0.3"/></g></svg>
+                    </button> --}}
+
+                    <!-- Modal Backdrop -->
+                    <div id="modal-backdrop" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50"></div>
+
+                    <!-- Modal -->
+                    <div id="question-modal" class="hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg w-full max-w-2xl z-50">
+                        <div class="p-6 border rounded-lg shadow max-h-[90vh] overflow-auto">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-xl font-bold">Tambah Pertanyaan Baru</h2>
+                                <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <form method="POST" action="{{ route('questions.store') }}" onsubmit="closeModal()">
                                 @csrf
-                                <div>
-                                    <label for="question" class="block text-sm font-medium" >Pertanyaan:</label>
-                                    <input type="text" name="question" id="question" class="w-full border rounded p-2" required>
-                                </div>
-                                <div>
-                                    <label for="asked_by" class="block text-sm font-medium">Asked By :</label>
-                                    <select name="asked_by" id="asked_by" class="w-full border rounded p-2" required>
-                                        <option value="Divisi Marketing">Pimpinan</option>
-                                        <option value="Divisi Marketing">SPI Operasional</option>
-                                        <option value="Divisi Marketing">SPI IT</option>
-                                        <option value="Divisi Marketing">Divisi Marketing</option>
-                                        <option value="Divisi Procurement">Divisi Procurement</option>
-                                        <option value="Divisi Support">Divisi Support</option>
-                                        <option value="Divisi Accounting">Divisi Accounting</option>
-                                        <option value="Divisi IT">Divisi IT</option>
-                                        <option value="Divisi HRGA">Divisi HRGA</option>
-                                        <option value="Divisi SPI">Divisi SPI</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label for="asked_to" class="block text-sm font-medium">Asked To:</label>
-                                    <select name="asked_to" id="asked_to" class="w-full border rounded p-2" required>
-                                        <option value="Divisi Marketing">Pimpinan</option>
-                                        <option value="Divisi Marketing">SPI Operasional</option>
-                                        <option value="Divisi Marketing">SPI IT</option>
-                                        <option value="Divisi Marketing">Divisi Marketing</option>
-                                        <option value="Divisi Procurement">Divisi Procurement</option>
-                                        <option value="Divisi Support">Divisi Support</option>
-                                        <option value="Divisi Accounting">Divisi Accounting</option>
-                                        <option value="Divisi IT">Divisi IT</option>
-                                        <option value="Divisi HRGA">Divisi HRGA</option>
-                                        <option value="Divisi SPI">Divisi SPI</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label for="created_at" class="block text-sm font-medium">Tanggal & Waktu:</label>
-                                    <input type="text" name="created_at" id="created_at" class="w-full border rounded p-2" readonly>
-                                </div>
-                                <div class="flex justify-end w-full gap-2">
-                                    <button type="submit" class="mt-4 w-full bg-red-600 text-white py-2 rounded flex items-center justify-center gap-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                            <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-                                                <path stroke-dasharray="64" stroke-dashoffset="64" d="M13 3l6 6v12h-14v-18h8">
-                                                    <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0"/>
-                                                </path>
-                                                <path stroke-dasharray="14" stroke-dashoffset="14" stroke-width="1" d="M12.5 3v5.5h6.5">
-                                                    <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.7s" dur="0.2s" values="14;0"/>
-                                                </path>
-                                                <path stroke-dasharray="8" stroke-dashoffset="8" d="M9 14h6">
-                                                    <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.9s" dur="0.2s" values="8;0"/>
-                                                </path>
-                                                <path stroke-dasharray="8" stroke-dashoffset="8" d="M12 11v6">
-                                                    <animate fill="freeze" attributeName="stroke-dashoffset" begin="1.1s" dur="0.2s" values="8;0"/>
-                                                </path>
-                                            </g>
-                                        </svg>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label for="question" class="block text-sm font-medium">Pertanyaan:</label>
+                                        <input type="text" name="question" id="question" class="w-full border rounded p-2" required>
+                                    </div>
+
+                                    <!-- Dropdown Options (Perbaikan value yang duplikat) -->
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label for="asked_by" class="block text-sm font-medium">Asked By:</label>
+                                            <select name="asked_by" id="asked_by" class="w-full border rounded p-2" required>
+                                                <option value="Pimpinan">Pimpinan</option>
+                                                <option value="SPI Operasional">SPI Operasional</option>
+                                                <option value="SPI IT">SPI IT</option>
+                                                <option value="Divisi Marketing">Divisi Marketing</option>
+                                                <option value="Divisi Procurement">Divisi Procurement</option>
+                                                <option value="Divisi Support">Divisi Support</option>
+                                                <option value="Divisi Accounting">Divisi Accounting</option>
+                                                <option value="Divisi IT">Divisi IT</option>
+                                                <option value="Divisi HRGA">Divisi HRGA</option>
+                                                <option value="Divisi SPI">Divisi SPI</option>
+                                            </select>
+                                        </div>
+
+                                        <div>
+                                            <label for="asked_to" class="block text-sm font-medium">Asked To:</label>
+                                            <select name="asked_to" id="asked_to" class="w-full border rounded p-2" required>
+                                                <option value="Pimpinan">Pimpinan</option>
+                                                <option value="SPI Operasional">SPI Operasional</option>
+                                                <option value="SPI IT">SPI IT</option>
+                                                <option value="Divisi Marketing">Divisi Marketing</option>
+                                                <option value="Divisi Procurement">Divisi Procurement</option>
+                                                <option value="Divisi Support">Divisi Support</option>
+                                                <option value="Divisi Accounting">Divisi Accounting</option>
+                                                <option value="Divisi IT">Divisi IT</option>
+                                                <option value="Divisi HRGA">Divisi HRGA</option>
+                                                <option value="Divisi SPI">Divisi SPI</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label for="created_at" class="block text-sm font-medium">Tanggal & Waktu:</label>
+                                        <input type="text" name="created_at" id="created_at" class="w-full border rounded p-2 bg-gray-100" readonly>
+                                    </div>
+
+                                    <button type="submit" class="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition-all">
                                         Tambah Pertanyaan
                                     </button>
                                 </div>
                             </form>
                         </div>
+                    </div>
 
                     </div>
                 </div>
@@ -261,7 +274,15 @@
         </div>
 
         <script>
-             document.addEventListener("DOMContentLoaded", function() {
+            
+            const toggleQuestion = document.getElementById('toggleQuestion');
+            const questionId = document.getElementById('questionId');
+
+            toggleQuestion.addEventListener('click', () => {
+                questionId.classList.toggle('hidden');
+            });
+
+            document.addEventListener("DOMContentLoaded", function() {
         var currentDate = new Date();
         var formattedDate = currentDate.toLocaleString('id-ID', {
             weekday: 'long', 
@@ -291,6 +312,32 @@
                 section.classList.toggle('hidden');
             }
 
+            function openModal() {
+            // Set tanggal dan waktu otomatis
+            const now = new Date();
+            const options = {
+                weekday: 'long'
+                , year: 'numeric'
+                , month: 'long'
+                , day: 'numeric'
+                , hour: '2-digit'
+                , minute: '2-digit'
+            };
+            document.getElementById('created_at').value = now.toLocaleDateString('id-ID', options);
+
+            // Tampilkan modal
+            document.getElementById('modal-backdrop').classList.remove('hidden');
+            document.getElementById('question-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('modal-backdrop').classList.add('hidden');
+            document.getElementById('question-modal').classList.add('hidden');
+        }
+        document.getElementById('questionId').addEventListener('click',closeModal);
+
+
+            
         </script>
 
 </body>

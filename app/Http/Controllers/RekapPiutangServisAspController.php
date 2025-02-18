@@ -9,9 +9,11 @@ use Mpdf\Mpdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rule;
+use App\Traits\DateValidationTrait;
 
 class RekapPiutangServisAspController extends Controller
 {
+    use DateValidationTrait;
     // Show the view
     public function index(Request $request)
     { 
@@ -61,7 +63,7 @@ class RekapPiutangServisAspController extends Controller
     public function store(Request $request)
     {
         try {
-            $validatedata = $request->validate([
+            $validateData = $request->validate([
                 'bulan' => 'required|date_format:Y-m',
                 'pelaksana' => [
                     'required',
@@ -77,8 +79,8 @@ class RekapPiutangServisAspController extends Controller
             ]);
 
             // Cek kombinasi unik bulan dan perusahaan
-            $exists = RekapPiutangServisASP::where('bulan', $validatedata['bulan'])
-            ->where('pelaksana', $validatedata['pelaksana'])
+            $exists = RekapPiutangServisASP::where('bulan', $validateData['bulan'])
+            ->where('pelaksana', $validateData['pelaksana'])
             ->exists();
 
             if ($exists) {
@@ -86,15 +88,15 @@ class RekapPiutangServisAspController extends Controller
             }
 
             // Cek kombinasi unik bulan dan pelaksana
-            $exists = RekapPiutangServisAsp::where('bulan', $validatedata['bulan'])
-            ->where('pelaksana', $validatedata['pelaksana'])
+            $exists = RekapPiutangServisAsp::where('bulan', $validateData['bulan'])
+            ->where('pelaksana', $validateData['pelaksana'])
             ->exists();
 
             if ($exists) {
                 return redirect()->back()->with('error', 'Data Already Exists.');
             }
     
-            RekapPiutangServisAsp::create($validatedata);
+            RekapPiutangServisAsp::create($validateData);
     
             return redirect()->route('rekappiutangservisasp.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
@@ -151,8 +153,8 @@ class RekapPiutangServisAspController extends Controller
                 ->withInput();
 
             // Cek kombinasi unik bulan dan perusahaan
-            $exists = RekapPiutangServisASP::where('bulan', $validatedata['bulan'])
-            ->where('pelaksana', $validatedata['pelaksana'])
+            $exists = RekapPiutangServisASP::where('bulan', $validateData['bulan'])
+            ->where('pelaksana', $validateData['pelaksana'])
             ->exists();
 
             if ($exists) {
@@ -160,7 +162,7 @@ class RekapPiutangServisAspController extends Controller
             }
 
             // Update data rekappiutang
-            $rpiutangsasp->update($validatedata);
+            $rpiutangsasp->update($validateData);
 
             return redirect()->route('rpiutangsasp.index')->with('success', 'Data Berhasil Diupdate');
         } catch (\Exception $e) {

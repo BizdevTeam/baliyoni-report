@@ -5,9 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\ItBizdevBulanan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use App\Traits\DateValidationTrait;
+
 
 class ItBizdevBulananController extends Controller
 {
+    use DateValidationTrait;
+
     // Menampilkan semua data
     public function index(Request $request)
     {
@@ -28,19 +32,24 @@ class ItBizdevBulananController extends Controller
     public function store(Request $request)
     {
         try {
-            $validatedata = $request->validate([
+            $validateData = $request->validate([
                 'bulan' => 'required|date_format:Y-m',
                 'judul' => 'required|string|max:255'
             ]);
 
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validateData['bulan'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
+
             // Cek kombinasi unik bulan dan perusahaan
-            $exists = ItBizdevBulanan::where('bulan', $validatedata['bulan'])->exists();
+            $exists = ItBizdevBulanan::where('bulan', $validateData['bulan'])->exists();
     
             if ($exists) {
                 return redirect()->back()->with('error', 'Data Already Exists.');
             }
     
-            ItBizdevBulanan::create($validatedata);
+            ItBizdevBulanan::create($validateData);
     
             return redirect()->route('bizdevbulanan.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
@@ -53,19 +62,19 @@ class ItBizdevBulananController extends Controller
     public function update(Request $request, ItBizdevBulanan $bizdevbulanan)
     {
         try {
-            $validatedata = $request->validate([
+            $validateData = $request->validate([
                 'bulan' => 'required|date_format:Y-m',
                 'judul' => 'required|string|max:255'
             ]);
 
-            $exists = ItBizdevBulanan::where('bulan', $validatedata['bulan'])
+            $exists = ItBizdevBulanan::where('bulan', $validateData['bulan'])
                 ->where('id_bizdevbulanan', '!=', $bizdevbulanan->id_bizdevbulanan)->exists();
 
             if ($exists) {
                 return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
             }
     
-            $bizdevbulanan->update($validatedata);
+            $bizdevbulanan->update($validateData);
     
             return redirect()->route('bizdevbulanan.index')->with('success', 'Data Berhasil Diupdate');
         } catch (\Exception $e) {

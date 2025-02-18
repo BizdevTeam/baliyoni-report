@@ -38,7 +38,7 @@ class LaporanPaketAdministrasiController extends Controller
         
         $labels = $laporanpaketadministrasis->map(function($item) {
             $formattedDate = \Carbon\Carbon::parse($item->bulan)->translatedFormat('F - Y');
-            return $item->perusahaan . ' - ' . $formattedDate;
+            return $item->website . ' - ' . $formattedDate;
         })->toArray();
         $data = $laporanpaketadministrasis->pluck('total_paket')->toArray();
         
@@ -223,7 +223,6 @@ class LaporanPaketAdministrasiController extends Controller
             return response()->json(['success' => false, 'message' => 'Gagal mengekspor PDF.'], 500);
         }
     }
-    
 
     public function destroy(LaporanPaketAdministrasi $laporanpaketadministrasi)
     {

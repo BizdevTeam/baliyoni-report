@@ -1,19 +1,20 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\RekapPenjualanPerusahaan;
 use App\Models\Perusahaan;
+use App\Traits\DateValidationTrait;
 use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rule;
 
-
 class RekapPenjualanPerusahaanController extends Controller
 {
+    use DateValidationTrait;
+
     // Show the view
     public function index(Request $request)
     { 
@@ -60,18 +61,23 @@ class RekapPenjualanPerusahaanController extends Controller
                 ],
             ],
         ];
-        
+            
         return view('marketings.rekappenjualanperusahaan', compact('rekappenjualanperusahaans', 'chartData', 'perusahaans'));    }
 
         public function store(Request $request)
         {
             try {
-                $request->validate([
+                $validatedData = $request->validate([
                     'bulan' => 'required|date_format:Y-m',
                     'perusahaan_id' => 'required|exists:perusahaans,id',
                     'total_penjualan' => 'required|integer|min:0',
                 ]);
     
+                $errorMessage = '';
+                if (!$this->isInputAllowed($validatedData['bulan'], $errorMessage)) {
+                    return redirect()->back()->with('error', $errorMessage);
+                }
+
                 // Cek kombinasi unik bulan dan perusahaan_id
                 $exists = RekapPenjualanPerusahaan::where('bulan', $request->bulan)
                     ->where('perusahaan_id', $request->perusahaan_id)
@@ -81,12 +87,7 @@ class RekapPenjualanPerusahaanController extends Controller
                     return redirect()->back()->with('error', 'Data untuk bulan dan perusahaan ini sudah ada');
                 }
     
-                RekapPenjualanPerusahaan::create([
-                    'bulan' => $request->bulan,
-                    'perusahaan_id' => $request->perusahaan_id,
-                    'total_penjualan' => $request->total_penjualan,
-                ]);
-    
+                RekapPenjualanPerusahaan::create($validatedData);
                 return redirect()->route('rekappenjualanperusahaan.index')->with('success', 'Data Berhasil Ditambahkan');
             } catch (\Exception $e) {
                 Log::error('Error Storing Laporan Holding Data: ' . $e->getMessage());
