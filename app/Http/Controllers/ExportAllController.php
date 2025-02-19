@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\View;
 use ZipArchive;
 use Amenadiel\JpGraph\Graph;
 use Amenadiel\JpGraph\Plot;
+use App\Models\LaporanPerInstansi;
 
 class ExportAllController extends Controller
 {
@@ -27,11 +28,12 @@ class ExportAllController extends Controller
 
         // Generate all PDFs
         $files = [
-            'rekap_penjualan.pdf' => $this->exportPenjualan($search),
-            'rekap_perusahaan.pdf' => $this->exportPerusahaan($search),
-            'laporan_holding.pdf' => $this->exportHolding($search),
-            'paket_administrasi.pdf' => $this->exportPaketAdministrasi($search),
-            'status_paket.pdf' => $this->exportStatusPaket($search)
+            // 'rekap_penjualan.pdf' => $this->exportPenjualan($search),
+            // 'rekap_perusahaan.pdf' => $this->exportPerusahaan($search),
+            // 'laporan_holding.pdf' => $this->exportHolding($search),
+            // 'paket_administrasi.pdf' => $this->exportPaketAdministrasi($search),
+            // 'status_paket.pdf' => $this->exportStatusPaket($search),
+            'per_instansi.pdf' => $this->exportPerInstansi($search),
         ];
 
         // If only one file is requested, return it directly
@@ -498,5 +500,114 @@ class ExportAllController extends Controller
         $graph->Stroke($tempPath);
         
         return $tempPath;
+    }
+
+    //Export Per Instansi
+    private function exportPerInstansi(string $search) {
+        $laporanperinstansis = LaporanPerInstansi::query()
+            ->when($search, function ($query, $search) {
+                return $query->where('bulan', 'LIKE', "%$search%");
+            })
+            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
+            ->get();
+
+            $laporanperinstansis->map(function ($item) {
+                $item->nilai_formatted = number_format($item->nilai, 0, ',', '.');
+                return $item;
+            });
+
+        // Generate chart image
+        $chartImagePath = $this->generateChartImage5($laporanperinstansis);
+    
+        // Render view with data
+        $html = View::make('exports.per-instansi', [
+            'laporanperinstansis' => $laporanperinstansis,
+            'chartImagePath' => $chartImagePath
+        ])->render();
+    
+        // Configure mPDF
+        $mpdf = new Mpdf([
+            'margin_left' => 10,
+            'margin_right' => 10,
+            'margin_top' => 35,
+            'margin_bottom' => 15,
+            'mode' => 'utf-8',
+            'format' => 'A4-L',
+        ]);
+    
+        $mpdf->WriteHTML($html);
+        
+        // Clean up temporary chart image
+        if (file_exists($chartImagePath)) {
+            unlink($chartImagePath);
+        }
+        
+        return $mpdf->Output('', 'S');
+    }
+    
+    private function generateChartImage5($laporanperinstansis) {
+        // Create data arrays for the chart
+        $data = $laporanperinstansis->pluck('nilai');
+        $labels = $laporanperinstansis->pluck('instansi')->toArray();
+    
+        // Create the graph
+        $graph = new Graph\Graph(800, 400);
+        $graph->SetScale('textlin');
+        $graph->SetBox(false);
+        
+        // Create the bar plot
+        $bplot = new Plot\BarPlot($data);
+        $bplot->SetFillColor('blue@0.7');
+        
+        // Add the plot to the graph
+        $graph->Add($bplot);
+        
+        // Set the titles
+        $graph->title->Set('Grafik Per Instansi per Bulan');
+        $graph->xaxis->SetTickLabels($labels);
+        $graph->xaxis->SetLabelAngle(45);
+        
+        // Format Y-axis labels as currency
+        $graph->yaxis->SetLabelFormatCallback(function($value) {
+            return 'Rp ' . number_format($value, 0, ',', '.');
+        });
+        // Generate temporary file path
+        $tempPath = storage_path('app/temp/charts/' . uniqid() . '.png');
+        
+        // Ensure directory exists
+        if (!file_exists(dirname($tempPath))) {
+            mkdir(dirname($tempPath), 0777, true);
+        }
+        // Save the graph
+        $graph->Stroke($tempPath);
+        
+        return $tempPath;
+    }
+
+
+    private function template($data1, $data2)  {
+        return  $htmlContent = "
+        <div style='gap: 100px; width: 100%;'>
+            <div style='width: 30%; float: left; padding-right: 20px;'>
+                <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Tabel Data</h2>
+                <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
+                    <thead>
+                        <tr style='background-color: #f2f2f2;'>
+                            <th style='border: 1px solid #000; padding: 1px;'>Bulan</th>
+                            <th style='border: 1px solid #000; padding: 2px;'>Instansi</th>
+                            <th style='border: 1px solid #000; padding: 2px;'>Nilai</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {$data1}
+                    </tbody>
+                </table>
+            </div>
+            <div style='width: 65%; text-align:center; margin-left: 20px;'>
+                <h2 style='font-size: 14px; margin-bottom: 10px;'>Grafik Laporan Per Instansi</h2>
+                <img src='{$data2}' style='width: 100%; height: auto;' alt='Grafik Laporan' />
+            </div>
+        </div>
+        ";
     }
 }

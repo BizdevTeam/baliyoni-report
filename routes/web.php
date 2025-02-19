@@ -251,8 +251,7 @@ Route::middleware(['web'])->group(function () {
     
     Route::get('/rekap-penjualan', [PerusahaanController::class, 'penjualanPerusahaan'])->name('rekap.penjualan');
     Route::get('/laporan-holding', [PerusahaanController::class, 'laporanHolding'])->name('laporan.holding');
-    Route::resource('perusahaan', PerusahaanController::class);
-
+    
     Route::post('/exportall',[ExportAllController::class,'exportAll'])->name('exportall');
 
 });
