@@ -40,7 +40,7 @@
              showSuccess: {{ session('success') ? 'true' : 'false' }},
              showError: {{ session('error') ? 'true' : 'false' }}
          }"
-         x-init="setTimeout(() => showSuccess = false, 3000); setTimeout(() => showError = false, 3000);"
+         x-init="setTimeout(() => showSuccess = false, 5000); setTimeout(() => showError = false, 5000);"
          class="fixed top-5 right-5 z-50 flex flex-col gap-3">
  
          <!-- Success Alert -->

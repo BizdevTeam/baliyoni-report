@@ -94,7 +94,7 @@
 
             <div class="flex items-center justify-end transition-all duration-500 mt-8 mb-4">
                 <!-- Search -->
-                <form method="GET" action="{{ route('laporansakit.index') }}" class="flex items-center gap-2">
+                <form method="GET" action="{{ route('laporancuti.index') }}" class="flex items-center gap-2">
                     <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
                         <input type="date" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}"
                             class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
@@ -404,7 +404,7 @@
                     meta.data.forEach((bar, index) => {
                         var value = dataset.data[index];
                         ctx.fillStyle = 'black'; // Warna teks
-                        ctx.font = '15px sans-serif'; // Ukuran teks
+                        ctx.font = 'bold 15px sans-serif'; // Ukuran teks
                         ctx.textAlign = 'center';
                         ctx.fillText(value.toLocaleString(), bar.x, bar.y - 10); // Menambahkan jarak antara bar dan teks
                     });

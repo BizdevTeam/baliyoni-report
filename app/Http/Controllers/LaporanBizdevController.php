@@ -133,7 +133,7 @@ class LaporanBizdevController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan IT|Halaman {PAGENO}');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan IT - Laporan Bizdev');
     
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "
@@ -164,7 +164,7 @@ class LaporanBizdevController extends Controller
             // Return PDF sebagai respon download
             return response($mpdf->Output('', 'S'), 200)
                 ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'attachment; filename=\"laporan_rekap_penjualan.pdf\"');
+                ->header('Content-Disposition', 'attachment; filename=\"laporan_bizdev.pdf\"');
         } catch (\Exception $e) {
             // Log error jika terjadi masalah
             Log::error('Error exporting PDF: ' . $e->getMessage());

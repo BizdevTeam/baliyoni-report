@@ -152,6 +152,10 @@ class RekapPendapatanServisAspController extends Controller
                 'nilai_pendapatan' => 'required|integer|min:0',
             ]);
 
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
             // Cek kombinasi unik date dan perusahaan
             $exists = RekapPendapatanServisAsp::where('date', $validatedData['date'])
             ->where('pelaksana', $validatedData['pelaksana'])
@@ -160,7 +164,6 @@ class RekapPendapatanServisAspController extends Controller
             if ($exists) {
                 return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
             }
-    
             // Update data
             $rekappendapatanservisasp->update($validatedData);
     
@@ -223,7 +226,7 @@ class RekapPendapatanServisAspController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Support|Halaman {PAGENO}');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Support - Lapran Pendapatan Servis ASP');
     
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "

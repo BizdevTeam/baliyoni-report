@@ -30,24 +30,24 @@ class IjasaGambarController extends Controller
     public function store(Request $request)
     {
         try {
-            $validateData = $request->validate([
+            $validatedData = $request->validate([
                 'date' => 'required|date',
                 'keterangan' => 'required|string|max:255',
                 'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550'
             ]);
 
             $errorMessage = '';
-            if (!$this->isInputAllowed($validateData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
 
             if ($request->hasFile('gambar')) {
                 $filename = time() . $request->file('gambar')->getClientOriginalName();
                 $request->file('gambar')->move(public_path('images/hrga/ijasagambar'), $filename);
-                $validateData['gambar'] = $filename;
+                $validatedData['gambar'] = $filename;
             }
 
-            IjasaGambar::create($validateData);
+            IjasaGambar::create($validatedData);
 
             return redirect()->route('ijasagambar.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
@@ -59,11 +59,16 @@ class IjasaGambarController extends Controller
     public function update(Request $request, IjasaGambar $ijasagambar)
     {
         try {
-            $validateData = $request->validate([
+            $validatedData = $request->validate([
                 'date' => 'required|date',
                 'keterangan' => 'required|string|max:255',
                 'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550'
             ]);
+
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
 
             if ($request->hasFile('gambar')) {
                 $destination = "images/hrga/ijasagambar/" . $ijasagambar->gambar;
@@ -73,10 +78,10 @@ class IjasaGambarController extends Controller
 
                 $filename = time() . $request->file('gambar')->getClientOriginalName();
                 $request->file('gambar')->move(public_path('images/hrga/ijasagambar'), $filename);
-                $validateData['gambar'] = $filename;
+                $validatedData['gambar'] = $filename;
             }
 
-            $ijasagambar->update($validateData);
+            $ijasagambar->update($validatedData);
 
             return redirect()->route('ijasagambar.index')->with('success', 'Data Berhasil Diupdate');
         } catch (\Exception $e) {
@@ -106,12 +111,12 @@ class IjasaGambarController extends Controller
     {
         try {
             // Validasi input date
-            $validateData = $request->validate([
+            $validatedData = $request->validate([
                 'date' => 'required|date',
             ]);
     
             // Ambil semua data laporan berdasarkan date yang dipilih
-            $laporans = IjasaGambar::where('date', $validateData['date'])->get();
+            $laporans = IjasaGambar::where('date', $validatedData['date'])->get();
     
             if ($laporans->isEmpty()) {
                 return redirect()->back()->with('error', 'Data tidak ditemukan.');
@@ -136,7 +141,7 @@ class IjasaGambarController extends Controller
             ", 'O');
     
             // Tambahkan footer
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan IT - Bizdev Gambar|Halaman {PAGENO}');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA - Laporan iJASA Gambar');
     
             // Loop melalui setiap laporan dan tambahkan ke PDF
             foreach ($laporans as $index => $laporan) {
@@ -153,8 +158,8 @@ class IjasaGambarController extends Controller
                 $htmlContent = "
             <div style='text-align: center; top: 0; margin: 0; padding: 0;'>
                 {$imageHTML}
-                    <h3 style='margin: 0; padding: 0;'>Laporan Tanggal {$laporan->date_formatted}</h3>
-                    <p style='margin: 0; padding: 0;'><strong>Keterangan:</strong> {$laporan->keterangan}</p>
+                    <h3 style='margin: 0; padding: 0;'>Keterangan : {$laporan->keterangan}</h3>
+                    <h3 style='margin: 0; padding: 0;'>Laporan : {$laporan->date_formatted}</h3>
             </div>
 
                 ";
@@ -164,7 +169,7 @@ class IjasaGambarController extends Controller
             }
     
             // Output PDF
-            return response($mpdf->Output("laporan_ijasa_gambar_{$validateData['date']}.pdf", 'D'))
+            return response($mpdf->Output("laporan_ijasa_gambar_{$validatedData['date']}.pdf", 'D'))
                 ->header('Content-Type', 'application/pdf')
                 ->header('Content-Disposition', 'attachment; filename="laporan_ijasa_gambar.pdf"');
     

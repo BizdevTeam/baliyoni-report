@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Laporan Tax Planing</title>
+    <title>Laporan Tax Planning</title>
     <script src="https://cdn.tailwindcss.com"></script>
     @vite('resources/css/app.css')
     <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
@@ -33,16 +33,69 @@
 
         <!-- Navbar -->
         <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
+  <!-- Wrapper Alert -->
+  @if (session('success') || session('error'))
+  <div x-data="{ 
+          showSuccess: {{ session('success') ? 'true' : 'false' }},
+          showError: {{ session('error') ? 'true' : 'false' }}
+      }"
+      x-init="setTimeout(() => showSuccess = false, 5000); setTimeout(() => showError = false, 5000);"
+      class="fixed top-5 right-5 z-50 flex flex-col gap-3">
+
+      <!-- Success Alert -->
+      @if (session('success'))
+      <div x-show="showSuccess" x-transition.opacity.scale.90
+          class="bg-green-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
+          
+          <!-- Icon -->
+          <span class="text-2xl">✅</span>
+
+          <!-- Message -->
+          <div>
+              <h3 class="font-bold">Success!</h3>
+              <p class="text-sm">{{ session('success') }}</p>
+          </div>
+
+          <!-- Close Button -->
+          <button @click="showSuccess = false" class="ml-auto text-white text-lg font-bold">
+              &times;
+          </button>
+      </div>
+      @endif
+
+      <!-- Error Alert -->
+      @if (session('error'))
+      <div x-show="showError" x-transition.opacity.scale.90
+          class="bg-red-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
+          
+          <!-- Icon -->
+          <span class="text-2xl">⚠️</span>
+
+          <!-- Message -->
+          <div>
+              <h3 class="font-bold">Error!</h3>
+              <p class="text-sm">{{ session('error') }}</p>
+          </div>
+
+          <!-- Close Button -->
+          <button @click="showError = false" class="ml-auto text-white text-lg font-bold">
+              &times;
+          </button>
+      </div>
+      @endif
+
+  </div>
+  @endif
 
         <!-- Main Content -->
         <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
-            <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan Laba Rugi</h1>
+            <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan Tax Planning</h1>
 
             <div class="flex items-center justify-end transition-all duration-500 mt-8 mb-4">
                 <!-- Search -->
                 <form method="GET" action="{{ route('taxplaning.index') }}" class="flex items-center gap-2">
                     <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
-                        <input type="month" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
+                        <input type="date" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
                     </div>
 
                     <button type="submit" class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm mr-2" aria-label="Search">
@@ -93,24 +146,12 @@
             <div id="formContainer" class="visible">
                 <div class="mx-auto bg-white p-6 rounded-lg shadow">
 
-                    <!-- Success Message -->
-                    @if (session('success'))
-                    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">
-                        {{ session('success') }}
-                    </div>
-                    @endif
-                    @if (session('error'))
-                    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
-                        {{ session('error') }}
-                    </div>
-                    @endif
-
                     <!-- Event Table -->
                     <div class="overflow-x-auto bg-white shadow-md rounded-lg">
                         <table class="table-auto w-full border-collapse border border-gray-300">
                             <thead class="bg-gray-200">
                                 <tr>
-                                    <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
                                     <th class="border border-gray-300 px-4 py-2 text-center">Thumbnail</th>
                                     <th class="border border-gray-300 px-4 py-2 text-center">File Excel</th>
                                     <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
@@ -120,7 +161,7 @@
                             <tbody>
                                 @foreach ($laporantaxplanings as $laporantaxplaning)
                                 <tr class="even:bg-gray-50 odd:bg-white hover:bg-gray-100 transition duration-300">
-                                    <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporantaxplaning->bulan_formatted }}</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporantaxplaning->date_formatted }}</td>
                                     <td class="px-6 py-4 text-center text-pretty border-b overflow-hidden " data-aos="fade-right"
                                     data-aos-duration="400"
                                     data-aos-easing="ease-out-sine">
@@ -167,8 +208,8 @@
                                             @method('PUT')
                                             <div class="space-y-4">
                                                 <div>
-                                                    <label for="bulan" class="block text-sm font-medium">Bulan</label>
-                                                    <input type="month" name="bulan" class="w-full p-2 border rounded" value="{{ $laporantaxplaning->bulan }}" required>
+                                                    <label for="date" class="block text-sm font-medium">Tanggal</label>
+                                                    <input type="date" name="date" class="w-full p-2 border rounded" value="{{ $laporantaxplaning->date }}" required>
                                                 </div>
                                                 <div>
                                                     <label for="gambar" class="block text-sm font-medium">Thumbnail</label>
@@ -287,8 +328,8 @@
 
                             <form action="{{ route('taxplaning.exportPDF') }}" method="POST">
                                 @csrf
-                                <label for="bulan" class="block text-gray-700 font-medium mb-2 text-center">Pilih Bulan:</label>
-                                <input type="month" id="bulan" name="bulan" required class="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-red-500">
+                                <label for="date" class="block text-gray-700 font-medium mb-2 text-center">Pilih Tanggal:</label>
+                                <input type="date" id="date" name="date" required class="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-red-500">
 
                                 <button type="submit" class="w-full mt-3 bg-red-600 text-white py-2 rounded hover:bg-red-700 transition">
                                     Export PDF
@@ -311,8 +352,8 @@
                         @csrf
                         <div class="space-y-4">
                             <div>
-                                <label for="bulan" class="block text-sm font-medium">Bulan</label>
-                                <input type="month" name="bulan" class="w-full p-2 border rounded" required>
+                                <label for="date" class="block text-sm font-medium">Tanggal</label>
+                                <input type="date" name="date" class="w-full p-2 border rounded" required>
                             </div>
                             <div>
                                 <label for="gambar" class="block text-sm font-medium">Gambar</label>
@@ -343,6 +384,7 @@
             </div>
 
 </body>
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <script>
        //toogle form
        const toggleFormButton = document.getElementById('toggleFormButton');
@@ -350,13 +392,6 @@
 
         toggleFormButton.addEventListener('click', () => {
             formContainer.classList.toggle('hidden');
-        });
-
-    const toggleChartButton = document.getElementById('toggleChartButton');
-        const formChart = document.getElementById('formChart');
-
-        toggleChartButton.addEventListener('click', () => {
-            formChart.classList.toggle('hidden');
         });
 
     // Mengatur tombol untuk membuka modal add

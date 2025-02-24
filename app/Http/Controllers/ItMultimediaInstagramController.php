@@ -84,6 +84,11 @@ class ItMultimediaInstagramController extends Controller
                 'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550'
             ]);
 
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
+
             if ($request->hasFile('gambar')) {
                 $destination = "images/it/multimediainstagram/" . $multimediainstagram->gambar;
                 if (File::exists($destination)) {
@@ -155,7 +160,7 @@ class ItMultimediaInstagramController extends Controller
             ", 'O');
     
             // Tambahkan footer
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan IT - Multimedia Tiktok|Halaman {PAGENO}');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan IT - Laporan Multimedia Instagram');
     
             // Loop melalui setiap laporan dan tambahkan ke PDF
             foreach ($laporans as $index => $laporan) {
@@ -173,7 +178,7 @@ class ItMultimediaInstagramController extends Controller
             <div style='text-align: center; top: 0; margin: 0; padding: 0;'>
                 {$imageHTML}
                     <h3 style='margin: 0; padding: 0;'>Keterangan : {$laporan->keterangan}</h3>
-                    <h3 style='margin: 0; padding: 0;'>Laporan Tanggal {$laporan->bulan_formatted}</h3>
+                    <h3 style='margin: 0; padding: 0;'>Laporan : {$laporan->date_formatted}</h3>
             </div>
 
                 ";

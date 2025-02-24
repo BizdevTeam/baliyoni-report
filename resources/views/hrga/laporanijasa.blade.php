@@ -96,7 +96,7 @@
             <!-- Search -->
             <form method="GET" action="{{ route('laporanijasa.index') }}" class="flex items-center gap-2">
                 <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
-                    <input type="month" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}"
+                    <input type="date" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}"
                         class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
                 </div>
 
@@ -138,13 +138,13 @@
                 <tbody>
                     @foreach ($laporanijasas as $laporanijasa)
                         <tr class="hover:bg-gray-100">
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanijasa->tanggal_formatted }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ \Carbon\Carbon::parse($laporanijasa->jam)->format('h:i A') }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanijasa->date_formatted }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ \Carbon\Carbon::parse($laporanijasa->jam)->format('H:i') }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanijasa->permasalahan }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanijasa->impact }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanijasa->troubleshooting }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanijasa->resolve_formatted }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ \Carbon\Carbon::parse($laporanijasa->resolve_jam)->format('h:i A') }}</td>                       
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanijasa->resolve_tanggal_formatted }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ \Carbon\Carbon::parse($laporanijasa->resolve_jam)->format('H:i') }}</td>                       
                             <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
                                 <!-- Edit Button -->
                                 <button class="bg-red-600 text-white px-3 py-2 rounded" data-modal-target="#editEventModal{{ $laporanijasa->id_ijasa }}">
@@ -153,7 +153,7 @@
                                 </button>
                                 <!-- Delete Form -->
                                 <form method="POST" action="{{ route('laporanijasa.destroy', $laporanijasa->id_ijasa) }}">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @csrf
+                                    @csrf
                                     @method('DELETE')
                                     <button class="bg-red-600 text-white px-3 py-2 rounded" onclick="return confirm('Are you sure to delete?')">
                                         <i class="fa fa-trash"></i>
@@ -171,12 +171,12 @@
                                     @method('PUT')
                                     <div class="space-y-4">
                                         <div>
-                                            <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
-                                            <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $laporanijasa->tanggal }}" required>
+                                            <label for="date" class="block text-sm font-medium">Tanggal</label>
+                                            <input type="date" name="date" class="w-full p-2 border rounded" value="{{ $laporanijasa->date }}" required>
                                         </div>
                                         <div>
                                             <label for="jam" class="block text-sm font-medium">Jam</label>
-                                            <input type="time" name="jam" class="w-full p-2 border rounded" value="{{ $laporanijasa->jam }}" required>
+                                            <input type="time" name="jam" class="w-full p-2 border rounded" value="{{ \Carbon\Carbon::parse($laporanijasa->jam)->format('H:i') }}" required>
                                         </div>
                                         <div>
                                             <label for="permasalahan" class="block text-sm font-medium">Permasalahan</label>
@@ -196,7 +196,7 @@
                                         </div>
                                         <div>
                                             <label for="resolve_jam" class="block text-sm font-medium">Resolve Jam</label>
-                                            <input type="time" name="resolve_jam" class="w-full p-2 border rounded" value="{{ $laporanijasa->resolve_jam }}" required>
+                                            <input type="time" name="resolve_jam" class="w-full p-2 border rounded" value="{{ \Carbon\Carbon::parse($laporanijasa->resolve_jam)->format('H:i') }}" required>
                                         </div>
                                     </div>
                                     <div class="mt-4 flex justify-end gap-2">
@@ -296,8 +296,8 @@
             @csrf
             <div class="space-y-4">
                 <div>
-                    <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
-                    <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
+                    <label for="date" class="block text-sm font-medium">Tanggal</label>
+                    <input type="date" name="date" class="w-full p-2 border rounded" required>
                 </div>
                 <div>
                     <label for="jam" class="block text-sm font-medium">Jam</label>
@@ -317,7 +317,7 @@
                 </div>
                 <div>
                     <label for="resolve_tanggal" class="block text-sm font-medium">Resolve Tanggal</label>
-                    <input type="date" name="resolve_tanggal" class="w-full p-2 border rounded" value="{{ old('resolve_jam') }}" required>
+                    <input type="date" name="resolve_tanggal" class="w-full p-2 border rounded" value="{{ old('resolve_tanggal') }}" required>
                 </div>
                 <div>
                     <label for="resolve_jam" class="block text-sm font-medium">Resolve Jam</label>
@@ -378,7 +378,7 @@
     const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
         const cells = row.querySelectorAll('td');
         return {
-                tanggal: cells[0]?.innerText.trim() || '',
+                date: cells[0]?.innerText.trim() || '',
                 jam: cells[1]?.innerText.trim() || '',
                 permasalahan: cells[2]?.innerText.trim() || '',
                 impact: cells[3]?.innerText.trim() || '',
@@ -389,10 +389,10 @@
     });
 
     const tableContent = items
-        .filter(item => item.tanggal && item.jam)
+        .filter(item => item.date && item.jam)
         .map(item => `
             <tr>
-                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.tanggal}</td>
+                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.date}</td>
                     <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.jam}</td>
                     <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.permasalahan}</td>
                     <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.impact}</td>

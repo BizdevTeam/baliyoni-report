@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\LaporanSakit;
+use App\Traits\DateValidationTrait;
 use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
 use Illuminate\Support\Facades\DB;
@@ -12,6 +13,7 @@ use Illuminate\Validation\Rule;
 
 class LaporanSakitController extends Controller
 {
+    use DateValidationTrait;
     // Show the view
     public function index(Request $request)
     { 
@@ -60,27 +62,32 @@ class LaporanSakitController extends Controller
     public function store(Request $request)
     {
         try {
-            $validatedata = $request->validate([
+            $validatedData = $request->validate([
                 'date' => 'required|date',
                 'nama' => 'required|string',
                 'total_sakit' => 'required|integer|min:0',
             ]);
 
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
+            
             // Cek kombinasi unik date dan nama
-            $exists = LaporanSakit::where('date', $validatedata['date'])
-            ->where('nama', $validatedata['nama'])
+            $exists = LaporanSakit::where('date', $validatedData['date'])
+            ->where('nama', $validatedData['nama'])
             ->exists();
 
             if ($exists) {
                 return redirect()->back()->with('error', 'Data Already Exists.');
             }
     
-            LaporanSakit::create($validatedata);
+            LaporanSakit::create($validatedData);
     
             return redirect()->route('laporansakit.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
             // Logging untuk debug
-            Log::error('Error Storing Rekap Penjualan Data:', [
+            Log::error('Error Storing Data:', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
                 'input' => $request->all(),
@@ -88,20 +95,20 @@ class LaporanSakitController extends Controller
             return redirect()->route('laporansakit.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
         try {
-            $validatedata = $request->validate([
+            $validatedData = $request->validate([
                 'date' => 'required|date',
                 'total_sakit' => 'required|integer',
                 'nama' => 'required|string'
             ]);
     
             // Cek kombinasi unik date dan perusahaan
-            $exists = LaporanSakit::where('nama', $validatedata['nama'])->exists();
+            $exists = LaporanSakit::where('nama', $validatedData['nama'])->exists();
                 
             if ($exists) {
                 return redirect()->back()->with('error', 'Data Already Exists.');
             }
     
-            LaporanSakit::create($validatedata);
+            LaporanSakit::create($validatedData);
     
             return redirect()->route('laporansakit.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
@@ -114,14 +121,19 @@ class LaporanSakitController extends Controller
     {
         try {
             // Validasi input
-            $validatedata = $request->validate([
+            $validatedData = $request->validate([
                 'date' => 'required|date',
                 'nama' => 'required|string',
                 'total_sakit' => 'required|integer|min:0',
             ]);
+            
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
 
             // Cek kombinasi unik date dan nama
-            $exists = LaporanSakit::where('nama', $validatedata['nama'])
+            $exists = LaporanSakit::where('nama', $validatedData['nama'])
             ->where('id_sakit', '!=', $laporansakit->id_sakit)->exists();
 
             if ($exists) {
@@ -129,7 +141,7 @@ class LaporanSakitController extends Controller
             }
     
             // Update data
-            $laporansakit->update($validatedata);
+            $laporansakit->update($validatedData);
     
             // Redirect dengan pesan sukses
             return redirect()->route('laporansakit.index')->with('success', 'Data berhasil diperbarui.');
@@ -180,7 +192,7 @@ class LaporanSakitController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA|Halaman {PAGENO}');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA - Laporan Sakit');
             
             $htmlContent = "
             <div style='gap: 100px; width: 100%;'>
@@ -189,7 +201,7 @@ class LaporanSakitController extends Controller
                     <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                         <thead>
                             <tr style='background-color: #f2f2f2;'>
-                                <th style='border: 1px solid #000; padding: 1px;'>Tahun</th>
+                                <th style='border: 1px solid #000; padding: 1px;'>Tanggal</th>
                                 <th style='border: 1px solid #000; padding: 2px;'>Nama Karyawan</th>
                                 <th style='border: 1px solid #000; padding: 2px;'>Total Sakit</th>
                             </tr>
@@ -223,7 +235,7 @@ class LaporanSakitController extends Controller
             $laporansakit->delete();
             return redirect()->route('laporansakit.index')->with('success', 'Data Berhasil Dihapus');
         } catch (\Exception $e) {
-            Log::error('Error Deleting Rekap Penjualan Data: ' . $e->getMessage());
+            Log::error('Error Deleting Data: ' . $e->getMessage());
             return redirect()->route('laporansakit.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
     }

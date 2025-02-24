@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="{{ asset('templates/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    <script src="https://cdn.ckeditor.com/ckeditor5/38.1.0/classic/ckeditor.js"></script>
     @vite('resources/css/tailwind.css')
     @vite('resources/css/custom.css')
     @vite('resources/js/app.js')
@@ -34,6 +35,60 @@
         <!-- Navbar -->
         <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
 
+            <!-- Wrapper Alert -->
+            @if (session('success') || session('error'))
+            <div x-data="{ 
+                    showSuccess: {{ session('success') ? 'true' : 'false' }},
+                    showError: {{ session('error') ? 'true' : 'false' }}
+                }"
+                x-init="setTimeout(() => showSuccess = false, 5000); setTimeout(() => showError = false, 5000);"
+                class="fixed top-5 right-5 z-50 flex flex-col gap-3">
+        
+                <!-- Success Alert -->
+                @if (session('success'))
+                <div x-show="showSuccess" x-transition.opacity.scale.90
+                    class="bg-green-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
+                    
+                    <!-- Icon -->
+                    <span class="text-2xl">✅</span>
+        
+                    <!-- Message -->
+                    <div>
+                        <h3 class="font-bold">Success!</h3>
+                        <p class="text-sm">{{ session('success') }}</p>
+                    </div>
+        
+                    <!-- Close Button -->
+                    <button @click="showSuccess = false" class="ml-auto text-white text-lg font-bold">
+                        &times;
+                    </button>
+                </div>
+                @endif
+        
+                <!-- Error Alert -->
+                @if (session('error'))
+                <div x-show="showError" x-transition.opacity.scale.90
+                    class="bg-red-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
+                    
+                    <!-- Icon -->
+                    <span class="text-2xl">⚠️</span>
+        
+                    <!-- Message -->
+                    <div>
+                        <h3 class="font-bold">Error!</h3>
+                        <p class="text-sm">{{ session('error') }}</p>
+                    </div>
+        
+                    <!-- Close Button -->
+                    <button @click="showError = false" class="ml-auto text-white text-lg font-bold">
+                        &times;
+                    </button>
+                </div>
+                @endif
+        
+            </div>
+            @endif
+
         <!-- Main Content -->
        <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
         <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan SPI</h1>
@@ -42,7 +97,7 @@
             <!-- Search -->
             <form method="GET" action="{{ route('laporanspi.index') }}" class="flex items-center gap-2">
                 <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
-                    <input type="month" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}"
+                    <input type="date" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}"
                         class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
                 </div>
 
@@ -65,218 +120,237 @@
 
         <div id="formContainer" class="visible">
             <div class="mx-auto bg-white p-6 rounded-lg shadow">
-
-                <!-- Success Message -->
-                @if (session('success'))
-                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">
-                    {{ session('success') }}
-                </div>
-                @endif
-                @if (session('error'))
-                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
-                    {{ session('error') }}
-                </div>
-                @endif
-
-
-        <!-- Event Table -->
-        <div class="overflow-x-auto bg-white shadow-md">
-            <table class="table-auto w-full border-collapse border border-gray-300" id="data-table">
-                <thead class="bg-gray-200">
-                    <tr>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Aspek</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Masalah</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Solusi</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Implementasi</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($laporanspis as $laporanspi)
-                        <tr class="hover:bg-gray-100">
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanspi->bulan_formatted }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanspi->aspek }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanspi->masalah }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanspi->solusi }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanspi->implementasi }}</td>
-                            <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
-                                <!-- Edit Button -->
-                                <button class="bg-transparent text-red-600 px-3 py-2 rounded" data-modal-target="#editEventModal{{ $laporanspi->id_spi }}">
-                                    <i class="fa fa-pen"></i>
+<!-- Event Table -->
+<div class="overflow-x-auto bg-white shadow-md">
+    <table class="table-auto w-full border-collapse border border-gray-300" id="data-table">
+        <thead class="bg-gray-200">
+            <tr>
+                <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
+                <th class="border border-gray-300 px-4 py-2 text-center">Aspek</th>
+                <th class="border border-gray-300 px-4 py-2 text-center">Masalah</th>
+                <th class="border border-gray-300 px-4 py-2 text-center">Solusi</th>
+                <th class="border border-gray-300 px-4 py-2 text-center">Implementasi</th>
+                <th class="border border-gray-300 px-4 py-2 text-center">Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($laporanspis as $laporanspi)
+                <tr class="hover:bg-gray-100">
+                    <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanspi->date_formatted }}</td>
+                    <td class="border border-gray-300 px-4 py-2 content-html align-top text-justify">{!! $laporanspi->aspek !!}</td>
+                    <td class="border border-gray-300 px-4 py-2 content-html align-top text-justify">{!! $laporanspi->masalah !!}</td>
+                    <td class="border border-gray-300 px-4 py-2 content-html align-top text-justify">{!! $laporanspi->solusi !!}</td>
+                    <td class="border border-gray-300 px-4 py-2 content-html align-top text-justify">{!! $laporanspi->implementasi !!}</td>
+                    <td class="border border-gray-300 py-4 text-center">
+                        <div class="flex justify-center items-center gap-3">
+                            <!-- Edit Button -->
+                            <button class="text-red-600 hover:text-red-800 transition" 
+                                data-modal-target="#editEventModal{{ $laporanspi->id_spi }}">
+                                <i class="fa fa-pen text-lg"></i>
+                            </button>
+                            <!-- Delete Form -->
+                            <form method="POST" action="{{ route('laporanspi.destroy', $laporanspi->id_spi) }}">
+                                @csrf
+                                @method('DELETE')
+                                <button class="text-red-600 hover:text-red-800 transition" 
+                                    onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                    <i class="fa fa-trash text-lg"></i>
                                 </button>
-                                <!-- Delete Form -->
-                                <form method="POST" action="{{ route('laporanspi.destroy', $laporanspi->id_spi) }}">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="bg-transparent text-red-600 px-3 py-2 rounded" onclick="return confirm('Are you sure to delete?')">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                        
-                        <!-- Modal for Edit Event -->
-                        <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="editEventModal{{ $laporanspi->id_spi }}">
-                            <div class="bg-white w-1/2 p-6 rounded shadow-lg">
-                                <h3 class="text-xl font-semibold mb-4">Edit Data</h3>
-                                <form method="POST" action="{{ route('laporanspi.update', $laporanspi->id_spi) }}" enctype="multipart/form-data">
-                                    @csrf
-                                    @method('PUT')
-                                    <div class="space-y-4">
-                                        <div>
-                                            <label for="bulan" class="block text-sm font-medium">Bulan</label>
-                                            <input type="month" name="bulan" class="w-full p-2 border rounded" value="{{ $laporanspi->bulan }}" required>
-                                        </div>
-                                        <div>
-                                            <label for="aspek" class="block text-sm font-medium">Aspek</label>
-                                            <textarea name="aspek" class="w-full p-2 border rounded" rows="1"
-                                                required>{{ $laporanspi->aspek }}</textarea>
-                                        </div>
-                                        <div>
-                                            <label for="masalah" class="block text-sm font-medium">Masalah</label>
-                                            <textarea name="masalah" class="w-full p-2 border rounded" rows="1"
-                                                required>{{ $laporanspi->masalah }}</textarea>
-                                        </div>
-                                        <div>
-                                            <label for="solusi" class="block text-sm font-medium">Solusi</label>
-                                            <textarea name="solusi" class="w-full p-2 border rounded" rows="1"
-                                                required>{{ $laporanspi->solusi }}</textarea>
-                                        </div>
-                                        <div>
-                                            <label for="implementasi"
-                                                class="block text-sm font-medium">Implementasi</label>
-                                            <textarea name="implementasi" class="w-full p-2 border rounded" rows="1"
-                                                required>{{ $laporanspi->implementasi }}</textarea>
-                                        </div>
-                                    </div>
-                                    <div class="mt-4 flex justify-end gap-2">
-                                        <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
-                                        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Update</button>
-                                    </div>
-                                </form>
-                            </div>
+                            </form>
                         </div>
-                    @endforeach
-                </tbody>
-            </table>
-            
-       <!-- Pagination -->
-       <div class="flex justify-center items-center mt-2 mb-4 p-4 bg-gray-50 rounded-lg">
-        <!-- Dropdown untuk memilih jumlah data per halaman -->
-        <div class="flex items-center">
-            <label for="perPage" class="mr-2 text-sm text-gray-600">Tampilkan</label>
-            <select 
-                id="perPage" 
-                class="p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                onchange="changePerPage(this.value)">
-                <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
-                <option value="12" {{ request('per_page') == 12 || !request('per_page') ? 'selected' : '' }}>12</option>
-                <option value="24" {{ request('per_page') == 24 ? 'selected' : '' }}>24</option>
-            </select>
-            <span class="ml-2 text-sm text-gray-600">data per halaman</span>
+                    </td>                            
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
+
+    @foreach ($laporanspis as $laporanspi)
+    <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="editEventModal{{ $laporanspi->id_spi }}">
+        <div class="bg-white w-2/3 p-6 rounded shadow-lg max-h-[80vh] overflow-y-auto">
+            <h3 class="text-xl font-semibold mb-4">Edit Data</h3>
+            <form method="POST" action="{{ route('laporanspi.update', $laporanspi->id_spi) }}" enctype="multipart/form-data" id="editForm{{ $laporanspi->id_spi }}">
+                @csrf
+                @method('PUT')
+                <div class="space-y-4">
+                    <div>
+                        <label for="date" class="block text-sm font-medium">Tanggal</label>
+                        <input type="hidden" name="date" id="edit-{{ $laporanspi->id_spi }}-date-input" value="{{ $laporanspi->date }}">
+                        <div id="edit-{{ $laporanspi->id_spi }}-date"></div>                            
+                    </div>
+                    <div>
+                        <label for="aspek" class="block text-sm font-medium">Aspek</label>
+                        <input type="hidden" name="aspek" id="edit-{{ $laporanspi->id_spi }}-aspek-input" value="{{ $laporanspi->aspek }}">
+                        <div id="edit-{{ $laporanspi->id_spi }}-aspek"></div>
+                    </div>
+                    <div>
+                        <label for="masalah" class="block text-sm font-medium">Masalah</label>
+                        <input type="hidden" name="masalah" id="edit-{{ $laporanspi->id_spi }}-masalah-input" value="{{ $laporanspi->masalah }}">
+                        <div id="edit-{{ $laporanspi->id_spi }}-masalah"></div>
+                    </div>
+                    <!-- Repeat for other fields -->
+                    <div>
+                        <label for="solusi" class="block text-sm font-medium mb-1">Solusi <span class="text-red-500">*</span></label>
+                        <input type="hidden" name="solusi" id="edit-{{ $laporanspi->id_spi }}-solusi-input" value="{{ $laporanspi->solusi }}" required>
+                        <div id="edit-{{ $laporanspi->id_spi }}-solusi"></div>
+                        <div class="text-red-500 text-sm mt-1 hidden" id="edit-solusi-error-{{ $laporanspi->id_spi }}">This field is required</div>
+                    </div>
+                    <!-- Repeat for other fields -->
+                    <div>
+                        <label for="implementasi" class="block text-sm font-medium mb-1">Implementasi <span class="text-red-500">*</span></label>
+                        <input type="hidden" name="implementasi" id="edit-{{ $laporanspi->id_spi }}-implementasi-input" value="{{ $laporanspi->implementasi }}" required>
+                        <div id="edit-{{ $laporanspi->id_spi }}-implementasi"></div>
+                        <div class="text-red-500 text-sm mt-1 hidden" id="edit-implementasi-error-{{ $laporanspi->id_spi }}">This field is required</div>
+                    </div>
+                </div>
+                <div class="mt-4 flex justify-end gap-2">
+                    <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
+                    <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Update</button>
+                </div>
+            </form>
         </div>
     </div>
+    @endforeach
 
-    <div class="m-4">
-        {{ $laporanspis->links('pagination::tailwind') }}
+ <!-- Pagination -->
+ <div class="flex justify-center items-center mt-2 mb-4 p-4 bg-gray-50 rounded-lg">
+    <!-- Dropdown untuk memilih jumlah data per halaman -->
+    <div class="flex items-center">
+        <label for="perPage" class="mr-2 text-sm text-gray-600">Tampilkan</label>
+        <select 
+            id="perPage" 
+            class="p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            onchange="changePerPage(this.value)">
+            <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
+            <option value="12" {{ request('per_page') == 12 || !request('per_page') ? 'selected' : '' }}>12</option>
+            <option value="24" {{ request('per_page') == 24 ? 'selected' : '' }}>24</option>
+        </select>
+        <span class="ml-2 text-sm text-gray-600">data per halaman</span>
     </div>
-    </div>
-    <div class="mt-6 flex justify-end">
-        <button onclick="exportToPDF()" class="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition duration-300 ease-in-out">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                <mask id="lineMdCloudAltPrintFilledLoop0">
-                    <g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-                        <path stroke-dasharray="64" stroke-dashoffset="64" d="M7 19h11c2.21 0 4 -1.79 4 -4c0 -2.21 -1.79 -4 -4 -4h-1v-1c0 -2.76 -2.24 -5 -5 -5c-2.42 0 -4.44 1.72 -4.9 4h-0.1c-2.76 0 -5 2.24 -5 5c0 2.76 2.24 5 5 5Z">
-                            <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0" />
-                            <set fill="freeze" attributeName="opacity" begin="0.7s" to="0" />
-                        </path>
-                        <g fill="#fff" stroke="none" opacity="0">
-                            <circle cx="12" cy="10" r="6">
-                                <animate attributeName="cx" begin="0.7s" dur="30s" repeatCount="indefinite" values="12;11;12;13;12" />
-                            </circle>
-                            <rect width="9" height="8" x="8" y="12" />
-                            <rect width="15" height="12" x="1" y="8" rx="6">
-                                <animate attributeName="x" begin="0.7s" dur="21s" repeatCount="indefinite" values="1;0;1;2;1" />
-                            </rect>
-                            <rect width="13" height="10" x="10" y="10" rx="5">
-                                <animate attributeName="x" begin="0.7s" dur="17s" repeatCount="indefinite" values="10;9;10;11;10" />
-                            </rect>
-                            <set fill="freeze" attributeName="opacity" begin="0.7s" to="1" />
-                        </g>
-                        <g fill="#000" fill-opacity="0" stroke="none">
-                            <circle cx="12" cy="10" r="4">
-                                <animate attributeName="cx" begin="0.7s" dur="30s" repeatCount="indefinite" values="12;11;12;13;12" />
-                            </circle>
-                            <rect width="9" height="6" x="8" y="12" />
-                            <rect width="11" height="8" x="3" y="10" rx="4">
-                                <animate attributeName="x" begin="0.7s" dur="21s" repeatCount="indefinite" values="3;2;3;4;3" />
-                            </rect>
-                            <rect width="9" height="6" x="12" y="12" rx="3">
-                                <animate attributeName="x" begin="0.7s" dur="17s" repeatCount="indefinite" values="12;11;12;13;12" />
-                            </rect>
-                            <set fill="freeze" attributeName="fill-opacity" begin="0.7s" to="1" />
-                            <animate fill="freeze" attributeName="opacity" begin="0.7s" dur="0.5s" values="1;0" />
-                        </g>
-                        <g stroke="none">
-                            <path fill="#fff" d="M6 11h12v0h-12z">
-                                <animate fill="freeze" attributeName="d" begin="1.3s" dur="0.22s" values="M6 11h12v0h-12z;M6 11h12v11h-12z" />
-                            </path>
-                            <path fill="#000" d="M8 13h8v0h-8z">
-                                <animate fill="freeze" attributeName="d" begin="1.34s" dur="0.14s" values="M8 13h8v0h-8z;M8 13h8v7h-8z" />
-                            </path>
-                            <path fill="#fff" fill-opacity="0" d="M9 12h6v1H9zM9 14h6v1H9zM9 16h6v1H9zM9 18h6v1H9z">
-                                <animate fill="freeze" attributeName="fill-opacity" begin="1.4s" dur="0.1s" values="0;1" />
-                                <animateMotion begin="1.5s" calcMode="linear" dur="1.5s" path="M0 0v2" repeatCount="indefinite" />
-                            </path>
-                        </g>
+</div>
+
+<div class="m-4">
+    {{ $laporanspis->links('pagination::tailwind') }}
+</div>
+</div>
+<div class="mt-6 flex justify-end">
+    <button onclick="exportToPDF()" class="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition duration-300 ease-in-out">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+            <mask id="lineMdCloudAltPrintFilledLoop0">
+                <g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                    <path stroke-dasharray="64" stroke-dashoffset="64" d="M7 19h11c2.21 0 4 -1.79 4 -4c0 -2.21 -1.79 -4 -4 -4h-1v-1c0 -2.76 -2.24 -5 -5 -5c-2.42 0 -4.44 1.72 -4.9 4h-0.1c-2.76 0 -5 2.24 -5 5c0 2.76 2.24 5 5 5Z">
+                        <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0" />
+                        <set fill="freeze" attributeName="opacity" begin="0.7s" to="0" />
+                    </path>
+                    <g fill="#fff" stroke="none" opacity="0">
+                        <circle cx="12" cy="10" r="6">
+                            <animate attributeName="cx" begin="0.7s" dur="30s" repeatCount="indefinite" values="12;11;12;13;12" />
+                        </circle>
+                        <rect width="9" height="8" x="8" y="12" />
+                        <rect width="15" height="12" x="1" y="8" rx="6">
+                            <animate attributeName="x" begin="0.7s" dur="21s" repeatCount="indefinite" values="1;0;1;2;1" />
+                        </rect>
+                        <rect width="13" height="10" x="10" y="10" rx="5">
+                            <animate attributeName="x" begin="0.7s" dur="17s" repeatCount="indefinite" values="10;9;10;11;10" />
+                        </rect>
+                        <set fill="freeze" attributeName="opacity" begin="0.7s" to="1" />
                     </g>
-                </mask>
-                <rect width="24" height="24" fill="currentColor" mask="url(#lineMdCloudAltPrintFilledLoop0)" />
-            </svg>
-        </button>
-    </div>
-    </div>
-    </div>
+                    <g fill="#000" fill-opacity="0" stroke="none">
+                        <circle cx="12" cy="10" r="4">
+                            <animate attributeName="cx" begin="0.7s" dur="30s" repeatCount="indefinite" values="12;11;12;13;12" />
+                        </circle>
+                        <rect width="9" height="6" x="8" y="12" />
+                        <rect width="11" height="8" x="3" y="10" rx="4">
+                            <animate attributeName="x" begin="0.7s" dur="21s" repeatCount="indefinite" values="3;2;3;4;3" />
+                        </rect>
+                        <rect width="9" height="6" x="12" y="12" rx="3">
+                            <animate attributeName="x" begin="0.7s" dur="17s" repeatCount="indefinite" values="12;11;12;13;12" />
+                        </rect>
+                        <set fill="freeze" attributeName="fill-opacity" begin="0.7s" to="1" />
+                        <animate fill="freeze" attributeName="opacity" begin="0.7s" dur="0.5s" values="1;0" />
+                    </g>
+                    <g stroke="none">
+                        <path fill="#fff" d="M6 11h12v0h-12z">
+                            <animate fill="freeze" attributeName="d" begin="1.3s" dur="0.22s" values="M6 11h12v0h-12z;M6 11h12v11h-12z" />
+                        </path>
+                        <path fill="#000" d="M8 13h8v0h-8z">
+                            <animate fill="freeze" attributeName="d" begin="1.34s" dur="0.14s" values="M8 13h8v0h-8z;M8 13h8v7h-8z" />
+                        </path>
+                        <path fill="#fff" fill-opacity="0" d="M9 12h6v1H9zM9 14h6v1H9zM9 16h6v1H9zM9 18h6v1H9z">
+                            <animate fill="freeze" attributeName="fill-opacity" begin="1.4s" dur="0.1s" values="0;1" />
+                            <animateMotion begin="1.5s" calcMode="linear" dur="1.5s" path="M0 0v2" repeatCount="indefinite" />
+                        </path>
+                    </g>
+                </g>
+            </mask>
+            <rect width="24" height="24" fill="currentColor" mask="url(#lineMdCloudAltPrintFilledLoop0)" />
+        </svg>
+    </button>
+</div>
+</div>
+</div>
 </div>
 
-    <!-- Modal untuk Add Event -->
 <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">
-    <div class="bg-white w-1/2 p-6 rounded shadow-lg">
-        <h3 class="text-xl font-semibold mb-4">Add New Data</h3>
-        <form method="POST" action="{{ route('laporanspi.store') }}" enctype="multipart/form-data">
-            @csrf
-            <div class="space-y-4">
-                <div>
-                    <label for="bulan" class="block text-sm font-medium">Bulan</label>
-                    <input type="month" name="bulan" class="w-full p-2 border rounded" required>
-                </div>
-                <div>
-                    <label for="aspek" class="block text-sm font-medium">Aspek</label>
-                    <input type="text" name="aspek" class="w-full p-2 border rounded">
-                </div>
-                <div>
-                    <label for="masalah" class="block text-sm font-medium">Masalah</label>
-                    <textarea name="masalah" class="w-full p-2 border rounded" rows="1"></textarea>
-                </div>
-                <div>
-                    <label for="solusi" class="block text-sm font-medium">Solusi</label>
-                    <textarea name="solusi" class="w-full p-2 border rounded" rows="1" required></textarea>
-                </div>
-                <div>
-                    <label for="implementasi" class="block text-sm font-medium">Implementasi</label>
-                    <input type="text" name="implementasi" class="w-full p-2 border rounded">
-                </div>
+<div class="bg-white w-2/3 p-6 rounded shadow-lg">
+    <h3 class="text-xl font-semibold mb-4">Add New Data</h3>
+    <form method="POST" action="{{ route('laporanspi.store') }}" enctype="multipart/form-data" id="addForm">
+        @csrf
+        <div class="space-y-4">
+            <div>
+                <label for="date" class="block text-sm font-medium">Bulan</label>
+                <input type="date" name="date" class="w-full p-2 border rounded" required>
             </div>
-            <div class="mt-4 flex justify-end gap-2">
-                <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
-                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Add</button>
+            <div>
+                <label for="aspek" class="block text-sm font-medium">Aspek</label>
+                <input type="hidden" name="aspek" id="aspek-input">
+                <div id="editor-aspek"></div>
             </div>
-        </form>
-    </div>
+            <div>
+                <label for="masalah" class="block text-sm font-medium">Masalah</label>
+                <input type="hidden" name="masalah" id="masalah-input">
+                <div id="editor-masalah"></div>
+            </div>
+            <div>
+                <label for="solusi" class="block text-sm font-medium mb-1">Solusi <span class="text-red-500">*</span></label>
+                <input type="hidden" name="solusi" id="solusi-input" required>
+                <div id="editor-solusi"></div>
+                <div class="text-red-500 text-sm mt-1 hidden" id="solusi-error">This field is required</div>
+            </div>
+            <div>
+                <label for="implementasi" class="block text-sm font-medium">Implementasi</label>
+                <input type="hidden" name="implementasi" id="implementasi-input">
+                <div id="editor-implementasi"></div>
+            </div>
+        </div>
+        <div class="mt-4 flex justify-end gap-2">
+            <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
+            <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Add</button>
+        </div>
+    </form>
 </div>
+</div>
+
 
 </body>
+<style>
+/* Styling agar numbered list & bullet list tetap tampil di tabel */
+.content-html ol {
+list-style-type: decimal;
+margin-left: 20px;
+}
+
+.content-html ul {
+list-style-type: disc;
+margin-left: 20px;
+}
+
+.content-html li {
+margin-bottom: 4px;
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <script>
     // Mengatur tombol untuk membuka modal add
     document.querySelector('[data-modal-target="#addEventModal"]').addEventListener('click', function() {
@@ -314,7 +388,7 @@ async function exportToPDF() {
     const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
         const cells = row.querySelectorAll('td');
         return {
-                bulan: cells[0]?.innerText.trim() || '',
+                date: cells[0]?.innerText.trim() || '',
                 aspek: cells[1] ?.innerText.trim() || '',
                 masalah: cells[2]?.innerText.trim() || '',
                 solusi: cells[3]?.innerText.trim() || '',
@@ -323,10 +397,10 @@ async function exportToPDF() {
     });
 
     const tableContent = items
-        .filter(item => item.bulan && item.judul)
+        .filter(item => item.date && item.judul)
         .map(item => `
             <tr>
-                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.bulan}</td>
+                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.date}</td>
                     <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.aspek}</td>
                     <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.masalah}</td>
                     <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.solusi}</td>
@@ -366,6 +440,71 @@ async function exportToPDF() {
     }
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    let editors = {};
+
+    // Fungsi untuk inisialisasi CKEditor
+    function initCKEditor(elementId, inputId) {
+        ClassicEditor
+            .create(document.querySelector(elementId), {
+                toolbar: [
+                    'bold', 'italic', '|', 
+                    'bulletedList', 'numberedList', '|', 
+                    'undo', 'redo'
+                ]
+            })
+            .then(editor => {
+                editors[elementId] = editor;
+                
+                // Set nilai awal jika ada
+                let initialValue = document.querySelector(inputId).value;
+                editor.setData(initialValue);
+
+                // Update hidden input saat ada perubahan
+                editor.model.document.on('change:data', () => {
+                    document.querySelector(inputId).value = editor.getData();
+                });
+            })
+            .catch(error => console.error('CKEditor error:', error));
+    }
+
+    // Inisialisasi CKEditor di form tambah
+    if (document.querySelector('#editor-aspek')) {
+        initCKEditor('#editor-aspek', '#aspek-input');
+    }
+    if (document.querySelector('#editor-masalah')) {
+        initCKEditor('#editor-masalah', '#masalah-input');
+    }
+    if (document.querySelector('#editor-solusi')) {
+        initCKEditor('#editor-solusi', '#solusi-input');
+    }
+    if (document.querySelector('#editor-implementasi')) {
+        initCKEditor('#editor-implementasi', '#implementasi-input');
+    }
+
+    // Inisialisasi CKEditor saat modal edit dibuka
+    document.querySelectorAll('[data-modal-target]').forEach(button => {
+        button.addEventListener('click', function() {
+            const modalId = this.getAttribute('data-modal-target');
+            const id = modalId.replace('#editEventModal', '');
+
+            if (document.querySelector(modalId)) {
+                initCKEditor(`#edit-${id}-aspek`, `#edit-${id}-aspek-input`);
+                initCKEditor(`#edit-${id}-masalah`, `#edit-${id}-masalah-input`);
+                initCKEditor(`#edit-${id}-solusi`, `#edit-${id}-solusi-input`);
+                initCKEditor(`#edit-${id}-implementasi`, `#edit-${id}-implementasi-input`);
+            }
+        });
+    });
+
+    // Fungsi untuk menutup modal
+    document.querySelectorAll('[data-modal-close]').forEach(button => {
+        button.addEventListener('click', function() {
+            const modal = this.closest('.fixed');
+            modal.classList.add('hidden');
+        });
+    });
+});
 
 </script>
 </html>

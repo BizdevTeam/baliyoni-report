@@ -17,7 +17,7 @@ class LaporanNegosiasi extends Model
     protected $fillable = ['date', 'total_negosiasi'];
 
     // Menambahkan accessor untuk date dengan format 'mm/yyyy'
-    public function getBulanFormattedAttribute()
+    public function getDateFormattedAttribute()
     {
         return Carbon::parse($this->date)->translatedFormat('d F Y');
     }

@@ -13,12 +13,12 @@ class LaporanNeraca extends Model
 
     protected $primaryKey = 'id_neraca'; // Primary key custom
 
-    protected $fillable = ['bulan', 'gambar', 'file_excel', 'keterangan'];
+    protected $fillable = ['date', 'gambar', 'file_excel', 'keterangan'];
 
     // Menambahkan accessor untuk bulan dengan format 'mm/yyyy'
-    public function getBulanFormattedAttribute()
+    public function getDateFormattedAttribute()
     {
-        return Carbon::parse($this->bulan)->translatedFormat('F - Y');
+        return Carbon::parse($this->date)->translatedFormat('d F Y');
     }
 
 }

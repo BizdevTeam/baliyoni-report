@@ -6,7 +6,7 @@
 
             <form id="chartFilterForm" method="GET" action="#" class="flex items-center justify-end gap-2">
                 <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
-                    <input type="month" id="searchInput" name="search" placeholder="Search YYYY - MM" value="{{ request('search') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
+                    <input type="date" id="searchInput" name="search" placeholder="Search YYYY - MM" value="{{ request('search') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
                 </div>
                 <button type="submit" class="justify-end bg-gradient-to-r font-medium from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm" aria-label="Search">
                     Search

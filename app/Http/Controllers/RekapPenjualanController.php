@@ -85,9 +85,6 @@ class RekapPenjualanController extends Controller
                 'total_penjualan' => 'required|integer|min:0',
             ]);
 
-            // Bersihkan total_penjualan agar hanya angka
-            $validatedData['total_penjualan'] = preg_replace('/\D/', '', $validatedData['total_penjualan']);
-
             $errorMessage = '';
                 if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
                     return redirect()->back()->with('error', $errorMessage);
@@ -124,6 +121,11 @@ class RekapPenjualanController extends Controller
                 'date' => 'required|date',
                 'total_penjualan' => 'required|integer|min:0',
             ]);
+
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
 
             // Bersihkan total_penjualan agar hanya angka
             $validatedData['total_penjualan'] = preg_replace('/\D/', '', $validatedData['total_penjualan']);
@@ -235,6 +237,8 @@ class RekapPenjualanController extends Controller
             return response()->json(['success' => false, 'message' => 'Gagal mengekspor PDF.'], 500);
         }
     }
+
+
 
     public function destroy(RekapPenjualan $rekappenjualan)
     {

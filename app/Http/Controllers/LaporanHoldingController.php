@@ -14,9 +14,7 @@ use Illuminate\Validation\Rule;
 class LaporanHoldingController extends Controller
 {
     use DateValidationTrait;
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index(Request $request)
     {
         $perusahaans = Perusahaan::all();
@@ -118,11 +116,16 @@ class LaporanHoldingController extends Controller
                 }
             }
 
-            $request->validate([
+            $validatedData = $request->validate([
                 'date' => 'required|date',
                 'perusahaan_id' => 'required|exists:perusahaans,id',
                 'nilai' => 'required|integer|min:0',
             ]);
+
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
     
             // Cek apakah kombinasi date dan perusahaan_id sudah ada di data lain
             $exists = LaporanHolding::where('date', $request->date)
@@ -135,11 +138,7 @@ class LaporanHoldingController extends Controller
             }
     
             // Update data
-            $laporanholding->update([
-                'date' => $request->date,
-                'perusahaan_id' => $request->perusahaan_id,
-                'nilai' => $request->nilai,
-            ]);
+            $laporanholding->update($validatedData);
     
             return redirect()->route('laporanholding.index')->with('success', 'Data berhasil diperbarui.');
         } catch (\Exception $e) {
@@ -201,7 +200,7 @@ class LaporanHoldingController extends Controller
                 </div>
             ", 'O');
 
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Procurements|Halaman {PAGENO}');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Procurements - Laporan Pembelian (Holding)');
 
             $htmlContent = "
             <div style='display: flex; gap: 20px; width: 100%;'>

@@ -69,7 +69,6 @@ class LaporanTerlambatController extends Controller
                 return redirect()->back()->with('error', 'Format tanggal tidak valid.');
             }
         }
-
         try {
             $validatedData = $request->validate([
                 'date' => 'required|date',
@@ -143,10 +142,14 @@ class LaporanTerlambatController extends Controller
                 'nama' => 'required|string',
                 'total_terlambat' => 'required|integer|min:0',
             ]);
-            
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
+
             // Cek kombinasi unik date dan nama
             $exists = LaporanTerlambat::where('nama', $validatedData['nama'])
-                ->where('id_izin', '!=', $laporanterlambat->id_izin)->exists();
+                ->where('id_terlambat', '!=', $laporanterlambat->id_terlambat)->exists();
 
             if ($exists) {
                 return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
@@ -204,7 +207,7 @@ class LaporanTerlambatController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA|Halaman {PAGENO}');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA - Laporan Terlambat');
             
             $htmlContent = "
             <div style='gap: 100px; width: 100%;'>

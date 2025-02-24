@@ -143,7 +143,7 @@ class ItMultimediaTiktokController extends Controller
             ", 'O');
     
             // Tambahkan footer
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan IT - Multimedia Tiktok');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan IT - Laporan Multimedia Tiktok');
     
             // Loop melalui setiap laporan dan tambahkan ke PDF
             foreach ($laporans as $index => $laporan) {
@@ -160,8 +160,8 @@ class ItMultimediaTiktokController extends Controller
                 $htmlContent = "
             <div style='text-align: center; top: 0; margin: 0; padding: 0;'>
                 {$imageHTML}
-                    <h3 style='margin: 0; padding: 0;'>Laporan Bulan {$laporan->date}</h3>
-                    <h3 style='margin: 0; padding: 0;'>Laporan Bulan {$laporan->bulan_formatted}</h3>
+                    <h3 style='margin: 0; padding: 0;'>Keterangan : {$laporan->keterangan}</h3>
+                    <h3 style='margin: 0; padding: 0;'>Laporan : {$laporan->date_formatted}</h3>
             </div>
 
                 ";

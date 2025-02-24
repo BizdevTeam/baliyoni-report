@@ -113,6 +113,11 @@ class LaporanNegosiasiController extends Controller
                 'total_negosiasi' => 'required|integer|min:0',
             ]);
 
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
+
             $exists = LaporanNegosiasi::where('date', $validatedData['date'])
             ->where('id_negosiasi', '!=', $laporannegosiasi->id_negosiasi)->exists();
 
@@ -182,7 +187,7 @@ class LaporanNegosiasiController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
 
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Procurements|Halaman {PAGENO}');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Procurements - Laporan Negosiasi');
 
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "
@@ -192,7 +197,7 @@ class LaporanNegosiasiController extends Controller
                     <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                         <thead>
                             <tr style='background-color: #f2f2f2;'>
-                                <th style='border: 1px solid #000; padding: 1px;'>Bulan</th>
+                                <th style='border: 1px solid #000; padding: 1px;'>Tanggal</th>
                                 <th style='border: 1px solid #000; padding: 2px;'>Total Negosiasi (Rp)</th>
                             </tr>
                         </thead>

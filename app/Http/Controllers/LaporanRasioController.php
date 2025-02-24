@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\LaporanRasio;
+use App\Traits\DateValidationTraitAccSPI;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 
 class LaporanRasioController extends Controller
 {
+    use DateValidationTraitAccSPI;
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 12);
@@ -16,10 +18,10 @@ class LaporanRasioController extends Controller
 
         $laporanrasios = LaporanRasio::query()
         ->when($search, function($query, $search) {
-            return $query->where('bulan', 'like', "%$search%")
+            return $query->where('date', 'like', "%$search%")
                          ->orWhere('keterangan', 'like', "%$search%");
         })
-        ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
+        ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC')
         ->paginate($perPage);
 
             // Ubah path gambar agar dapat diakses dari frontend
@@ -41,26 +43,30 @@ class LaporanRasioController extends Controller
     public function store(Request $request)
     {
         try {
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            $validatedData = $request->validate([
+                'date' => 'required|date',
                 'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550',
                 'file_excel' => 'mimes:xlsx,xls|max:2048',
                 'keterangan' => 'required|string|max:255'
             ]);
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
     
             if ($request->hasFile('file_excel')) {
                 $filename = time() . $request->file('file_excel')->getClientOriginalName();
                 $request->file('file_excel')->move(public_path('files/accounting/rasio'), $filename);
-                $validatedata['file_excel'] = $filename;
+                $validatedData['file_excel'] = $filename;
             }
     
             if ($request->hasFile('gambar')) {
                 $excelfilename = time() . $request->file('gambar')->getClientOriginalName();
                 $request->file('gambar')->move(public_path('images/accounting/rasio'), $excelfilename);
-                $validatedata['gambar'] = $excelfilename;
+                $validatedData['gambar'] = $excelfilename;
             }
     
-            LaporanRasio::create($validatedata);
+            LaporanRasio::create($validatedData);
     
             return redirect()->route('rasio.index')->with('success', 'Data Berhasil Ditambahkan!');
         } catch (\Exception $e) {
@@ -73,12 +79,16 @@ class LaporanRasioController extends Controller
     {
         try {
             $fileRules = $rasio->file_excel ? 'nullable|mimes:xlsx,xls|max:2048' : 'mimes:xlsx,xls|max:2048';
-        $validatedata = $request->validate([
-            'bulan' => 'required|date_format:Y-m',
+            $validatedData = $request->validate([
+            'date' => 'required|date',
             'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550',
             'file_excel' => $fileRules,
             'keterangan' => 'required|string|max:255'
         ]);
+        $errorMessage = '';
+        if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            return redirect()->back()->with('error', $errorMessage);
+        }
 
         if ($request->hasFile('gambar')) {
             $destinationimages = "images/accounting/rasio/" . $rasio->gambar;
@@ -88,7 +98,7 @@ class LaporanRasioController extends Controller
 
             $filename = time() . $request->file('gambar')->getClientOriginalName();
             $request->file('gambar')->move(public_path('images/accounting/rasio'), $filename);
-            $validatedata['gambar'] = $filename;
+            $validatedData['gambar'] = $filename;
         }
 
         if ($request->hasFile('file_excel')) {
@@ -99,10 +109,10 @@ class LaporanRasioController extends Controller
 
             $excelfilename = time() . $request->file('file_excel')->getClientOriginalName();
             $request->file('file_excel')->move(public_path('files/accounting/rasio'), $excelfilename);
-            $validatedata['file_excel'] = $excelfilename;
+            $validatedData['file_excel'] = $excelfilename;
         }
 
-        $rasio->update($validatedata);
+        $rasio->update($validatedData);
 
         return redirect()->route('rasio.index')->with('success', 'Data Telah Diupdate');
         } catch (\Exception $e) {
@@ -136,13 +146,13 @@ class LaporanRasioController extends Controller
             public function exportPDF(Request $request)
             {
                 try {
-                    // Validasi input bulan
-                    $validatedata = $request->validate([
-                        'bulan' => 'required|date_format:Y-m',
+                    // Validasi input date
+                    $validatedData = $request->validate([
+                        'date' => 'required|date',
                     ]);
             
-        // Ambil data laporan berdasarkan bulan yang dipilih
-        $laporans = LaporanRasio::where('bulan', $validatedata['bulan'])->get();
+        // Ambil data laporan berdasarkan date yang dipilih
+        $laporans = LaporanRasio::where('date', $validatedData['date'])->get();
             
         if (!$laporans) {
             return redirect()->back()->with('error', 'Data tidak ditemukan.');
@@ -167,7 +177,7 @@ class LaporanRasioController extends Controller
         ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
 
         // Tambahkan footer ke PDF
-        $mpdf->SetFooter('{DATE j-m-Y}|Laporan Accounting - Rasio |Halaman {PAGENO}');
+        $mpdf->SetFooter('{DATE j-m-Y}|Laporan Accounting -Laporan Rasio');
 
         // Loop melalui setiap laporan dan tambahkan ke PDF
         foreach ($laporans as $index => $laporan) {
@@ -184,8 +194,8 @@ class LaporanRasioController extends Controller
             $htmlContent = "
         <div style='text-align: center; top: 0; margin: 0; padding: 0;'>
             {$imageHTML}
-                <h3 style='margin: 0; padding: 0;'>Laporan Bulan {$laporan->bulan}</h3>
-                <h3 style='margin: 0; padding: 0;'>Laporan Bulan {$laporan->bulan_formatted}</h3>
+                <h3 style='margin: 0; padding: 0;'>Keterangan : {$laporan->keterangan}</h3>
+                <h3 style='margin: 0; padding: 0;'>Laporan : {$laporan->date_formatted}</h3>
         </div>
 
             ";
@@ -195,7 +205,7 @@ class LaporanRasioController extends Controller
         }
             
             // Output PDF
-            return response($mpdf->Output("Laporan_Rasio_{$laporan->bulan}.pdf", 'D'))
+            return response($mpdf->Output("Laporan_Rasio_{$laporan->date}.pdf", 'D'))
                 ->header('Content-Type', 'application/pdf')
                 ->header('Content-Disposition', 'attachment; filename="Laporan_Laba_Rugi.pdf"');
     

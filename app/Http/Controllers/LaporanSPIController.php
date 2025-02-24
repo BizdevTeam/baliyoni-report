@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\LaporanSPI;
+use App\Traits\DateValidationTraitAccSPI;
 use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
 use Illuminate\Support\Facades\DB;
@@ -11,6 +12,8 @@ use Illuminate\Validation\ValidationException;
 
 class LaporanSPIController extends Controller
 {
+    use DateValidationTraitAccSPI;
+
     // Show the view
     public function index(Request $request)
     { 
@@ -19,9 +22,9 @@ class LaporanSPIController extends Controller
 
         $laporanspis = LaporanSPI::query()
             ->when($search, function ($query, $search) {
-                return $query->where('bulan', 'LIKE', "%$search%");
+                return $query->where('date', 'LIKE', "%$search%");
             })
-            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
+            ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
 
             if ($request->ajax()) {
@@ -33,23 +36,27 @@ class LaporanSPIController extends Controller
     public function store(Request $request)
     {
         try {
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            $validatedData = $request->validate([
+                'date' => 'required|date',
                 'aspek' => 'required',
                 'masalah' => 'required',
                 'solusi' => 'required',
                 'implementasi' => 'required',
             ]);
 
-            // // Cek kombinasi unik bulan dan perusahaan
-            // $exists = LaporanSPI::where('bulan', $validatedata['bulan'])->exists();
+            // // Cek kombinasi unik date dan perusahaan
+            // $exists = LaporanSPI::where('date', $validatedData['date'])->exists();
 
             // if ($exists) {
             //     return redirect()->back()->with('error', 'Data Already Exists.');
             // }
+
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
     
-            LaporanSPI::create($validatedata);
-    
+            LaporanSPI::create($validatedData);
             return redirect()->route('laporanspi.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
             Log::error('Error Storing Rekap Penjualan Data: ' . $e->getMessage());
@@ -62,12 +69,17 @@ class LaporanSPIController extends Controller
         try {
             // Validasi input
             $validatedData = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+                'date' => 'required|date',
                 'aspek' => 'required',
                 'masalah' => 'required',
                 'solusi' => 'required',
                 'implementasi' => 'required',
             ]);
+            
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
             // Update data
             $laporanspi->update($validatedData);
     
@@ -123,7 +135,7 @@ class LaporanSPIController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan SPI|Halaman {PAGENO}');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan SPI - Laporan SPI Operasional');
     
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "
@@ -132,7 +144,7 @@ class LaporanSPIController extends Controller
                     <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                         <thead>
                             <tr style='background-color: #f2f2f2;'>
-                            <th style='border: 1px solid #000; padding: 1px;'>Bulan</th>
+                            <th style='border: 1px solid #000; padding: 1px;'>Tanggal</th>
                             <th style='border: 1px solid #000; padding: 2px;'>Aspek</th>
                             <th style='border: 1px solid #000; padding: 2px;'>Masalah</th>
                             <th style='border: 1px solid #000; padding: 2px;'>Solusi</th>

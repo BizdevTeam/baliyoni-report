@@ -34,59 +34,60 @@
         <!-- Navbar -->
         <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
 
-             <!-- Wrapper Alert -->
-             @if (session('success') || session('error'))
-             <div x-data="{ 
-                     showSuccess: {{ session('success') ? 'true' : 'false' }},
-                     showError: {{ session('error') ? 'true' : 'false' }}
-                 }"
-                 x-init="setTimeout(() => showSuccess = false, 3000); setTimeout(() => showError = false, 3000);"
-                 class="fixed top-5 right-5 z-50 flex flex-col gap-3">
-         
-                 <!-- Success Alert -->
-                 @if (session('success'))
-                 <div x-show="showSuccess" x-transition.opacity.scale.90
-                     class="bg-green-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
-                     
-                     <!-- Icon -->
-                     <span class="text-2xl">✅</span>
-         
-                     <!-- Message -->
-                     <div>
-                         <h3 class="font-bold">Success!</h3>
-                         <p class="text-sm">{{ session('success') }}</p>
-                     </div>
-         
-                     <!-- Close Button -->
-                     <button @click="showSuccess = false" class="ml-auto text-white text-lg font-bold">
-                         &times;
-                     </button>
-                 </div>
-                 @endif
-         
-                 <!-- Error Alert -->
-                 @if (session('error'))
-                 <div x-show="showError" x-transition.opacity.scale.90
-                     class="bg-red-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
-                     
-                     <!-- Icon -->
-                     <span class="text-2xl">⚠️</span>
-         
-                     <!-- Message -->
-                     <div>
-                         <h3 class="font-bold">Error!</h3>
-                         <p class="text-sm">{{ session('error') }}</p>
-                     </div>
-         
-                     <!-- Close Button -->
-                     <button @click="showError = false" class="ml-auto text-white text-lg font-bold">
-                         &times;
-                     </button>
-                 </div>
-                 @endif
-         
-             </div>
-             @endif
+            <!-- Wrapper Alert -->
+        @if (session('success') || session('error'))
+        <div x-data="{ 
+                showSuccess: {{ session('success') ? 'true' : 'false' }},
+                showError: {{ session('error') ? 'true' : 'false' }}
+            }"
+            x-init="setTimeout(() => showSuccess = false, 3000); setTimeout(() => showError = false, 3000);"
+            class="fixed top-5 right-5 z-50 flex flex-col gap-3">
+    
+            <!-- Success Alert -->
+            @if (session('success'))
+            <div x-show="showSuccess" x-transition.opacity.scale.90
+                class="bg-green-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
+                
+                <!-- Icon -->
+                <span class="text-2xl">✅</span>
+    
+                <!-- Message -->
+                <div>
+                    <h3 class="font-bold">Success!</h3>
+                    <p class="text-sm">{{ session('success') }}</p>
+                </div>
+    
+                <!-- Close Button -->
+                <button @click="showSuccess = false" class="ml-auto text-white text-lg font-bold">
+                    &times;
+                </button>
+            </div>
+            @endif
+    
+            <!-- Error Alert -->
+            @if (session('error'))
+            <div x-show="showError" x-transition.opacity.scale.90
+                class="bg-red-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
+                
+                <!-- Icon -->
+                <span class="text-2xl">⚠️</span>
+    
+                <!-- Message -->
+                <div>
+                    <h3 class="font-bold">Error!</h3>
+                    <p class="text-sm">{{ session('error') }}</p>
+                </div>
+    
+                <!-- Close Button -->
+                <button @click="showError = false" class="ml-auto text-white text-lg font-bold">
+                    &times;
+                </button>
+            </div>
+            @endif
+    
+        </div>
+        @endif
+
              
         <!-- Main Content -->
         <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
@@ -401,7 +402,7 @@
                     meta.data.forEach((bar, index) => {
                         var value = dataset.data[index];
                         ctx.fillStyle = 'black'; // Warna teks
-                        ctx.font = '15px sans-serif'; // Ukuran teks
+                        ctx.font = 'bold 15px sans-serif'; // Ukuran teks
                         ctx.textAlign = 'center';
                         ctx.fillText('Rp ' + value.toLocaleString(), bar.x, bar.y - 10); // Tampilkan di atas bar
                     });

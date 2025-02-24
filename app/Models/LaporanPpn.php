@@ -9,11 +9,11 @@ class LaporanPpn extends Model
 {
     protected $table = 'laporan_ppns';
     protected $primaryKey = 'id_laporanppn';
-    protected $fillable = ['bulan','thumbnail','file','keterangan'];
+    protected $fillable = ['date','thumbnail','file','keterangan'];
 
-    public function getBulanFormattedAttribute()
+    public function getDateFormattedAttribute()
     {
-        return Carbon::parse($this->bulan)->translatedFormat('F - Y');
+        return Carbon::parse($this->date)->translatedFormat('d F Y');
     }
 
 }

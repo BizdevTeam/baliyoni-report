@@ -88,6 +88,7 @@
         </div>
         @endif
 
+
         <!-- Main Content -->
         <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
             <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan Holding</h1>
@@ -96,7 +97,7 @@
                     <!-- Search -->
                     <form method="GET" action="{{ route('laporanholding.index') }}" class="flex items-center gap-2">
                         <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
-                            <input type="text" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}"
+                            <input type="date" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}"
                                 class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
                         </div>
     
@@ -415,7 +416,7 @@
                     meta.data.forEach((bar, index) => {
                         var value = dataset.data[index];
                         ctx.fillStyle = 'black'; // Warna teks
-                        ctx.font = '15px sans-serif'; // Ukuran teks
+                        ctx.font = 'bold 15px sans-serif'; // Ukuran teks
                         ctx.textAlign = 'center';
                         ctx.fillText('Rp ' + value.toLocaleString(), bar.x, bar.y - 10); // Tampilkan di atas bar
                     });

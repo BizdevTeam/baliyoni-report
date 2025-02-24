@@ -399,7 +399,7 @@
                     meta.data.forEach((bar, index) => {
                         var value = dataset.data[index];
                         ctx.fillStyle = 'black'; // Warna teks
-                        ctx.font = '15px sans-serif'; // Ukuran teks
+                        ctx.font = 'bold 15px sans-serif'; // Ukuran teks
                         ctx.textAlign = 'center';
                         ctx.fillText(value.toLocaleString(), bar.x, bar.y - 10); // Tampilkan di atas bar
                     });

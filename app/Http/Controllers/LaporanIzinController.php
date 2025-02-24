@@ -87,7 +87,7 @@ class LaporanIzinController extends Controller
             return redirect()->route('laporanizin.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
             // Logging untuk debug
-            Log::error('Error Storing Laporan Izin Data:', [
+            Log::error('Error Storing Data:', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
                 'input' => $request->all(),
@@ -126,6 +126,11 @@ class LaporanIzinController extends Controller
                 'nama' => 'required|string',
                 'total_izin' => 'required|integer|min:0',
             ]);
+
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
             
             // Cek kombinasi unik date dan nama
             $exists = LaporanIzin::where('nama', $validatedData['nama'])
@@ -187,7 +192,7 @@ class LaporanIzinController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA|Halaman {PAGENO}');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA - Laporan Izin');
             
             $htmlContent = "
             <div style='gap: 100px; width: 100%;'>
@@ -230,7 +235,7 @@ class LaporanIzinController extends Controller
             $laporanizin->delete();
             return redirect()->route('laporanizin.index')->with('success', 'Data Berhasil Dihapus');
         } catch (\Exception $e) {
-            Log::error('Error Deleting Laporan Izin Data: ' . $e->getMessage());
+            Log::error('Error Deleting Data: ' . $e->getMessage());
             return redirect()->route('laporanizin.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
     }

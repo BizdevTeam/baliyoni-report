@@ -100,6 +100,10 @@ class LaporanStokController extends Controller
                 'date' => 'required|date',
                 'stok' => 'required|integer|min:0',
             ]);
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
 
             $exists = LaporanStok::where('date', $validatedData['date'])
                 ->where('id_stok', '!=', $laporanstok->id_stok)->exists();
@@ -170,7 +174,7 @@ class LaporanStokController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
 
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Procurements|Halaman {PAGENO}');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Procurements - Laporan Stok');
 
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "

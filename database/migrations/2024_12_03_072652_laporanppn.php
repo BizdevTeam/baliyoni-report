@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('laporan_ppns', function (Blueprint $table) {
             $table->id('id_laporanppn');
-            $table->string('bulan');
+            $table->string('date');
             $table->string('thumbnail')->nullable();
             $table->string('file')->nullable();
             $table->string('keterangan');

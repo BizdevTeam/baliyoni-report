@@ -33,69 +33,68 @@
         <!-- Navbar -->
         <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
 
-       
-        <!-- Wrapper Alert -->
-    @if (session('success') || session('error'))
-    <div x-data="{ 
-            showSuccess: {{ session('success') ? 'true' : 'false' }},
-            showError: {{ session('error') ? 'true' : 'false' }}
-        }"
-        x-init="setTimeout(() => showSuccess = false, 3000); setTimeout(() => showError = false, 3000);"
-        class="fixed top-5 right-5 z-50 flex flex-col gap-3">
-
-        <!-- Success Alert -->
-        @if (session('success'))
-        <div x-show="showSuccess" x-transition.opacity.scale.90
-            class="bg-green-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
-            
-            <!-- Icon -->
-            <span class="text-2xl">✅</span>
-
-            <!-- Message -->
-            <div>
-                <h3 class="font-bold">Success!</h3>
-                <p class="text-sm">{{ session('success') }}</p>
-            </div>
-
-            <!-- Close Button -->
-            <button @click="showSuccess = false" class="ml-auto text-white text-lg font-bold">
-                &times;
-            </button>
-        </div>
-        @endif
-
-        <!-- Error Alert -->
-        @if (session('error'))
-        <div x-show="showError" x-transition.opacity.scale.90
-            class="bg-red-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
-            
-            <!-- Icon -->
-            <span class="text-2xl">⚠️</span>
-
-            <!-- Message -->
-            <div>
-                <h3 class="font-bold">Error!</h3>
-                <p class="text-sm">{{ session('error') }}</p>
-            </div>
-
-            <!-- Close Button -->
-            <button @click="showError = false" class="ml-auto text-white text-lg font-bold">
-                &times;
-            </button>
-        </div>
-        @endif
-
-    </div>
-    @endif
+       <!-- Wrapper Alert -->
+       @if (session('success') || session('error'))
+       <div x-data="{ 
+               showSuccess: {{ session('success') ? 'true' : 'false' }},
+               showError: {{ session('error') ? 'true' : 'false' }}
+           }"
+           x-init="setTimeout(() => showSuccess = false, 5000); setTimeout(() => showError = false, 5000);"
+           class="fixed top-5 right-5 z-50 flex flex-col gap-3">
+   
+           <!-- Success Alert -->
+           @if (session('success'))
+           <div x-show="showSuccess" x-transition.opacity.scale.90
+               class="bg-green-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
+               
+               <!-- Icon -->
+               <span class="text-2xl">✅</span>
+   
+               <!-- Message -->
+               <div>
+                   <h3 class="font-bold">Success!</h3>
+                   <p class="text-sm">{{ session('success') }}</p>
+               </div>
+   
+               <!-- Close Button -->
+               <button @click="showSuccess = false" class="ml-auto text-white text-lg font-bold">
+                   &times;
+               </button>
+           </div>
+           @endif
+   
+           <!-- Error Alert -->
+           @if (session('error'))
+           <div x-show="showError" x-transition.opacity.scale.90
+               class="bg-red-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
+               
+               <!-- Icon -->
+               <span class="text-2xl">⚠️</span>
+   
+               <!-- Message -->
+               <div>
+                   <h3 class="font-bold">Error!</h3>
+                   <p class="text-sm">{{ session('error') }}</p>
+               </div>
+   
+               <!-- Close Button -->
+               <button @click="showError = false" class="ml-auto text-white text-lg font-bold">
+                   &times;
+               </button>
+           </div>
+           @endif
+   
+       </div>
+       @endif
 
         <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
             <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan Per Instansi</h1>
 
             <div class="flex items-center justify-end transition-all duration-500 mt-8 mb-4">
                 <!-- Search -->
-                <form method="GET" action="{{ route('rekappenjualan.index') }}" class="flex items-center gap-2">
+                <form method="GET" action="{{ route('laporanperinstansi.index') }}" class="flex items-center gap-2">
                     <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
-                        <input type="text" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
+                        <input type="date" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
                     </div>
 
                     <button type="submit" class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm mr-2" aria-label="Search">
@@ -411,11 +410,12 @@
     var chartData = @json($chartData);
 
     var ctx = document.getElementById('chart').getContext('2d');
+
     var barChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: chartData.labels, // Label date
-            datasets: chartData.datasets, // Dataset total penjualan
+            labels: chartData.labels, // Label tanggal
+            datasets: chartData.datasets, // Data total penjualan
         },
         options: {
             responsive: true,
@@ -427,7 +427,7 @@
                     callbacks: {
                         label: function(tooltipItem) {
                             let value = tooltipItem.raw; // Ambil data nilai
-                            return tooltipItem.dataset.text + ': ' + value.toLocaleString(); // Format angka
+                            return tooltipItem.dataset.label + ' : ' + 'Rp ' + value.toLocaleString(); // Format angka
                         },
                     },
                 },
@@ -445,13 +445,29 @@
                     },
                     ticks: {
                         callback: function(value) {
-                            return value.toLocaleString(); // Format angka
+                            return 'Rp ' + value.toLocaleString(); // Format angka
                         },
                     },
                 },
             },
         },
+        plugins: [{
+            afterDatasetsDraw: function(chart) {
+                var ctx = chart.ctx;
+                chart.data.datasets.forEach((dataset, i) => {
+                    var meta = chart.getDatasetMeta(i);
+                    meta.data.forEach((bar, index) => {
+                        var value = dataset.data[index];
+                        ctx.fillStyle = 'black'; // Warna teks
+                        ctx.font = '15px sans-serif'; // Ukuran teks
+                        ctx.textAlign = 'center';
+                        ctx.fillText('Rp ' + value.toLocaleString(), bar.x, bar.y - 10); // Tampilkan di atas bar
+                    });
+                });
+            }
+        }]
     });
+
 
     async function exportToPDF() {
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;

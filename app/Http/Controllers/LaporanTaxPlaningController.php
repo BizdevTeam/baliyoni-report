@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\LaporanTaxPlaning;
+use App\Traits\DateValidationTraitAccSPI;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 
 class LaporanTaxPlaningController extends Controller
 {
+    use DateValidationTraitAccSPI;
+
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 12);
@@ -16,10 +19,10 @@ class LaporanTaxPlaningController extends Controller
 
         $laporantaxplanings = LaporanTaxPlaning::query()
         ->when($search, function($query, $search) {
-            return $query->where('bulan', 'like', "%$search%")
+            return $query->where('date', 'like', "%$search%")
                          ->orWhere('keterangan', 'like', "%$search%");
         })
-        ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
+        ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC')
         ->paginate($perPage);
 
               // Ubah path gambar agar dapat diakses dari frontend
@@ -41,26 +44,30 @@ class LaporanTaxPlaningController extends Controller
     public function store(Request $request)
     {
         try {
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            $validatedData = $request->validate([
+                'date' => 'required|date',
                 'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550',
                 'file_excel' => 'mimes:xlsx,xls|max:2048',
                 'keterangan' => 'required|string|max:255'
             ]);
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
     
             if ($request->hasFile('file_excel')) {
                 $excelfilename = date('d-m-Y') . '_' . $request->file('file_excel')->getClientOriginalName();
                 $request->file('file_excel')->move(public_path('files/accounting/taxplaning'), $excelfilename);
-                $validatedata['file_excel'] = $excelfilename;
+                $validatedData['file_excel'] = $excelfilename;
             }
     
             if ($request->hasFile('gambar')) {
                 $filename = date('d-m-Y') . '_' . $request->file('gambar')->getClientOriginalName();
                 $request->file('gambar')->move(public_path('images/accounting/taxplaning'), $filename);
-                $validatedata['gambar'] = $filename;
+                $validatedData['gambar'] = $filename;
             }
     
-            LaporanTaxPlaning::create($validatedata);
+            LaporanTaxPlaning::create($validatedData);
     
             return redirect()->route('taxplaning.index')->with('success', 'Data Berhasil Ditambahkan!');
         } catch (\Exception $e) {
@@ -73,12 +80,16 @@ class LaporanTaxPlaningController extends Controller
     {
         try {
             $fileRules = $taxplaning->file_excel ? 'nullable|mimes:xlsx,xls|max:2048' : 'mimes:xlsx,xls|max:2048';
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            $validatedData = $request->validate([
+                'date' => 'required|date',
                 'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550',
                 'file_excel' => $fileRules,
                 'keterangan' => 'required|string|max:255'
             ]);
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
 
             if ($request->hasFile('gambar')) {
                 $destinationimages = "images/accounting/taxplaning/" . $taxplaning->gambar;
@@ -88,7 +99,7 @@ class LaporanTaxPlaningController extends Controller
 
                 $filename = date('d-m-Y') . '_' . $request->file('gambar')->getClientOriginalName();
                 $request->file('gambar')->move(public_path('images/accounting/taxplaning'), $filename);
-                $validatedata['gambar'] = $filename;
+                $validatedData['gambar'] = $filename;
             }
 
             if ($request->hasFile('file_excel')) {
@@ -99,10 +110,10 @@ class LaporanTaxPlaningController extends Controller
 
                 $excelfilename = date('d-m-Y') . '_' . $request->file('file_excel')->getClientOriginalName();
                 $request->file('file_excel')->move(public_path('files/accounting/taxplaning'), $excelfilename);
-                $validatedata['file_excel'] = $excelfilename;
+                $validatedData['file_excel'] = $excelfilename;
             }
 
-            $taxplaning->update($validatedata);
+            $taxplaning->update($validatedData);
 
             return redirect()->route('taxplaning.index')->with('success', 'Data Telah Diupdate');
         } catch (\Exception $e) {
@@ -135,13 +146,13 @@ class LaporanTaxPlaningController extends Controller
     public function exportPDF(Request $request)
     {
         try {
-            // Validasi input bulan
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            // Validasi input date
+            $validatedData = $request->validate([
+                'date' => 'required|date',
             ]);
     
-            // Ambil data laporan berdasarkan bulan yang dipilih
-            $laporans = LaporanTaxPlaning::where('bulan', $validatedata['bulan'])->get();
+            // Ambil data laporan berdasarkan date yang dipilih
+            $laporans = LaporanTaxPlaning::where('date', $validatedData['date'])->get();
     
             if (!$laporans) {
                 return redirect()->back()->with('error', 'Data tidak ditemukan.');
@@ -166,7 +177,7 @@ class LaporanTaxPlaningController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Accounting - Tax Planning |Halaman {PAGENO}');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Accounting - Laporan Tax Planning');
     
             // Loop melalui setiap laporan dan tambahkan ke PDF
             foreach ($laporans as $index => $laporan) {
@@ -183,8 +194,8 @@ class LaporanTaxPlaningController extends Controller
                 $htmlContent = "
             <div style='text-align: center; top: 0; margin: 0; padding: 0;'>
                 {$imageHTML}
-                    <h3 style='margin: 0; padding: 0;'>Laporan Bulan {$laporan->bulan}</h3>
-                    <h3 style='margin: 0; padding: 0;'>Laporan Bulan {$laporan->bulan_formatted}</h3>
+                    <h3 style='margin: 0; padding: 0;'>Keterangan : {$laporan->date}</h3>
+                    <h3 style='margin: 0; padding: 0;'>Laporan : {$laporan->date_formatted}</h3>
             </div>
 
                 ";
@@ -192,7 +203,7 @@ class LaporanTaxPlaningController extends Controller
            $mpdf->WriteHTML($htmlContent);
         }
             // Output PDF
-            return response($mpdf->Output("Laporan_Tax Planning_{$laporan->bulan}.pdf", 'D'))
+            return response($mpdf->Output("Laporan_Tax Planning_{$laporan->date}.pdf", 'D'))
                 ->header('Content-Type', 'application/pdf')
                 ->header('Content-Disposition', 'attachment; filename="Laporan_PPN.pdf"');
     

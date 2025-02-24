@@ -34,6 +34,60 @@
         <!-- Navbar -->
         <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
 
+          <!-- Wrapper Alert -->
+          @if (session('success') || session('error'))
+          <div x-data="{ 
+                  showSuccess: {{ session('success') ? 'true' : 'false' }},
+                  showError: {{ session('error') ? 'true' : 'false' }}
+              }"
+              x-init="setTimeout(() => showSuccess = false, 5000); setTimeout(() => showError = false, 5000);"
+              class="fixed top-5 right-5 z-50 flex flex-col gap-3">
+      
+              <!-- Success Alert -->
+              @if (session('success'))
+              <div x-show="showSuccess" x-transition.opacity.scale.90
+                  class="bg-green-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
+                  
+                  <!-- Icon -->
+                  <span class="text-2xl">✅</span>
+      
+                  <!-- Message -->
+                  <div>
+                      <h3 class="font-bold">Success!</h3>
+                      <p class="text-sm">{{ session('success') }}</p>
+                  </div>
+      
+                  <!-- Close Button -->
+                  <button @click="showSuccess = false" class="ml-auto text-white text-lg font-bold">
+                      &times;
+                  </button>
+              </div>
+              @endif
+      
+              <!-- Error Alert -->
+              @if (session('error'))
+              <div x-show="showError" x-transition.opacity.scale.90
+                  class="bg-red-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
+                  
+                  <!-- Icon -->
+                  <span class="text-2xl">⚠️</span>
+      
+                  <!-- Message -->
+                  <div>
+                      <h3 class="font-bold">Error!</h3>
+                      <p class="text-sm">{{ session('error') }}</p>
+                  </div>
+      
+                  <!-- Close Button -->
+                  <button @click="showError = false" class="ml-auto text-white text-lg font-bold">
+                      &times;
+                  </button>
+              </div>
+              @endif
+      
+          </div>
+          @endif
+
         <!-- Main Content -->
         <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
             <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan Rasio</h1>
@@ -42,7 +96,7 @@
                 <!-- Search -->
                 <form method="GET" action="{{ route('rasio.index') }}" class="flex items-center gap-2">
                     <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
-                        <input type="month" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}"
+                        <input type="date" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}"
                             class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
                     </div>
 
@@ -66,24 +120,12 @@
             <div id="formContainer" class="visible">
                 <div class="mx-auto bg-white p-6 rounded-lg shadow">
 
-                    <!-- Success Message -->
-                    @if (session('success'))
-                    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">
-                        {{ session('success') }}
-                    </div>
-                    @endif
-                    @if (session('error'))
-                    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
-                        {{ session('error') }}
-                    </div>
-                    @endif
-
                 <!-- Event Table -->
                 <div class="overflow-x-auto border-l-4 border-red-600 shadow-md rounded-sm">
                     <table class="table-auto w-full border-collapse text-gray-700 text-sm">
                         <thead class="bg-gradient-to-r from-gray-200 to-gray-300 text-gray-900 font-semibold">
                             <tr class="font-sans">
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-out-sine">Bulan</th>
+                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-out-sine">Tanggal</th>
                                 <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-out-sine">Thumbnail</th>
                                 <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-out-sine">File Excel</th>
                                 <th class="px-6 py-3 text-center border-b " data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-out-sine">Keterangan</th>
@@ -93,7 +135,7 @@
                         <tbody>
                             @foreach ($laporanrasios as $laporanrasio)
                             <tr class="even:bg-gray-50 odd:bg-white hover:bg-gray-100 transition duration-300">
-                                <td class="px-6 py-4 text-center text-pretty border-b" data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-out-sine">{{ $laporanrasio->bulan_formatted }}</td>
+                                <td class="px-6 py-4 text-center text-pretty border-b" data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-out-sine">{{ $laporanrasio->date_formatted }}</td>
                                 <td class="px-6 py-4 text-center text-pretty border-b overflow-hidden " data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-out-sine">
                                     <div class="relative hover:scale-[1.5] transition-transform duration-300">
                                         @if ($laporanrasio->gambar)
@@ -137,8 +179,8 @@
                                         @method('PUT')
                                         <div class="space-y-3">
                                             <div>
-                                                <label for="bulan" class="block text-sm font-medium">Bulan</label>
-                                                <input type="month" name="bulan" class="w-full p-2 border rounded" value="{{ $laporanrasio->bulan }}" required>
+                                                <label for="date" class="block text-sm font-medium">Tanggal</label>
+                                                <input type="date" name="date" class="w-full p-2 border rounded" value="{{ $laporanrasio->date }}" required>
                                             </div>
                                             <div>
                                                 <label for="gambar" class="block text-sm font-medium">Thumbnail</label>
@@ -261,8 +303,8 @@
 
                             <form action="{{ route('rasio.exportPDF') }}" method="POST">
                                 @csrf
-                                <label for="bulan" class="block text-gray-700 font-medium mb-2 text-center">Pilih Bulan:</label>
-                                <input type="month" id="bulan" name="bulan" required class="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-red-500">
+                                <label for="date" class="block text-gray-700 font-medium mb-2 text-center">Pilih Tanggal:</label>
+                                <input type="date" id="date" name="date" required class="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-red-500">
 
                                 <button type="submit" class="w-full mt-3 bg-red-600 text-white py-2 rounded hover:bg-red-700 transition">
                                     Export PDF
@@ -285,8 +327,8 @@
                         @csrf
                         <div class="space-y-3">
                             <div>
-                                <label for="bulan" class="block text-sm font-medium">Bulan</label>
-                                <input type="month" name="bulan" class="w-full p-2 border rounded" required>
+                                <label for="date" class="block text-sm font-medium">Tanggal</label>
+                                <input type="date" name="date" class="w-full p-2 border rounded" required>
                             </div>
                             <div>
                                 <label for="gambar" class="block text-sm font-medium">Gambar</label>
@@ -318,6 +360,7 @@
             </div>
 
 </body>
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <script>
 
     //toogle form
@@ -328,13 +371,6 @@
             formContainer.classList.toggle('hidden');
         });
 
-    const toggleChartButton = document.getElementById('toggleChartButton');
-        const formChart = document.getElementById('formChart');
-
-        toggleChartButton.addEventListener('click', () => {
-            formChart.classList.toggle('hidden');
-        });
-    
     // Mengatur tombol untuk membuka modal add
     document.querySelector('[data-modal-target="#addEventModal"]').addEventListener('click', function() {
         const modal = document.querySelector('#addEventModal');

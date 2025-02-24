@@ -34,13 +34,13 @@
         <!-- Navbar -->
         <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
 
-      <!-- Wrapper Alert -->
+<!-- Wrapper Alert -->
 @if (session('success') || session('error'))
 <div x-data="{ 
         showSuccess: {{ session('success') ? 'true' : 'false' }},
         showError: {{ session('error') ? 'true' : 'false' }}
     }"
-    x-init="setTimeout(() => showSuccess = false, 5000); setTimeout(() => showError = false, 3000);"
+    x-init="setTimeout(() => showSuccess = false, 5000); setTimeout(() => showError = false, 5000);"
     class="fixed top-5 right-5 z-50 flex flex-col gap-3">
 
     <!-- Success Alert -->
@@ -49,7 +49,7 @@
         class="bg-green-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
         
         <!-- Icon -->
-        <span class="text-2xl">✔️</span>
+        <span class="text-2xl">✅</span>
 
         <!-- Message -->
         <div>
@@ -84,6 +84,7 @@
         </button>
     </div>
     @endif
+
 </div>
 @endif
          <!-- Main Content -->
@@ -92,9 +93,9 @@
 
             <div class="flex items-center justify-end transition-all duration-500 mt-8 mb-4">
                 <!-- Search -->
-                <form method="GET" action="{{ route('rekappenjualan.index') }}" class="flex items-center gap-2">
+                <form method="GET" action="{{ route('statuspaket.index') }}" class="flex items-center gap-2">
                     <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
-                        <input type="text" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}"
+                        <input type="date" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}"
                             class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
                     </div>
 
@@ -359,48 +360,64 @@
 
     var chartData = @json($chartData);
 
-    var ctx = document.getElementById('chart').getContext('2d');
-    var barChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: chartData.labels, // Label date
-            datasets: chartData.datasets, // Dataset total penjualan
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: false, // Sembunyikan legenda
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(tooltipItem) {
-                            let value = tooltipItem.raw; // Ambil data nilai
-                            return tooltipItem.dataset.text + ': ' + value.toLocaleString(); // Format angka
-                        },
-                    },
-                },
+var ctx = document.getElementById('chart').getContext('2d');
+
+var barChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: chartData.labels, // Label tanggal
+        datasets: chartData.datasets, // Data total penjualan
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false, // Sembunyikan legenda
             },
-            scales: {
-                x: {
-                    title: {
-                        display: false, // Sembunyikan label sumbu X
-                    },
-                },
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: false, // Sembunyikan label sumbu Y
-                    },
-                    ticks: {
-                        callback: function(value) {
-                            return value.toLocaleString(); // Format angka
-                        },
+            tooltip: {
+                callbacks: {
+                    label: function(tooltipItem) {
+                        let value = tooltipItem.raw; // Ambil data nilai
+                        return tooltipItem.dataset.label + ' : ' + value.toLocaleString(); // Format angka
                     },
                 },
             },
         },
-    });
+        scales: {
+            x: {
+                title: {
+                    display: false, // Sembunyikan label sumbu X
+                },
+            },
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: false, // Sembunyikan label sumbu Y
+                },
+                ticks: {
+                    callback: function(value) {
+                        return value.toLocaleString(); // Format angka
+                    },
+                },
+            },
+        },
+    },
+    plugins: [{
+        afterDatasetsDraw: function(chart) {
+            var ctx = chart.ctx;
+            chart.data.datasets.forEach((dataset, i) => {
+                var meta = chart.getDatasetMeta(i);
+                meta.data.forEach((bar, index) => {
+                    var value = dataset.data[index];
+                    ctx.fillStyle = 'black'; // Warna teks
+                    ctx.font = '15px sans-serif'; // Ukuran teks
+                    ctx.textAlign = 'center';
+                    ctx.fillText(value.toLocaleString(), bar.x, bar.y - 10); // Tampilkan di atas bar
+                });
+            });
+        }
+    }]
+});
 
     async function exportToPDF() {
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;

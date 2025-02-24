@@ -142,6 +142,11 @@ class RekapPiutangServisAspController extends Controller
                 'nilai_piutang' => 'required|integer|min:0',
             ]);
 
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
+
             $exists = RekapPiutangServisAsp::where('date', $validatedData['date'])
             ->where('pelaksana', $validatedData['pelaksana'])
             ->where('id_rpiutangsasp', '!=', $rekappiutangservisasp->id_rpiutangsasp)->exists();
@@ -226,7 +231,7 @@ class RekapPiutangServisAspController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Support|Halaman {PAGENO}');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Support - Laporan Piutang Servis ASP');
     
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "

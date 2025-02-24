@@ -143,6 +143,11 @@ class LaporanDetransController extends Controller
                 'total_pengiriman' => 'required|integer|min:0',
             ]);
 
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
+
           // Cek kombinasi unik date dan perusahaan
           $exists = LaporanDetrans::where('date', $validatedData['date'])
           ->where('pelaksana', $validatedData['pelaksana'])
@@ -213,7 +218,7 @@ class LaporanDetransController extends Controller
         ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
 
         // Tambahkan footer ke PDF
-        $mpdf->SetFooter('{DATE j-m-Y}|Laporan Supports|Halaman {PAGENO}');
+        $mpdf->SetFooter('{DATE j-m-Y}|Laporan Supports - Laporan Pengiriman');
 
         // Konten HTML
         $htmlContent = "
@@ -234,7 +239,7 @@ class LaporanDetransController extends Controller
                 </table>
             </div>
             <div style='width: 65%; text-align:center; margin-left: 20px;'>
-                <h2 style='font-size: 14px; margin-bottom: 10px;'>Grafik Laporan Pengiriman Detrans</h2>
+                <h2 style='font-size: 14px; margin-bottom: 10px;'>Grafik Laporan Pengiriman</h2>
                 <img src='{$chartBase64}' style='width: 100%; height: auto;' alt='Grafik Penjualan' />
             </div>
         </div>

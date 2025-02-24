@@ -34,64 +34,59 @@
         <!-- Navbar -->
         <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
        
- <!-- Success & Error Popup -->
- <div x-data="{ showSuccess: {{ session('success') ? 'true' : 'false' }}, showError: {{ session('error') ? 'true' : 'false' }} }">
+ <!-- Wrapper Alert -->
+ @if (session('success') || session('error'))
+ <div x-data="{ 
+         showSuccess: {{ session('success') ? 'true' : 'false' }},
+         showError: {{ session('error') ? 'true' : 'false' }}
+     }"
+     x-init="setTimeout(() => showSuccess = false, 5000); setTimeout(() => showError = false, 5000);"
+     class="fixed top-5 right-5 z-50 flex flex-col gap-3">
 
-    <!-- Success Message -->
-    @if (session('success'))
-    <div x-show="showSuccess" x-transition class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-        <div class="bg-gray-900 text-white p-6 rounded-lg shadow-lg w-[400px] relative">
-            <!-- Close Button -->
-            <button @click="showSuccess = false" class="absolute top-3 right-3 text-gray-400 hover:text-gray-200 text-xl">
-                &times;
-            </button>
-    
-            <!-- Icon & Title -->
-            <div class="flex items-center gap-3">
-                <span class="text-green-500 text-3xl">✅</span>
-                <h3 class="text-xl font-bold">Success!</h3>
-            </div>
-    
-            <p class="text-gray-300 mt-2">{{ session('success') }}</p>
+     <!-- Success Alert -->
+     @if (session('success'))
+     <div x-show="showSuccess" x-transition.opacity.scale.90
+         class="bg-green-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
+         
+         <!-- Icon -->
+         <span class="text-2xl">✅</span>
 
-            <!-- Button -->
-            <div class="mt-4 flex justify-end">
-                <button @click="showSuccess = false" class="border border-green-500 text-green-500 px-4 py-2 rounded hover:bg-green-600 hover:text-white transition">
-                    OK
-                </button>
-            </div>
-        </div>
-    </div>
-    @endif
+         <!-- Message -->
+         <div>
+             <h3 class="font-bold">Success!</h3>
+             <p class="text-sm">{{ session('success') }}</p>
+         </div>
 
-    <!-- Error Message -->
-    @if (session('error'))
-    <div x-show="showError" x-transition class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-        <div class="bg-gray-900 text-white p-6 rounded-lg shadow-lg w-[400px] relative">
-            <!-- Close Button -->
-            <button @click="showError = false" class="absolute top-3 right-3 text-gray-400 hover:text-gray-200 text-xl">
-                &times;
-            </button>
+         <!-- Close Button -->
+         <button @click="showSuccess = false" class="ml-auto text-white text-lg font-bold">
+             &times;
+         </button>
+     </div>
+     @endif
 
-            <!-- Icon & Title -->
-            <div class="flex items-center gap-3">
-                <span class="text-red-500 text-3xl">⚠️</span>
-                <h3 class="text-xl font-bold">Error!</h3>
-            </div>
+     <!-- Error Alert -->
+     @if (session('error'))
+     <div x-show="showError" x-transition.opacity.scale.90
+         class="bg-red-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
+         
+         <!-- Icon -->
+         <span class="text-2xl">⚠️</span>
 
-            <p class="mt-2 text-gray-300">{{ session('error') }}</p>
+         <!-- Message -->
+         <div>
+             <h3 class="font-bold">Error!</h3>
+             <p class="text-sm">{{ session('error') }}</p>
+         </div>
 
-            <!-- Button -->
-            <div class="mt-4 flex justify-end">
-                <button @click="showError = false" class="border border-red-500 text-red-500 px-4 py-2 rounded hover:bg-red-600 hover:text-white transition">
-                    OK
-                </button>
-            </div>
-        </div>
-    </div>
-    @endif
-    
-</div>
+         <!-- Close Button -->
+         <button @click="showError = false" class="ml-auto text-white text-lg font-bold">
+             &times;
+         </button>
+     </div>
+     @endif
+
+ </div>
+ @endif
 
        <!-- Main Content -->
        <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
@@ -99,9 +94,9 @@
 
         <div class="flex items-center justify-end transition-all duration-500 mt-8 mb-4">
             <!-- Search -->
-            <form method="GET" action="{{ route('rekappenjualan.index') }}" class="flex items-center gap-2">
+            <form method="GET" action="{{ route('laporanpaketadministrasi.index') }}" class="flex items-center gap-2">
                 <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
-                    <input type="text" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}"
+                    <input type="date" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}"
                         class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
                 </div>
 
@@ -146,7 +141,7 @@
                         <tr class="hover:bg-gray-100">
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanpaketadministrasi->date_formatted }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanpaketadministrasi->website }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanpaketadministrasi->total_paket_formatted }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanpaketadministrasi->total_paket }}</td>
                             <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
                                 <!-- Edit Button -->
                                 <button class="bg-red-600 text-white px-3 py-2 rounded" data-modal-target="#editEventModal{{ $laporanpaketadministrasi->id_laporanpaket }}">
@@ -323,89 +318,101 @@
 </body>
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <script>
-        //toogle form
-        const toggleFormButton = document.getElementById('toggleFormButton');
-        const formContainer = document.getElementById('formContainer');
+    // Toggle form
+    const toggleFormButton = document.getElementById('toggleFormButton');
+    const formContainer = document.getElementById('formContainer');
 
-        toggleFormButton.addEventListener('click', () => {
-            formContainer.classList.toggle('hidden');
-        });
+    toggleFormButton.addEventListener('click', () => {
+        formContainer.classList.toggle('hidden');
+    });
 
+    // Toggle chart form
     const toggleChartButton = document.getElementById('toggleChartButton');
-        const formChart = document.getElementById('formChart');
+    const formChart = document.getElementById('formChart');
 
-        toggleChartButton.addEventListener('click', () => {
-            formChart.classList.toggle('hidden');
-        });
+    toggleChartButton.addEventListener('click', () => {
+        formChart.classList.toggle('hidden');
+    });
 
-    const chartCanvas = document.getElementById('chart');
-    // Mengatur tombol untuk membuka modal add
+    // Modal for add event
     document.querySelector('[data-modal-target="#addEventModal"]').addEventListener('click', function() {
         const modal = document.querySelector('#addEventModal');
         modal.classList.remove('hidden');
     });
-    // Mengatur tombol untuk membuka modal edit
+
+    // Modal for edit event
     document.querySelectorAll('[data-modal-target]').forEach(button => {
         button.addEventListener('click', function() {
-            // Menemukan modal berdasarkan ID yang diberikan di data-modal-target
             const modalId = this.getAttribute('data-modal-target');
             const modal = document.querySelector(modalId);
             if (modal) {
-                modal.classList.remove('hidden'); // Menampilkan modal
+                modal.classList.remove('hidden');
             }
         });
     });
-    // Menutup modal ketika tombol Close ditekan
+
+    // Close modal
     document.querySelectorAll('[data-modal-close]').forEach(button => {
         button.addEventListener('click', function() {
             const modal = this.closest('.fixed');
-            modal.classList.add('hidden'); // Menyembunyikan modal
+            modal.classList.add('hidden');
         });
     });
 
+    // Inisialisasi chart menggunakan data yang diberikan (misalnya dari server)
     var chartData = @json($chartData);
-
     var ctx = document.getElementById('chart').getContext('2d');
     var barChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: chartData.labels, // Label date
-            datasets: chartData.datasets, // Dataset total penjualan
+            labels: chartData.labels,
+            datasets: chartData.datasets,
         },
         options: {
             responsive: true,
             plugins: {
                 legend: {
-                    display: false, // Sembunyikan legenda
+                    display: false,
                 },
                 tooltip: {
                     callbacks: {
                         label: function(tooltipItem) {
-                            let value = tooltipItem.raw; // Ambil data nilai
-                            return tooltipItem.dataset.text + ': ' + value.toLocaleString(); // Format angka
+                            let value = tooltipItem.raw;
+                            return tooltipItem.dataset.label + ' : ' + value.toLocaleString();
                         },
                     },
                 },
             },
             scales: {
                 x: {
-                    title: {
-                        display: false, // Sembunyikan label sumbu X
-                    },
+                    title: { display: false },
                 },
                 y: {
                     beginAtZero: true,
-                    title: {
-                        display: false, // Sembunyikan label sumbu Y
-                    },
+                    title: { display: false },
                     ticks: {
                         callback: function(value) {
-                            return value.toLocaleString(); // Format angka
+                            return value.toLocaleString();
                         },
                     },
                 },
             },
         },
+        plugins: [{
+            afterDatasetsDraw: function(chart) {
+                var ctx = chart.ctx;
+                chart.data.datasets.forEach((dataset, i) => {
+                    var meta = chart.getDatasetMeta(i);
+                    meta.data.forEach((bar, index) => {
+                        var value = dataset.data[index];
+                        ctx.fillStyle = 'black';
+                        ctx.font = 'bold 15px sans-serif';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(value.toLocaleString(), bar.x, bar.y - 10);
+                    });
+                });
+            }
+        }]
     });
 
     async function exportToPDF() {
@@ -415,38 +422,48 @@
         return;
     }
 
-    // Ambil data dari tabel
-    const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
-        const cells = row.querySelectorAll('td');
-        return {
-            date: cells[0]?.innerText.trim() || '',
-            website: cells[1]?.innerText.trim() || '',
-            total_paket: cells[2]?.innerText.trim() || '',
-        };
-    });
+    // Ambil data tabel dengan validasi jumlah kolom
+    const items = Array.from(document.querySelectorAll('#data-table tbody tr'))
+        .map(row => {
+            const cells = row.querySelectorAll('td');
+            if (cells.length < 3) {
+                console.warn("Baris tidak memiliki cukup kolom:", row);
+                return null;
+            }
+            return {
+                date_formatted: cells[0]?.innerText.trim() || '',
+                website: cells[1]?.innerText.trim() || '',
+                total_paket_formatted: cells[2]?.innerText.trim() || '',
+            };
+        })
+        .filter(item => item.date_formatted && item.website && item.total_paket_formatted);
+
+    if (items.length === 0) {
+        alert('Tidak ada data tabel yang valid untuk diekspor.');
+        return;
+    }
 
     const tableContent = items
-        .filter(item => item.date && item.website && item.total_paket)
         .map(item => `
             <tr>
-                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.date}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.date_formatted}</td>
                 <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.website}</td>
-                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.total_paket}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.total_paket_formatted}</td>
             </tr>
-        `).join('');
+        `)
+        .join('');
 
-    const pdfTable = tableContent;
+    const pdfTable = `<table>${tableContent}</table>`;
 
-    const chartCanvas = document.querySelector('#chart');
+    const chartCanvas = document.getElementById('chart');
     if (!chartCanvas) {
         alert('Elemen canvas grafik tidak ditemukan.');
         return;
     }
-
     const chartBase64 = chartCanvas.toDataURL();
 
     try {
-        const response = await fetch('/marketings/laporanpaketadministrasi/export-pdf', {
+        const response = await fetch('marketings/laporanpaketadministrasi/export-pdf', {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,
@@ -458,12 +475,12 @@
             }),
         });
 
-    if (response.ok) {
+        if (response.ok) {
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'Laporan_paket_administrai.pdf';
+            a.download = 'laporan_paket_administrasi.pdf';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -476,5 +493,17 @@
     }
 }
 
+    // Fungsi untuk mengubah jumlah item per halaman
+    function changePerPage(value) {
+        const url = new URL(window.location.href);
+        const searchParams = new URLSearchParams(url.search);
+        
+        searchParams.set('per_page', value);
+        if (!searchParams.has('page')) {
+            searchParams.set('page', 1);
+        }
+        
+        window.location.href = url.pathname + '?' + searchParams.toString();
+    }
 </script>
 </html>

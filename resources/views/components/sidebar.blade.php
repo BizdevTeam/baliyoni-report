@@ -212,7 +212,7 @@
                         <a href="{{ route('taxplaning.index') }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/taxplanning.svg") }}" class="w-5 h-5">
-                            <span class="ml-2">Tax Planning vs Penjualan</span>
+                            <span class="ml-2">Tax Planning </span>
                         </a>
                     </li>
                 </ul>
@@ -351,8 +351,8 @@
                 <li class="group hover:text-white menu-item">
                     <a href="{{ route("questions.index") }}"
                         class="flex items-center space-x-3 px-4 py-2 rounded-md transition">
-                        <img src="{{ asset ("images/ask.svg") }}" class="w-5 h-5">
-                        <span class="menu-label">Tanya Jawab</span>
+                        <img src="{{ asset('images/ask.svg') }}" class="w-5 h-5">
+                        <span class="menu-label">FAQ</span>
                     </a>
                 </li>
                 </div>
@@ -551,6 +551,13 @@
                             <span class="ml-2">Laporan Bizdev</span>
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ route('laporanbizdevgambar.index') }}"
+                            class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
+                            <img src="{{ asset("icon/LaporanPaketAdministrasi.svg") }}" class="w-5 h-5">
+                            <span class="ml-2">Laporan Bizdev Gambar</span>
+                        </a>
+                    </li>
                 </ul>
             </li>
             
@@ -635,7 +642,7 @@
                         <a href="{{ route('taxplaning.index') }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/taxplanning.svg") }}" class="w-5 h-5">
-                            <span class="ml-2">Tax Planning vs Penjualan</span>
+                            <span class="ml-2">Tax Planning </span>
                         </a>
                     </li>
                 </ul>
@@ -691,6 +698,13 @@
                         </a>
                     </li>
                     <li>
+                        <a href="{{ route("ijasagambar.index") }}"
+                            class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
+                            <img src="{{ asset("icon/ijasa.svg") }}" class="w-5 h-5">
+                            <span class="ml-2">iJASA Gambar</span>
+                        </a>
+                    </li>
+                    <li>
                         <a href="{{ route("laporansakit.index") }}"
                             class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/laporansakit.svg") }}" class="w-5 h-5">
@@ -698,7 +712,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route("laopranizin.index") }}"
+                        <a href="{{ route("laporanizin.index") }}"
                             class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
                             <img src="{{ asset("icon/laporanizin.svg") }}" class="w-5 h-5">
                             <span class="ml-2">Laporan Izin</span>

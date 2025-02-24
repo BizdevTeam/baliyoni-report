@@ -127,6 +127,10 @@ class LaporanCutiController extends Controller
                 'total_cuti' => 'required|integer|min:0',
             ]);
 
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
             // Cek kombinasi unik date dan nama
             $exists = LaporanCuti::where('nama', $validatedData['nama'])
                 ->where('id_cuti', '!=', $laporancuti->id_cuti)->exists();
@@ -187,7 +191,7 @@ class LaporanCutiController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA|Halaman {PAGENO}');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA - Laporan Cuti');
             
             $htmlContent = "
             <div style='gap: 100px; width: 100%;'>

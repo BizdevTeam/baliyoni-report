@@ -62,19 +62,24 @@ class LaporanOutletController extends Controller
     public function store(Request $request)
     {
         try {
-            $validatedata = $request->validate([
+            $validatedData = $request->validate([
                 'date' => 'required|date',
                 'total_pembelian' => 'required|integer|min:0'
             ]);
-    
+
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
+
             // Cek kombinasi unik date dan perusahaan
-            $exists = LaporanOutlet::where('date', $validatedata['date'])->exists();
+            $exists = LaporanOutlet::where('date', $validatedData['date'])->exists();
             
             if ($exists) {
                 return redirect()->back()->with('error', 'Data Already Exists.');
             }
     
-            LaporanOutlet::create($validatedata);
+            LaporanOutlet::create($validatedData);
     
             return redirect()->route('laporanoutlet.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
@@ -86,7 +91,7 @@ class LaporanOutletController extends Controller
     public function update(Request $request, LaporanOutlet $laporanoutlet)
     {
         try {
-                        // Konversi tanggal agar selalu dalam format Y-m-d
+            // Konversi tanggal agar selalu dalam format Y-m-d
             if ($request->has('date')) {
                 try {
                     $request->merge(['date' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
@@ -100,6 +105,7 @@ class LaporanOutletController extends Controller
                 'date' => 'required|date',
                 'total_pembelian' => 'required|integer|min:0',
             ]);
+
             $errorMessage = '';
             if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
@@ -174,7 +180,7 @@ class LaporanOutletController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
 
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Procurements|Halaman {PAGENO}');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Procurements - Laporan Pembelian Outlet');
 
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "

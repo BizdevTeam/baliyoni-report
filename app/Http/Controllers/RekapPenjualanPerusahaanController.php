@@ -108,12 +108,25 @@ class RekapPenjualanPerusahaanController extends Controller
     public function update(Request $request, RekapPenjualanPerusahaan $rekappenjualanperusahaan)
     {
         try {
-            // Validasi input
-            $request->validate([
-                'date' => 'required|date',
-                'perusahaan_id' => 'required|exists:perusahaans,id',
-                'total_penjualan' => 'required|integer|min:0',
-            ]);
+            // Konversi tanggal agar selalu dalam format Y-m-d
+            if ($request->has('date')) {
+                try {
+                    $request->merge(['date' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
+                } catch (\Exception $e) {
+                    return redirect()->back()->with('error', 'Format tanggal tidak valid.');
+                }
+            }
+
+                $validatedData = $request->validate([
+                    'date' => 'required|date',
+                    'perusahaan_id' => 'required|exists:perusahaans,id',
+                    'total_penjualan' => 'required|integer|min:0',
+                ]);
+
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
 
             $exists = RekapPenjualanPerusahaan::where('date', $request->date)
                 ->where('perusahaan_id', $request->perusahaan_id)
@@ -125,11 +138,7 @@ class RekapPenjualanPerusahaanController extends Controller
             }
     
             // Update data
-            $rekappenjualanperusahaan->update([
-                'date' => $request->date,
-                'perusahaan_id' => $request->perusahaan_id,
-                'total_penjualan' => $request->total_penjualan,
-            ]);
+            $rekappenjualanperusahaan->update($validatedData);
     
             // Redirect dengan pesan sukses
             return redirect()->route('rekappenjualanperusahaan.index')->with('success', 'Data berhasil diperbarui.');
@@ -154,11 +163,11 @@ class RekapPenjualanPerusahaanController extends Controller
                 'table' => 'required|string',
                 'chart' => 'required|string',
             ]);
-    
+
             // Ambil data dari request
             $tableHTML = trim($data['table']);
             $chartBase64 = trim($data['chart']);
-    
+
             // Validasi isi tabel dan chart untuk mencegah halaman kosong
             if (empty($tableHTML)) {
                 return response()->json(['success' => false, 'message' => 'Data tabel kosong.'], 400);
@@ -166,7 +175,7 @@ class RekapPenjualanPerusahaanController extends Controller
             if (empty($chartBase64)) {
                 return response()->json(['success' => false, 'message' => 'Data grafik kosong.'], 400);
             }
-    
+
             // Buat instance mPDF dengan konfigurasi
             $mpdf = new \Mpdf\Mpdf([
                 'orientation' => 'L', // Landscape orientation
@@ -176,7 +185,7 @@ class RekapPenjualanPerusahaanController extends Controller
                 'margin_bottom' => 10, // Kurangi margin bawah
                 'format' => 'A4', // Ukuran kertas A4
             ]);
-    
+
             // Tambahkan gambar sebagai header tanpa margin
             $headerImagePath = public_path('images/HEADER.png'); // Sesuaikan path
             $mpdf->SetHTMLHeader("
@@ -184,9 +193,9 @@ class RekapPenjualanPerusahaanController extends Controller
                     <img src='{$headerImagePath}' alt='Header' style='width: 100%; height: auto;' />
                 </div>
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
-    
+
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Marketing|Laporan Rekap Penjualan Perusahaan');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Marketing - Laporan Rekap Penjualan Perusahaan');
 
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "
@@ -196,9 +205,9 @@ class RekapPenjualanPerusahaanController extends Controller
                     <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                         <thead>
                             <tr style='background-color: #f2f2f2;'>
-                                <th style='border: 1px solid #000; padding: 1px;'>Bulan</th>
-                                <th style='border: 1px solid #000; padding: 2px;'>Perusahaan</th>
-                                <th style='border: 1px solid #000; padding: 2px;'>Total Penjualan Perusahaan (Rp)</th>
+                                <th style='border: 1px solid #000; padding: 1px;'>Tanggal</th>
+                                <th style='border: 1px solid #000; padding: 1px;'>Perusahaan</th>
+                                <th style='border: 1px solid #000; padding: 2px;'>Total Penjualan (Rp)</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -212,18 +221,21 @@ class RekapPenjualanPerusahaanController extends Controller
                 </div>
             </div>
             ";
+            // 
             // Tambahkan konten ke PDF
             $mpdf->WriteHTML($htmlContent);
-    
+
             // Return PDF sebagai respon download
-            return response($mpdf->Output('', 'S'), 200)->header('Content-Type', 'application/pdf')->header('Content-Disposition', 'attachment; filename="laporan_rekap_penjualan_perusahaan.pdf"');
+            return response($mpdf->Output('', 'S'), 200)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename=\"laporan_rekap_penjualan.pdf\"');
         } catch (\Exception $e) {
             // Log error jika terjadi masalah
             Log::error('Error exporting PDF: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Gagal mengekspor PDF.'], 500);
         }
-    }   
-
+    }
+    
     public function destroy(RekapPenjualanPerusahaan $rekappenjualanperusahaan)
     {
         try {

@@ -33,59 +33,60 @@
 
         <!-- Navbar -->
         <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
-     <!-- Wrapper Alert -->
-     @if (session('success') || session('error'))
-     <div x-data="{ 
-             showSuccess: {{ session('success') ? 'true' : 'false' }},
-             showError: {{ session('error') ? 'true' : 'false' }}
-         }"
-         x-init="setTimeout(() => showSuccess = false, 5000); setTimeout(() => showError = false, 3000);"
-         class="fixed top-5 right-5 z-50 flex flex-col gap-3">
-     
-         <!-- Success Alert -->
-         @if (session('success'))
-         <div x-show="showSuccess" x-transition.opacity.scale.90
-             class="bg-green-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
-             
-             <!-- Icon -->
-             <span class="text-2xl">✅</span>
-     
-             <!-- Message -->
-             <div>
-                 <h3 class="font-bold">Success!</h3>
-                 <p class="text-sm">{{ session('success') }}</p>
-             </div>
-     
-             <!-- Close Button -->
-             <button @click="showSuccess = false" class="ml-auto text-white text-lg font-bold">
-                 &times;
-             </button>
-         </div>
-         @endif
-     
-         <!-- Error Alert -->
-         @if (session('error'))
-         <div x-show="showError" x-transition.opacity.scale.90
-             class="bg-red-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
-             
-             <!-- Icon -->
-             <span class="text-2xl">⚠️</span>
-     
-             <!-- Message -->
-             <div>
-                 <h3 class="font-bold">Error!</h3>
-                 <p class="text-sm">{{ session('error') }}</p>
-             </div>
-     
-             <!-- Close Button -->
-             <button @click="showError = false" class="ml-auto text-white text-lg font-bold">
-                 &times;
-             </button>
-         </div>
-         @endif
-     
-     </div>
-     @endif
+    
+        <!-- Wrapper Alert -->
+    @if (session('success') || session('error'))
+    <div x-data="{ 
+            showSuccess: {{ session('success') ? 'true' : 'false' }},
+            showError: {{ session('error') ? 'true' : 'false' }}
+        }"
+        x-init="setTimeout(() => showSuccess = false, 5000); setTimeout(() => showError = false, 5000);"
+        class="fixed top-5 right-5 z-50 flex flex-col gap-3">
+
+        <!-- Success Alert -->
+        @if (session('success'))
+        <div x-show="showSuccess" x-transition.opacity.scale.90
+            class="bg-green-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
+            
+            <!-- Icon -->
+            <span class="text-2xl">✅</span>
+
+            <!-- Message -->
+            <div>
+                <h3 class="font-bold">Success!</h3>
+                <p class="text-sm">{{ session('success') }}</p>
+            </div>
+
+            <!-- Close Button -->
+            <button @click="showSuccess = false" class="ml-auto text-white text-lg font-bold">
+                &times;
+            </button>
+        </div>
+        @endif
+
+        <!-- Error Alert -->
+        @if (session('error'))
+        <div x-show="showError" x-transition.opacity.scale.90
+            class="bg-red-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
+            
+            <!-- Icon -->
+            <span class="text-2xl">⚠️</span>
+
+            <!-- Message -->
+            <div>
+                <h3 class="font-bold">Error!</h3>
+                <p class="text-sm">{{ session('error') }}</p>
+            </div>
+
+            <!-- Close Button -->
+            <button @click="showError = false" class="ml-auto text-white text-lg font-bold">
+                &times;
+            </button>
+        </div>
+        @endif
+
+    </div>
+    @endif
      
             <!-- Main Content -->
         <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
@@ -93,7 +94,7 @@
 
             <div class="flex items-center justify-end transition-all duration-500 mt-8 mb-4">
                 <!-- Search -->
-                <form method="GET" action="{{ route('rekappenjualan.index') }}" class="flex items-center gap-2">
+                <form method="GET" action="{{ route('rekappenjualanperusahaan.index') }}" class="flex items-center gap-2">
                     <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
                         <input type="date" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}"
                             class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
@@ -228,7 +229,56 @@
 </div>
 <div class="mt-6 flex justify-end">
     <button onclick="exportToPDF()" class="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition duration-300 ease-in-out">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><mask id="lineMdCloudAltPrintFilledLoop0"><g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="64" stroke-dashoffset="64" d="M7 19h11c2.21 0 4 -1.79 4 -4c0 -2.21 -1.79 -4 -4 -4h-1v-1c0 -2.76 -2.24 -5 -5 -5c-2.42 0 -4.44 1.72 -4.9 4h-0.1c-2.76 0 -5 2.24 -5 5c0 2.76 2.24 5 5 5Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0"/><set fill="freeze" attributeName="opacity" begin="0.7s" to="0"/></path><g fill="#fff" stroke="none" opacity="0"><circle cx="12" cy="10" r="6"><animate attributeName="cx" begin="0.7s" dur="30s" repeatCount="indefinite" values="12;11;12;13;12"/></circle><rect width="9" height="8" x="8" y="12"/><rect width="15" height="12" x="1" y="8" rx="6"><animate attributeName="x" begin="0.7s" dur="21s" repeatCount="indefinite" values="1;0;1;2;1"/></rect><rect width="13" height="10" x="10" y="10" rx="5"><animate attributeName="x" begin="0.7s" dur="17s" repeatCount="indefinite" values="10;9;10;11;10"/></rect><set fill="freeze" attributeName="opacity" begin="0.7s" to="1"/></g><g fill="#000" fill-opacity="0" stroke="none"><circle cx="12" cy="10" r="4"><animate attributeName="cx" begin="0.7s" dur="30s" repeatCount="indefinite" values="12;11;12;13;12"/></circle><rect width="9" height="6" x="8" y="12"/><rect width="11" height="8" x="3" y="10" rx="4"><animate attributeName="x" begin="0.7s" dur="21s" repeatCount="indefinite" values="3;2;3;4;3"/></rect><rect width="9" height="6" x="12" y="12" rx="3"><animate attributeName="x" begin="0.7s" dur="17s" repeatCount="indefinite" values="12;11;12;13;12"/></rect><set fill="freeze" attributeName="fill-opacity" begin="0.7s" to="1"/><animate fill="freeze" attributeName="opacity" begin="0.7s" dur="0.5s" values="1;0"/></g><g stroke="none"><path fill="#fff" d="M6 11h12v0h-12z"><animate fill="freeze" attributeName="d" begin="1.3s" dur="0.22s" values="M6 11h12v0h-12z;M6 11h12v11h-12z"/></path><path fill="#000" d="M8 13h8v0h-8z"><animate fill="freeze" attributeName="d" begin="1.34s" dur="0.14s" values="M8 13h8v0h-8z;M8 13h8v7h-8z"/></path><path fill="#fff" fill-opacity="0" d="M9 12h6v1H9zM9 14h6v1H9zM9 16h6v1H9zM9 18h6v1H9z"><animate fill="freeze" attributeName="fill-opacity" begin="1.4s" dur="0.1s" values="0;1"/><animateMotion begin="1.5s" calcMode="linear" dur="1.5s" path="M0 0v2" repeatCount="indefinite"/></path></g></g></mask><rect width="24" height="24" fill="currentColor" mask="url(#lineMdCloudAltPrintFilledLoop0)"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+            <mask id="lineMdCloudAltPrintFilledLoop0">
+                <g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                    <path stroke-dasharray="64" stroke-dashoffset="64" d="M7 19h11c2.21 0 4 -1.79 4 -4c0 -2.21 -1.79 -4 -4 -4h-1v-1c0 -2.76 -2.24 -5 -5 -5c-2.42 0 -4.44 1.72 -4.9 4h-0.1c-2.76 0 -5 2.24 -5 5c0 2.76 2.24 5 5 5Z">
+                        <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0" />
+                        <set fill="freeze" attributeName="opacity" begin="0.7s" to="0" />
+                    </path>
+                    <g fill="#fff" stroke="none" opacity="0">
+                        <circle cx="12" cy="10" r="6">
+                            <animate attributeName="cx" begin="0.7s" dur="30s" repeatCount="indefinite" values="12;11;12;13;12" />
+                        </circle>
+                        <rect width="9" height="8" x="8" y="12" />
+                        <rect width="15" height="12" x="1" y="8" rx="6">
+                            <animate attributeName="x" begin="0.7s" dur="21s" repeatCount="indefinite" values="1;0;1;2;1" />
+                        </rect>
+                        <rect width="13" height="10" x="10" y="10" rx="5">
+                            <animate attributeName="x" begin="0.7s" dur="17s" repeatCount="indefinite" values="10;9;10;11;10" />
+                        </rect>
+                        <set fill="freeze" attributeName="opacity" begin="0.7s" to="1" />
+                    </g>
+                    <g fill="#000" fill-opacity="0" stroke="none">
+                        <circle cx="12" cy="10" r="4">
+                            <animate attributeName="cx" begin="0.7s" dur="30s" repeatCount="indefinite" values="12;11;12;13;12" />
+                        </circle>
+                        <rect width="9" height="6" x="8" y="12" />
+                        <rect width="11" height="8" x="3" y="10" rx="4">
+                            <animate attributeName="x" begin="0.7s" dur="21s" repeatCount="indefinite" values="3;2;3;4;3" />
+                        </rect>
+                        <rect width="9" height="6" x="12" y="12" rx="3">
+                            <animate attributeName="x" begin="0.7s" dur="17s" repeatCount="indefinite" values="12;11;12;13;12" />
+                        </rect>
+                        <set fill="freeze" attributeName="fill-opacity" begin="0.7s" to="1" />
+                        <animate fill="freeze" attributeName="opacity" begin="0.7s" dur="0.5s" values="1;0" />
+                    </g>
+                    <g stroke="none">
+                        <path fill="#fff" d="M6 11h12v0h-12z">
+                            <animate fill="freeze" attributeName="d" begin="1.3s" dur="0.22s" values="M6 11h12v0h-12z;M6 11h12v11h-12z" />
+                        </path>
+                        <path fill="#000" d="M8 13h8v0h-8z">
+                            <animate fill="freeze" attributeName="d" begin="1.34s" dur="0.14s" values="M8 13h8v0h-8z;M8 13h8v7h-8z" />
+                        </path>
+                        <path fill="#fff" fill-opacity="0" d="M9 12h6v1H9zM9 14h6v1H9zM9 16h6v1H9zM9 18h6v1H9z">
+                            <animate fill="freeze" attributeName="fill-opacity" begin="1.4s" dur="0.1s" values="0;1" />
+                            <animateMotion begin="1.5s" calcMode="linear" dur="1.5s" path="M0 0v2" repeatCount="indefinite" />
+                        </path>
+                    </g>
+                </g>
+            </mask>
+            <rect width="24" height="24" fill="currentColor" mask="url(#lineMdCloudAltPrintFilledLoop0)" />
+        </svg>
     </button>
 </div>
 </div>
@@ -316,11 +366,12 @@
     var chartData = @json($chartData);
 
     var ctx = document.getElementById('chart').getContext('2d');
+
     var barChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: chartData.labels, // Label date
-            datasets: chartData.datasets, // Dataset total penjualan
+            labels: chartData.labels, // Label tanggal
+            datasets: chartData.datasets, // Data total penjualan
         },
         options: {
             responsive: true,
@@ -332,7 +383,7 @@
                     callbacks: {
                         label: function(tooltipItem) {
                             let value = tooltipItem.raw; // Ambil data nilai
-                            return tooltipItem.dataset.text + ' : ' + value.toLocaleString(); // Format angka
+                            return tooltipItem.dataset.label + ' : ' + 'Rp ' + value.toLocaleString(); // Format angka
                         },
                     },
                 },
@@ -350,15 +401,31 @@
                     },
                     ticks: {
                         callback: function(value) {
-                            return value.toLocaleString(); // Format angka
+                            return 'Rp ' + value.toLocaleString(); // Format angka
                         },
                     },
                 },
             },
         },
+        plugins: [{
+            afterDatasetsDraw: function(chart) {
+                var ctx = chart.ctx;
+                chart.data.datasets.forEach((dataset, i) => {
+                    var meta = chart.getDatasetMeta(i);
+                    meta.data.forEach((bar, index) => {
+                        var value = dataset.data[index];
+                        ctx.fillStyle = 'black'; // Warna teks
+                        ctx.font = '15px sans-serif'; // Ukuran teks
+                        ctx.textAlign = 'center';
+                        ctx.fillText('Rp ' + value.toLocaleString(), bar.x, bar.y - 10); // Tampilkan di atas bar
+                    });
+                });
+            }
+        }]
     });
     
-    async function exportToPDF() {
+// JavaScript Function
+async function exportToPDF() {
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
     if (!csrfToken) {
         alert('CSRF token tidak ditemukan. Pastikan meta tag CSRF disertakan.');
@@ -369,19 +436,19 @@
     const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
         const cells = row.querySelectorAll('td');
         return {
-            date: cells[0]?.innerText.trim() || '',
+            date_formatted: cells[0]?.innerText.trim() || '',
             perusahaan: cells[1]?.innerText.trim() || '',
-            total_penjualan: cells[2]?.innerText.trim() || '',
+            total_penjualan_formatted: cells[2]?.innerText.trim() || '',
         };
     });
 
     const tableContent = items
-        .filter(item => item.date && item.perusahaan && item.total_penjualan)
+        .filter(item => item.date_formatted && item.perusahaan && item.total_penjualan_formatted)
         .map(item => `
             <tr>
-                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.date}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.date_formatted}</td>
                 <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.perusahaan}</td>
-                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.total_penjualan}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.total_penjualan_formatted}</td>
             </tr>
         `).join('');
 
@@ -408,13 +475,13 @@
             }),
         });
 
-    if (response.ok) {
+        if (response.ok) {
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             a.download = 'Laporan_rekap_penjualan_perusahaan.pdf';
-            document.body.appendChild(a);
+        document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
         } else {
@@ -425,6 +492,7 @@
         alert('Terjadi kesalahan saat mengekspor PDF.');
     }
 }
+
 function changePerPage(value) {
     const url = new URL(window.location.href);
     url.searchParams.set('per_page', value);
@@ -442,5 +510,6 @@ function changePerPage(value) {
     
     window.location.href = url.pathname + '?' + searchParams.toString();
 }
+
 </script>
 </html>

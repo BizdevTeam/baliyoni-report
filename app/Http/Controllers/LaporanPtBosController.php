@@ -91,6 +91,11 @@ class LaporanPtBosController extends Controller
                 'rencana_implementasi' => 'required|string',
                 'keterangan' => 'required|string'
             ]);
+
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
     
             $laporanptbo->update($validatedData);
     
@@ -136,7 +141,7 @@ class LaporanPtBosController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA|Halaman {PAGENO}');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA - Laporan PT BOS');
     
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "
@@ -167,7 +172,7 @@ class LaporanPtBosController extends Controller
             // Return PDF sebagai respon download
             return response($mpdf->Output('', 'S'), 200)
                 ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'attachment; filename=\"laporan_rekap_penjualan.pdf\"');
+                ->header('Content-Disposition', 'attachment; filename=\"laporan_PT_BOS.pdf\"');
         } catch (\Exception $e) {
             // Log error jika terjadi masalah
             Log::error('Error exporting PDF: ' . $e->getMessage());

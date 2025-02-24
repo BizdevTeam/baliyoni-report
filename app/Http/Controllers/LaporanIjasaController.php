@@ -23,10 +23,10 @@ class LaporanIjasaController extends Controller
 
         $laporanijasas = LaporanIjasa::query()
         ->when($search, function ($query, $search) {
-            return $query->where('tanggal', 'LIKE', "%$search%")
+            return $query->where('date', 'LIKE', "%$search%")
                          ->orWhere('permasalahan', 'LIKE', "%$search%");
         })
-        ->orderBy('tanggal', 'DESC')
+        ->orderBy('date', 'DESC')
         ->paginate($perPage);
 
         if ($request->ajax()) {
@@ -40,7 +40,7 @@ class LaporanIjasaController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'tanggal' => 'required|date',
+                'date' => 'required|date',
                 'jam' => 'required|date_format:H:i',
                 'permasalahan' => 'required|string',
                 'impact' => 'required|string',
@@ -48,6 +48,7 @@ class LaporanIjasaController extends Controller
                 'resolve_tanggal' => 'required|date',
                 'resolve_jam' => 'required|date_format:H:i',
             ]);
+
 
             $errorMessage = '';
             if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
@@ -67,7 +68,7 @@ class LaporanIjasaController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'tanggal' => 'required|date',
+                'date' => 'required|date',
                 'jam' => 'nullable|date_format:H:i',
                 'permasalahan' => 'required|string',
                 'impact' => 'required|string',
@@ -75,6 +76,11 @@ class LaporanIjasaController extends Controller
                 'resolve_tanggal' => 'required|date',
                 'resolve_jam' => 'required|date_format:H:i',
             ]);
+
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
             
             $laporanijasa->update($validatedData);
 
@@ -113,7 +119,7 @@ class LaporanIjasaController extends Controller
         ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
 
         // Tambahkan footer ke PDF
-        $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA - iJASA|Halaman {PAGENO}');
+        $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA - Laporan iJASA');
 
         $htmlContent = "
             <div style='width: 100%;'>
