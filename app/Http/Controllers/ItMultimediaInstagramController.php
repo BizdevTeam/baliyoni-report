@@ -3,12 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\ItMultimediaInstagram;
+use App\Traits\DateValidationTrait;
+use Carbon\Traits\Date;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 
 class ItMultimediaInstagramController extends Controller
 {
+    use DateValidationTrait;
+    
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 12);
@@ -16,10 +20,10 @@ class ItMultimediaInstagramController extends Controller
 
         $itmultimediainstagrams = ItMultimediaInstagram::query()
             ->when($search, function($query, $search) {
-                return $query->where('bulan', 'like', "%$search%")
+                return $query->where('date', 'like', "%$search%")
                              ->orWhere('keterangan', 'like', "%$search%");
             })
-            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
+            ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC')
             ->paginate($perPage);
 
         return view('it.multimediainstagram', compact('itmultimediainstagrams'));
@@ -28,19 +32,33 @@ class ItMultimediaInstagramController extends Controller
     public function store(Request $request)
     {
         try {
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+                // Konversi tanggal agar selalu dalam format Y-m-d
+                if ($request->has('date')) {
+                try {
+                    $request->merge(['date' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
+                } catch (\Exception $e) {
+                    return redirect()->back()->with('error', 'Format tanggal tidak valid.');
+                }
+            }
+            
+            $validatedData = $request->validate([
+                'date' => 'required|date',
                 'keterangan' => 'required|string|max:255',
                 'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550'
             ]);
 
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
+
             if ($request->hasFile('gambar')) {
                 $filename = time() . $request->file('gambar')->getClientOriginalName();
                 $request->file('gambar')->move(public_path('images/it/multimediainstagram'), $filename);
-                $validatedata['gambar'] = $filename;
+                $validatedData['gambar'] = $filename;
             }
 
-            ItMultimediaInstagram::create($validatedata);
+            ItMultimediaInstagram::create($validatedData);
 
             return redirect()->route('multimediainstagram.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
@@ -52,8 +70,16 @@ class ItMultimediaInstagramController extends Controller
     public function update(Request $request, ItMultimediaInstagram $multimediainstagram)
     {
         try {
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+                // Konversi tanggal agar selalu dalam format Y-m-d
+                if ($request->has('date')) {
+                try {
+                    $request->merge(['date' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
+                } catch (\Exception $e) {
+                    return redirect()->back()->with('error', 'Format tanggal tidak valid.');
+                }
+            }
+            $validatedData = $request->validate([
+                'date' => 'required|date',
                 'keterangan' => 'required|string|max:255',
                 'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550'
             ]);
@@ -66,10 +92,10 @@ class ItMultimediaInstagramController extends Controller
 
                 $filename = time() . $request->file('gambar')->getClientOriginalName();
                 $request->file('gambar')->move(public_path('images/it/multimediainstagram'), $filename);
-                $validatedata['gambar'] = $filename;
+                $validatedData['gambar'] = $filename;
             }
 
-            $multimediainstagram->update($validatedata);
+            $multimediainstagram->update($validatedData);
 
             return redirect()->route('multimediainstagram.index')->with('success', 'Data Berhasil Diupdate');
         } catch (\Exception $e) {
@@ -98,13 +124,13 @@ class ItMultimediaInstagramController extends Controller
      public function exportPDF(Request $request)
     {
         try {
-            // Validasi input bulan
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            // Validasi input date
+            $validatedData = $request->validate([
+                'date' => 'required|date',
             ]);
     
-            // Ambil semua data laporan berdasarkan bulan yang dipilih
-            $laporans = ItMultimediaInstagram::where('bulan', $validatedata['bulan'])->get();
+            // Ambil semua data laporan berdasarkan date yang dipilih
+            $laporans = ItMultimediaInstagram::where('date', $validatedData['date'])->get();
     
             if ($laporans->isEmpty()) {
                 return redirect()->back()->with('error', 'Data tidak ditemukan.');
@@ -146,8 +172,8 @@ class ItMultimediaInstagramController extends Controller
                 $htmlContent = "
             <div style='text-align: center; top: 0; margin: 0; padding: 0;'>
                 {$imageHTML}
-                    <h3 style='margin: 0; padding: 0;'>Laporan Bulan {$laporan->bulan}</h3>
-                    <h3 style='margin: 0; padding: 0;'>Laporan Bulan {$laporan->bulan_formatted}</h3>
+                    <h3 style='margin: 0; padding: 0;'>Keterangan : {$laporan->keterangan}</h3>
+                    <h3 style='margin: 0; padding: 0;'>Laporan Tanggal {$laporan->bulan_formatted}</h3>
             </div>
 
                 ";
@@ -157,7 +183,7 @@ class ItMultimediaInstagramController extends Controller
             }
     
             // Output PDF
-            return response($mpdf->Output("laporan_multimedia_instagram_{$laporan->bulan}.pdf", 'D'))
+            return response($mpdf->Output("laporan_multimedia_instagram_{$laporan->date}.pdf", 'D'))
                 ->header('Content-Type', 'application/pdf')
                 ->header('Content-Disposition', 'attachment; filename="laporan_multimedia_instagram_.pdf"');
     

@@ -34,6 +34,58 @@
         <!-- Navbar -->
         <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
 
+      <!-- Wrapper Alert -->
+@if (session('success') || session('error'))
+<div x-data="{ 
+        showSuccess: {{ session('success') ? 'true' : 'false' }},
+        showError: {{ session('error') ? 'true' : 'false' }}
+    }"
+    x-init="setTimeout(() => showSuccess = false, 5000); setTimeout(() => showError = false, 3000);"
+    class="fixed top-5 right-5 z-50 flex flex-col gap-3">
+
+    <!-- Success Alert -->
+    @if (session('success'))
+    <div x-show="showSuccess" x-transition.opacity.scale.90
+        class="bg-green-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
+        
+        <!-- Icon -->
+        <span class="text-2xl">✔️</span>
+
+        <!-- Message -->
+        <div>
+            <h3 class="font-bold">Success!</h3>
+            <p class="text-sm">{{ session('success') }}</p>
+        </div>
+
+        <!-- Close Button -->
+        <button @click="showSuccess = false" class="ml-auto text-white text-lg font-bold">
+            &times;
+        </button>
+    </div>
+    @endif
+
+    <!-- Error Alert -->
+    @if (session('error'))
+    <div x-show="showError" x-transition.opacity.scale.90
+        class="bg-red-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
+        
+        <!-- Icon -->
+        <span class="text-2xl">⚠️</span>
+
+        <!-- Message -->
+        <div>
+            <h3 class="font-bold">Error!</h3>
+            <p class="text-sm">{{ session('error') }}</p>
+        </div>
+
+        <!-- Close Button -->
+        <button @click="showError = false" class="ml-auto text-white text-lg font-bold">
+            &times;
+        </button>
+    </div>
+    @endif
+</div>
+@endif
          <!-- Main Content -->
          <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
             <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan Status Paket</h1>
@@ -71,24 +123,12 @@
             <div id="formContainer" class="hidden">
                 <div class="mx-auto bg-white p-6 rounded-lg shadow">
 
-        <!-- Success Message -->
-        @if (session('success'))
-            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">
-                {{ session('success') }}
-            </div>
-        @endif
-        @if (session('error'))
-            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
-                {{ session('error') }}
-            </div>
-        @endif
-
         <!-- Event Table -->
         <div class="overflow-x-auto bg-white shadow-md">
             <table class="table-auto w-full border-collapse border border-gray-300" id="data-table">
                 <thead class="bg-gray-200">
                     <tr>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Status</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Nilai Paket</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Aksi</th>
@@ -97,7 +137,7 @@
                 <tbody>
                     @foreach ($statuspakets as $statuspaket)
                         <tr class="hover:bg-gray-100">
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $statuspaket->bulan_formatted }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $statuspaket->date_formatted }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $statuspaket->status }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $statuspaket->total_paket }}</td>
                             <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
@@ -126,8 +166,8 @@
                                     @method('PUT')
                                     <div class="space-y-4">
                                         <div>
-                                            <label for="bulan" class="block text-sm font-medium">Bulan</label>
-                                            <input type="month" name="bulan" class="w-full p-2 border rounded" value="{{ $statuspaket->bulan }}" required>
+                                            <label for="date" class="block text-sm font-medium">Tanggal</label>
+                                            <input type="date" name="date" class="w-full p-2 border rounded" value="{{ $statuspaket->date }}" required>
                                         </div>
                                         <div>
                                             <label for="status" class="block text-sm font-medium">Status</label>
@@ -248,8 +288,8 @@
             @csrf
             <div class="space-y-4">
                 <div>
-                    <label for="bulan" class="block text-sm font-medium">Bulan</label>
-                    <input type="month" name="bulan" class="w-full p-2 border rounded" required>
+                    <label for="date" class="block text-sm font-medium">Tanggal</label>
+                    <input type="date" name="date" class="w-full p-2 border rounded" required>
                 </div>
                 <div>
                     <label for="status" class="block text-sm font-medium">Status</label>
@@ -275,6 +315,7 @@
 </div>
 
 </body>
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <script>
         //toogle form
         const toggleFormButton = document.getElementById('toggleFormButton');
@@ -322,7 +363,7 @@
     var barChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: chartData.labels, // Label bulan
+            labels: chartData.labels, // Label date
             datasets: chartData.datasets, // Dataset total penjualan
         },
         options: {
@@ -372,17 +413,17 @@
     const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
         const cells = row.querySelectorAll('td');
         return {
-            bulan: cells[0]?.innerText.trim() || '',
+            date: cells[0]?.innerText.trim() || '',
             status: cells[1]?.innerText.trim() || '',
             total_paket: cells[2]?.innerText.trim() || '',
         };
     });
 
     const tableContent = items
-        .filter(item => item.bulan && item.status && item.total_paket)
+        .filter(item => item.date && item.status && item.total_paket)
         .map(item => `
             <tr>
-                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.bulan}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.date}</td>
                 <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.status}</td>
                 <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.total_paket}</td>
             </tr>

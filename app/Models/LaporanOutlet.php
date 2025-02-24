@@ -14,12 +14,12 @@ class LaporanOutlet extends Model
 
     protected $primaryKey = 'id_outlet'; // Primary key custom
 
-    protected $fillable = ['bulan', 'total_pembelian'];
+    protected $fillable = ['date', 'total_pembelian'];
 
-    // Menambahkan accessor untuk bulan dengan format 'mm/yyyy'
-    public function getBulanFormattedAttribute()
+    // Menambahkan accessor untuk date dengan format 'mm/yyyy'
+    public function getDateFormattedAttribute()
     {
-        return Carbon::parse($this->bulan)->translatedFormat('F - Y');
+        return Carbon::parse($this->date)->translatedFormat('d F Y');
     }
 
     // Menambahkan accessor dengan format Rp

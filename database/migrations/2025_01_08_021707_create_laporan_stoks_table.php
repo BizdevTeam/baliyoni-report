@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('laporan_stoks', function (Blueprint $table) {
             $table->id('id_stok');
-            $table->string('bulan');
+            $table->string('date');
             $table->bigInteger('stok');
             $table->timestamps();
 
-            $table->unique(['bulan']);
+            $table->unique(['date']);
         });
     }
 

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('laporan_paket_administrasis', function (Blueprint $table) {
             $table->id('id_laporanpaket');
-            $table->string('bulan');
+            $table->string('date');
             $table->enum('website',[
                 'E - Katalog',
                 'E - Katalog Luar Bali',
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->bigInteger('total_paket');
             $table->timestamps();
 
-            $table->unique(['bulan', 'website']);
+            $table->unique(['date', 'website']);
         });
     }
 

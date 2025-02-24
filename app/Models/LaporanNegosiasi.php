@@ -14,12 +14,12 @@ class LaporanNegosiasi extends Model
 
     protected $primaryKey = 'id_negosiasi'; // Primary key custom
 
-    protected $fillable = ['bulan', 'total_negosiasi'];
+    protected $fillable = ['date', 'total_negosiasi'];
 
-    // Menambahkan accessor untuk bulan dengan format 'mm/yyyy'
+    // Menambahkan accessor untuk date dengan format 'mm/yyyy'
     public function getBulanFormattedAttribute()
     {
-        return Carbon::parse($this->bulan)->translatedFormat('F - Y');
+        return Carbon::parse($this->date)->translatedFormat('d F Y');
     }
 
     // Menambahkan accessor dengan format Rp

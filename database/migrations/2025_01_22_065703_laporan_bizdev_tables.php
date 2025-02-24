@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('laporan_bizdevs', function (Blueprint $table) {
             $table->id("id_bizdev");
-            $table->string('bulan'); // Contoh: '08 / 2024'
+            $table->string('date'); // Contoh: '08 / 2024'
             $table->string('aplikasi');
             $table->text('kondisi_bulanlalu');
             $table->text('kondisi_bulanini');

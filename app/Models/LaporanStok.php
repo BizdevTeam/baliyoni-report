@@ -14,12 +14,12 @@ class LaporanStok extends Model
 
     protected $primaryKey = 'id_stok'; // Primary key custom
 
-    protected $fillable = ['bulan', 'stok'];
+    protected $fillable = ['date', 'stok'];
 
-    // Menambahkan accessor untuk bulan dengan format 'mm/yyyy'
-    public function getBulanFormattedAttribute()
+    // Menambahkan accessor untuk date dengan format 'mm/yyyy'
+    public function getDateFormattedAttribute()
     {
-        return Carbon::parse($this->bulan)->translatedFormat('F - Y');
+        return Carbon::parse($this->date)->translatedFormat('d F Y');
     }
 
     // Menambahkan accessor dengan format Rp

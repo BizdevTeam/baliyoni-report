@@ -19,10 +19,10 @@ class IjasaGambarController extends Controller
 
         $ijasagambars = IjasaGambar::query()
             ->when($search, function($query, $search) {
-                return $query->where('bulan', 'like', "%$search%")
+                return $query->where('date', 'like', "%$search%")
                              ->orWhere('keterangan', 'like', "%$search%");
             })
-            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
+            ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC')
             ->paginate($perPage);
         return view('hrga.ijasagambar', compact('ijasagambars'));
     }
@@ -31,13 +31,13 @@ class IjasaGambarController extends Controller
     {
         try {
             $validateData = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+                'date' => 'required|date',
                 'keterangan' => 'required|string|max:255',
                 'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550'
             ]);
 
             $errorMessage = '';
-            if (!$this->isInputAllowed($validateData['bulan'], $errorMessage)) {
+            if (!$this->isInputAllowed($validateData['date'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
 
@@ -60,7 +60,7 @@ class IjasaGambarController extends Controller
     {
         try {
             $validateData = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+                'date' => 'required|date',
                 'keterangan' => 'required|string|max:255',
                 'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550'
             ]);
@@ -105,13 +105,13 @@ class IjasaGambarController extends Controller
     public function exportPDF(Request $request)
     {
         try {
-            // Validasi input bulan
+            // Validasi input date
             $validateData = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+                'date' => 'required|date',
             ]);
     
-            // Ambil semua data laporan berdasarkan bulan yang dipilih
-            $laporans = IjasaGambar::where('bulan', $validateData['bulan'])->get();
+            // Ambil semua data laporan berdasarkan date yang dipilih
+            $laporans = IjasaGambar::where('date', $validateData['date'])->get();
     
             if ($laporans->isEmpty()) {
                 return redirect()->back()->with('error', 'Data tidak ditemukan.');
@@ -153,7 +153,7 @@ class IjasaGambarController extends Controller
                 $htmlContent = "
             <div style='text-align: center; top: 0; margin: 0; padding: 0;'>
                 {$imageHTML}
-                    <h3 style='margin: 0; padding: 0;'>Laporan Bulan {$laporan->bulan_formatted}</h3>
+                    <h3 style='margin: 0; padding: 0;'>Laporan Tanggal {$laporan->date_formatted}</h3>
                     <p style='margin: 0; padding: 0;'><strong>Keterangan:</strong> {$laporan->keterangan}</p>
             </div>
 
@@ -164,7 +164,7 @@ class IjasaGambarController extends Controller
             }
     
             // Output PDF
-            return response($mpdf->Output("laporan_ijasa_gambar_{$validateData['bulan']}.pdf", 'D'))
+            return response($mpdf->Output("laporan_ijasa_gambar_{$validateData['date']}.pdf", 'D'))
                 ->header('Content-Type', 'application/pdf')
                 ->header('Content-Disposition', 'attachment; filename="laporan_ijasa_gambar.pdf"');
     

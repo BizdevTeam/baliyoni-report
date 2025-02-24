@@ -13,11 +13,11 @@ class LaporanSakit extends Model
 
     protected $primaryKey = 'id_sakit'; // Primary key custom
 
-    protected $fillable = ['bulan', 'total_sakit', 'nama'];
+    protected $fillable = ['date', 'total_sakit', 'nama'];
 
-    // Menambahkan accessor untuk bulan dengan format 'mm/yyyy'
-    public function getBulanFormattedAttribute()
+    // Menambahkan accessor untuk date dengan format 'mm/yyyy'
+    public function getDateFormattedAttribute()
     {
-        return Carbon::parse($this->bulan)->translatedFormat('F - Y');
+        return Carbon::parse($this->date)->translatedFormat('d F Y');
     }
 }

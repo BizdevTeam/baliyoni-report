@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\LaporanPaketAdministrasi;
+use App\Traits\DateValidationTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -12,6 +13,8 @@ use Illuminate\Validation\Rule;
 
 class LaporanPaketAdministrasiController extends Controller
 {
+    use DateValidationTrait;
+
     // Menampilkan halaman utama
     public function index(Request $request)
     { 
@@ -20,12 +23,12 @@ class LaporanPaketAdministrasiController extends Controller
 
         #$query = KasHutangPiutang::query();
 
-        // Query untuk mencari berdasarkan tahun dan bulan
+        // Query untuk mencari berdasarkan tahun dan date
         $laporanpaketadministrasis = LaporanPaketAdministrasi::query()
             ->when($search, function ($query, $search) {
-                return $query->where('bulan', 'LIKE', "%$search%");
+                return $query->where('date', 'LIKE', "%$search%");
             })
-            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
+            ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
 
         // Hitung total untuk masing-masing kategori
@@ -37,7 +40,7 @@ class LaporanPaketAdministrasiController extends Controller
         }
         
         $labels = $laporanpaketadministrasis->map(function($item) {
-            $formattedDate = \Carbon\Carbon::parse($item->bulan)->translatedFormat('F - Y');
+            $formattedDate = \Carbon\Carbon::parse($item->date)->translatedFormat('F - Y');
             return $item->website . ' - ' . $formattedDate;
         })->toArray();
         $data = $laporanpaketadministrasis->pluck('total_paket')->toArray();
@@ -63,8 +66,16 @@ class LaporanPaketAdministrasiController extends Controller
     public function store(Request $request)
     {
         try {
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            // Konversi tanggal agar selalu dalam format Y-m-d
+            if ($request->has('date')) {
+                try {
+                    $request->merge(['date' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
+                } catch (\Exception $e) {
+                    return redirect()->back()->with('error', 'Format tanggal tidak valid.');
+                }
+            }
+            $validatedData = $request->validate([
+                'date' => 'required|date',
                 'website' => [
                     'required',
                     Rule::in([
@@ -76,16 +87,21 @@ class LaporanPaketAdministrasiController extends Controller
                 ],
                 'total_paket' => 'required|integer|min:0',
             ]);
+            
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
 
-            // Cek kombinasi unik bulan dan perusahaan
-            $exists = LaporanPaketAdministrasi::where('bulan', $validatedata['bulan'])
-            ->where('website', $validatedata['website'])->exists();
+            // Cek kombinasi unik date dan perusahaan
+            $exists = LaporanPaketAdministrasi::where('date', $validatedData['date'])
+            ->where('website', $validatedData['website'])->exists();
             
             if ($exists) {
                 return redirect()->back()->with('error', 'Data Already Exists.');
             }
     
-            LaporanPaketAdministrasi::create($validatedata);
+            LaporanPaketAdministrasi::create($validatedData);
     
             return redirect()->route('laporanpaketadministrasi.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
@@ -99,8 +115,8 @@ class LaporanPaketAdministrasiController extends Controller
     {
         try {
             // Validasi input
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            $validatedData = $request->validate([
+                'date' => 'required|date',
                 'website' => [
                 'required',
                 Rule::in([
@@ -113,9 +129,9 @@ class LaporanPaketAdministrasiController extends Controller
                 'total_paket' => 'required|integer|min:0',
             ]);
 
-            // Cek kombinasi unik bulan dan perusahaan
-            $exists = LaporanPaketAdministrasi::where('bulan', $validatedata['bulan'])
-            ->where('website', $validatedata['website'])
+            // Cek kombinasi unik date dan perusahaan
+            $exists = LaporanPaketAdministrasi::where('date', $validatedData['date'])
+            ->where('website', $validatedData['website'])
             ->where('id_laporanpaket', '!=', $laporanpaketadministrasi->id_laporanpaket)->exists();
 
             if ($exists) {
@@ -123,7 +139,7 @@ class LaporanPaketAdministrasiController extends Controller
             }
     
             // Update data
-            $laporanpaketadministrasi->update($validatedata);
+            $laporanpaketadministrasi->update($validatedData);
     
             // Redirect dengan pesan sukses
             return redirect()
@@ -238,7 +254,7 @@ class LaporanPaketAdministrasiController extends Controller
     public function showChart()
 {
     // Ambil data dari database
-    $laporanpaketadministrasis = LaporanPaketAdministrasi::orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')->get();
+    $laporanpaketadministrasis = LaporanPaketAdministrasi::orderByRaw('YEAR(date) DESC, MONTH(date) ASC')->get();
 
     // Siapkan data untuk chart
     $labels = $laporanpaketadministrasis->pluck('website')->toArray();

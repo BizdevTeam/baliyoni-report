@@ -12,16 +12,16 @@ class RekapPenjualanPerusahaan extends Model
     use HasFactory;
 
     protected $table = 'rekap_penjualan_perusahaans';
-    protected $fillable = ['bulan', 'perusahaan_id', 'total_penjualan'];
+    protected $fillable = ['date', 'perusahaan_id', 'total_penjualan'];
 
     public function perusahaan()
     {
         return $this->belongsTo(Perusahaan::class, 'perusahaan_id', 'id');
     }
-    // Menambahkan accessor untuk bulan dengan format 'mm/yyyy'
-    public function getBulanFormattedAttribute()
+    // Menambahkan accessor untuk date dengan format 'mm/yyyy'
+    public function getDateFormattedAttribute()
     {
-        return Carbon::parse($this->bulan)->translatedFormat('F - Y');
+        return Carbon::parse($this->date)->translatedFormat('d F Y');
     }
 
     // Menambahkan accessor dengan format Rp

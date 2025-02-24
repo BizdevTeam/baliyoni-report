@@ -13,11 +13,11 @@ class LaporanTerlambat extends Model
 
     protected $primaryKey = 'id_terlambat'; // Primary key custom
 
-    protected $fillable = ['bulan', 'total_terlambat', 'nama'];
+    protected $fillable = ['date', 'total_terlambat', 'nama'];
 
-    // Menambahkan accessor untuk bulan dengan format 'mm/yyyy'
+    // Menambahkan accessor untuk date dengan format 'mm/yyyy'
     public function getBulanFormattedAttribute()
     {
-        return Carbon::parse($this->bulan)->translatedFormat('F - Y');
+        return Carbon::parse($this->date)->translatedFormat('d F Y');
     }
 }

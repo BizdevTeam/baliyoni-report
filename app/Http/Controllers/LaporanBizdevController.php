@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\LaporanBizdev;
+use App\Traits\DateValidationTrait;
 use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
 use Illuminate\Support\Facades\DB;
@@ -11,6 +12,7 @@ use Illuminate\Validation\ValidationException;
 
 class LaporanBizdevController extends Controller
 {
+    use DateValidationTrait;
     // Show the view
     public function index(Request $request)
     { 
@@ -19,9 +21,9 @@ class LaporanBizdevController extends Controller
 
         $laporanbizdevs = LaporanBizdev::query()
             ->when($search, function ($query, $search) {
-                return $query->where('bulan', 'LIKE', "%$search%");
+                return $query->where('date', 'LIKE', "%$search%");
             })
-            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
+            ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
 
             if ($request->ajax()) {
@@ -33,8 +35,9 @@ class LaporanBizdevController extends Controller
     public function store(Request $request)
     {
         try {
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+
+            $validatedData = $request->validate([
+                'date' => 'required|date',
                 'aplikasi' => 'required',
                 'kondisi_bulanlalu' => 'required',
                 'kondisi_bulanini' => 'required',
@@ -42,8 +45,13 @@ class LaporanBizdevController extends Controller
                 'rencana_implementasi' => 'required',
                 'keterangan' => 'required',
             ]);
+
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
     
-            LaporanBizdev::create($validatedata);
+            LaporanBizdev::create($validatedData);
     
             return redirect()->route('laporanbizdev.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
@@ -57,7 +65,7 @@ class LaporanBizdevController extends Controller
         try {
             // Validasi input
             $validatedData = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+                'date' => 'required|date',
                 'aplikasi' => 'required',
                 'kondisi_bulanlalu' => 'required',
                 'kondisi_bulanini' => 'required',
@@ -65,6 +73,11 @@ class LaporanBizdevController extends Controller
                 'rencana_implementasi' => 'required',
                 'keterangan' => 'required',
             ]);
+
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
             // Update data
             $laporanbizdev->update($validatedData);
     
@@ -129,7 +142,7 @@ class LaporanBizdevController extends Controller
                     <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                         <thead>
                             <tr style='background-color: #f2f2f2;'>
-                            <th style='border: 1px solid #000; padding: 1px;'>Bulan</th>
+                            <th style='border: 1px solid #000; padding: 1px;'>Tanggal</th>
                             <th style='border: 1px solid #000; padding: 2px;'>Aplikasi</th>
                             <th style='border: 1px solid #000; padding: 2px;'>Kondisi Bulan Lalu</th>
                             <th style='border: 1px solid #000; padding: 2px;'>Kondisi Bulan Ini</th>

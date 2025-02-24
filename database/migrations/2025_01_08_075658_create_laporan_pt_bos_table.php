@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('laporan_ptbos', function (Blueprint $table) {
             $table->id('id_ptbos');
-            $table->string('bulan');
+            $table->string('date');
             $table->string('pekerjaan');
             $table->string('kondisi_bulanlalu');
             $table->string('kondisi_bulanini');
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('laporan_pt_bos');
+        Schema::dropIfExists('laporan_ptbos');
     }
 };

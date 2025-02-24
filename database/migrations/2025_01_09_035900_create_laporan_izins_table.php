@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('laporan_izins', function (Blueprint $table) {
             $table->id('id_izin');
-            $table->string('bulan');
+            $table->string('date');
             $table->integer('total_izin')->default(0); 
             $table->string('nama');
             $table->timestamps();

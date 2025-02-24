@@ -12,14 +12,14 @@ class LaporanDetrans extends Model
     protected $table = 'laporan_detrans';
     protected $primaryKey = 'id_detrans'; // Primary key custom
     protected $fillable = [
-    'bulan', 
+    'date', 
     'pelaksana',
     'total_pengiriman',
 ];
 
-    public function getBulanFormattedAttribute()
+    public function getDateFormattedAttribute()
     {
-        return Carbon::parse($this->bulan)->translatedFormat('F - Y');
+        return Carbon::parse($this->date)->translatedFormat('d F Y');
     }
 
     // Menambahkan accessor untuk kas, hutang, piutang, stok dengan format Rp

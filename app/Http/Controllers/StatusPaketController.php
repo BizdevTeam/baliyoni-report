@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\StatusPaket;
+use App\Traits\DateValidationTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -11,6 +12,8 @@ use Illuminate\Validation\Rule;
 
 class StatusPaketController extends Controller
 {
+    use DateValidationTrait;
+
     public function index(Request $request)
     { 
         $perPage = $request->input('per_page', 12);
@@ -18,12 +21,12 @@ class StatusPaketController extends Controller
 
         #$query = KasHutangPiutang::query();
 
-        // Query untuk mencari berdasarkan tahun dan bulan
+        // Query untuk mencari berdasarkan tahun dan date
         $statuspakets = StatusPaket::query()
             ->when($search, function ($query, $search) {
-                return $query->where('bulan', 'LIKE', "%$search%");
+                return $query->where('date', 'LIKE', "%$search%");
             })
-            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
+            ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
 
         // Hitung total untuk masing-masing kategori
@@ -35,7 +38,7 @@ class StatusPaketController extends Controller
         }
         
         $labels = $statuspakets->map(function($item) {
-            $formattedDate = \Carbon\Carbon::parse($item->bulan)->translatedFormat('F - Y');
+            $formattedDate = \Carbon\Carbon::parse($item->date)->translatedFormat('F - Y');
             return $item->status . ' - ' . $formattedDate;
         })->toArray();
         $data = $statuspakets->pluck('total_paket')->toArray();
@@ -60,8 +63,17 @@ class StatusPaketController extends Controller
     public function store(Request $request)
     {
         try {
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            // Konversi tanggal agar selalu dalam format Y-m-d
+            if ($request->has('date')) {
+                try {
+                    $request->merge(['date' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
+                } catch (\Exception $e) {
+                    return redirect()->back()->with('error', 'Format tanggal tidak valid.');
+                }
+            }
+
+            $validatedData = $request->validate([
+                'date' => 'required|date',
                 'status' => [
                     'required',
                     Rule::in([
@@ -74,17 +86,21 @@ class StatusPaketController extends Controller
                 ],
                 'total_paket' => 'required|integer|min:0',
             ]);
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
 
-            // Cek kombinasi unik bulan dan perusahaan
-            $exists = StatusPaket::where('bulan', $validatedata['bulan'])
-            ->where('status', $validatedata['status'])
+            // Cek kombinasi unik date dan perusahaan
+            $exists = StatusPaket::where('date', $validatedData['date'])
+            ->where('status', $validatedData['status'])
             ->exists();
 
             if ($exists) {
                 return redirect()->back()->with('error', 'Data Already Exists.');
             }
     
-            StatusPaket::create($validatedata);
+            StatusPaket::create($validatedData);
     
             return redirect()->route('statuspaket.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
@@ -99,7 +115,7 @@ class StatusPaketController extends Controller
         try {
             // Validasi input
             $validatedData = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+                 'date' => 'required|date',
                 'status' => [
                 'required',
                 Rule::in([
@@ -113,8 +129,8 @@ class StatusPaketController extends Controller
                 'total_paket' => 'required|integer|min:0',
             ]);
 
-            // Cek kombinasi unik bulan dan perusahaan
-            $exists = StatusPaket::where('bulan', $validatedData['bulan'])
+            // Cek kombinasi unik date dan perusahaan
+            $exists = StatusPaket::where('date', $validatedData['date'])
             ->where('status', $validatedData['status'])
             ->where('id_statuspaket', '!=', $statuspaket->id_statuspaket)->exists();
 
@@ -234,7 +250,7 @@ class StatusPaketController extends Controller
     }
     public function getLaporanPaketAdministrasiData()
     {
-        $data = StatusPaket::all(['bulan','status','total_paket']);
+        $data = StatusPaket::all(['date','status','total_paket']);
     
         return response()->json($data);
     }
@@ -246,9 +262,9 @@ class StatusPaketController extends Controller
     
         $statuspakets = StatusPaket::query()
         ->when($search, function ($query, $search) {
-            return $query->where('bulan', 'LIKE', "%$search%");
+            return $query->where('date', 'LIKE', "%$search%");
         })
-        ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC'); // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
+        ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC'); // Urutkan berdasarkan tahun (descending) dan date (ascending)
     
         // Format label sesuai kebutuhan
         $labels = $statuspakets->pluck('status')->toArray();

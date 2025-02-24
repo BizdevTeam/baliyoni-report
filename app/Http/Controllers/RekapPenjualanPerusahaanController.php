@@ -23,15 +23,15 @@ class RekapPenjualanPerusahaanController extends Controller
         $perPage = $request->input('per_page', 12);
         $search = $request->input('search');
 
-        // Query untuk mencari berdasarkan tahun dan bulan
+        // Query untuk mencari berdasarkan tahun dan date
         $rekappenjualanperusahaans = RekapPenjualanPerusahaan::with('perusahaan')
         ->when($search, function ($query, $search) {
-            return $query->where('bulan', 'LIKE', "%$search%")
+            return $query->where('date', 'LIKE', "%$search%")
                          ->orWhereHas('perusahaan', function ($q) use ($search) {
                              $q->where('nama_perusahaan', 'LIKE', "%$search%");
                          });
             })
-            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
+            ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
 
         // Hitung total untuk masing-masing kategori
@@ -43,7 +43,7 @@ class RekapPenjualanPerusahaanController extends Controller
         }
         
         $labels = $rekappenjualanperusahaans->map(function($item) {
-            $formattedDate = \Carbon\Carbon::parse($item->bulan)->translatedFormat('F - Y');
+            $formattedDate = \Carbon\Carbon::parse($item->date)->translatedFormat('F - Y');
             return $item->perusahaan->nama_perusahaan. ' - ' . $formattedDate;
         })->toArray();
         $data = $rekappenjualanperusahaans->pluck('total_penjualan')->toArray();
@@ -67,24 +67,33 @@ class RekapPenjualanPerusahaanController extends Controller
         public function store(Request $request)
         {
             try {
+            // Konversi tanggal agar selalu dalam format Y-m-d
+            if ($request->has('date')) {
+                try {
+                    $request->merge(['date' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
+                } catch (\Exception $e) {
+                    return redirect()->back()->with('error', 'Format tanggal tidak valid.');
+                }
+            }
+
                 $validatedData = $request->validate([
-                    'bulan' => 'required|date_format:Y-m',
+                    'date' => 'required|date',
                     'perusahaan_id' => 'required|exists:perusahaans,id',
                     'total_penjualan' => 'required|integer|min:0',
                 ]);
     
                 $errorMessage = '';
-                if (!$this->isInputAllowed($validatedData['bulan'], $errorMessage)) {
+                if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
                     return redirect()->back()->with('error', $errorMessage);
                 }
 
-                // Cek kombinasi unik bulan dan perusahaan_id
-                $exists = RekapPenjualanPerusahaan::where('bulan', $request->bulan)
+                // Cek kombinasi unik date dan perusahaan_id
+                $exists = RekapPenjualanPerusahaan::where('date', $request->date)
                     ->where('perusahaan_id', $request->perusahaan_id)
                     ->exists();
     
                 if ($exists) {
-                    return redirect()->back()->with('error', 'Data untuk bulan dan perusahaan ini sudah ada');
+                    return redirect()->back()->with('error', 'Data untuk date dan perusahaan ini sudah ada');
                 }
     
                 RekapPenjualanPerusahaan::create($validatedData);
@@ -101,12 +110,12 @@ class RekapPenjualanPerusahaanController extends Controller
         try {
             // Validasi input
             $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+                'date' => 'required|date',
                 'perusahaan_id' => 'required|exists:perusahaans,id',
                 'total_penjualan' => 'required|integer|min:0',
             ]);
 
-            $exists = RekapPenjualanPerusahaan::where('bulan', $request->bulan)
+            $exists = RekapPenjualanPerusahaan::where('date', $request->date)
                 ->where('perusahaan_id', $request->perusahaan_id)
                 ->where('id', '!=', $rekappenjualanperusahaan->id) // Menggunakan model binding
                 ->exists();
@@ -117,7 +126,7 @@ class RekapPenjualanPerusahaanController extends Controller
     
             // Update data
             $rekappenjualanperusahaan->update([
-                'bulan' => $request->bulan,
+                'date' => $request->date,
                 'perusahaan_id' => $request->perusahaan_id,
                 'total_penjualan' => $request->total_penjualan,
             ]);
@@ -177,7 +186,7 @@ class RekapPenjualanPerusahaanController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Marketing|Halaman {PAGENO}');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Marketing|Laporan Rekap Penjualan Perusahaan');
 
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "
@@ -233,14 +242,14 @@ class RekapPenjualanPerusahaanController extends Controller
         // Ambil data dari database
         $rekappenjualanperusahaans = RekapPenjualanPerusahaan::query()
         ->when($search, function ($query, $search) {
-            return $query->where('bulan', 'LIKE', "%$search%");
+            return $query->where('date', 'LIKE', "%$search%");
         })
-        ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Order by year (desc) and month (asc)
+        ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Order by year (desc) and month (asc)
         ->get();  
 
         // Siapkan data untuk chart
         $labels = $rekappenjualanperusahaans->map(function($item) {
-            $formattedDate = \Carbon\Carbon::parse($item->bulan)->translatedFormat('F - Y');
+            $formattedDate = \Carbon\Carbon::parse($item->date)->translatedFormat('F - Y');
             return $item->perusahaan->nama_perusahaan . ' - ' . $formattedDate;
         })->toArray();
         $data = $rekappenjualanperusahaans->pluck('total_penjualan')->toArray();

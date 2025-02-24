@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\LaporanOutlet;
+use App\Traits\DateValidationTrait;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Mpdf\Mpdf;
@@ -11,6 +12,8 @@ use Illuminate\Support\Facades\DB;
 
 class LaporanOutletController extends Controller
 {
+    use DateValidationTrait;
+
     public function index(Request $request)
     { 
         $perPage = $request->input('per_page', 12);
@@ -18,12 +21,12 @@ class LaporanOutletController extends Controller
 
         #$query = KasHutangPiutang::query();
 
-        // Query untuk mencari berdasarkan tahun dan bulan
+        // Query untuk mencari berdasarkan tahun dan date
         $laporanoutlets = LaporanOutlet::query()
             ->when($search, function ($query, $search) {
-                return $query->where('bulan', 'LIKE', "%$search%");
+                return $query->where('date', 'LIKE', "%$search%");
             })
-            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
+            ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
 
         // Hitung total untuk masing-masing kategori
@@ -34,7 +37,7 @@ class LaporanOutletController extends Controller
             return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
         }
         
-        $labels = $laporanoutlets->pluck('bulan')->map(function ($date) {
+        $labels = $laporanoutlets->pluck('date')->map(function ($date) {
             return \Carbon\Carbon::parse($date)->translatedFormat('F - Y');
         })->toArray();        
         $data = $laporanoutlets->pluck('total_pembelian')->toArray();
@@ -60,12 +63,12 @@ class LaporanOutletController extends Controller
     {
         try {
             $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+                'date' => 'required|date',
                 'total_pembelian' => 'required|integer|min:0'
             ]);
     
-            // Cek kombinasi unik bulan dan perusahaan
-            $exists = LaporanOutlet::where('bulan', $validatedata['bulan'])->exists();
+            // Cek kombinasi unik date dan perusahaan
+            $exists = LaporanOutlet::where('date', $validatedata['date'])->exists();
             
             if ($exists) {
                 return redirect()->back()->with('error', 'Data Already Exists.');
@@ -83,13 +86,26 @@ class LaporanOutletController extends Controller
     public function update(Request $request, LaporanOutlet $laporanoutlet)
     {
         try {
+                        // Konversi tanggal agar selalu dalam format Y-m-d
+            if ($request->has('date')) {
+                try {
+                    $request->merge(['date' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
+                } catch (\Exception $e) {
+                    return redirect()->back()->with('error', 'Format tanggal tidak valid.');
+                }
+            }
+
             // Validasi input
             $validatedData = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+                'date' => 'required|date',
                 'total_pembelian' => 'required|integer|min:0',
             ]);
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
 
-            $exists = LaporanOutlet::where('bulan', $validatedData['bulan'])
+            $exists = LaporanOutlet::where('date', $validatedData['date'])
             ->where('id_outlet', '!=', $laporanoutlet->id_outlet)->exists();
 
             if ($exists) {
@@ -168,7 +184,7 @@ class LaporanOutletController extends Controller
                     <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                         <thead>
                             <tr style='background-color: #f2f2f2;'>
-                                <th style='border: 1px solid #000; padding: 1px;'>Bulan</th>
+                                <th style='border: 1px solid #000; padding: 1px;'>Tanggal</th>
                                 <th style='border: 1px solid #000; padding: 2px;'>Total Pembelian (Rp)</th>
                             </tr>
                         </thead>
@@ -210,7 +226,7 @@ class LaporanOutletController extends Controller
     }
     public function getLaporanStokData()
     {
-        $data = LaporanOutlet::all(['bulan','total_pembelian']);
+        $data = LaporanOutlet::all(['date','total_pembelian']);
     
         return response()->json($data);
     }
@@ -222,12 +238,12 @@ class LaporanOutletController extends Controller
     
         $laporanoutlets = LaporanOutlet::query()
         ->when($search, function ($query, $search) {
-            return $query->where('bulan', 'LIKE', "%$search%");
+            return $query->where('date', 'LIKE', "%$search%");
         })
-        ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC'); // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
+        ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC'); // Urutkan berdasarkan tahun (descending) dan date (ascending)
     
         // Format label sesuai kebutuhan
-        $labels = $laporanoutlets->pluck('bulan')->map(function ($date) {
+        $labels = $laporanoutlets->pluck('date')->map(function ($date) {
             return \Carbon\Carbon::parse($date)->translatedFormat('F - Y');
         })->toArray();      
         $data = $laporanoutlets->pluck('total_pembelian')->toArray();

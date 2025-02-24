@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('laporan_holdings', function (Blueprint $table) {
             $table->id(); // ID otomatis dibuat dengan nama 'id'
-            $table->string('bulan'); // Bisa juga pakai date_format
+            $table->string('date'); // Bisa juga pakai date_format
             $table->foreignId('perusahaan_id')->constrained('perusahaans')->onDelete('cascade');
             $table->bigInteger('nilai');
             $table->timestamps();
             
-            // Mencegah duplikasi data bulan dan perusahaan
-            $table->unique(['bulan', 'perusahaan_id']);
+            // Mencegah duplikasi data date dan perusahaan
+            $table->unique(['date', 'perusahaan_id']);
         });
     }
 

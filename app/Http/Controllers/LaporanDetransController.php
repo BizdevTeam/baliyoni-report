@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\LaporanDetrans;
+use App\Traits\DateValidationTrait;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Mpdf\Mpdf;
@@ -12,6 +13,8 @@ use Illuminate\Validation\Rule;
 
 class LaporanDetransController extends Controller
 {
+    use DateValidationTrait;
+
     public function index(Request $request)
 { 
     $perPage = $request->input('per_page', 12);
@@ -19,21 +22,21 @@ class LaporanDetransController extends Controller
 
     $laporandetrans = LaporanDetrans::query()
         ->when($search, function ($query, $search) {
-            return $query->where('bulan', 'LIKE', "%$search%");
+            return $query->where('date', 'LIKE', "%$search%");
         })
-        ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
+        ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC')
         ->paginate($perPage);
 
     // Calculate total (if needed)
     $totalPengiriman = $laporandetrans->sum('total_pengiriman');
-    $months = $laporandetrans->sortBy('bulan')->map(function ($item) {
-        return \Carbon\Carbon::parse($item->bulan)->translatedFormat('F - Y');
+    $months = $laporandetrans->sortBy('date')->map(function ($item) {
+        return \Carbon\Carbon::parse($item->date)->translatedFormat('F - Y');
     })->unique()->values()->toArray();
     
-    // Kelompokkan data berdasarkan pelaksana dan bulan
+    // Kelompokkan data berdasarkan pelaksana dan date
     $groupedData = [];
     foreach ($laporandetrans as $item) {
-        $month = \Carbon\Carbon::parse($item->bulan)->translatedFormat('F - Y');
+        $month = \Carbon\Carbon::parse($item->date)->translatedFormat('F - Y');
         $groupedData[$item->pelaksana][$month] = $item->total_pengiriman;
     }
     
@@ -49,7 +52,7 @@ class LaporanDetransController extends Controller
     foreach ($groupedData as $pelaksana => $monthData) {
         $data = [];
         foreach ($months as $month) {
-            $data[] = $monthData[$month] ?? 0; // Isi 0 jika data bulan tidak ada
+            $data[] = $monthData[$month] ?? 0; // Isi 0 jika data date tidak ada
         }
         
         $datasets[] = [
@@ -70,8 +73,17 @@ class LaporanDetransController extends Controller
     public function store(Request $request)
     {
         try {
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+              // Konversi tanggal agar selalu dalam format Y-m-d
+              if ($request->has('date')) {
+                try {
+                    $request->merge(['date' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
+                } catch (\Exception $e) {
+                    return redirect()->back()->with('error', 'Format tanggal tidak valid.');
+                }
+            }
+
+            $validatedData = $request->validate([
+                'date' => 'required|date',
                 'pelaksana' => [
                     'required',
                     Rule::in([
@@ -82,9 +94,14 @@ class LaporanDetransController extends Controller
                 'total_pengiriman' => 'required|integer|min:0',
             ]);
 
-       // Cek kombinasi unik bulan dan perusahaan
-       $exists = LaporanDetrans::where('bulan', $validatedata['bulan'])
-       ->where('pelaksana', $validatedata['pelaksana'])
+            $errorMessage = '';
+                if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                    return redirect()->back()->with('error', $errorMessage);
+                }
+
+       // Cek kombinasi unik date dan perusahaan
+       $exists = LaporanDetrans::where('date', $validatedData['date'])
+       ->where('pelaksana', $validatedData['pelaksana'])
        ->exists();
 
        if ($exists) {
@@ -92,7 +109,7 @@ class LaporanDetransController extends Controller
        }
 
     
-            LaporanDetrans::create($validatedata);
+            LaporanDetrans::create($validatedData);
     
             return redirect()->route('laporandetrans.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
@@ -104,9 +121,18 @@ class LaporanDetransController extends Controller
     public function update(Request $request, LaporanDetrans $laporandetran)
     {
         try {
+              // Konversi tanggal agar selalu dalam format Y-m-d
+              if ($request->has('date')) {
+                try {
+                    $request->merge(['date' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
+                } catch (\Exception $e) {
+                    return redirect()->back()->with('error', 'Format tanggal tidak valid.');
+                }
+            }
+            
             // Validasi input
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            $validatedData = $request->validate([
+                'date' => 'required|date',
                 'pelaksana' => [
                     'required',
                     Rule::in([
@@ -117,9 +143,9 @@ class LaporanDetransController extends Controller
                 'total_pengiriman' => 'required|integer|min:0',
             ]);
 
-          // Cek kombinasi unik bulan dan perusahaan
-          $exists = LaporanDetrans::where('bulan', $validatedata['bulan'])
-          ->where('pelaksana', $validatedata['pelaksana'])
+          // Cek kombinasi unik date dan perusahaan
+          $exists = LaporanDetrans::where('date', $validatedData['date'])
+          ->where('pelaksana', $validatedData['pelaksana'])
           ->where('id_detrans', '!=', $laporandetran->id_detrans)->exists();
 
           if ($exists) {
@@ -128,7 +154,7 @@ class LaporanDetransController extends Controller
   
 
             // Update data
-            $laporandetran->update($validatedata);
+            $laporandetran->update($validatedData);
     
             // Redirect dengan pesan sukses
             return redirect()->route('laporandetrans.index')->with('success', 'Data berhasil diperbarui.');
@@ -197,7 +223,7 @@ class LaporanDetransController extends Controller
                 <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                     <thead>
                         <tr style='background-color: #f2f2f2;'>
-                            <th style='border: 1px solid #000; padding: 1px;'>Bulan</th>
+                            <th style='border: 1px solid #000; padding: 1px;'>Tanggal</th>
                             <th style='border: 1px solid #000; padding: 1px;'>Pelaksana</th>
                             <th style='border: 1px solid #000; padding: 2px;'>Total Pengiriman (Rp)</th>
                         </tr>
@@ -239,7 +265,7 @@ class LaporanDetransController extends Controller
     }
     public function getLaporanSamitraData()
     {
-        $data = LaporanDetrans::all(['bulan','total_pengiriman']);
+        $data = LaporanDetrans::all(['date','total_pengiriman']);
     
         return response()->json($data);
     }
@@ -251,14 +277,14 @@ class LaporanDetransController extends Controller
         // Ambil data dari database
         $laporandetrans = LaporanDetrans::query()
         ->when($search, function ($query, $search) {
-            return $query->where('bulan', 'LIKE', "%$search%");
+            return $query->where('date', 'LIKE', "%$search%");
         })
-        ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Order by year (desc) and month (asc)
+        ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Order by year (desc) and month (asc)
         ->get();  
 
         // Siapkan data untuk chart
         $labels = $laporandetrans->map(function ($item) {
-            return \Carbon\Carbon::parse($item->bulan)->translatedFormat('F - Y');
+            return \Carbon\Carbon::parse($item->date)->translatedFormat('F - Y');
         })->toArray();
     
         $data = $laporandetrans->pluck('total_pengiriman')->toArray();

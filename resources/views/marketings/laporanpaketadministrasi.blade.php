@@ -33,6 +33,65 @@
 
         <!-- Navbar -->
         <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
+       
+ <!-- Success & Error Popup -->
+ <div x-data="{ showSuccess: {{ session('success') ? 'true' : 'false' }}, showError: {{ session('error') ? 'true' : 'false' }} }">
+
+    <!-- Success Message -->
+    @if (session('success'))
+    <div x-show="showSuccess" x-transition class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div class="bg-gray-900 text-white p-6 rounded-lg shadow-lg w-[400px] relative">
+            <!-- Close Button -->
+            <button @click="showSuccess = false" class="absolute top-3 right-3 text-gray-400 hover:text-gray-200 text-xl">
+                &times;
+            </button>
+    
+            <!-- Icon & Title -->
+            <div class="flex items-center gap-3">
+                <span class="text-green-500 text-3xl">✅</span>
+                <h3 class="text-xl font-bold">Success!</h3>
+            </div>
+    
+            <p class="text-gray-300 mt-2">{{ session('success') }}</p>
+
+            <!-- Button -->
+            <div class="mt-4 flex justify-end">
+                <button @click="showSuccess = false" class="border border-green-500 text-green-500 px-4 py-2 rounded hover:bg-green-600 hover:text-white transition">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <!-- Error Message -->
+    @if (session('error'))
+    <div x-show="showError" x-transition class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div class="bg-gray-900 text-white p-6 rounded-lg shadow-lg w-[400px] relative">
+            <!-- Close Button -->
+            <button @click="showError = false" class="absolute top-3 right-3 text-gray-400 hover:text-gray-200 text-xl">
+                &times;
+            </button>
+
+            <!-- Icon & Title -->
+            <div class="flex items-center gap-3">
+                <span class="text-red-500 text-3xl">⚠️</span>
+                <h3 class="text-xl font-bold">Error!</h3>
+            </div>
+
+            <p class="mt-2 text-gray-300">{{ session('error') }}</p>
+
+            <!-- Button -->
+            <div class="mt-4 flex justify-end">
+                <button @click="showError = false" class="border border-red-500 text-red-500 px-4 py-2 rounded hover:bg-red-600 hover:text-white transition">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+    @endif
+    
+</div>
 
        <!-- Main Content -->
        <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
@@ -71,24 +130,12 @@
         <div id="formContainer" class="hidden">
             <div class="mx-auto bg-white p-6 rounded-lg shadow">
 
-        <!-- Success Message -->
-        @if (session('success'))
-            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">
-                {{ session('success') }}
-            </div>
-        @endif
-        @if (session('error'))
-            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
-                {{ session('error') }}
-            </div>
-        @endif
-
         <!-- Event Table -->
         <div class="overflow-x-auto bg-white shadow-md">
             <table class="table-auto w-full border-collapse border border-gray-300" id="data-table">
                 <thead class="bg-gray-200">
                     <tr>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Website</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Nilai Paket</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Aksi</th>
@@ -97,7 +144,7 @@
                 <tbody>
                     @foreach ($laporanpaketadministrasis as $laporanpaketadministrasi)
                         <tr class="hover:bg-gray-100">
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanpaketadministrasi->bulan_formatted }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanpaketadministrasi->date_formatted }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanpaketadministrasi->website }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanpaketadministrasi->total_paket_formatted }}</td>
                             <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
@@ -127,8 +174,8 @@
                                     @method('PUT')
                                     <div class="space-y-4">
                                         <div>
-                                            <label for="bulan" class="block text-sm font-medium">Bulan</label>
-                                            <input type="month" name="bulan" class="w-full p-2 border rounded" value="{{ $laporanpaketadministrasi->bulan }}" required>
+                                            <label for="date" class="block text-sm font-medium">Tanggal</label>
+                                            <input type="date" name="date" class="w-full p-2 border rounded" value="{{ $laporanpaketadministrasi->date }}" required>
                                         </div>
                                         <div>
                                             <label for="website" class="block text-sm font-medium">Pilih Perusahaan</label>
@@ -248,8 +295,8 @@
             @csrf
             <div class="space-y-4">
                 <div>
-                    <label for="bulan" class="block text-sm font-medium">Bulan</label>
-                    <input type="month" name="bulan" class="w-full p-2 border rounded" required>
+                    <label for="date" class="block text-sm font-medium">Tanggal</label>
+                    <input type="date" name="date" class="w-full p-2 border rounded" required>
                 </div>
                 <div>
                     <label for="website" class="block text-sm font-medium">Pilih Perusahaan</label>
@@ -274,6 +321,7 @@
 </div>
 
 </body>
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <script>
         //toogle form
         const toggleFormButton = document.getElementById('toggleFormButton');
@@ -321,7 +369,7 @@
     var barChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: chartData.labels, // Label bulan
+            labels: chartData.labels, // Label date
             datasets: chartData.datasets, // Dataset total penjualan
         },
         options: {
@@ -371,17 +419,17 @@
     const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
         const cells = row.querySelectorAll('td');
         return {
-            bulan: cells[0]?.innerText.trim() || '',
+            date: cells[0]?.innerText.trim() || '',
             website: cells[1]?.innerText.trim() || '',
             total_paket: cells[2]?.innerText.trim() || '',
         };
     });
 
     const tableContent = items
-        .filter(item => item.bulan && item.website && item.total_paket)
+        .filter(item => item.date && item.website && item.total_paket)
         .map(item => `
             <tr>
-                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.bulan}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.date}</td>
                 <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.website}</td>
                 <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.total_paket}</td>
             </tr>

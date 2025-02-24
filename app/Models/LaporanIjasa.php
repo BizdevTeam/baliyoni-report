@@ -18,12 +18,12 @@ class LaporanIjasa extends Model
     // Menambahkan accessor untuk tanggal dengan format 'd/m/y'
     public function getTanggalFormattedAttribute()
     {
-        return $this->tanggal ? Carbon::parse($this->tanggal)->format('d/m/y') : '-';
+        return $this->tanggal ? Carbon::parse($this->tanggal)->format('d F Y') : '-';
     }
 
     public function getResolveFormattedAttribute()
     {
-        return $this->resolve_tanggal ? Carbon::parse($this->resolve_tanggal)->format('d/m/y') : '-';
+        return $this->resolve_tanggal ? Carbon::parse($this->resolve_tanggal)->format('d F Y') : '-';
     }
 
     public function setJamAttribute($value)

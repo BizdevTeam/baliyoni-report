@@ -13,7 +13,7 @@ class LaporanPerInstansi extends Model
     protected $primaryKey = 'id_perinstansi';
 
     protected $fillable = [
-        'bulan',      
+        'date',      
         'instansi',          
         'nilai',         
     ];
@@ -21,7 +21,7 @@ class LaporanPerInstansi extends Model
     // Kolom yang dapat diisi menggunakan metode mass assignment
     public function getBulanFormattedAttribute()
     {
-        return Carbon::parse($this->bulan)->translatedFormat('F - Y');
+        return Carbon::parse($this->date)->translatedFormat('F - Y');
     }
 
     // Menambahkan accessor dengan format Rp

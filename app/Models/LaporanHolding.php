@@ -13,7 +13,7 @@ class LaporanHolding extends Model
     protected $table = 'laporan_holdings'; // Sesuaikan dengan nama tabel
 
     protected $fillable = [
-        'bulan',
+        'date',
         'perusahaan_id',
         'nilai',
     ];
@@ -30,8 +30,8 @@ class LaporanHolding extends Model
         return 'Rp ' . number_format($this->nilai, 0, ',', '.');
     }
 
-    public function getBulanFormattedAttribute()
+    public function getDateFormattedAttribute()
     {
-        return Carbon::parse($this->bulan)->translatedFormat('F - Y');
+        return Carbon::parse($this->date)->translatedFormat('d F Y');
     }
 }

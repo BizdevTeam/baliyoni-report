@@ -13,11 +13,11 @@ class LaporanCuti extends Model
 
     protected $primaryKey = 'id_cuti'; // Primary key custom
 
-    protected $fillable = ['bulan', 'total_cuti', 'nama'];
+    protected $fillable = ['date', 'total_cuti', 'nama'];
 
-    // Menambahkan accessor untuk bulan dengan format 'mm/yyyy'
-    public function getBulanFormattedAttribute()
+    // Menambahkan accessor untuk date dengan format 'mm/yyyy'
+    public function getDateFormattedAttribute()
     {
-        return Carbon::parse($this->bulan)->translatedFormat('F - Y');
+        return Carbon::parse($this->date)->translatedFormat('d F Y');
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\LaporanNegosiasi;
+use App\Traits\DateValidationTrait;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Mpdf\Mpdf;
@@ -11,6 +12,8 @@ use Illuminate\Support\Facades\DB;
 
 class LaporanNegosiasiController extends Controller
 {
+    use DateValidationTrait;
+
     public function index(Request $request)
     { 
         $perPage = $request->input('per_page', 12);
@@ -18,12 +21,12 @@ class LaporanNegosiasiController extends Controller
 
         #$query = KasHutangPiutang::query();
 
-        // Query untuk mencari berdasarkan tahun dan bulan
+        // Query untuk mencari berdasarkan tahun dan date
         $laporannegosiasis = LaporanNegosiasi::query()
             ->when($search, function ($query, $search) {
-                return $query->where('bulan', 'LIKE', "%$search%");
+                return $query->where('date', 'LIKE', "%$search%");
             })
-            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
+            ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
 
         // Hitung total untuk masing-masing kategori
@@ -34,7 +37,7 @@ class LaporanNegosiasiController extends Controller
             return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
         }
         
-        $labels = $laporannegosiasis->pluck('bulan')->map(function ($date) {
+        $labels = $laporannegosiasis->pluck('date')->map(function ($date) {
             return \Carbon\Carbon::parse($date)->translatedFormat('F - Y');
         })->toArray();   
         $data = $laporannegosiasis->pluck('total_negosiasi')->toArray();
@@ -59,19 +62,32 @@ class LaporanNegosiasiController extends Controller
     public function store(Request $request)
     {
         try {
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            // Konversi tanggal agar selalu dalam format Y-m-d
+            if ($request->has('date')) {
+                try {
+                    $request->merge(['date' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
+                } catch (\Exception $e) {
+                    return redirect()->back()->with('error', 'Format tanggal tidak valid.');
+                }
+            }
+
+            $validatedData = $request->validate([
+                'date' => 'required|date',
                 'total_negosiasi' => 'required|integer|min:0'
             ]);
-    
-            // Cek kombinasi unik bulan dan perusahaan
-            $exists = LaporanNegosiasi::where('bulan', $validatedata['bulan'])->exists();
+            
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
+            // Cek kombinasi unik date dan perusahaan
+            $exists = LaporanNegosiasi::where('date', $validatedData['date'])->exists();
         
             if ($exists) {
                 return redirect()->back()->with('error', 'Data Already Exists.');
             }
     
-            LaporanNegosiasi::create($validatedata);
+            LaporanNegosiasi::create($validatedData);
     
             return redirect()->route('laporannegosiasi.index')->with('success', 'Data Berhasil Ditambah');
         } catch (\Exception $e) {
@@ -83,13 +99,21 @@ class LaporanNegosiasiController extends Controller
     public function update(Request $request, LaporanNegosiasi $laporannegosiasi)
     {
         try {
+              // Konversi tanggal agar selalu dalam format Y-m-d
+              if ($request->has('date')) {
+                try {
+                    $request->merge(['date' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
+                } catch (\Exception $e) {
+                    return redirect()->back()->with('error', 'Format tanggal tidak valid.');
+                }
+            }
             // Validasi input
             $validatedData = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+                'date' => 'required|date',
                 'total_negosiasi' => 'required|integer|min:0',
             ]);
 
-            $exists = LaporanNegosiasi::where('bulan', $validatedData['bulan'])
+            $exists = LaporanNegosiasi::where('date', $validatedData['date'])
             ->where('id_negosiasi', '!=', $laporannegosiasi->id_negosiasi)->exists();
 
             if ($exists) {
@@ -210,7 +234,7 @@ class LaporanNegosiasiController extends Controller
     }
     public function getLaporanNegosiasiData()
     {
-        $data = LaporanNegosiasi::all(['bulan','total_negosiasi']);
+        $data = LaporanNegosiasi::all(['date','total_negosiasi']);
     
         return response()->json($data);
     }
@@ -222,14 +246,14 @@ class LaporanNegosiasiController extends Controller
         // Ambil data dari database
         $laporannegosiasis = LaporanNegosiasi::query()
         ->when($search, function ($query, $search) {
-            return $query->where('bulan', 'LIKE', "%$search%");
+            return $query->where('date', 'LIKE', "%$search%");
         })
-        ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Order by year (desc) and month (asc)
+        ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Order by year (desc) and month (asc)
         ->get();  
 
         // Siapkan data untuk chart
         $labels = $laporannegosiasis->map(function($item) {
-            $formattedDate = \Carbon\Carbon::parse($item->bulan)->translatedFormat('F - Y');
+            $formattedDate = \Carbon\Carbon::parse($item->date)->translatedFormat('F - Y');
             return $item->perusahaan . ' - ' . $formattedDate;
         })->toArray();
         $data = $laporannegosiasis->pluck('total_negosiasi')->toArray();

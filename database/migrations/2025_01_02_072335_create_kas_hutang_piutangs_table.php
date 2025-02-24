@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('kas_hutang_piutangs', function (Blueprint $table) {
             $table->id('id_khps');
-            $table->string('bulan');
+            $table->string('date');
             $table->bigInteger('kas');
             $table->bigInteger('hutang');
             $table->bigInteger('piutang');
             $table->bigInteger('stok');
             $table->timestamps();
 
-            $table->unique(['bulan']);
+            $table->unique(['date']);
         });
     }
 

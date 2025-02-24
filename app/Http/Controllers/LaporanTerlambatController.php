@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\LaporanTerlambat;
+use App\Traits\DateValidationTrait;
 use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
 use Illuminate\Support\Facades\DB;
@@ -12,6 +13,7 @@ use Illuminate\Validation\Rule;
 
 class LaporanTerlambatController extends Controller
 {
+    use DateValidationTrait;
     // Show the view
     public function index(Request $request)
     { 
@@ -20,13 +22,13 @@ class LaporanTerlambatController extends Controller
 
         #$query = KasHutangPiutang::query();
 
-        // Query untuk mencari berdasarkan tahun dan bulan
+        // Query untuk mencari berdasarkan tahun dan date
         $laporanterlambats = LaporanTerlambat::query()
             ->when($search, function ($query, $search) {
-                return $query->where('bulan', 'LIKE', "%$search%")
+                return $query->where('date', 'LIKE', "%$search%")
                              ->orWhere('nama', 'like', "%$search%");
             })
-            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
+            ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
 
         // Hitung total untuk masing-masing kategori
@@ -59,23 +61,37 @@ class LaporanTerlambatController extends Controller
 
     public function store(Request $request)
     {
+        // Konversi tanggal agar selalu dalam format Y-m-d
+        if ($request->has('date')) {
+            try {
+                $request->merge(['date' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
+            } catch (\Exception $e) {
+                return redirect()->back()->with('error', 'Format tanggal tidak valid.');
+            }
+        }
+
         try {
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            $validatedData = $request->validate([
+                'date' => 'required|date',
                 'nama' => 'required|string',
                 'total_terlambat' => 'required|integer|min:0',
             ]);
 
-            // Cek kombinasi unik bulan dan nama
-            $exists = LaporanTerlambat::where('bulan', $validatedata['bulan'])
-            ->where('nama', $validatedata['nama'])
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
+
+            // Cek kombinasi unik date dan nama
+            $exists = LaporanTerlambat::where('date', $validatedData['date'])
+            ->where('nama', $validatedData['nama'])
             ->exists();
 
             if ($exists) {
                 return redirect()->back()->with('error', 'Data Already Exists.');
             }
     
-            LaporanTerlambat::create($validatedata);
+            LaporanTerlambat::create($validatedData);
     
             return redirect()->route('laporanterlambat.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
@@ -88,20 +104,20 @@ class LaporanTerlambatController extends Controller
             return redirect()->route('laporanterlambat.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
         try {
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            $validatedData = $request->validate([
+                'date' => 'required|date',
                 'total_terlambat' => 'required|integer',
                 'nama' => 'required|string'
             ]);
     
-            // Cek kombinasi unik bulan dan perusahaan
-            $exists = LaporanTerlambat::where('nama', $validatedata['nama'])->exists();
+            // Cek kombinasi unik date dan perusahaan
+            $exists = LaporanTerlambat::where('nama', $validatedData['nama'])->exists();
     
             if ($exists) {
                 return redirect()->back()->with('error', 'Data Already Exists.');
             }
     
-            LaporanTerlambat::create($validatedata);
+            LaporanTerlambat::create($validatedData);
     
             return redirect()->route('laporanterlambat.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
@@ -113,15 +129,23 @@ class LaporanTerlambatController extends Controller
     public function update(Request $request, LaporanTerlambat $laporanterlambat)
     {
         try {
+            // Konversi tanggal agar selalu dalam format Y-m-d
+            if ($request->has('date')) {
+                try {
+                    $request->merge(['date' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
+                } catch (\Exception $e) {
+                    return redirect()->back()->with('error', 'Format tanggal tidak valid.');
+                }
+            }
             // Validasi input
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            $validatedData = $request->validate([
+                'date' => 'required|date',
                 'nama' => 'required|string',
                 'total_terlambat' => 'required|integer|min:0',
             ]);
             
-            // Cek kombinasi unik bulan dan nama
-            $exists = LaporanTerlambat::where('nama', $validatedata['nama'])
+            // Cek kombinasi unik date dan nama
+            $exists = LaporanTerlambat::where('nama', $validatedData['nama'])
                 ->where('id_izin', '!=', $laporanterlambat->id_izin)->exists();
 
             if ($exists) {
@@ -129,7 +153,7 @@ class LaporanTerlambatController extends Controller
             }
     
             // Update data
-            $laporanterlambat->update($validatedata);
+            $laporanterlambat->update($validatedData);
     
             // Redirect dengan pesan sukses
             return redirect()->route('laporanterlambat.index')->with('success', 'Data berhasil diperbarui.');
@@ -189,7 +213,7 @@ class LaporanTerlambatController extends Controller
                     <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                         <thead>
                             <tr style='background-color: #f2f2f2;'>
-                                <th style='border: 1px solid #000; padding: 1px;'>Bulan</th>
+                                <th style='border: 1px solid #000; padding: 1px;'>Tanggal</th>
                                 <th style='border: 1px solid #000; padding: 2px;'>Nama Karyawan</th>
                                 <th style='border: 1px solid #000; padding: 2px;'>Total Terlambat</th>
                             </tr>
@@ -231,7 +255,7 @@ class LaporanTerlambatController extends Controller
     public function showChart()
     {
         // Ambil data dari database
-        $laporanterlambats = LaporanTerlambat::orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')->get();
+        $laporanterlambats = LaporanTerlambat::orderByRaw('YEAR(date) DESC, MONTH(date) ASC')->get();
     
         // Siapkan data untuk chart
         $labels = $laporanterlambats->pluck('nama')->toArray();

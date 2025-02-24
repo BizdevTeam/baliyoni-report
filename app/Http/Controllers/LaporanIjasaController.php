@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\LaporanIjasa;
+use App\Traits\DateValidationTrait;
 use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
 use Illuminate\Support\Facades\DB;
@@ -13,6 +14,8 @@ use Illuminate\Support\Facades\Storage;
 
 class LaporanIjasaController extends Controller
 {
+    use DateValidationTrait;
+
         public function index(Request $request)
     {
         $perPage = $request->input('per_page', 12);
@@ -36,7 +39,7 @@ class LaporanIjasaController extends Controller
     public function store(Request $request)
     {
         try {
-            $validatedata = $request->validate([
+            $validatedData = $request->validate([
                 'tanggal' => 'required|date',
                 'jam' => 'required|date_format:H:i',
                 'permasalahan' => 'required|string',
@@ -46,7 +49,12 @@ class LaporanIjasaController extends Controller
                 'resolve_jam' => 'required|date_format:H:i',
             ]);
 
-            LaporanIjasa::create($validatedata);
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
+
+            LaporanIjasa::create($validatedData);
 
             return redirect()->route('laporanijasa.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
@@ -58,7 +66,7 @@ class LaporanIjasaController extends Controller
     public function update(Request $request, LaporanIjasa $laporanijasa)
     {
         try {
-            $validatedata = $request->validate([
+            $validatedData = $request->validate([
                 'tanggal' => 'required|date',
                 'jam' => 'nullable|date_format:H:i',
                 'permasalahan' => 'required|string',
@@ -68,7 +76,7 @@ class LaporanIjasaController extends Controller
                 'resolve_jam' => 'required|date_format:H:i',
             ]);
             
-            $laporanijasa->update($validatedata);
+            $laporanijasa->update($validatedData);
 
             return redirect()->route('laporanijasa.index')->with('success', 'Data Berhasil Diupdate');
         } catch (\Exception $e) {

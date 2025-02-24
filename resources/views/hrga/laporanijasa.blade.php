@@ -34,6 +34,60 @@
         <!-- Navbar -->
         <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
 
+ <!-- Wrapper Alert -->
+ @if (session('success') || session('error'))
+ <div x-data="{ 
+         showSuccess: {{ session('success') ? 'true' : 'false' }},
+         showError: {{ session('error') ? 'true' : 'false' }}
+     }"
+     x-init="setTimeout(() => showSuccess = false, 3000); setTimeout(() => showError = false, 3000);"
+     class="fixed top-5 right-5 z-50 flex flex-col gap-3">
+
+     <!-- Success Alert -->
+     @if (session('success'))
+     <div x-show="showSuccess" x-transition.opacity.scale.90
+         class="bg-green-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
+         
+         <!-- Icon -->
+         <span class="text-2xl">✅</span>
+
+         <!-- Message -->
+         <div>
+             <h3 class="font-bold">Success!</h3>
+             <p class="text-sm">{{ session('success') }}</p>
+         </div>
+
+         <!-- Close Button -->
+         <button @click="showSuccess = false" class="ml-auto text-white text-lg font-bold">
+             &times;
+         </button>
+     </div>
+     @endif
+
+     <!-- Error Alert -->
+     @if (session('error'))
+     <div x-show="showError" x-transition.opacity.scale.90
+         class="bg-red-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
+         
+         <!-- Icon -->
+         <span class="text-2xl">⚠️</span>
+
+         <!-- Message -->
+         <div>
+             <h3 class="font-bold">Error!</h3>
+             <p class="text-sm">{{ session('error') }}</p>
+         </div>
+
+         <!-- Close Button -->
+         <button @click="showError = false" class="ml-auto text-white text-lg font-bold">
+             &times;
+         </button>
+     </div>
+     @endif
+
+ </div>
+ @endif
+
         <!-- Main Content -->
        <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
         <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan iJASA</h1>
@@ -65,18 +119,6 @@
 
         <div id="formContainer" class="visible">
             <div class="mx-auto bg-white p-6 rounded-lg shadow">
-
-                <!-- Success Message -->
-                @if (session('success'))
-                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">
-                    {{ session('success') }}
-                </div>
-                @endif
-                @if (session('error'))
-                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
-                    {{ session('error') }}
-                </div>
-                @endif
 
         <!-- Event Table -->
         <div class="overflow-x-auto bg-white shadow-md">
@@ -291,6 +333,7 @@
 </div>
 
 </body>
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <script>
         //toogle form
         const toggleFormButton = document.getElementById('toggleFormButton');
