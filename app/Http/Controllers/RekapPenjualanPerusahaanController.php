@@ -26,12 +26,12 @@ class RekapPenjualanPerusahaanController extends Controller
         // Query untuk mencari berdasarkan tahun dan date
         $rekappenjualanperusahaans = RekapPenjualanPerusahaan::with('perusahaan')
         ->when($search, function ($query, $search) {
-            return $query->where('date', 'LIKE', "%$search%")
+            return $query->where('tanggal', 'LIKE', "%$search%")
                          ->orWhereHas('perusahaan', function ($q) use ($search) {
                              $q->where('nama_perusahaan', 'LIKE', "%$search%");
                          });
             })
-            ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
 
         // Hitung total untuk masing-masing kategori
@@ -43,7 +43,7 @@ class RekapPenjualanPerusahaanController extends Controller
         }
         
         $labels = $rekappenjualanperusahaans->map(function($item) {
-            $formattedDate = \Carbon\Carbon::parse($item->date)->translatedFormat('F - Y');
+            $formattedDate = \Carbon\Carbon::parse($item->date)->translatedFormat('F Y');
             return $item->perusahaan->nama_perusahaan. ' - ' . $formattedDate;
         })->toArray();
         $data = $rekappenjualanperusahaans->pluck('total_penjualan')->toArray();
@@ -68,27 +68,27 @@ class RekapPenjualanPerusahaanController extends Controller
         {
             try {
             // Konversi tanggal agar selalu dalam format Y-m-d
-            if ($request->has('date')) {
+            if ($request->has('tanggal')) {
                 try {
-                    $request->merge(['date' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
+                    $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
                 } catch (\Exception $e) {
                     return redirect()->back()->with('error', 'Format tanggal tidak valid.');
                 }
             }
 
                 $validatedData = $request->validate([
-                    'date' => 'required|date',
+                    'tanggal' => 'required|date',
                     'perusahaan_id' => 'required|exists:perusahaans,id',
                     'total_penjualan' => 'required|integer|min:0',
                 ]);
     
                 $errorMessage = '';
-                if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                     return redirect()->back()->with('error', $errorMessage);
                 }
 
                 // Cek kombinasi unik date dan perusahaan_id
-                $exists = RekapPenjualanPerusahaan::where('date', $request->date)
+                $exists = RekapPenjualanPerusahaan::where('tanggal', $request->date)
                     ->where('perusahaan_id', $request->perusahaan_id)
                     ->exists();
     
@@ -109,26 +109,26 @@ class RekapPenjualanPerusahaanController extends Controller
     {
         try {
             // Konversi tanggal agar selalu dalam format Y-m-d
-            if ($request->has('date')) {
+            if ($request->has('tanggal')) {
                 try {
-                    $request->merge(['date' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
+                    $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
                 } catch (\Exception $e) {
                     return redirect()->back()->with('error', 'Format tanggal tidak valid.');
                 }
             }
 
                 $validatedData = $request->validate([
-                    'date' => 'required|date',
+                    'tanggal' => 'required|date',
                     'perusahaan_id' => 'required|exists:perusahaans,id',
                     'total_penjualan' => 'required|integer|min:0',
                 ]);
 
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
 
-            $exists = RekapPenjualanPerusahaan::where('date', $request->date)
+            $exists = RekapPenjualanPerusahaan::where('tanggal', $request->date)
                 ->where('perusahaan_id', $request->perusahaan_id)
                 ->where('id', '!=', $rekappenjualanperusahaan->id) // Menggunakan model binding
                 ->exists();
@@ -195,7 +195,7 @@ class RekapPenjualanPerusahaanController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
 
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Marketing - Laporan Rekap Penjualan Perusahaan');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Marketing - Laporan Rekap Penjualan Perusahaan|');
 
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "
@@ -254,7 +254,7 @@ class RekapPenjualanPerusahaanController extends Controller
         // Ambil data dari database
         $rekappenjualanperusahaans = RekapPenjualanPerusahaan::query()
         ->when($search, function ($query, $search) {
-            return $query->where('date', 'LIKE', "%$search%");
+            return $query->where('tanggal', 'LIKE', "%$search%");
         })
         ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Order by year (desc) and month (asc)
         ->get();  

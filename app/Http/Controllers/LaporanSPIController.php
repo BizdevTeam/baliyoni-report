@@ -135,7 +135,7 @@ class LaporanSPIController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan SPI - Laporan SPI Operasional');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan SPI - Laporan SPI Operasional|');
     
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "

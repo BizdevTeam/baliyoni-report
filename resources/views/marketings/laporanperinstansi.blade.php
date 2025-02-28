@@ -181,7 +181,7 @@
                             <tbody>
                                 @foreach ($laporanperinstansis as $laporanperinstansi)
                                 <tr class="hover:bg-gray-100">
-                                    <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanperinstansi->date_formatted }}</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanperinstansi->tanggal_formatted }}</td>
                                     <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanperinstansi->instansi }}</td>
                                     <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanperinstansi->nilai_formatted }}</td>
                                     <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
@@ -210,8 +210,8 @@
                                             @method('PUT')
                                             <div class="space-y-4">
                                                 <div>
-                                                    <label for="date" class="block text-sm font-medium">Tanggal</label>
-                                                    <input type="date" name="date" class="w-full p-2 border rounded" value="{{ $laporanperinstansi->date }}" required>
+                                                    <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                                                    <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $laporanperinstansi->tanggal }}" required>
                                                 </div>
                                                 <div>
                                                     <label for="instansi" class="block text-sm font-medium">Instansi</label>
@@ -234,7 +234,7 @@
                                             </div>
                                             <div class="mt-4 flex justify-end gap-2">
                                                 <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
-                                                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Update</button>
+                                                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Uptanggal</button>
                                             </div>
                                         </form>
                                     </div>
@@ -333,8 +333,8 @@
                         @csrf
                         <div class="space-y-4">
                             <div>
-                                <label for="date" class="block text-sm font-medium">Tanggal</label>
-                                <input type="date" name="date" class="w-full p-2 border rounded" required>
+                                <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                                <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
                             </div>
                             <div>
                                 <label for="instansi" class="block text-sm font-medium">Instansi</label>
@@ -459,7 +459,7 @@
                     meta.data.forEach((bar, index) => {
                         var value = dataset.data[index];
                         ctx.fillStyle = 'black'; // Warna teks
-                        ctx.font = '15px sans-serif'; // Ukuran teks
+                        ctx.font = 'bold 15px sans-serif'; // Ukuran teks
                         ctx.textAlign = 'center';
                         ctx.fillText('Rp ' + value.toLocaleString(), bar.x, bar.y - 10); // Tampilkan di atas bar
                     });
@@ -480,17 +480,17 @@
     const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
         const cells = row.querySelectorAll('td');
         return {
-            date: cells[0]?.innerText.trim() || '',
+            tanggal: cells[0]?.innerText.trim() || '',
             instansi: cells[2]?.innerText.trim() || '',
             nilai: cells[1]?.innerText.trim() || '',
         };
     });
 
     const tableContent = items
-        .filter(item => item.date && item.instansi && item.nilai)
+        .filter(item => item.tanggal && item.instansi && item.nilai)
         .map(item => `
             <tr>
-                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.date}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.tanggal}</td>
                 <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.instansi}</td>
                 <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.nilai}</td>
             </tr>

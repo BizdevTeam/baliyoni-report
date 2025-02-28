@@ -192,7 +192,7 @@ class LaporanSakitController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA - Laporan Sakit');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA - Laporan Sakit|');
             
             $htmlContent = "
             <div style='gap: 100px; width: 100%;'>

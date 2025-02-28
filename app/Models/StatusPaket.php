@@ -16,15 +16,15 @@ class StatusPaket extends Model
     protected $primaryKey = 'id_statuspaket'; // Primary key custom
     // Kolom yang dapat diisi menggunakan metode mass assignment
     protected $fillable = [
-        'date',      // Format bulan dan tahun (contoh: '11/2024')
+        'tanggal',      // Format bulan dan tahun (contoh: '11/2024')
         'status',          // Nama website (string)
         'total_paket',         // Nilai paket dalam rupiah (integer)
     ];
 
     // Kolom yang dapat diisi menggunakan metode mass assignment
-    public function getDateFormattedAttribute()
+    public function getTanggalFormattedAttribute()
     {
-        return Carbon::parse($this->date)->translatedFormat('d F Y');
+        return Carbon::parse($this->tanggal)->translatedFormat('d F Y');
     }
     
 }

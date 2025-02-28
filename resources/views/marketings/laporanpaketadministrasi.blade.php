@@ -139,7 +139,7 @@
                 <tbody>
                     @foreach ($laporanpaketadministrasis as $laporanpaketadministrasi)
                         <tr class="hover:bg-gray-100">
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanpaketadministrasi->date_formatted }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanpaketadministrasi->tanggal_formatted }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanpaketadministrasi->website }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanpaketadministrasi->total_paket }}</td>
                             <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
@@ -169,11 +169,11 @@
                                     @method('PUT')
                                     <div class="space-y-4">
                                         <div>
-                                            <label for="date" class="block text-sm font-medium">Tanggal</label>
-                                            <input type="date" name="date" class="w-full p-2 border rounded" value="{{ $laporanpaketadministrasi->date }}" required>
+                                            <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                                            <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $laporanpaketadministrasi->tanggal }}" required>
                                         </div>
                                         <div>
-                                            <label for="website" class="block text-sm font-medium">Pilih Perusahaan</label>
+                                            <label for="website" class="block text-sm font-medium">Pilih website</label>
                                             <select name="website" class="w-full p-2 border rounded" required>
                                                 <option value="E - Katalog" {{ $laporanpaketadministrasi->website == 'E - Katalog' ? 'selected' : '' }}>E - Katalog</option>
                                                 <option value="E - Katalog Luar Bali" {{ $laporanpaketadministrasi->website == 'E - Katalog Luar Bali' ? 'selected' : '' }}>E - Katalog Luar Bali</option>
@@ -188,7 +188,7 @@
                                     </div>
                                     <div class="mt-4 flex justify-end gap-2">
                                         <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
-                                        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Update</button>
+                                        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Uptanggal</button>
                                     </div>
                                 </form>
                             </div>
@@ -290,11 +290,11 @@
             @csrf
             <div class="space-y-4">
                 <div>
-                    <label for="date" class="block text-sm font-medium">Tanggal</label>
-                    <input type="date" name="date" class="w-full p-2 border rounded" required>
+                    <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                    <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
                 </div>
                 <div>
-                    <label for="website" class="block text-sm font-medium">Pilih Perusahaan</label>
+                    <label for="website" class="block text-sm font-medium">Pilih website</label>
                     <select name="website" class="w-full p-2 border rounded" required>
                         <option value="E - Katalog">E - Katalog</option>
                         <option value="E - Katalog Luar Bali">E - Katalog Luar Bali</option>
@@ -415,55 +415,46 @@
         }]
     });
 
-    async function exportToPDF() {
+    // JavaScript Function
+async function exportToPDF() {
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
     if (!csrfToken) {
         alert('CSRF token tidak ditemukan. Pastikan meta tag CSRF disertakan.');
         return;
     }
 
-    // Ambil data tabel dengan validasi jumlah kolom
-    const items = Array.from(document.querySelectorAll('#data-table tbody tr'))
-        .map(row => {
-            const cells = row.querySelectorAll('td');
-            if (cells.length < 3) {
-                console.warn("Baris tidak memiliki cukup kolom:", row);
-                return null;
-            }
-            return {
-                date_formatted: cells[0]?.innerText.trim() || '',
-                website: cells[1]?.innerText.trim() || '',
-                total_paket_formatted: cells[2]?.innerText.trim() || '',
-            };
-        })
-        .filter(item => item.date_formatted && item.website && item.total_paket_formatted);
-
-    if (items.length === 0) {
-        alert('Tidak ada data tabel yang valid untuk diekspor.');
-        return;
-    }
+    // Ambil data dari tabel
+    const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
+        const cells = row.querySelectorAll('td');
+        return {
+            tanggal_formatted: cells[0]?.innerText.trim() || '',
+            website: cells[1]?.innerText.trim() || '',
+            total_paket_formatted: cells[2]?.innerText.trim() || '',
+        };
+    });
 
     const tableContent = items
+        .filter(item => item.tanggal_formatted && item.website && item.total_paket_formatted)
         .map(item => `
             <tr>
-                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.date_formatted}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.tanggal_formatted}</td>
                 <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.website}</td>
                 <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.total_paket_formatted}</td>
             </tr>
-        `)
-        .join('');
+        `).join('');
 
-    const pdfTable = `<table>${tableContent}</table>`;
+    const pdfTable = tableContent;
 
-    const chartCanvas = document.getElementById('chart');
+    const chartCanvas = document.querySelector('#chart');
     if (!chartCanvas) {
         alert('Elemen canvas grafik tidak ditemukan.');
         return;
     }
+
     const chartBase64 = chartCanvas.toDataURL();
 
     try {
-        const response = await fetch('marketings/laporanpaketadministrasi/export-pdf', {
+        const response = await fetch('/marketings/laporanpaketadministrasi/export-pdf', {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,
@@ -481,7 +472,7 @@
             const a = document.createElement('a');
             a.href = url;
             a.download = 'laporan_paket_administrasi.pdf';
-            document.body.appendChild(a);
+        document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
         } else {

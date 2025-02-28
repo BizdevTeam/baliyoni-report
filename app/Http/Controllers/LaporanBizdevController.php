@@ -133,7 +133,7 @@ class LaporanBizdevController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan IT - Laporan Bizdev');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan IT - Laporan Bizdev|');
     
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "

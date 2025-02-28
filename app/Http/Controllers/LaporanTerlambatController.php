@@ -207,7 +207,7 @@ class LaporanTerlambatController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA - Laporan Terlambat');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA - Laporan Terlambat|');
             
             $htmlContent = "
             <div style='gap: 100px; width: 100%;'>

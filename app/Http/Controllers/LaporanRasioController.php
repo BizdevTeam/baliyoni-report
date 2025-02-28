@@ -177,7 +177,7 @@ class LaporanRasioController extends Controller
         ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
 
         // Tambahkan footer ke PDF
-        $mpdf->SetFooter('{DATE j-m-Y}|Laporan Accounting -Laporan Rasio');
+        $mpdf->SetFooter('{DATE j-m-Y}|Laporan Accounting -Laporan Rasio|');
 
         // Loop melalui setiap laporan dan tambahkan ke PDF
         foreach ($laporans as $index => $laporan) {

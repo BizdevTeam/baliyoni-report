@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('rekap_penjualans', function (Blueprint $table) {
             $table->id('id_rp');
-            $table->string('date');
+            $table->string('tanggal');
             $table->bigInteger('total_penjualan');
             $table->timestamps();
 

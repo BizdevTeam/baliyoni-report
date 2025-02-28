@@ -231,7 +231,7 @@ class RekapPiutangServisAspController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Support - Laporan Piutang Servis ASP');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Support - Laporan Piutang Servis ASP|');
     
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "

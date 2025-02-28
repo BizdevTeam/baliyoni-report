@@ -218,7 +218,7 @@ class LaporanDetransController extends Controller
         ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
 
         // Tambahkan footer ke PDF
-        $mpdf->SetFooter('{DATE j-m-Y}|Laporan Supports - Laporan Pengiriman');
+        $mpdf->SetFooter('{DATE j-m-Y}|Laporan Supports - Laporan Pengiriman|');
 
         // Konten HTML
         $htmlContent = "

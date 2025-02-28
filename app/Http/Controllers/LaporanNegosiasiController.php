@@ -187,7 +187,7 @@ class LaporanNegosiasiController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
 
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Procurements - Laporan Negosiasi');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Procurements - Laporan Negosiasi|');
 
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "

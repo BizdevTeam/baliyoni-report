@@ -160,7 +160,7 @@ class ItMultimediaInstagramController extends Controller
             ", 'O');
     
             // Tambahkan footer
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan IT - Laporan Multimedia Instagram');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan IT - Laporan Multimedia Instagram|');
     
             // Loop melalui setiap laporan dan tambahkan ke PDF
             foreach ($laporans as $index => $laporan) {

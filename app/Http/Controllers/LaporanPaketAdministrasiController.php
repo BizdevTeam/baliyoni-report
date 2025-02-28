@@ -26,9 +26,9 @@ class LaporanPaketAdministrasiController extends Controller
         // Query untuk mencari berdasarkan tahun dan date
         $laporanpaketadministrasis = LaporanPaketAdministrasi::query()
             ->when($search, function ($query, $search) {
-                return $query->where('date', 'LIKE', "%$search%");
+                return $query->where('tanggal', 'LIKE', "%$search%");
             })
-            ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
 
         // Hitung total untuk masing-masing kategori
@@ -40,7 +40,7 @@ class LaporanPaketAdministrasiController extends Controller
         }
         
         $labels = $laporanpaketadministrasis->map(function($item) {
-            $formattedDate = \Carbon\Carbon::parse($item->date)->translatedFormat('F - Y');
+            $formattedDate = \Carbon\Carbon::parse($item->date)->translatedFormat('F Y');
             return $item->website . ' - ' . $formattedDate;
         })->toArray();
         $data = $laporanpaketadministrasis->pluck('total_paket')->toArray();
@@ -67,15 +67,15 @@ class LaporanPaketAdministrasiController extends Controller
     {
         try {
             // Konversi tanggal agar selalu dalam format Y-m-d
-            if ($request->has('date')) {
+            if ($request->has('tanggal')) {
                 try {
-                    $request->merge(['date' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
+                    $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
                 } catch (\Exception $e) {
                     return redirect()->back()->with('error', 'Format tanggal tidak valid.');
                 }
             }
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'website' => [
                     'required',
                     Rule::in([
@@ -89,12 +89,12 @@ class LaporanPaketAdministrasiController extends Controller
             ]);
             
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
 
             // Cek kombinasi unik date dan perusahaan
-            $exists = LaporanPaketAdministrasi::where('date', $validatedData['date'])
+            $exists = LaporanPaketAdministrasi::where('tanggal', $validatedData['tanggal'])
             ->where('website', $validatedData['website'])->exists();
             
             if ($exists) {
@@ -116,7 +116,7 @@ class LaporanPaketAdministrasiController extends Controller
         try {
             // Validasi input
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'website' => [
                 'required',
                 Rule::in([
@@ -130,11 +130,11 @@ class LaporanPaketAdministrasiController extends Controller
             ]);
 
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
             // Cek kombinasi unik date dan perusahaan
-            $exists = LaporanPaketAdministrasi::where('date', $validatedData['date'])
+            $exists = LaporanPaketAdministrasi::where('tanggal', $validatedData['tanggal'])
             ->where('website', $validatedData['website'])
             ->where('id_laporanpaket', '!=', $laporanpaketadministrasi->id_laporanpaket)->exists();
 
@@ -209,19 +209,19 @@ class LaporanPaketAdministrasiController extends Controller
             }
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Marketing - Laporan Paket Administrasi');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Marketing - Laporan Paket Administrasi|');
     
             // Buat konten HTML dengan styling CSS yang lebih ketat
             $htmlContent = "
-            <div style='display: flex; gap: 20px; width: 100%;'>
-                <div style='width: 30%; padding-right: 20px;'>
+            <div style='gap: 100px; width: 100%;'>
+                <div style='width: 30%; float: left; padding-right: 20px;'>
                     <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Tabel Data</h2>
                     <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                         <thead>
                             <tr style='background-color: #f2f2f2;'>
                                 <th style='border: 1px solid #000; padding: 1px;'>Tanggal</th>
                                 <th style='border: 1px solid #000; padding: 1px;'>Website</th>
-                                <th style='border: 1px solid #000; padding: 1px;'>Total Paket (Rp)</th>
+                                <th style='border: 1px solid #000; padding: 2px;'>Nilai Paket</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -229,7 +229,7 @@ class LaporanPaketAdministrasiController extends Controller
                         </tbody>
                     </table>
                 </div>
-                <div style='width: 65%; text-align:center;'>
+                <div style='width: 65%; text-align:center; margin-left: 20px;'>
                     <h2 style='font-size: 14px; margin-bottom: 10px;'>Grafik Laporan Paket Administrasi</h2>
                     <img src='{$chartBase64}' style='width: 100%; height: auto;' alt='Grafik Laporan' />
                 </div>
@@ -270,7 +270,7 @@ class LaporanPaketAdministrasiController extends Controller
         // Ambil data dari database
         $laporanpaketadministrasis = LaporanPaketAdministrasi::query()
         ->when($search, function ($query, $search) {
-            return $query->where('date', 'LIKE', "%$search%");
+            return $query->where('tanggal', 'LIKE', "%$search%");
         })
         ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Order by year (desc) and month (asc)
         ->get();  

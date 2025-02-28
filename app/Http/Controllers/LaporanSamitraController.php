@@ -158,7 +158,7 @@ class LaporanSamitraController extends Controller
         ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
 
         // Tambahkan footer ke PDF
-        $mpdf->SetFooter('{DATE j-m-Y}|Laporan Supports|Halaman {PAGENO}');
+        $mpdf->SetFooter('{DATE j-m-Y}|Laporan Supports|');
 
         // Konten HTML
         $htmlContent = "

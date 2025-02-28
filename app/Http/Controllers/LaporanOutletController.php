@@ -180,7 +180,7 @@ class LaporanOutletController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
 
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Procurements - Laporan Pembelian Outlet');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Procurements - Laporan Pembelian Outlet|');
 
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "

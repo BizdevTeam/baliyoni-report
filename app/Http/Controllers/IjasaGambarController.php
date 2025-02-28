@@ -141,7 +141,7 @@ class IjasaGambarController extends Controller
             ", 'O');
     
             // Tambahkan footer
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA - Laporan iJASA Gambar');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA - Laporan iJASA Gambar|');
     
             // Loop melalui setiap laporan dan tambahkan ke PDF
             foreach ($laporans as $index => $laporan) {

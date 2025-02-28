@@ -119,7 +119,7 @@ class LaporanIjasaController extends Controller
         ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
 
         // Tambahkan footer ke PDF
-        $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA - Laporan iJASA');
+        $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA - Laporan iJASA|');
 
         $htmlContent = "
             <div style='width: 100%;'>

@@ -13,15 +13,15 @@ class LaporanPerInstansi extends Model
     protected $primaryKey = 'id_perinstansi';
 
     protected $fillable = [
-        'date',      
+        'tanggal',      
         'instansi',          
         'nilai',         
     ];
 
     // Kolom yang dapat diisi menggunakan metode mass assignment
-    public function getBulanFormattedAttribute()
+    public function getTanggalFormattedAttribute()
     {
-        return Carbon::parse($this->date)->translatedFormat('F - Y');
+        return Carbon::parse($this->tanggal)->translatedFormat('d F Y');
     }
 
     // Menambahkan accessor dengan format Rp

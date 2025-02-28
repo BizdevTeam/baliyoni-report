@@ -24,9 +24,9 @@ class StatusPaketController extends Controller
         // Query untuk mencari berdasarkan tahun dan date
         $statuspakets = StatusPaket::query()
             ->when($search, function ($query, $search) {
-                return $query->where('date', 'LIKE', "%$search%");
+                return $query->where('tanggal', 'LIKE', "%$search%");
             })
-            ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
 
         // Hitung total untuk masing-masing kategori
@@ -64,16 +64,16 @@ class StatusPaketController extends Controller
     {
         try {
             // Konversi tanggal agar selalu dalam format Y-m-d
-            if ($request->has('date')) {
+            if ($request->has('tanggal')) {
                 try {
-                    $request->merge(['date' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
+                    $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
                 } catch (\Exception $e) {
                     return redirect()->back()->with('error', 'Format tanggal tidak valid.');
                 }
             }
 
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'status' => [
                     'required',
                     Rule::in([
@@ -88,12 +88,12 @@ class StatusPaketController extends Controller
             ]);
 
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
 
             // Cek kombinasi unik date dan perusahaan
-            $exists = StatusPaket::where('date', $validatedData['date'])
+            $exists = StatusPaket::where('tanggal', $validatedData['tanggal'])
             ->where('status', $validatedData['status'])
             ->exists();
 
@@ -116,7 +116,7 @@ class StatusPaketController extends Controller
         try {
             // Validasi input
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'status' => [
                 'required',
                 Rule::in([
@@ -131,12 +131,12 @@ class StatusPaketController extends Controller
             ]);
 
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
 
             // Cek kombinasi unik date dan perusahaan
-            $exists = StatusPaket::where('date', $validatedData['date'])
+            $exists = StatusPaket::where('tanggal', $validatedData['tanggal'])
             ->where('status', $validatedData['status'])
             ->where('id_statuspaket', '!=', $statuspaket->id_statuspaket)->exists();
 
@@ -204,7 +204,7 @@ class StatusPaketController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Marketing - Lapoan Status Paket');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Marketing - Lapoan Status Paket|');
 
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "
@@ -256,7 +256,7 @@ class StatusPaketController extends Controller
     }
     public function getLaporanPaketAdministrasiData()
     {
-        $data = StatusPaket::all(['date','status','total_paket']);
+        $data = StatusPaket::all(['tanggal','status','total_paket']);
     
         return response()->json($data);
     }
@@ -268,7 +268,7 @@ class StatusPaketController extends Controller
     
         $statuspakets = StatusPaket::query()
         ->when($search, function ($query, $search) {
-            return $query->where('date', 'LIKE', "%$search%");
+            return $query->where('tanggal', 'LIKE', "%$search%");
         })
         ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC'); // Urutkan berdasarkan tahun (descending) dan date (ascending)
     

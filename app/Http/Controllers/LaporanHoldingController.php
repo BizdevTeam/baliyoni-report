@@ -200,7 +200,7 @@ class LaporanHoldingController extends Controller
                 </div>
             ", 'O');
 
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Procurements - Laporan Pembelian (Holding)');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Procurements - Laporan Pembelian (Holding)|');
 
             $htmlContent = "
             <div style='display: flex; gap: 20px; width: 100%;'>

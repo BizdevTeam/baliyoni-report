@@ -143,7 +143,7 @@ class ItMultimediaTiktokController extends Controller
             ", 'O');
     
             // Tambahkan footer
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan IT - Laporan Multimedia Tiktok');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan IT - Laporan Multimedia Tiktok|');
     
             // Loop melalui setiap laporan dan tambahkan ke PDF
             foreach ($laporans as $index => $laporan) {

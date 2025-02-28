@@ -177,7 +177,7 @@ class LaporanNeracaController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Accounting - Laporan Neraca');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Accounting - Laporan Neraca|');
     
             // Loop melalui setiap laporan dan tambahkan ke PDF
             foreach ($laporans as $index => $laporan) {

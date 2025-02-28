@@ -545,7 +545,7 @@
 </button>
 
 <!-- Modal -->
-<div id="exportModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden">
+{{-- <div id="exportModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden">
     <div class="bg-white rounded-lg p-6 shadow-lg w-96">
         <h2 class="text-xl font-bold mb-4">Export PDF</h2>
 
@@ -562,7 +562,7 @@
             </div>
         </form>
     </div>
-</div>
+</div> --}}
 
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

@@ -25,9 +25,9 @@ class LaporanPerInstansiController extends Controller
         // Query untuk mencari berdasarkan tahun dan date
         $laporanperinstansis = LaporanPerInstansi::query()
             ->when($search, function ($query, $search) {
-                return $query->where('date', 'LIKE', "%$search%");
+                return $query->where('tanggal', 'LIKE', "%$search%");
             })
-            ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
 
         // Hitung total untuk masing-masing kategori
@@ -62,15 +62,15 @@ class LaporanPerInstansiController extends Controller
     {
         try {
                       // Konversi tanggal agar selalu dalam format Y-m-d
-            if ($request->has('date')) {
+            if ($request->has('tanggal')) {
                 try {
-                    $request->merge(['date' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
+                    $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
                 } catch (\Exception $e) {
                     return redirect()->back()->with('error', 'Format tanggal tidak valid.');
                 }
             }
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'instansi' => [
                     'required',
                     Rule::in([
@@ -90,12 +90,12 @@ class LaporanPerInstansiController extends Controller
             ]);
 
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
 
             // Cek kombinasi unik date dan perusahaan
-            $exists = LaporanPerInstansi::where('date', $validatedData['date'])
+            $exists = LaporanPerInstansi::where('tanggal', $validatedData['tanggal'])
             ->where('instansi', $validatedData['instansi'])->exists();
             
             if ($exists) {
@@ -117,7 +117,7 @@ class LaporanPerInstansiController extends Controller
         try {
             // Validasi input
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'instansi' => [
                 'required',
                 Rule::in([
@@ -137,11 +137,11 @@ class LaporanPerInstansiController extends Controller
             ]);
 
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
             // Cek kombinasi unik date dan perusahaan
-            $exists = LaporanPerInstansi::where('date', $validatedData['date'])
+            $exists = LaporanPerInstansi::where('tanggal', $validatedData['tanggal'])
             ->where('instansi', $validatedData['instansi'])
             ->where('id_perinstansi', '!=', $laporanperinstansi->id_perinstansi)->exists();
 
@@ -211,7 +211,7 @@ class LaporanPerInstansiController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Marketing - Laporan Per Instansi');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Marketing - Laporan Per Instansi|');
 
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "

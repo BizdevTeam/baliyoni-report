@@ -139,7 +139,7 @@
                 <tbody>
                     @foreach ($rekappenjualanperusahaans as $rekappenjualanperusahaan)
                         <tr class="hover:bg-gray-100">
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $rekappenjualanperusahaan->date_formatted }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $rekappenjualanperusahaan->tanggal_formatted }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $rekappenjualanperusahaan->perusahaan->nama_perusahaan }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $rekappenjualanperusahaan->total_penjualan_formatted }}</td>
                             <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
@@ -169,8 +169,8 @@
                                     @method('PUT')
                                     <div class="space-y-4">
                                         <div>
-                                            <label for="date" class="block text-sm font-medium">Tanggal</label>
-                                            <input type="date" name="date" class="w-full p-2 border rounded" value="{{ $rekappenjualanperusahaan->date }}" required>
+                                            <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                                            <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $rekappenjualanperusahaan->tanggal }}" required>
                                         </div>
                                         <div>
                                             <label for="perusahaan_id" class="block text-sm font-medium">Pilih Perusahaan</label>
@@ -190,7 +190,7 @@
                                     </div>
                                     <div class="mt-4 flex justify-end gap-2">
                                         <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
-                                        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Update</button>
+                                        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Uptanggal</button>
                                     </div>
                                 </form>
                             </div>
@@ -292,8 +292,8 @@
             @csrf
             <div class="space-y-4">
                 <div>
-                    <label for="date" class="block text-sm font-medium">Tanggal</label>
-                    <input type="date" name="date" class="w-full p-2 border rounded" required>
+                    <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                    <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
                 </div>
                 <div>
                     <label for="perusahaan_id" class="block text-sm font-medium">Pilih Perusahaan</label>
@@ -415,7 +415,7 @@
                     meta.data.forEach((bar, index) => {
                         var value = dataset.data[index];
                         ctx.fillStyle = 'black'; // Warna teks
-                        ctx.font = '15px sans-serif'; // Ukuran teks
+                        ctx.font = 'bold 15px sans-serif'; // Ukuran teks
                         ctx.textAlign = 'center';
                         ctx.fillText('Rp ' + value.toLocaleString(), bar.x, bar.y - 10); // Tampilkan di atas bar
                     });
@@ -436,17 +436,17 @@ async function exportToPDF() {
     const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
         const cells = row.querySelectorAll('td');
         return {
-            date_formatted: cells[0]?.innerText.trim() || '',
+            tanggal_formatted: cells[0]?.innerText.trim() || '',
             perusahaan: cells[1]?.innerText.trim() || '',
             total_penjualan_formatted: cells[2]?.innerText.trim() || '',
         };
     });
 
     const tableContent = items
-        .filter(item => item.date_formatted && item.perusahaan && item.total_penjualan_formatted)
+        .filter(item => item.tanggal_formatted && item.perusahaan && item.total_penjualan_formatted)
         .map(item => `
             <tr>
-                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.date_formatted}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.tanggal_formatted}</td>
                 <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.perusahaan}</td>
                 <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.total_penjualan_formatted}</td>
             </tr>
