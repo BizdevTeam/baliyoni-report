@@ -25,18 +25,18 @@ class LaporanHoldingController extends Controller
         // Retrieve LaporanHolding records along with the related Perusahaan
         $laporanholdings = LaporanHolding::with('perusahaan')
             ->when($search, function ($query, $search) {
-                return $query->where('date', 'LIKE', "%$search%")
+                return $query->where('tanggal', 'LIKE', "%$search%")
                              ->orWhereHas('perusahaan', function ($q) use ($search) {
                                  $q->where('nama_perusahaan', 'LIKE', "%$search%");
                              });
             })
-            ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC')
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
             ->paginate($perPage);
 
         // Prepare chart data
         $labels = $laporanholdings->map(function ($item) {
             // Format the month using Carbon’s translatedFormat() as defined in your model accessor
-            $formattedDate = \Carbon\Carbon::parse($item->date)->translatedFormat('F - Y');
+            $formattedDate = \Carbon\Carbon::parse($item->date)->translatedFormat('F Y');
             return $item->perusahaan->nama_perusahaan . ' - ' . $formattedDate;
         })->toArray();
 
@@ -68,27 +68,27 @@ class LaporanHoldingController extends Controller
     public function store(Request $request)
     {
         try {
-            if ($request->has('date')) {
+            if ($request->has('tanggal')) {
                 try {
-                    $request->merge(['date' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
+                    $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
                 } catch (\Exception $e) {
                     return redirect()->back()->with('error', 'Format tanggal tidak valid.');
                 }
             }
 
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'perusahaan_id' => 'required|exists:perusahaans,id',
                 'nilai' => 'required|integer|min:0',
             ]);
 
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
 
             // Cek kombinasi unik date dan perusahaan_id
-            $exists = LaporanHolding::where('date', $request->date)
+            $exists = LaporanHolding::where('tanggal', $request->date)
                 ->where('perusahaan_id', $request->perusahaan_id)
                 ->exists();
 
@@ -108,27 +108,27 @@ class LaporanHoldingController extends Controller
     {
         try {
 
-            if ($request->has('date')) {
+            if ($request->has('tanggal')) {
                 try {
-                    $request->merge(['date' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
+                    $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
                 } catch (\Exception $e) {
                     return redirect()->back()->with('error', 'Format tanggal tidak valid.');
                 }
             }
 
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'perusahaan_id' => 'required|exists:perusahaans,id',
                 'nilai' => 'required|integer|min:0',
             ]);
 
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
     
             // Cek apakah kombinasi date dan perusahaan_id sudah ada di data lain
-            $exists = LaporanHolding::where('date', $request->date)
+            $exists = LaporanHolding::where('tanggal', $request->date)
                 ->where('perusahaan_id', $request->perusahaan_id)
                 ->where('id', '!=', $laporanholding->id) // Menggunakan model binding
                 ->exists();
@@ -242,7 +242,7 @@ class LaporanHoldingController extends Controller
      */
     public function getLaporanHoldingData()
     {
-        $data = LaporanHolding::with('perusahaan')->get(['date', 'perusahaan_id', 'nilai']);
+        $data = LaporanHolding::with('perusahaan')->get(['tanggal', 'perusahaan_id', 'nilai']);
         return response()->json($data);
     }
 
@@ -255,7 +255,7 @@ class LaporanHoldingController extends Controller
 
         $laporanholdings = LaporanHolding::with('perusahaan')
             ->when($search, function ($query, $search) {
-                return $query->where('date', 'LIKE', "%$search%")
+                return $query->where('tanggal', 'LIKE', "%$search%")
                              ->orWhereHas('perusahaan', function ($q) use ($search) {
                                  $q->where('nama_perusahaan', 'LIKE', "%$search%");
                              });

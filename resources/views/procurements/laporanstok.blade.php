@@ -130,7 +130,7 @@
             <table class="table-auto w-full border-collapse border border-gray-300" id="data-table">
                 <thead class="bg-gray-200">
                     <tr>
-                        <th class="border border-gray-300 px-4 py-2 text-center">   al/Tahun</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Total Nilai Stok</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Aksi</th>
                     </tr>
@@ -138,7 +138,7 @@
                 <tbody>
                     @foreach ($laporanstoks as $laporanstok)
                         <tr class="hover:bg-gray-100">
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanstok->bulan_formatted }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanstok->tanggal_formatted }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanstok->stok_formatted }}</td>
                             <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
                                 <!-- Edit Button -->
@@ -167,8 +167,8 @@
                                     @method('PUT')
                                     <div class="space-y-4">
                                         <div>
-                                            <label for="date" class="block text-sm font-medium">Tanggal/Tahun</label>
-                                            <input type="date" name="date" class="w-full p-2 border rounded" value="{{ $laporanstok->date }}" required>
+                                            <label for="tanggal" class="block text-sm font-medium">Tanggal/Tahun</label>
+                                            <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $laporanstok->tanggal }}" required>
                                         </div>
                                         <div>
                                             <label for="stok" class="block text-sm font-medium">Total Stok</label>
@@ -279,8 +279,8 @@
             @csrf
             <div class="space-y-4">
                 <div>
-                    <label for="date" class="block text-sm font-medium">Tanggal/Tahun</label>
-                    <input type="date" name="date" class="w-full p-2 border rounded" required>
+                    <label for="tanggal" class="block text-sm font-medium">Tanggal/Tahun</label>
+                    <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
                 </div>
                 <div>
                     <label for="stok" class="block text-sm font-medium">Total Stok</label>
@@ -410,17 +410,17 @@
     const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
         const cells = row.querySelectorAll('td');
         return {
-            date: cells[0]?.innerText.trim() || '',
-            stok: cells[1]?.innerText.trim() || '',
+            tanggal_formatted: cells[0]?.innerText.trim() || '',
+            stok_formatted: cells[1]?.innerText.trim() || '',
         };
     });
 
     const tableContent = items
-        .filter(item => item.date && item.stok)
+        .filter(item => item.tanggal_formatted && item.stok_formatted)
         .map(item => `
             <tr>
-                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.date}</td>
-                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.stok}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.tanggal_formatted}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.stok_formatted}</td>
             </tr>
         `).join('');
 

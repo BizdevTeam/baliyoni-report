@@ -13,12 +13,12 @@ class RekapPendapatanServisASP extends Model
 
     protected $primaryKey = 'id_rpsasp'; // Primary key custom
 
-    protected $fillable = ['date', 'pelaksana', 'nilai_pendapatan'];
+    protected $fillable = ['tanggal', 'pelaksana', 'nilai_pendapatan'];
 
-    // Menambahkan accessor untuk date dengan format 'mm/yyyy'
-    public function getDateFormattedAttribute()
+    // Menambahkan accessor untuk tanggal dengan format 'mm/yyyy'
+    public function getTanggalFormattedAttribute()
     {
-        return Carbon::parse($this->date)->translatedFormat('d F Y');
+        return Carbon::parse($this->tanggal)->translatedFormat('d F Y');
     }
 
     // Menambahkan accessor dengan format Rp

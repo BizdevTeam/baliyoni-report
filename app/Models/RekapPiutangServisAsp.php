@@ -13,12 +13,12 @@ class RekapPiutangServisASP extends Model
 
     protected $primaryKey = 'id_rpiutangsasp'; // Primary key custom
 
-    protected $fillable = ['date', 'pelaksana', 'nilai_piutang']; // Kolom yang dapat diisi
+    protected $fillable = ['tanggal', 'pelaksana', 'nilai_piutang']; // Kolom yang dapat diisi
 
-    // Menambahkan accessor untuk date dengan format 'mm/yyyy'
-    public function getDateFormattedAttribute()
+    // Menambahkan accessor untuk tanggal dengan format 'mm/yyyy'
+    public function getTanggalFormattedAttribute()
     {
-        return Carbon::parse($this->date)->translatedFormat('d F Y');
+        return Carbon::parse($this->tanggal)->translatedFormat('d F Y');
     }
 
     // Menambahkan accessor dengan format Rp

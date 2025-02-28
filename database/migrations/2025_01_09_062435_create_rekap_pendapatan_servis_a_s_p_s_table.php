@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('rekap_pendapatan_servis_a_s_p_s', function (Blueprint $table) {
             $table->id('id_rpsasp');
-            $table->string('date');
+            $table->string('tanggal');
             $table->enum('pelaksana', [
                 'CV. ARI DISTRIBUTION CENTER',
                 'CV. BALIYONI COMPUTER',
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->bigInteger('nilai_pendapatan');
             $table->timestamps();
 
-            $table->unique(['date', 'pelaksana']);
+            $table->unique(['tanggal', 'pelaksana']);
         });
     }
 

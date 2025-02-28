@@ -24,9 +24,9 @@ class LaporanNegosiasiController extends Controller
         // Query untuk mencari berdasarkan tahun dan date
         $laporannegosiasis = LaporanNegosiasi::query()
             ->when($search, function ($query, $search) {
-                return $query->where('date', 'LIKE', "%$search%");
+                return $query->where('tanggal', 'LIKE', "%$search%");
             })
-            ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
 
         // Hitung total untuk masing-masing kategori
@@ -37,7 +37,7 @@ class LaporanNegosiasiController extends Controller
             return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
         }
         
-        $labels = $laporannegosiasis->pluck('date')->map(function ($date) {
+        $labels = $laporannegosiasis->pluck('tanggal')->map(function ($date) {
             return \Carbon\Carbon::parse($date)->translatedFormat('F - Y');
         })->toArray();   
         $data = $laporannegosiasis->pluck('total_negosiasi')->toArray();
@@ -63,25 +63,25 @@ class LaporanNegosiasiController extends Controller
     {
         try {
             // Konversi tanggal agar selalu dalam format Y-m-d
-            if ($request->has('date')) {
+            if ($request->has('tanggal')) {
                 try {
-                    $request->merge(['date' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
+                    $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
                 } catch (\Exception $e) {
                     return redirect()->back()->with('error', 'Format tanggal tidak valid.');
                 }
             }
 
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'total_negosiasi' => 'required|integer|min:0'
             ]);
             
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
             // Cek kombinasi unik date dan perusahaan
-            $exists = LaporanNegosiasi::where('date', $validatedData['date'])->exists();
+            $exists = LaporanNegosiasi::where('tanggal', $validatedData['tanggal'])->exists();
         
             if ($exists) {
                 return redirect()->back()->with('error', 'Data Already Exists.');
@@ -100,25 +100,25 @@ class LaporanNegosiasiController extends Controller
     {
         try {
               // Konversi tanggal agar selalu dalam format Y-m-d
-              if ($request->has('date')) {
+              if ($request->has('tanggal')) {
                 try {
-                    $request->merge(['date' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
+                    $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
                 } catch (\Exception $e) {
                     return redirect()->back()->with('error', 'Format tanggal tidak valid.');
                 }
             }
             // Validasi input
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'total_negosiasi' => 'required|integer|min:0',
             ]);
 
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
 
-            $exists = LaporanNegosiasi::where('date', $validatedData['date'])
+            $exists = LaporanNegosiasi::where('tanggal', $validatedData['tanggal'])
             ->where('id_negosiasi', '!=', $laporannegosiasi->id_negosiasi)->exists();
 
             if ($exists) {
@@ -239,7 +239,7 @@ class LaporanNegosiasiController extends Controller
     }
     public function getLaporanNegosiasiData()
     {
-        $data = LaporanNegosiasi::all(['date','total_negosiasi']);
+        $data = LaporanNegosiasi::all(['tanggal','total_negosiasi']);
     
         return response()->json($data);
     }
@@ -251,7 +251,7 @@ class LaporanNegosiasiController extends Controller
         // Ambil data dari database
         $laporannegosiasis = LaporanNegosiasi::query()
         ->when($search, function ($query, $search) {
-            return $query->where('date', 'LIKE', "%$search%");
+            return $query->where('tanggal', 'LIKE', "%$search%");
         })
         ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Order by year (desc) and month (asc)
         ->get();  

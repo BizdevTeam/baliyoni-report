@@ -23,9 +23,9 @@ class LaporanStokController extends Controller
         // Query untuk mencari berdasarkan tahun dan date
         $laporanstoks = LaporanStok::query()
             ->when($search, function ($query, $search) {
-                return $query->where('date', 'LIKE', "%$search%");
+                return $query->where('tanggal', 'LIKE', "%$search%");
             })
-            ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
 
         // Hitung total untuk masing-masing kategori
@@ -36,7 +36,7 @@ class LaporanStokController extends Controller
             return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
         }
         
-        $labels = $laporanstoks->pluck('date')->toArray();
+        $labels = $laporanstoks->pluck('tanggal')->toArray();
         $data = $laporanstoks->pluck('stok')->toArray();
         
         // Generate random colors for each data item
@@ -59,25 +59,25 @@ class LaporanStokController extends Controller
     {
         try {
                // Konversi tanggal agar selalu dalam format Y-m-d
-               if ($request->has('date')) {
+               if ($request->has('tanggal')) {
                 try {
-                    $request->merge(['date' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
+                    $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
                 } catch (\Exception $e) {
                     return redirect()->back()->with('error', 'Format tanggal tidak valid.');
                 }
             }
 
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'stok' => 'required|integer|min:0'
             ]);
             
             $errorMessage = '';
-                if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                     return redirect()->back()->with('error', $errorMessage);
                 }
             // Cek kombinasi unik date dan perusahaan
-            $exists = LaporanStok::where('date', $validatedData['date'])->exists();
+            $exists = LaporanStok::where('tanggal', $validatedData['tanggal'])->exists();
                     
             if ($exists) {
                 return redirect()->back()->with('error', 'Data Already Exists.');
@@ -97,15 +97,15 @@ class LaporanStokController extends Controller
         try {
             // Validasi input
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'stok' => 'required|integer|min:0',
             ]);
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
 
-            $exists = LaporanStok::where('date', $validatedData['date'])
+            $exists = LaporanStok::where('tanggal', $validatedData['tanggal'])
                 ->where('id_stok', '!=', $laporanstok->id_stok)->exists();
 
             if ($exists) {
@@ -225,7 +225,7 @@ class LaporanStokController extends Controller
     }
     public function getLaporanStokData()
     {
-        $data = LaporanStok::all(['date','stok']);
+        $data = LaporanStok::all(['tanggal','stok']);
     
         return response()->json($data);
     }
@@ -237,12 +237,12 @@ class LaporanStokController extends Controller
     
         $laporanstoks = LaporanStok::query()
         ->when($search, function ($query, $search) {
-            return $query->where('date', 'LIKE', "%$search%");
+            return $query->where('tanggal', 'LIKE', "%$search%");
         })
         ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC'); // Urutkan berdasarkan tahun (descending) dan date (ascending)
     
         // Format label sesuai kebutuhan
-        $labels = $laporanstoks->pluck('date')->toArray();
+        $labels = $laporanstoks->pluck('tanggal')->toArray();
         $data = $laporanstoks->pluck('stok')->toArray();
         $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data);
     

@@ -139,7 +139,7 @@
                 <tbody>
                     @foreach ($laporandetrans as $laporandetran)
                         <tr class="hover:bg-gray-100">
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporandetran->bulan_formatted }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporandetran->tanggal_formatted }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporandetran->pelaksana }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporandetran->total_pengiriman_formatted }}</td>
                             <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
@@ -169,8 +169,8 @@
                                     @method('PUT')
                                     <div class="space-y-4">
                                         <div>
-                                            <label for="date" class="block text-sm font-medium">Tanggal</label>
-                                            <input type="date" name="date" class="w-full p-2 border rounded" value="{{ $laporandetran->date }}" required>
+                                            <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                                            <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $laporandetran->tanggal }}" required>
                                         </div>
                                         <div>
                                             <label for="pelaksana" class="block text-sm font-medium">Status</label>
@@ -288,8 +288,8 @@
             @csrf
             <div class="space-y-4">
                 <div>
-                    <label for="date" class="block text-sm font-medium">Tanggal</label>
-                    <input type="date" name="date" class="w-full p-2 border rounded" required>
+                    <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                    <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
                 </div>
                 <div>
                     <label for="pelaksana" class="block text-sm font-medium">Status</label>
@@ -433,13 +433,13 @@ async function exportToPDF() {
     const tableContent = Array.from(tableRows)
         .map(row => {
             const cells = row.querySelectorAll('td');
-            if (cells.length < 2) return ''; // Pastikan ada dua kolom (date dan total_pengiriman)
-            const date = cells[0]?.innerText.trim() || '-';
+            if (cells.length < 2) return ''; // Pastikan ada dua kolom (tanggal dan total_pengiriman)
+            const tanggal = cells[0]?.innerText.trim() || '-';
             const pelaksana = cells[1]?.innerText.trim() || '-';
             const total_pengiriman = cells[2]?.innerText.trim() || '-';
             return `
                 <tr>
-                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${date}</td>
+                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${tanggal}</td>
                     <td style="border: 1px solid #000; padding: 8px; text-align: center;">${pelaksana}</td>
                     <td style="border: 1px solid #000; padding: 8px; text-align: center;">${total_pengiriman}</td>
                 </tr>
@@ -479,7 +479,7 @@ async function exportToPDF() {
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'laporan_pengiriman_detrans.pdf';
+            a.download = 'laporan_pengiriman.pdf';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);

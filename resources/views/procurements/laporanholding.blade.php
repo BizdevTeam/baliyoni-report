@@ -140,7 +140,7 @@
                 <tbody>
                     @foreach ($laporanholdings as $laporanholding)
                         <tr class="hover:bg-gray-100">
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanholding->date_formatted }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanholding->tanggal_formatted }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanholding->perusahaan->nama_perusahaan }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanholding->nilai_formatted }}</td>
                             <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
@@ -170,8 +170,8 @@
                                     @method('PUT')
                                     <div class="space-y-4">
                                         <div>
-                                            <label for="date" class="block text-sm font-medium">Tanggal</label>
-                                            <input type="date" name="date" class="w-full p-2 border rounded" value="{{ $laporanholding->date }}" required>
+                                            <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                                            <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $laporanholding->tanggal }}" required>
                                         </div>
                                         <div>
                                             <label for="perusahaan_id" class="block text-sm font-medium">Pilih Perusahaan</label>
@@ -294,8 +294,8 @@
             @csrf
             <div class="space-y-4">
                 <div>
-                    <label for="date" class="block text-sm font-medium">Tanggal</label>
-                    <input type="date" name="date" class="w-full p-2 border rounded" required>
+                    <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                    <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
                 </div>
                 <div>
                     <label for="perusahaan_id" class="block text-sm font-medium">Pilih Perusahaan</label>
@@ -436,17 +436,17 @@
     const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
         const cells = row.querySelectorAll('td');
         return {
-            date: cells[0]?.innerText.trim() || '',
+            tanggal: cells[0]?.innerText.trim() || '',
             laporanholding: cells[1]?.innerText.trim() || '',
             nilai: cells[2]?.innerText.trim() || '',
         };
     });
 
     const tableContent = items
-        .filter(item => item.date && item.laporanholding && item.nilai)
+        .filter(item => item.tanggal && item.laporanholding && item.nilai)
         .map(item => `
             <tr>
-                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.date}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.tanggal}</td>
                 <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.laporanholding}</td>
                 <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.nilai}</td>
             </tr>

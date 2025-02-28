@@ -25,10 +25,10 @@ class RekapPendapatanServisAspController extends Controller
         // Query untuk mencari berdasarkan tahun dan date
         $rekappendapatanservisasps = RekapPendapatanServisAsp::query()
             ->when($search, function ($query, $search) {
-                return $query->where('date', 'LIKE', "%$search%")
+                return $query->where('tanggal', 'LIKE', "%$search%")
                              ->orWhere('pelaksana', 'like', "%$search%");
             })
-            ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
 
         // Hitung total untuk masing-masing kategori
@@ -63,16 +63,16 @@ class RekapPendapatanServisAspController extends Controller
     {
         try {
                // Konversi tanggal agar selalu dalam format Y-m-d
-               if ($request->has('date')) {
+               if ($request->has('tanggal')) {
                 try {
-                    $request->merge(['date' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
+                    $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
                 } catch (\Exception $e) {
                     return redirect()->back()->with('error', 'Format tanggal tidak valid.');
                 }
             }
 
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'pelaksana' => [
                     'required',
                     Rule::in([
@@ -87,12 +87,12 @@ class RekapPendapatanServisAspController extends Controller
             ]);
 
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
 
             // Cek kombinasi unik date dan pelaksana
-            $exists = RekapPendapatanServisAsp::where('date', $validatedData['date'])
+            $exists = RekapPendapatanServisAsp::where('tanggal', $validatedData['tanggal'])
             ->where('pelaksana', $validatedData['pelaksana'])
             ->exists();
 
@@ -102,7 +102,7 @@ class RekapPendapatanServisAspController extends Controller
     
 
             // Cek kombinasi unik date dan perusahaan
-            $exists = RekapPendapatanServisAsp::where('date', $validatedData['date'])
+            $exists = RekapPendapatanServisAsp::where('tanggal', $validatedData['tanggal'])
             ->where('pelaksana', $validatedData['pelaksana'])
             ->exists();
 
@@ -128,16 +128,16 @@ class RekapPendapatanServisAspController extends Controller
     {
         try {
               // Konversi tanggal agar selalu dalam format Y-m-d
-              if ($request->has('date')) {
+              if ($request->has('tanggal')) {
                 try {
-                    $request->merge(['date' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
+                    $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
                 } catch (\Exception $e) {
                     return redirect()->back()->with('error', 'Format tanggal tidak valid.');
                 }
             }
             // Validasi input
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'pelaksana' => [
                 'required',
                 Rule::in([
@@ -153,11 +153,11 @@ class RekapPendapatanServisAspController extends Controller
             ]);
 
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
             // Cek kombinasi unik date dan perusahaan
-            $exists = RekapPendapatanServisAsp::where('date', $validatedData['date'])
+            $exists = RekapPendapatanServisAsp::where('tanggal', $validatedData['tanggal'])
             ->where('pelaksana', $validatedData['pelaksana'])
             ->where('id_rpsasp', '!=', $rekappendapatanservisasp->id_rpsasp)->exists();
 
@@ -276,7 +276,7 @@ class RekapPendapatanServisAspController extends Controller
 
     public function getRekapPenjualaPerusahaannData()
     {
-        $data = RekapPendapatanServisAsp::all(['date','pelaksana','nilai_pendapatan']);
+        $data = RekapPendapatanServisAsp::all(['tanggal','pelaksana','nilai_pendapatan']);
     
         return response()->json($data);
     }
@@ -288,7 +288,7 @@ class RekapPendapatanServisAspController extends Controller
     // Ambil data dari database
     $rekappendapatanservisasps = RekapPendapatanServisAsp::query()
         ->when($search, function ($query, $search) {
-            return $query->where('date', 'LIKE', "%$search%");
+            return $query->where('tanggal', 'LIKE', "%$search%");
         })
         ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Order by year (desc) and month (asc)
         ->get();  

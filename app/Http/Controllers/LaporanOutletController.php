@@ -24,9 +24,9 @@ class LaporanOutletController extends Controller
         // Query untuk mencari berdasarkan tahun dan date
         $laporanoutlets = LaporanOutlet::query()
             ->when($search, function ($query, $search) {
-                return $query->where('date', 'LIKE', "%$search%");
+                return $query->where('tanggal', 'LIKE', "%$search%");
             })
-            ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
 
         // Hitung total untuk masing-masing kategori
@@ -37,7 +37,7 @@ class LaporanOutletController extends Controller
             return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
         }
         
-        $labels = $laporanoutlets->pluck('date')->map(function ($date) {
+        $labels = $laporanoutlets->pluck('tanggal')->map(function ($date) {
             return \Carbon\Carbon::parse($date)->translatedFormat('F - Y');
         })->toArray();        
         $data = $laporanoutlets->pluck('total_pembelian')->toArray();
@@ -63,17 +63,17 @@ class LaporanOutletController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'total_pembelian' => 'required|integer|min:0'
             ]);
 
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
 
             // Cek kombinasi unik date dan perusahaan
-            $exists = LaporanOutlet::where('date', $validatedData['date'])->exists();
+            $exists = LaporanOutlet::where('tanggal', $validatedData['tanggal'])->exists();
             
             if ($exists) {
                 return redirect()->back()->with('error', 'Data Already Exists.');
@@ -92,9 +92,9 @@ class LaporanOutletController extends Controller
     {
         try {
             // Konversi tanggal agar selalu dalam format Y-m-d
-            if ($request->has('date')) {
+            if ($request->has('tanggal')) {
                 try {
-                    $request->merge(['date' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
+                    $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
                 } catch (\Exception $e) {
                     return redirect()->back()->with('error', 'Format tanggal tidak valid.');
                 }
@@ -102,16 +102,16 @@ class LaporanOutletController extends Controller
 
             // Validasi input
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'total_pembelian' => 'required|integer|min:0',
             ]);
 
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
 
-            $exists = LaporanOutlet::where('date', $validatedData['date'])
+            $exists = LaporanOutlet::where('tanggal', $validatedData['tanggal'])
             ->where('id_outlet', '!=', $laporanoutlet->id_outlet)->exists();
 
             if ($exists) {
@@ -232,7 +232,7 @@ class LaporanOutletController extends Controller
     }
     public function getLaporanStokData()
     {
-        $data = LaporanOutlet::all(['date','total_pembelian']);
+        $data = LaporanOutlet::all(['tanggal','total_pembelian']);
     
         return response()->json($data);
     }
@@ -244,12 +244,12 @@ class LaporanOutletController extends Controller
     
         $laporanoutlets = LaporanOutlet::query()
         ->when($search, function ($query, $search) {
-            return $query->where('date', 'LIKE', "%$search%");
+            return $query->where('tanggal', 'LIKE', "%$search%");
         })
         ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC'); // Urutkan berdasarkan tahun (descending) dan date (ascending)
     
         // Format label sesuai kebutuhan
-        $labels = $laporanoutlets->pluck('date')->map(function ($date) {
+        $labels = $laporanoutlets->pluck('tanggal')->map(function ($date) {
             return \Carbon\Carbon::parse($date)->translatedFormat('F - Y');
         })->toArray();      
         $data = $laporanoutlets->pluck('total_pembelian')->toArray();
