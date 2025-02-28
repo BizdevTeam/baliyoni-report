@@ -137,7 +137,7 @@
                     <tbody>
                         @foreach ($laporanbizdevgambars as $key => $laporanbizdevgambar)
                             <tr class="hover:bg-gray-100">
-                                <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanbizdevgambar->date_formatted }}</td>
+                                <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanbizdevgambar->tanggal_formatted }}</td>
                                 <td class="border border-gray-300 px-4 py-2 text-center">
                                     <div class="relative hover:scale-[1.5] transition-transform duration-300">
                                     @if ($laporanbizdevgambar->gambar)
@@ -173,8 +173,8 @@
                                         @method('PUT')
                                         <div class="space-y-4">
                                             <div>
-                                                <label for="date" class="block text-sm font-medium">Tanggal</label>
-                                                <input type="date" name="date" class="w-full p-2 border rounded" value="{{ $laporanbizdevgambar->date }}" required>
+                                                <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                                                <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $laporanbizdevgambar->tanggal }}" required>
                                             </div>
                                             <div>
                                                 <label for="gambar" class="block text-sm font-medium">Gambar</label>
@@ -217,8 +217,8 @@
                 
                             <form action="{{ route('laporanbizdevgambar.exportPDF') }}" method="POST">
                                 @csrf
-                                <label for="date" class="block text-gray-700 font-medium mb-2 text-center">Pilih Tanggal:</label>
-                                <input type="date" id="date" name="date" required
+                                <label for="tanggal" class="block text-gray-700 font-medium mb-2 text-center">Pilih Tanggal:</label>
+                                <input type="date" id="tanggal" name="tanggal" required
                                     class="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-red-500">
                                 
                                 <button type="submit"
@@ -265,8 +265,8 @@
                 @csrf
                 <div class="space-y-4">
                     <div>
-                        <label for="date" class="block text-sm font-medium">Tanggal</label>
-                        <input type="date" name="date" class="w-full p-2 border rounded" required>
+                        <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                        <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
                     </div>
                     <div>
                         <label for="gambar" class="block text-sm font-medium">Gambar</label>

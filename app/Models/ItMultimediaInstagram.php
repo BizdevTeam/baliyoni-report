@@ -14,14 +14,14 @@ class ItMultimediaInstagram extends Model
 
     protected $primaryKey = 'id_instagram'; // Primary key custom
 
-    protected $fillable = ['date', 'gambar', 'keterangan'];
+    protected $fillable = ['tanggal', 'gambar', 'keterangan'];
 
     // Menambahkan accessor untuk bulan dengan format 'mm/yyyy'
-    public function getDateFormattedAttribute()
+    public function getTanggalFormattedAttribute()
     {
-        return Carbon::parse($this->date)->translatedFormat('d F Y');
+        return Carbon::parse($this->tanggal)->translatedFormat('d F Y');
     }
-    protected $appends = ['date_formatted'];
+    protected $appends = ['tanggal_formatted'];
 
 
 

@@ -13,10 +13,10 @@ class LaporanBizdevGambar extends Model
 
     protected $primaryKey = 'id_laporan_bizdev_gambar'; // Primary key custom
 
-    protected $fillable = ['date', 'gambar', 'keterangan'];
+    protected $fillable = ['tanggal', 'gambar', 'keterangan'];
 
-    public function getDateFormattedAttribute()
+    public function getTanggalFormattedAttribute()
     {
-        return Carbon::parse($this->date)->translatedFormat('d F Y');
+        return Carbon::parse($this->tanggal)->translatedFormat('d F Y');
     }
 }

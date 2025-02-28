@@ -139,7 +139,7 @@
                 <tbody>
                     @foreach ($laporanizins as $laporanizin)
                         <tr class="hover:bg-gray-100">
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanizin->date_formatted }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanizin->tanggal_formatted }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanizin->nama }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanizin->total_izin }}</td>
                             <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
@@ -169,8 +169,8 @@
                                     @method('PUT')
                                     <div class="space-y-4">
                                         <div>
-                                            <label for="date" class="block text-sm font-medium">Tanggal</label>
-                                            <input type="date" name="date" class="w-full p-2 border rounded" value="{{ $laporanizin->date }}" required>
+                                            <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                                            <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $laporanizin->tanggal }}" required>
                                         </div>
                                         <div>
                                             <label for="nama" class="block text-sm font-medium">Nama Karyawan</label>
@@ -221,7 +221,7 @@
     <canvas id="chart"></canvas>
 </div>
 <div class="mt-6 flex justify-end">
-    <button onclick="exportToPDF()" class="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition duration-300 ease-in-out">
+    <button onclick="exportToPDF()" class="bg-red-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-red-600 transition duration-300 ease-in-out">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
             <mask id="lineMdCloudAltPrintFilledLoop0">
                 <g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
@@ -285,8 +285,8 @@
             @csrf
             <div class="space-y-4">
                 <div>
-                    <label for="date" class="block text-sm font-medium">Tanggal</label>
-                    <input type="date" name="date" class="w-full p-2 border rounded" required>
+                    <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                    <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
                 </div>
                 <div>
                     <label for="nama" class="block text-sm font-medium">Nama Karyawan</label>
@@ -420,17 +420,17 @@
     const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
         const cells = row.querySelectorAll('td');
         return {
-            date: cells[0]?.innerText.trim() || '',
+            tanggal: cells[0]?.innerText.trim() || '',
             nama: cells[1]?.innerText.trim() || '',
             total_izin: cells[2]?.innerText.trim() || '',
         };
     });
 
     const tableContent = items
-        .filter(item => item.date && item.nama && item.total_izin)
+        .filter(item => item.tanggal && item.nama && item.total_izin)
         .map(item => `
             <tr>
-                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.date}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.tanggal}</td>
                 <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.nama}</td>
                 <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.total_izin}</td>
             </tr>

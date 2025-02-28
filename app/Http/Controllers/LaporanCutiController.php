@@ -25,10 +25,10 @@ class LaporanCutiController extends Controller
         // Query untuk mencari berdasarkan tahun dan date
         $laporancutis = LaporanCuti::query()
             ->when($search, function ($query, $search) {
-                return $query->where('date', 'LIKE', "%$search%")
+                return $query->where('tanggal', 'LIKE', "%$search%")
                              ->orWhere('nama', 'like', "%$search%");
             })
-            ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
 
         // Hitung total untuk masing-masing kategori
@@ -63,18 +63,18 @@ class LaporanCutiController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'nama' => 'required|string',
                 'total_cuti' => 'required|integer|min:0',
             ]);
 
             $erroMessage = "";
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
 
             // Cek kombinasi unik date dan nama
-            $exists = LaporanCuti::where('date', $validatedData['date'])
+            $exists = LaporanCuti::where('tanggal', $validatedData['tanggal'])
             ->where('nama', $validatedData['nama'])
             ->exists();
 
@@ -96,7 +96,7 @@ class LaporanCutiController extends Controller
         }
         try {
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'total_cuti' => 'required|integer',
                 'nama' => 'required|string'
             ]);
@@ -122,13 +122,13 @@ class LaporanCutiController extends Controller
         try {
             // Validasi input
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'nama' => 'required|string',
                 'total_cuti' => 'required|integer|min:0',
             ]);
 
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
             // Cek kombinasi unik date dan nama
@@ -241,7 +241,7 @@ class LaporanCutiController extends Controller
 
     public function getRekapPenjualaPerusahaannData()
     {
-        $data = LaporanCuti::all(['date','nama','total_cuti']);
+        $data = LaporanCuti::all(['tanggal','nama','total_cuti']);
     
         return response()->json($data);
     }

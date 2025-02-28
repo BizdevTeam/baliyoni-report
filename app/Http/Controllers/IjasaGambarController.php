@@ -19,10 +19,10 @@ class IjasaGambarController extends Controller
 
         $ijasagambars = IjasaGambar::query()
             ->when($search, function($query, $search) {
-                return $query->where('date', 'like', "%$search%")
+                return $query->where('tanggal', 'like', "%$search%")
                              ->orWhere('keterangan', 'like', "%$search%");
             })
-            ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC')
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
             ->paginate($perPage);
         return view('hrga.ijasagambar', compact('ijasagambars'));
     }
@@ -31,13 +31,13 @@ class IjasaGambarController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'keterangan' => 'required|string|max:255',
                 'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550'
             ]);
 
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
 
@@ -60,13 +60,13 @@ class IjasaGambarController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'keterangan' => 'required|string|max:255',
                 'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550'
             ]);
 
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
 
@@ -112,11 +112,11 @@ class IjasaGambarController extends Controller
         try {
             // Validasi input date
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
             ]);
     
             // Ambil semua data laporan berdasarkan date yang dipilih
-            $laporans = IjasaGambar::where('date', $validatedData['date'])->get();
+            $laporans = IjasaGambar::where('tanggal', $validatedData['tanggal'])->get();
     
             if ($laporans->isEmpty()) {
                 return redirect()->back()->with('error', 'Data tidak ditemukan.');
@@ -159,7 +159,7 @@ class IjasaGambarController extends Controller
             <div style='text-align: center; top: 0; margin: 0; padding: 0;'>
                 {$imageHTML}
                     <h3 style='margin: 0; padding: 0;'>Keterangan : {$laporan->keterangan}</h3>
-                    <h3 style='margin: 0; padding: 0;'>Laporan : {$laporan->date_formatted}</h3>
+                    <h3 style='margin: 0; padding: 0;'>Laporan : {$laporan->tanggal_formatted}</h3>
             </div>
 
                 ";
@@ -169,7 +169,7 @@ class IjasaGambarController extends Controller
             }
     
             // Output PDF
-            return response($mpdf->Output("laporan_ijasa_gambar_{$validatedData['date']}.pdf", 'D'))
+            return response($mpdf->Output("laporan_ijasa_gambar_{$validatedData['tanggal']}.pdf", 'D'))
                 ->header('Content-Type', 'application/pdf')
                 ->header('Content-Disposition', 'attachment; filename="laporan_ijasa_gambar.pdf"');
     

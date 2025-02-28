@@ -25,10 +25,10 @@ class LaporanSakitController extends Controller
         // Query untuk mencari berdasarkan tahun dan date
         $laporansakits = LaporanSakit::query()
             ->when($search, function ($query, $search) {
-                return $query->where('date', 'LIKE', "%$search%")
+                return $query->where('tanggal', 'LIKE', "%$search%")
                              ->orWhere('nama', 'like', "%$search%");
             })
-            ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
 
         // Hitung total untuk masing-masing kategori
@@ -63,18 +63,18 @@ class LaporanSakitController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'nama' => 'required|string',
                 'total_sakit' => 'required|integer|min:0',
             ]);
 
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
             
             // Cek kombinasi unik date dan nama
-            $exists = LaporanSakit::where('date', $validatedData['date'])
+            $exists = LaporanSakit::where('tanggal', $validatedData['tanggal'])
             ->where('nama', $validatedData['nama'])
             ->exists();
 
@@ -96,7 +96,7 @@ class LaporanSakitController extends Controller
         }
         try {
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'total_sakit' => 'required|integer',
                 'nama' => 'required|string'
             ]);
@@ -122,13 +122,13 @@ class LaporanSakitController extends Controller
         try {
             // Validasi input
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'nama' => 'required|string',
                 'total_sakit' => 'required|integer|min:0',
             ]);
             
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
 

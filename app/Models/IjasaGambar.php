@@ -12,12 +12,12 @@ class IjasaGambar extends Model
 
     protected $primaryKey = 'id_ijasa_gambar'; // Primary key custom
 
-    protected $fillable = ['date', 'gambar', 'keterangan'];
+    protected $fillable = ['tanggal', 'gambar', 'keterangan'];
 
-    public function getDateFormattedAttribute()
+    public function getTanggalFormattedAttribute()
     {
-        return Carbon::parse($this->date)->translatedFormat('d F Y');
+        return Carbon::parse($this->tanggal)->translatedFormat('d F Y');
     }
-    protected $appends = ['date_formatted'];
+    protected $appends = ['tanggal_formatted'];
 
 }

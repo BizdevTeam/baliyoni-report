@@ -25,10 +25,10 @@ class LaporanIzinController extends Controller
         // Query untuk mencari berdasarkan tahun dan date
         $laporanizins = LaporanIzin::query()
             ->when($search, function ($query, $search) {
-                return $query->where('date', 'LIKE', "%$search%")
+                return $query->where('tanggal', 'LIKE', "%$search%")
                              ->orWhere('nama', 'like', "%$search%");
             })
-            ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
 
         // Hitung total untuk masing-masing kategori
@@ -64,17 +64,17 @@ class LaporanIzinController extends Controller
         try {
 
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'nama' => 'required|string',
                 'total_izin' => 'required|integer|min:0',
             ]);
 
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
             // Cek kombinasi unik date dan nama
-            $exists = LaporanIzin::where('date', $validatedData['date'])
+            $exists = LaporanIzin::where('tanggal', $validatedData['tanggal'])
             ->where('nama', $validatedData['nama'])
             ->exists();
 
@@ -96,7 +96,7 @@ class LaporanIzinController extends Controller
         }
         try {
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'total_izin' => 'required|integer',
                 'nama' => 'required|string'
             ]);
@@ -122,13 +122,13 @@ class LaporanIzinController extends Controller
         try {
             // Validasi input
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'nama' => 'required|string',
                 'total_izin' => 'required|integer|min:0',
             ]);
 
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
             
@@ -242,7 +242,7 @@ class LaporanIzinController extends Controller
 
     public function getRekapPenjualaPerusahaannData()
     {
-        $data = LaporanIzin::all(['date','nama','total_izin']);
+        $data = LaporanIzin::all(['tanggal','nama','total_izin']);
     
         return response()->json($data);
     }

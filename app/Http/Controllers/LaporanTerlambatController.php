@@ -25,10 +25,10 @@ class LaporanTerlambatController extends Controller
         // Query untuk mencari berdasarkan tahun dan date
         $laporanterlambats = LaporanTerlambat::query()
             ->when($search, function ($query, $search) {
-                return $query->where('date', 'LIKE', "%$search%")
+                return $query->where('tanggal', 'LIKE', "%$search%")
                              ->orWhere('nama', 'like', "%$search%");
             })
-            ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
 
         // Hitung total untuk masing-masing kategori
@@ -62,27 +62,27 @@ class LaporanTerlambatController extends Controller
     public function store(Request $request)
     {
         // Konversi tanggal agar selalu dalam format Y-m-d
-        if ($request->has('date')) {
+        if ($request->has('tanggal')) {
             try {
-                $request->merge(['date' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
+                $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
             } catch (\Exception $e) {
                 return redirect()->back()->with('error', 'Format tanggal tidak valid.');
             }
         }
         try {
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'nama' => 'required|string',
                 'total_terlambat' => 'required|integer|min:0',
             ]);
 
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
 
             // Cek kombinasi unik date dan nama
-            $exists = LaporanTerlambat::where('date', $validatedData['date'])
+            $exists = LaporanTerlambat::where('tanggal', $validatedData['tanggal'])
             ->where('nama', $validatedData['nama'])
             ->exists();
 
@@ -104,7 +104,7 @@ class LaporanTerlambatController extends Controller
         }
         try {
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'total_terlambat' => 'required|integer',
                 'nama' => 'required|string'
             ]);
@@ -129,21 +129,21 @@ class LaporanTerlambatController extends Controller
     {
         try {
             // Konversi tanggal agar selalu dalam format Y-m-d
-            if ($request->has('date')) {
+            if ($request->has('tanggal')) {
                 try {
-                    $request->merge(['date' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
+                    $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
                 } catch (\Exception $e) {
                     return redirect()->back()->with('error', 'Format tanggal tidak valid.');
                 }
             }
             // Validasi input
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'nama' => 'required|string',
                 'total_terlambat' => 'required|integer|min:0',
             ]);
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
 

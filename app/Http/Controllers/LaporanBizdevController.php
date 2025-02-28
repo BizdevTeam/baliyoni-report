@@ -21,9 +21,9 @@ class LaporanBizdevController extends Controller
 
         $laporanbizdevs = LaporanBizdev::query()
             ->when($search, function ($query, $search) {
-                return $query->where('date', 'LIKE', "%$search%");
+                return $query->where('tanggal', 'LIKE', "%$search%");
             })
-            ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
 
             if ($request->ajax()) {
@@ -37,7 +37,7 @@ class LaporanBizdevController extends Controller
         try {
 
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'aplikasi' => 'required',
                 'kondisi_bulanlalu' => 'required',
                 'kondisi_bulanini' => 'required',
@@ -47,7 +47,7 @@ class LaporanBizdevController extends Controller
             ]);
 
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
     
@@ -65,7 +65,7 @@ class LaporanBizdevController extends Controller
         try {
             // Validasi input
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'aplikasi' => 'required',
                 'kondisi_bulanlalu' => 'required',
                 'kondisi_bulanini' => 'required',
@@ -75,7 +75,7 @@ class LaporanBizdevController extends Controller
             ]);
 
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
             // Update data
