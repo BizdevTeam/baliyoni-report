@@ -21,9 +21,9 @@ class laporanSPITiController extends Controller
 
         $laporanspitis = LaporanSPITI::query()
         ->when($search, function($query, $search) {
-            return $query->where('date', 'like', "%$search%");
+            return $query->where('tanggal', 'like', "%$search%");
         })
-        ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC')
+        ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
         ->paginate($perPage);
 
         if ($request->ajax()) {
@@ -37,7 +37,7 @@ class laporanSPITiController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'aspek' => 'required',
                 'masalah' => 'required',
                 'solusi' => 'required',
@@ -45,7 +45,7 @@ class laporanSPITiController extends Controller
             ]);
 
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
 
@@ -61,7 +61,7 @@ class laporanSPITiController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'aspek' => 'required',
                 'masalah' => 'required',
                 'solusi' => 'required',
@@ -69,7 +69,7 @@ class laporanSPITiController extends Controller
             ]);
             
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
 

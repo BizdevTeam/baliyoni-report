@@ -22,7 +22,7 @@ class LaporanSPIController extends Controller
 
         $laporanspis = LaporanSPI::query()
             ->when($search, function ($query, $search) {
-                return $query->where('date', 'LIKE', "%$search%");
+                return $query->where('tanggal', 'LIKE', "%$search%");
             })
             ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
@@ -37,7 +37,7 @@ class LaporanSPIController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'aspek' => 'required',
                 'masalah' => 'required',
                 'solusi' => 'required',
@@ -45,14 +45,14 @@ class LaporanSPIController extends Controller
             ]);
 
             // // Cek kombinasi unik date dan perusahaan
-            // $exists = LaporanSPI::where('date', $validatedData['date'])->exists();
+            // $exists = LaporanSPI::where('tanggal', $validatedData['tanggal'])->exists();
 
             // if ($exists) {
             //     return redirect()->back()->with('error', 'Data Already Exists.');
             // }
 
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
     
@@ -69,7 +69,7 @@ class LaporanSPIController extends Controller
         try {
             // Validasi input
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'aspek' => 'required',
                 'masalah' => 'required',
                 'solusi' => 'required',
@@ -77,7 +77,7 @@ class LaporanSPIController extends Controller
             ]);
             
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
             // Update data

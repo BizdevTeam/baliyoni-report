@@ -9,10 +9,10 @@ class LaporanSPITI extends Model
 {
      protected $table = "laporanspiti";
     protected $primaryKey = "id_spiti";
-    protected $fillable = ["date","aspek","masalah","solusi","implementasi"];
+    protected $fillable = ["tanggal","aspek","masalah","solusi","implementasi"];
 
-    public function getDateFormattedAttribute()
+    public function getTanggalFormattedAttribute()
     {
-        return Carbon::parse($this->date)->translatedFormat('d F Y');
+        return Carbon::parse($this->tanggal)->translatedFormat('d F Y');
     }
 }
