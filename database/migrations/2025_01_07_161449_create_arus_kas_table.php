@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('arus_kas', function (Blueprint $table) {
             $table->id('id_aruskas');
-            $table->string('date');
+            $table->string('tanggal');
             $table->bigInteger('kas_masuk');
             $table->bigInteger('kas_keluar');
             $table->timestamps();
 
-            $table->unique(['date']);
+            $table->unique(['tanggal']);
         });
     }
 

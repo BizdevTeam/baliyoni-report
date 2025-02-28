@@ -139,7 +139,7 @@
                 <tbody>
                     @foreach ($kashutangpiutangstoks as $kashutangpiutangstok)
                         <tr class="hover:bg-gray-100">
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $kashutangpiutangstok->date_formatted }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $kashutangpiutangstok->tanggal_formatted }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $kashutangpiutangstok->kas_formatted }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $kashutangpiutangstok->hutang_formatted }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $kashutangpiutangstok->piutang_formatted }}</td>
@@ -171,8 +171,8 @@
                                     @method('PUT')
                                     <div class="space-y-4">
                                         <div>
-                                            <label for="date" class="block text-sm font-medium">Tanggal</label>
-                                            <input type="date" name="date" class="w-full p-2 border rounded" value="{{ $kashutangpiutangstok->date }}" required>
+                                            <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                                            <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $kashutangpiutangstok->tanggal }}" required>
                                         </div>
                                         <div>
                                             <label for="kas" class="block text-sm font-medium">Kas</label>
@@ -296,8 +296,8 @@
             @csrf
             <div class="space-y-4">
                 <div>
-                    <label for="date" class="block text-sm font-medium">Tanggal</label>
-                    <input type="date" name="date" class="w-full p-2 border rounded" required>
+                    <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                    <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
                 </div>
                 <div>
                     <label for="kas" class="block text-sm font-medium">Kas</label>
@@ -402,7 +402,7 @@
     const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
         const cells = row.querySelectorAll('td');
         return {
-            date: cells[0]?.innerText.trim() || '',
+            tanggal: cells[0]?.innerText.trim() || '',
             kas: cells[1]?.innerText.trim() || '',
             hutang: cells[2]?.innerText.trim() || '',
             piutang: cells[3]?.innerText.trim() || '',
@@ -411,10 +411,10 @@
     });
 
     const tableContent = items
-        .filter(item => item.date && item.kas && item.hutang && item.piutang && item.stok)
+        .filter(item => item.tanggal && item.kas && item.hutang && item.piutang && item.stok)
         .map(item => `
             <tr>
-                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.date}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.tanggal}</td>
                 <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.kas}</td>
                 <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.hutang}</td>
                 <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.piutang}</td>

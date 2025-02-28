@@ -13,11 +13,11 @@ class LaporanLabaRugi extends Model
 
     protected $primaryKey = 'id_labarugi'; // Primary key custom
 
-    protected $fillable = ['date', 'gambar', 'file_excel', 'keterangan'];
+    protected $fillable = ['tanggal', 'gambar', 'file_excel', 'keterangan'];
 
     // Menambahkan accessor untuk bulan dengan format 'mm/yyyy'
-    public function getDateFormattedAttribute()
+    public function getTanggalFormattedAttribute()
     {
-        return Carbon::parse($this->date)->translatedFormat('d F Y');
+        return Carbon::parse($this->tanggal)->translatedFormat('d F Y');
     }
 }

@@ -19,9 +19,9 @@ class LaporanPpnController extends Controller
 
         $laporanppns = LaporanPpn::query()
         ->when($search, function($query, $search) {
-            return $query->where('date', 'like', "%$search%");
+            return $query->where('tanggal', 'like', "%$search%");
         })
-        ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC')
+        ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
         ->paginate($perPage);
 
               // Ubah path thumbnail agar dapat diakses dari frontend
@@ -47,13 +47,13 @@ class LaporanPpnController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'thumbnail' => 'image|mimes:jpeg,png,jpg,gif|max:2550',
                 'file' => 'mimes:xlsx,xls|max:2048',
                 'keterangan' => 'required|string',
             ]);
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
 
@@ -84,13 +84,13 @@ class LaporanPpnController extends Controller
     {
         try{
             $validatedData = $request->validate([
-                'date' => 'required|string',
+                'tanggal' => 'required|string',
                 'thumbnail' => 'image|mimes:jpeg,png,jpg,gif|max:2550',
                 'file' => 'mimes:xlsx,xls|max:2048',
                 'keterangan' => 'required|string',
             ]);
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
 
@@ -148,11 +148,11 @@ class LaporanPpnController extends Controller
         try {
             // Validasi input date
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
             ]);
     
             // Ambil data laporan berdasarkan date yang dipilih
-            $laporans = LaporanPpn::where('date', $validatedData['date'])->get();
+            $laporans = LaporanPpn::where('tanggal', $validatedData['tanggal'])->get();
     
             if (!$laporans) {
                 return redirect()->back()->with('error', 'Data tidak ditemukan.');
@@ -195,7 +195,7 @@ class LaporanPpnController extends Controller
         <div style='text-align: center; top: 0; margin: 0; padding: 0;'>
             {$imageHTML}
                 <h3 style='margin: 0; padding: 0;'>Keterangan : {$laporan->keterangan}</h3>
-                <h3 style='margin: 0; padding: 0;'>Laporan : {$laporan->date_formatted}</h3>
+                <h3 style='margin: 0; padding: 0;'>Laporan : {$laporan->tanggal_formatted}</h3>
         </div>
 
             ";

@@ -20,9 +20,9 @@ class ArusKasController extends Controller
         // Query untuk mencari berdasarkan tahun dan date
         $aruskass = ArusKas::query()
             ->when($search, function ($query, $search) {
-                return $query->where('date', 'LIKE', "%$search%");
+                return $query->where('tanggal', 'LIKE', "%$search%");
             })
-            ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
 
         // Hitung total untuk masing-masing kategori
@@ -47,17 +47,17 @@ class ArusKasController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'kas_masuk' => 'required|integer|min:0',
                 'kas_keluar' => 'required|integer|min:0'
             ]);
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
 
             // Cek kombinasi unik date dan perusahaan
-            $exists = ArusKas::where('date', $validatedData['date'])->exists();
+            $exists = ArusKas::where('tanggal', $validatedData['tanggal'])->exists();
     
             if ($exists) {
                 return redirect()->back()->with('error', 'Data Already Exists.');
@@ -77,17 +77,17 @@ class ArusKasController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'kas_masuk' => 'required|integer|min:0',
                 'kas_keluar' => 'required|integer|min:0',
             ]);
 
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
 
-            $exists = ArusKas::where('date', $validatedData['date'])
+            $exists = ArusKas::where('tanggal', $validatedData['tanggal'])
                 ->where('id_aruskas', '!=', $aruska->id_aruskas)->exists();
 
             if ($exists) {
@@ -202,7 +202,7 @@ class ArusKasController extends Controller
         // Query untuk mencari berdasarkan tahun dan date
         $aruskass = ArusKas::query()
             ->when($search, function ($query, $search) {
-                return $query->where('date', 'LIKE', "%$search%");
+                return $query->where('tanggal', 'LIKE', "%$search%");
             })
             ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->get();

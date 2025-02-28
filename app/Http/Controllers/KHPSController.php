@@ -20,9 +20,9 @@ class KHPSController extends Controller
         // Query untuk mencari berdasarkan tahun dan date
         $kashutangpiutangstoks = KasHutangPiutang::query()
             ->when($search, function ($query, $search) {
-                return $query->where('date', 'LIKE', "%$search%");
+                return $query->where('tanggal', 'LIKE', "%$search%");
             })
-            ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
 
         // Hitung total untuk masing-masing kategori
@@ -49,19 +49,19 @@ class KHPSController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'kas' => 'required|integer|min:0',
                 'hutang' => 'required|integer|min:0',
                 'piutang' => 'required|integer|min:0',
                 'stok' => 'required|integer|min:0'
             ]);
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
 
             // Cek kombinasi unik date dan perusahaan
-            $exists = KasHutangPiutang::where('date', $validatedData['date'])->exists();
+            $exists = KasHutangPiutang::where('tanggal', $validatedData['tanggal'])->exists();
     
             if ($exists) {
                 return redirect()->back()->with('error', 'Data Already Exists.');
@@ -80,19 +80,19 @@ class KHPSController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'kas' => 'required|integer|min:0',
                 'hutang' => 'required|integer|min:0',
                 'piutang' => 'required|integer|min:0',
                 'stok' => 'required|integer|min:0'
             ]);
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
 
             // Cek kombinasi unik date dan perusahaan
-            $exists = KasHutangPiutang::where('date', $validatedData['date'])
+            $exists = KasHutangPiutang::where('tanggal', $validatedData['tanggal'])
                 ->where('id_khps', '!=', $khp->id_khps)->exists();
 
             if ($exists) {
@@ -208,7 +208,7 @@ class KHPSController extends Controller
         // Query untuk mencari berdasarkan tahun dan date
         $kashutangpiutangstoks = KasHutangPiutang::query()
             ->when($search, function ($query, $search) {
-                return $query->where('date', 'LIKE', "%$search%");
+                return $query->where('tanggal', 'LIKE', "%$search%");
             })
             ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->get();

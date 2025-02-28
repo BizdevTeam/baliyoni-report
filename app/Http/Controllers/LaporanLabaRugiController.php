@@ -20,9 +20,9 @@ class LaporanLabaRugiController extends Controller
     
         $laporanlabarugis = LaporanLabaRugi::query()
             ->when($search, function ($query, $search) {
-                return $query->where('date', 'like', "%$search%");
+                return $query->where('tanggal', 'like', "%$search%");
             })
-            ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC')
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
             ->paginate($perPage);
     
         // Ubah path gambar agar dapat diakses dari frontend
@@ -46,13 +46,13 @@ class LaporanLabaRugiController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550',
                 'file_excel' => 'mimes:xlsx,xls|max:2048',
                 'keterangan' => 'required|string|max:255'
             ]);
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
     
@@ -82,7 +82,7 @@ class LaporanLabaRugiController extends Controller
         try {
             $fileRules = $labarugi->file_excel ? 'nullable|mimes:xlsx,xls|max:2048' : 'mimes:xlsx,xls|max:2048';
             $validatedData = $request->validate([
-            'date' => 'required|date',
+            'tanggal' => 'required|date',
             'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550',
             'file_excel' => $fileRules,
             'keterangan' => 'required|string|max:255'
@@ -146,11 +146,11 @@ class LaporanLabaRugiController extends Controller
         try {
             // Validasi input date
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
             ]);
     
             // Ambil data laporan berdasarkan date yang dipilih
-            $laporans = LaporanLabaRugi::where('date', $validatedData['date'])->get();
+            $laporans = LaporanLabaRugi::where('tanggal', $validatedData['tanggal'])->get();
     
             if (!$laporans) {
                 return redirect()->back()->with('error', 'Data tidak ditemukan.');
@@ -193,7 +193,7 @@ class LaporanLabaRugiController extends Controller
             <div style='text-align: center; top: 0; margin: 0; padding: 0;'>
                 {$imageHTML}
                     <h3 style='margin: 0; padding: 0;'>Keterangan : {$laporan->keterangan}</h3>
-                    <h3 style='margin: 0; padding: 0;'>Laporan : {$laporan->date_formatted}</h3>
+                    <h3 style='margin: 0; padding: 0;'>Laporan : {$laporan->tanggal_formatted}</h3>
             </div>
 
                 ";
@@ -221,7 +221,7 @@ public function getGambar(Request $request)
         $images = LaporanLabaRugi::select('gambar')
             ->whereNotNull('gambar')
             ->when($search, function ($query, $search) {
-                return $query->where('date', 'like', "%$search%");
+                return $query->where('tanggal', 'like', "%$search%");
             })
             ->get()
             ->map(function ($item) {

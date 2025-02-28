@@ -14,12 +14,12 @@ class KasHutangPiutang extends Model
 
     protected $primaryKey = 'id_khps'; // Primary key custom
 
-    protected $fillable = ['date', 'kas', 'hutang', 'piutang', 'stok'];
+    protected $fillable = ['tanggal', 'kas', 'hutang', 'piutang', 'stok'];
 
-    // Menambahkan accessor untuk date dengan format 'mm/yyyy'
-    public function getDateFormattedAttribute()
+    // Menambahkan accessor untuk tanggal dengan format 'mm/yyyy'
+    public function getTanggalFormattedAttribute()
     {
-        return Carbon::parse($this->date)->translatedFormat('d F Y');
+        return Carbon::parse($this->tanggal)->translatedFormat('d F Y');
     }
 
     // Menambahkan accessor dengan format Rp
