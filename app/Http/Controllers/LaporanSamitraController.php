@@ -158,7 +158,7 @@ class LaporanSamitraController extends Controller
         ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
 
         // Tambahkan footer ke PDF
-        $mpdf->SetFooter('{DATE j-m-Y}|Laporan Supports|Halaman {PAGENO}');
+        $mpdf->SetFooter('{DATE j-m-Y}|Laporan Supports|');
 
         // Konten HTML
         $htmlContent = "
@@ -223,7 +223,7 @@ class LaporanSamitraController extends Controller
         ->when($search, function ($query, $search) {
             return $query->where('bulan', 'LIKE', "%$search%");
         })
-        ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Order by year (desc) and month (asc)
+        ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Order by year (desc) and month (asc)
         ->get();  
 
         // Siapkan data untuk chart

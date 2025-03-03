@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('rekap_pendapatan_servis_asps', function (Blueprint $table) {
+        Schema::create('rekap_pendapatan_servis_a_s_p_s', function (Blueprint $table) {
             $table->id('id_rpsasp');
-            $table->string('bulan');
+            $table->string('tanggal');
             $table->enum('pelaksana', [
                 'CV. ARI DISTRIBUTION CENTER',
                 'CV. BALIYONI COMPUTER',
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->bigInteger('nilai_pendapatan');
             $table->timestamps();
 
-            $table->unique(['bulan', 'pelaksana']);
+            $table->unique(['tanggal', 'pelaksana']);
         });
     }
 

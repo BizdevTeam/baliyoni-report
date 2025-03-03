@@ -14,14 +14,14 @@ class ItMultimediaTiktok extends Model
 
     protected $primaryKey = 'id_tiktok'; // Primary key custom
 
-    protected $fillable = ['bulan', 'gambar', 'keterangan'];
+    protected $fillable = ['tanggal', 'gambar', 'keterangan'];
 
-    // Menambahkan accessor untuk bulan dengan format 'mm/yyyy'
-    public function getBulanFormattedAttribute()
+    // Menambahkan accessor untuk date dengan format 'mm/yyyy'
+    public function getTanggalFormattedAttribute()
     {
-        return Carbon::parse($this->bulan)->translatedFormat('F - Y');
+        return Carbon::parse($this->tanggal)->translatedFormat('d F Y');
     }
-    protected $appends = ['bulan_formatted'];
+    protected $appends = ['tanggal_formatted'];
 
 
 

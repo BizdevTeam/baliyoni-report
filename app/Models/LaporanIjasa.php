@@ -13,17 +13,17 @@ class LaporanIjasa extends Model
 
     protected $primaryKey = 'id_ijasa'; // Primary key custom
 
-    protected $fillable = ['tanggal', 'jam', 'permasalahan', 'impact', 'troubleshooting', 'resolve_tanggal', 'resolve_jam'];
+    protected $fillable = ['date', 'jam', 'permasalahan', 'impact', 'troubleshooting', 'resolve_tanggal', 'resolve_jam'];
 
-    // Menambahkan accessor untuk tanggal dengan format 'd/m/y'
-    public function getTanggalFormattedAttribute()
+    // Menambahkan accessor untuk date dengan format 'd/m/y'
+    public function getDateFormattedAttribute()
     {
-        return $this->tanggal ? Carbon::parse($this->tanggal)->format('d/m/y') : '-';
+        return $this->date ? Carbon::parse($this->date)->format('d F Y') : '-';
     }
 
-    public function getResolveFormattedAttribute()
+    public function getResolveTanggalFormattedAttribute()
     {
-        return $this->resolve_tanggal ? Carbon::parse($this->resolve_tanggal)->format('d/m/y') : '-';
+        return $this->resolve_tanggal ? Carbon::parse($this->resolve_tanggal)->format('d F Y') : '-';
     }
 
     public function setJamAttribute($value)

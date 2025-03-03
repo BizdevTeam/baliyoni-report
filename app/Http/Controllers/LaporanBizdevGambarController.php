@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\LaporanBizdevGambar;
+use App\Traits\DateValidationTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 
 class LaporanBizdevGambarController extends Controller
 {
+    use DateValidationTrait;
+
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 12);
@@ -16,10 +19,10 @@ class LaporanBizdevGambarController extends Controller
 
         $laporanbizdevgambars = LaporanBizdevGambar::query()
             ->when($search, function($query, $search) {
-                return $query->where('bulan', 'like', "%$search%")
+                return $query->where('tanggal', 'like', "%$search%")
                              ->orWhere('keterangan', 'like', "%$search%");
             })
-            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
             ->paginate($perPage);
         return view('it.laporanbizdevgambar', compact('laporanbizdevgambars'));
     }
@@ -27,19 +30,24 @@ class LaporanBizdevGambarController extends Controller
     public function store(Request $request)
     {
         try {
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            $validatedData = $request->validate([
+                'tanggal' => 'required|date',
                 'keterangan' => 'required|string|max:255',
                 'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550'
             ]);
 
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
+
             if ($request->hasFile('gambar')) {
                 $filename = time() . $request->file('gambar')->getClientOriginalName();
                 $request->file('gambar')->move(public_path('images/it/laporanbizdevgambar'), $filename);
-                $validatedata['gambar'] = $filename;
+                $validatedData['gambar'] = $filename;
             }
 
-            LaporanBizdevGambar::create($validatedata);
+            LaporanBizdevGambar::create($validatedData);
 
             return redirect()->route('laporanbizdevgambar.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
@@ -51,11 +59,16 @@ class LaporanBizdevGambarController extends Controller
     public function update(Request $request, LaporanBizdevGambar $laporanbizdevgambar)
     {
         try {
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            $validatedData = $request->validate([
+                'tanggal' => 'required|date',
                 'keterangan' => 'required|string|max:255',
                 'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550'
             ]);
+
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
 
             if ($request->hasFile('gambar')) {
                 $destination = "images/it/laporanbizdevgambar/" . $laporanbizdevgambar->gambar;
@@ -65,10 +78,10 @@ class LaporanBizdevGambarController extends Controller
 
                 $filename = time() . $request->file('gambar')->getClientOriginalName();
                 $request->file('gambar')->move(public_path('images/it/laporanbizdevgambar'), $filename);
-                $validatedata['gambar'] = $filename;
+                $validatedData['gambar'] = $filename;
             }
 
-            $laporanbizdevgambar->update($validatedata);
+            $laporanbizdevgambar->update($validatedData);
 
             return redirect()->route('laporanbizdevgambar.index')->with('success', 'Data Berhasil Diupdate');
         } catch (\Exception $e) {
@@ -97,13 +110,13 @@ class LaporanBizdevGambarController extends Controller
     public function exportPDF(Request $request)
     {
         try {
-            // Validasi input bulan
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            // Validasi input date
+            $validatedData = $request->validate([
+                'tanggal' => 'required|date',
             ]);
     
-            // Ambil semua data laporan berdasarkan bulan yang dipilih
-            $laporans = LaporanBizdevGambar::where('bulan', $validatedata['bulan'])->get();
+            // Ambil semua data laporan berdasarkan date yang dipilih
+            $laporans = LaporanBizdevGambar::where('tanggal', $validatedData['tanggal'])->get();
     
             if ($laporans->isEmpty()) {
                 return redirect()->back()->with('error', 'Data tidak ditemukan.');
@@ -128,7 +141,7 @@ class LaporanBizdevGambarController extends Controller
             ", 'O');
     
             // Tambahkan footer
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan IT - Bizdev Gambar|Halaman {PAGENO}');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan IT - Laporan Bizdev Gambar|');
     
             // Loop melalui setiap laporan dan tambahkan ke PDF
             foreach ($laporans as $index => $laporan) {
@@ -145,8 +158,8 @@ class LaporanBizdevGambarController extends Controller
                 $htmlContent = "
             <div style='text-align: center; top: 0; margin: 0; padding: 0;'>
                 {$imageHTML}
-                    <h3 style='margin: 0; padding: 0;'>Laporan Bulan {$laporan->bulan}</h3>
-                    <h3 style='margin: 0; padding: 0;'>Laporan Bulan {$laporan->bulan_formatted}</h3>
+                    <h3 style='margin: 0; padding: 0;'>Keterangan : {$laporan->keterangan}</h3>
+                    <h3 style='margin: 0; padding: 0;'>Laporan : {$laporan->tanggal_formatted}</h3>
             </div>
 
                 ";
@@ -156,7 +169,7 @@ class LaporanBizdevGambarController extends Controller
             }
     
             // Output PDF
-            return response($mpdf->Output("laporan_bizdev_gambar_{$validatedata['bulan']}.pdf", 'D'))
+            return response($mpdf->Output("laporan_bizdev_gambar_{$validatedData['tanggal']}.pdf", 'D'))
                 ->header('Content-Type', 'application/pdf')
                 ->header('Content-Disposition', 'attachment; filename="laporan_bizdev_gambar.pdf"');
     

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\LaporanHolding;
 use App\Models\Perusahaan;
+use App\Traits\DateValidationTrait;
 use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
 use Illuminate\Validation\ValidationException;
@@ -12,9 +13,8 @@ use Illuminate\Validation\Rule;
 
 class LaporanHoldingController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    use DateValidationTrait;
+
     public function index(Request $request)
     {
         $perusahaans = Perusahaan::all();
@@ -25,18 +25,18 @@ class LaporanHoldingController extends Controller
         // Retrieve LaporanHolding records along with the related Perusahaan
         $laporanholdings = LaporanHolding::with('perusahaan')
             ->when($search, function ($query, $search) {
-                return $query->where('bulan', 'LIKE', "%$search%")
+                return $query->where('tanggal', 'LIKE', "%$search%")
                              ->orWhereHas('perusahaan', function ($q) use ($search) {
                                  $q->where('nama_perusahaan', 'LIKE', "%$search%");
                              });
             })
-            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
             ->paginate($perPage);
 
         // Prepare chart data
         $labels = $laporanholdings->map(function ($item) {
             // Format the month using Carbon’s translatedFormat() as defined in your model accessor
-            $formattedDate = \Carbon\Carbon::parse($item->bulan)->translatedFormat('F - Y');
+            $formattedDate = \Carbon\Carbon::parse($item->date)->translatedFormat('F Y');
             return $item->perusahaan->nama_perusahaan . ' - ' . $formattedDate;
         })->toArray();
 
@@ -68,27 +68,28 @@ class LaporanHoldingController extends Controller
     public function store(Request $request)
     {
         try {
-            $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            // Validasi input
+            $validatedData = $request->validate([
+                'tanggal' => 'required|date',
                 'perusahaan_id' => 'required|exists:perusahaans,id',
                 'nilai' => 'required|integer|min:0',
             ]);
 
-            // Cek kombinasi unik bulan dan perusahaan_id
-            $exists = LaporanHolding::where('bulan', $request->bulan)
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
+
+            // Cek kombinasi unik date dan perusahaan_id
+            $exists = LaporanHolding::where('tanggal', $request->date)
                 ->where('perusahaan_id', $request->perusahaan_id)
                 ->exists();
 
             if ($exists) {
-                return redirect()->back()->with('error', 'Data untuk bulan dan perusahaan ini sudah ada');
+                return redirect()->back()->with('error', 'Data untuk sudah ada');
             }
 
-            LaporanHolding::create([
-                'bulan' => $request->bulan,
-                'perusahaan_id' => $request->perusahaan_id,
-                'nilai' => $request->nilai,
-            ]);
-
+            LaporanHolding::create($validatedData);
             return redirect()->route('laporanholding.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
             Log::error('Error Storing Laporan Holding Data: ' . $e->getMessage());
@@ -96,34 +97,33 @@ class LaporanHoldingController extends Controller
         }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, LaporanHolding $laporanholding)
     {
         try {
-            $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            // Validasi input
+            $validatedData = $request->validate([
+                'tanggal' => 'required|date',
                 'perusahaan_id' => 'required|exists:perusahaans,id',
                 'nilai' => 'required|integer|min:0',
             ]);
+
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
     
-            // Cek apakah kombinasi bulan dan perusahaan_id sudah ada di data lain
-            $exists = LaporanHolding::where('bulan', $request->bulan)
+            // Cek apakah kombinasi date dan perusahaan_id sudah ada di data lain
+            $exists = LaporanHolding::where('tanggal', $request->date)
                 ->where('perusahaan_id', $request->perusahaan_id)
                 ->where('id', '!=', $laporanholding->id) // Menggunakan model binding
                 ->exists();
     
             if ($exists) {
-                return redirect()->back()->with('error', 'Data untuk bulan dan perusahaan ini sudah ada');
+                return redirect()->back()->with('error', 'Data untuk sudah ada');
             }
     
             // Update data
-            $laporanholding->update([
-                'bulan' => $request->bulan,
-                'perusahaan_id' => $request->perusahaan_id,
-                'nilai' => $request->nilai,
-            ]);
+            $laporanholding->update($validatedData);
     
             return redirect()->route('laporanholding.index')->with('success', 'Data berhasil diperbarui.');
         } catch (\Exception $e) {
@@ -185,7 +185,7 @@ class LaporanHoldingController extends Controller
                 </div>
             ", 'O');
 
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Procurements|Halaman {PAGENO}');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Procurements - Laporan Pembelian (Holding)|');
 
             $htmlContent = "
             <div style='display: flex; gap: 20px; width: 100%;'>
@@ -194,7 +194,7 @@ class LaporanHoldingController extends Controller
                     <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                         <thead>
                             <tr style='background-color: #f2f2f2;'>
-                                <th style='border: 1px solid #000; padding: 1px;'>Bulan</th>
+                                <th style='border: 1px solid #000; padding: 1px;'>Tanggal</th>
                                 <th style='border: 1px solid #000; padding: 1px;'>Perusahaan</th>
                                 <th style='border: 1px solid #000; padding: 2px;'>Nilai Holding (Rp)</th>
                             </tr>
@@ -227,7 +227,7 @@ class LaporanHoldingController extends Controller
      */
     public function getLaporanHoldingData()
     {
-        $data = LaporanHolding::with('perusahaan')->get(['bulan', 'perusahaan_id', 'nilai']);
+        $data = LaporanHolding::with('perusahaan')->get(['tanggal', 'perusahaan_id', 'nilai']);
         return response()->json($data);
     }
 
@@ -240,16 +240,16 @@ class LaporanHoldingController extends Controller
 
         $laporanholdings = LaporanHolding::with('perusahaan')
             ->when($search, function ($query, $search) {
-                return $query->where('bulan', 'LIKE', "%$search%")
+                return $query->where('tanggal', 'LIKE', "%$search%")
                              ->orWhereHas('perusahaan', function ($q) use ($search) {
                                  $q->where('nama_perusahaan', 'LIKE', "%$search%");
                              });
             })
-            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
             ->get();
 
         $labels = $laporanholdings->map(function ($item) {
-            $formattedDate = \Carbon\Carbon::parse($item->bulan)->translatedFormat('F - Y');
+            $formattedDate = \Carbon\Carbon::parse($item->date)->translatedFormat('F - Y');
             return $item->perusahaan->nama_perusahaan . ' - ' . $formattedDate;
         })->toArray();
         $data = $laporanholdings->pluck('nilai')->toArray();

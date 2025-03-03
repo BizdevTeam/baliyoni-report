@@ -16,16 +16,16 @@ class LaporanPaketAdministrasi extends Model
     protected $primaryKey = 'id_laporanpaket'; // Primary key custom
 
     protected $fillable = [
-        'bulan', 
+        'tanggal', 
         'website',     
         'total_paket',        
     ];
 
 
     // Kolom yang dapat diisi menggunakan metode mass assignment
-    public function getBulanFormattedAttribute()
+    public function getTanggalFormattedAttribute()
     {
-        return Carbon::parse($this->bulan)->translatedFormat('F - Y');
+        return Carbon::parse($this->tanggal)->translatedFormat('d F Y');
     }
     
     public function getTotalPaketFormattedAttribute()

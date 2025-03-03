@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\LaporanPerInstansi;
+use App\Traits\DateValidationTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -12,6 +13,7 @@ use Illuminate\Validation\Rule;
 
 class LaporanPerInstansiController extends Controller
 {
+    use DateValidationTrait;
     // Menampilkan halaman utama
     public function index(Request $request)
     { 
@@ -20,12 +22,12 @@ class LaporanPerInstansiController extends Controller
 
         #$query = KasHutangPiutang::query();
 
-        // Query untuk mencari berdasarkan tahun dan bulan
+        // Query untuk mencari berdasarkan tahun dan date
         $laporanperinstansis = LaporanPerInstansi::query()
             ->when($search, function ($query, $search) {
-                return $query->where('bulan', 'LIKE', "%$search%");
+                return $query->where('tanggal', 'LIKE', "%$search%");
             })
-            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
 
         // Hitung total untuk masing-masing kategori
@@ -59,8 +61,9 @@ class LaporanPerInstansiController extends Controller
     public function store(Request $request)
     {
         try {
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            // Validasi input
+            $validatedData = $request->validate([
+                'tanggal' => 'required|date',
                 'instansi' => [
                     'required',
                     Rule::in([
@@ -79,15 +82,20 @@ class LaporanPerInstansiController extends Controller
                 'nilai' => 'required|integer|min:0',
             ]);
 
-            // Cek kombinasi unik bulan dan perusahaan
-            $exists = LaporanPerInstansi::where('bulan', $validatedata['bulan'])
-            ->where('instansi', $validatedata['instansi'])->exists();
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
+
+            // Cek kombinasi unik date dan perusahaan
+            $exists = LaporanPerInstansi::where('tanggal', $validatedData['tanggal'])
+            ->where('instansi', $validatedData['instansi'])->exists();
             
             if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
+                return redirect()->back()->with('error', 'Data sudah ada.');
             }
     
-            LaporanPerInstansi::create($validatedata);
+            LaporanPerInstansi::create($validatedData);
     
             return redirect()->route('laporanperinstansi.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
@@ -101,8 +109,8 @@ class LaporanPerInstansiController extends Controller
     {
         try {
             // Validasi input
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            $validatedData = $request->validate([
+                'tanggal' => 'required|date',
                 'instansi' => [
                 'required',
                 Rule::in([
@@ -121,17 +129,21 @@ class LaporanPerInstansiController extends Controller
                 'nilai' => 'required|integer|min:0',
             ]);
 
-            // Cek kombinasi unik bulan dan perusahaan
-            $exists = LaporanPerInstansi::where('bulan', $validatedata['bulan'])
-            ->where('instansi', $validatedata['instansi'])
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
+            // Cek kombinasi unik date dan perusahaan
+            $exists = LaporanPerInstansi::where('tanggal', $validatedData['tanggal'])
+            ->where('instansi', $validatedData['instansi'])
             ->where('id_perinstansi', '!=', $laporanperinstansi->id_perinstansi)->exists();
 
             if ($exists) {
-                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
+                return redirect()->back()->with('error', 'TIdak dapat diubah, data sudah ada.');
             }
     
             // Update data
-            $laporanperinstansi->update($validatedata);
+            $laporanperinstansi->update($validatedData);
     
             // Redirect dengan pesan sukses
             return redirect()
@@ -192,7 +204,7 @@ class LaporanPerInstansiController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Marketing|Halaman {PAGENO}');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Marketing - Laporan Per Instansi|');
 
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "
@@ -202,7 +214,7 @@ class LaporanPerInstansiController extends Controller
                     <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                         <thead>
                             <tr style='background-color: #f2f2f2;'>
-                                <th style='border: 1px solid #000; padding: 1px;'>Bulan</th>
+                                <th style='border: 1px solid #000; padding: 1px;'>Tanggal</th>
                                 <th style='border: 1px solid #000; padding: 2px;'>Instansi</th>
                                 <th style='border: 1px solid #000; padding: 2px;'>Nilai</th>
                             </tr>
@@ -246,11 +258,11 @@ class LaporanPerInstansiController extends Controller
     public function showChart()
     {
         // Ambil data dari database
-        $laporanperinstansis = LaporanPerInstansi::orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')->get();
+        $laporanperinstansis = LaporanPerInstansi::orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')->get();
     
         // Siapkan data untuk chart
         $labels = $laporanperinstansis->map(function($item) {
-            $formattedDate = \Carbon\Carbon::parse($item->bulan)->translatedFormat('F - Y');
+            $formattedDate = \Carbon\Carbon::parse($item->date)->translatedFormat('F - Y');
             return $item->instansi . ' - ' . $formattedDate;
         })->toArray();
         $data = $laporanperinstansis->pluck('nilai')->toArray();

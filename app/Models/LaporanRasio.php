@@ -13,12 +13,12 @@ class LaporanRasio extends Model
 
     protected $primaryKey = 'id_rasio'; // Primary key custom
 
-    protected $fillable = ['bulan', 'gambar', 'file_excel', 'keterangan'];
+    protected $fillable = ['tanggal', 'gambar', 'file_excel', 'keterangan'];
 
     // Menambahkan accessor untuk bulan dengan format 'mm/yyyy'
-    public function getBulanFormattedAttribute()
+    public function getTanggalFormattedAttribute()
     {
-        return Carbon::parse($this->bulan)->translatedFormat('F - Y');
+        return Carbon::parse($this->tanggal)->translatedFormat('d F Y');
     }
 
 }

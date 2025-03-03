@@ -9,9 +9,9 @@ class LaporanSPI extends Model
 {
     protected $table = "laporan_spis";
     protected $primaryKey = "id_spi";
-    protected $fillable = ["bulan","aspek","masalah","solusi","implementasi"];
-    public function getBulanFormattedAttribute()
+    protected $fillable = ["tanggal","aspek","masalah","solusi","implementasi"];
+    public function getTanggalFormattedAttribute()
     {
-        return Carbon::parse($this->bulan)->translatedFormat('F - Y');
+        return Carbon::parse($this->tanggal)->translatedFormat('d F Y');
     }
 }

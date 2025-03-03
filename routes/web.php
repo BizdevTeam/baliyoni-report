@@ -66,6 +66,7 @@ Route::middleware(['web'])->group(function () {
         Route::resource('khps', KHPSController::class);
         Route::post('khps/export-pdf', [KHPSController::class, 'exportPDF'])->name('accounting.khps.exportPDF');
         Route::get('khps/data', [KHPSController::class, 'getKashutangpiutangstokData'])->name('accounting.khps.data');
+        
         Route::resource('aruskas', ArusKasController::class);
         Route::post('aruskas/export-pdf', [ArusKasController::class, 'exportPDF'])
         ->name('accounting.aruskas.exportPDF');
@@ -83,7 +84,7 @@ Route::middleware(['web'])->group(function () {
 
         Route::resource('laporanpaketadministrasi', LaporanPaketAdministrasiController::class);
         Route::post('laporanpaketadministrasi/export-pdf', [LaporanPaketAdministrasiController::class, 'exportPDF'])
-            ->name('marketings.laporanpaketadministrasi.exportPDF');
+    ->name('marketings.laporanpaketadministrasi.exportPDF');
         Route::get('laporanpaketadministrasi/chart-data', [LaporanPaketAdministrasiController::class, 'getChartData'])
             ->name('marketings.laporanpaketadministrasi.getChartData');
         Route::delete('laporanpaketadministrasi/{rp}', [LaporanPaketAdministrasiController::class, 'destroy']);
@@ -148,8 +149,7 @@ Route::middleware(['web'])->group(function () {
     });
 
     // PROCUREMENT
-    Route::prefix('procurements')->group(function () {
-
+    Route::prefix('procurements')->group(function () {  
 
         Route::resource('laporanstok', LaporanStokController::class);
         Route::get('laporanstok/data', [LaporanStokController::class, 'getLaporanHoldingData'])
@@ -255,6 +255,8 @@ Route::middleware(['web'])->group(function () {
     Route::post('/exportall',[ExportAllController::class,'exportAll'])->name('exportall');
 
 });
+
+
 
 
 

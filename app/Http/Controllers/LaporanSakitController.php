@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\LaporanSakit;
+use App\Traits\DateValidationTrait;
 use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
 use Illuminate\Support\Facades\DB;
@@ -12,6 +13,7 @@ use Illuminate\Validation\Rule;
 
 class LaporanSakitController extends Controller
 {
+    use DateValidationTrait;
     // Show the view
     public function index(Request $request)
     { 
@@ -20,13 +22,13 @@ class LaporanSakitController extends Controller
 
         #$query = KasHutangPiutang::query();
 
-        // Query untuk mencari berdasarkan tahun dan bulan
+        // Query untuk mencari berdasarkan tahun dan date
         $laporansakits = LaporanSakit::query()
             ->when($search, function ($query, $search) {
-                return $query->where('bulan', 'LIKE', "%$search%")
+                return $query->where('tanggal', 'LIKE', "%$search%")
                              ->orWhere('nama', 'like', "%$search%");
             })
-            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
 
         // Hitung total untuk masing-masing kategori
@@ -60,27 +62,32 @@ class LaporanSakitController extends Controller
     public function store(Request $request)
     {
         try {
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
-                 'nama' => 'required|string',
+            $validatedData = $request->validate([
+                'tanggal' => 'required|date',
+                'nama' => 'required|string',
                 'total_sakit' => 'required|integer|min:0',
             ]);
 
-            // Cek kombinasi unik bulan dan nama
-            $exists = LaporanSakit::where('bulan', $validatedata['bulan'])
-            ->where('nama', $validatedata['nama'])
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
+            
+            // Cek kombinasi unik date dan nama
+            $exists = LaporanSakit::where('tanggal', $validatedData['tanggal'])
+            ->where('nama', $validatedData['nama'])
             ->exists();
 
             if ($exists) {
                 return redirect()->back()->with('error', 'Data Already Exists.');
             }
     
-            LaporanSakit::create($validatedata);
+            LaporanSakit::create($validatedData);
     
             return redirect()->route('laporansakit.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
             // Logging untuk debug
-            Log::error('Error Storing Rekap Penjualan Data:', [
+            Log::error('Error Storing Data:', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
                 'input' => $request->all(),
@@ -88,20 +95,20 @@ class LaporanSakitController extends Controller
             return redirect()->route('laporansakit.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
         try {
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            $validatedData = $request->validate([
+                'tanggal' => 'required|date',
                 'total_sakit' => 'required|integer',
                 'nama' => 'required|string'
             ]);
     
-            // Cek kombinasi unik bulan dan perusahaan
-            $exists = LaporanSakit::where('nama', $validatedata['nama'])->exists();
+            // Cek kombinasi unik date dan perusahaan
+            $exists = LaporanSakit::where('nama', $validatedData['nama'])->exists();
                 
             if ($exists) {
                 return redirect()->back()->with('error', 'Data Already Exists.');
             }
     
-            LaporanSakit::create($validatedata);
+            LaporanSakit::create($validatedData);
     
             return redirect()->route('laporansakit.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
@@ -114,14 +121,19 @@ class LaporanSakitController extends Controller
     {
         try {
             // Validasi input
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            $validatedData = $request->validate([
+                'tanggal' => 'required|date',
                 'nama' => 'required|string',
                 'total_sakit' => 'required|integer|min:0',
             ]);
+            
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
 
-            // Cek kombinasi unik bulan dan nama
-            $exists = LaporanSakit::where('nama', $validatedata['nama'])
+            // Cek kombinasi unik date dan nama
+            $exists = LaporanSakit::where('nama', $validatedData['nama'])
             ->where('id_sakit', '!=', $laporansakit->id_sakit)->exists();
 
             if ($exists) {
@@ -129,7 +141,7 @@ class LaporanSakitController extends Controller
             }
     
             // Update data
-            $laporansakit->update($validatedata);
+            $laporansakit->update($validatedData);
     
             // Redirect dengan pesan sukses
             return redirect()->route('laporansakit.index')->with('success', 'Data berhasil diperbarui.');
@@ -180,7 +192,7 @@ class LaporanSakitController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA|Halaman {PAGENO}');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA - Laporan Sakit|');
             
             $htmlContent = "
             <div style='gap: 100px; width: 100%;'>
@@ -189,7 +201,7 @@ class LaporanSakitController extends Controller
                     <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                         <thead>
                             <tr style='background-color: #f2f2f2;'>
-                                <th style='border: 1px solid #000; padding: 1px;'>Bulan</th>
+                                <th style='border: 1px solid #000; padding: 1px;'>Tanggal</th>
                                 <th style='border: 1px solid #000; padding: 2px;'>Nama Karyawan</th>
                                 <th style='border: 1px solid #000; padding: 2px;'>Total Sakit</th>
                             </tr>
@@ -223,7 +235,7 @@ class LaporanSakitController extends Controller
             $laporansakit->delete();
             return redirect()->route('laporansakit.index')->with('success', 'Data Berhasil Dihapus');
         } catch (\Exception $e) {
-            Log::error('Error Deleting Rekap Penjualan Data: ' . $e->getMessage());
+            Log::error('Error Deleting Data: ' . $e->getMessage());
             return redirect()->route('laporansakit.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
     }
@@ -231,7 +243,7 @@ class LaporanSakitController extends Controller
     public function showChart()
     {
         // Ambil data dari database
-        $laporansakits = LaporanSakit::orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')->get();
+        $laporansakits = LaporanSakit::orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')->get();
     
         // Siapkan data untuk chart
         $labels = $laporansakits->pluck('nama')->toArray();

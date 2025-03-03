@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\LaporanPtBos;
+use App\Traits\DateValidationTrait;
+use Carbon\Traits\Date;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
@@ -11,6 +13,8 @@ use Illuminate\Validation\ValidationException;
 
 class LaporanPtBosController extends Controller
 {
+    use DateValidationTrait;
+
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 12);
@@ -18,9 +22,9 @@ class LaporanPtBosController extends Controller
     
         $laporanptboss = LaporanPtBos::query()
             ->when($search, function ($query, $search) {
-                return $query->where('bulan', 'LIKE', "%$search%");
+                return $query->where('tanggal', 'LIKE', "%$search%");
             })
-            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
             ->paginate($perPage);
     
         if ($request->ajax()) {
@@ -29,14 +33,21 @@ class LaporanPtBosController extends Controller
     
         return view('hrga.laporanptbos', compact('laporanptboss'));
     }
-    
-    
 
     public function store(Request $request)
     {
         try {
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            // Konversi tanggal agar selalu dalam format Y-m-d
+            if ($request->has('tanggal')) {
+                try {
+                    $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
+                } catch (\Exception $e) {
+                    return redirect()->back()->with('error', 'Format tanggal tidak valid.');
+                }
+            }
+
+            $validatedData = $request->validate([
+                'tanggal' => 'required|date',
                 'pekerjaan' => 'required|string',
                 'kondisi_bulanlalu' => 'required|string',
                 'kondisi_bulanini' => 'required|string',
@@ -44,8 +55,13 @@ class LaporanPtBosController extends Controller
                 'rencana_implementasi' => 'required|string',
                 'keterangan' => 'required|string'
             ]);
+
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
     
-            LaporanPtBos::create($validatedata);
+            LaporanPtBos::create($validatedData);
     
             return redirect()->route('laporanptbos.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
@@ -57,8 +73,17 @@ class LaporanPtBosController extends Controller
     public function update(Request $request, LaporanPtBos $laporanptbo)
     {
         try {
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            // Konversi tanggal agar selalu dalam format Y-m-d
+            if ($request->has('tanggal')) {
+                try {
+                    $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
+                } catch (\Exception $e) {
+                    return redirect()->back()->with('error', 'Format tanggal tidak valid.');
+                }
+            }
+
+            $validatedData = $request->validate([
+                'tanggal' => 'required|date',
                 'pekerjaan' => 'required|string',
                 'kondisi_bulanlalu' => 'required|string',
                 'kondisi_bulanini' => 'required|string',
@@ -66,8 +91,13 @@ class LaporanPtBosController extends Controller
                 'rencana_implementasi' => 'required|string',
                 'keterangan' => 'required|string'
             ]);
+
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
     
-            $laporanptbo->update($validatedata);
+            $laporanptbo->update($validatedData);
     
             return redirect()->route('laporanptbos.index')->with('success', 'Data Berhasil Diupdate');
         } catch (\Exception $e) {
@@ -111,7 +141,7 @@ class LaporanPtBosController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA|Halaman {PAGENO}');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA - Laporan PT BOS|');
     
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "
@@ -120,7 +150,7 @@ class LaporanPtBosController extends Controller
                     <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                         <thead>
                             <tr style='background-color: #f2f2f2;'>
-                            <th style='border: 1px solid #000; padding: 1px;'>Bulan</th>
+                            <th style='border: 1px solid #000; padding: 1px;'>Tanggal</th>
                             <th style='border: 1px solid #000; padding: 2px;'>Pekerjaan</th>
                             <th style='border: 1px solid #000; padding: 2px;'>Kondisi Bulan Ini</th>
                             <th style='border: 1px solid #000; padding: 2px;'>Kondisi Bulan Lalu</th>
@@ -142,7 +172,7 @@ class LaporanPtBosController extends Controller
             // Return PDF sebagai respon download
             return response($mpdf->Output('', 'S'), 200)
                 ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'attachment; filename=\"laporan_rekap_penjualan.pdf\"');
+                ->header('Content-Disposition', 'attachment; filename=\"laporan_PT_BOS.pdf\"');
         } catch (\Exception $e) {
             // Log error jika terjadi masalah
             Log::error('Error exporting PDF: ' . $e->getMessage());

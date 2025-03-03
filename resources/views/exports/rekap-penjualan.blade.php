@@ -1,88 +1,130 @@
-<!-- resources/views/exports/rekap-penjualan.blade.php -->
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rekap Penjualan</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            padding: 20px;
+            margin: 0;
+            padding-top: 120px;
+            position: relative;
         }
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .title {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .subtitle {
-            font-size: 16px;
-            color: #666;
-        }
-        table {
+        .header-container {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 30px;
+            height: auto;
+            z-index: -1;
         }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f5f5f5;
-        }
-        .chart-container {
+        .header-image {
             width: 100%;
-            text-align: center;
-            margin-top: 30px;
-        }
-        .chart-container img {
-            max-width: 100%;
             height: auto;
         }
-        .total-row {
-            font-weight: bold;
-            background-color: #f9f9f9;
+        .content-wrapper {
+            width: 100%;
+            margin-top: 30px;
+            margin-bottom: 40px;
+        }
+        .flex-container {
+            width: 100%;
+            gap: 100px;
+        }
+        .table-section {
+            width: 30%;
+            float: left;
+            padding-right: 20px;
+        }
+        .chart-section {
+            width: 65%;
+            float: left;
+            margin-left: 20px;
+            text-align: center;
+        }
+        .section-title {
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: normal;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10px;
+            border: 1px solid #000;
+        }
+        .data-table th {
+            background-color: #f2f2f2;
+            border: 1px solid #000;
+            padding: 1px;
+        }
+        .data-table td {
+            border: 1px solid #000;
+            padding: 2px;
+        }
+        .chart-image {
+            width: 100%;
+            height: auto;
+        }
+        .footer {
+            position: fixed;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            font-size: 10px;
+        }
+        /* Clear float after flex container */
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="title">Laporan Rekap Penjualan</div>
-        <div class="subtitle">Periode: {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</div>
+    <!-- Header Gambar -->
+    <div class="header-container">
+        <img src="images/HEADER.png" alt="Header" class="header-image">
     </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>Bulan</th>
-                <th>Total Penjualan</th>
-            </tr>
-        </thead>
-        <tbody>
-            @php $total = 0; @endphp
-            @foreach($rekappenjualans as $index => $penjualan)
-                @php $total += $penjualan->total_penjualan; @endphp
-                <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ \Carbon\Carbon::parse($penjualan->bulan)->translatedFormat('F Y') }}</td>
-                    <td>{{ $penjualan->total_penjualan_formatted }}</td>
-                </tr>
-            @endforeach
-            <tr class="total-row">
-                <td colspan="2">Total</td>
-                <td>Rp {{ number_format($total, 0, ',', '.') }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        <div class="flex-container clearfix">
+            <!-- Table Section -->
+            <div class="table-section">
+                <h2 class="section-title">Tabel Data</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Bulan</th>
+                            <th>Total Penjualan (Rp)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @php $total = 0; @endphp
+                        @foreach($rekappenjualans as $penjualan)
+                        @php $total += $penjualan->total_penjualan; @endphp
+                        <tr>
+                            <td>{{ \Carbon\Carbon::parse($penjualan->bulan)->translatedFormat('F Y') }}</td>
+                            <td>Rp {{ number_format($penjualan->total_penjualan, 0, ',', '.') }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <!-- Chart Section -->
+            <div class="chart-section">
+                <h2 class="section-title">Grafik Laporan Penjualan</h2>
+                <img src="{{ $chartImagePath }}" alt="Grafik Penjualan" class="chart-image">
+            </div>
+        </div>
+    </div>
 
-    <div class="chart-container">
-        <img src="{{ $chartImagePath }}" alt="Grafik Penjualan">
+    <!-- Footer -->
+    <div class="footer">
+        Laporan Marketing | Laporan Rekap Penjualan
     </div>
 </body>
 </html>

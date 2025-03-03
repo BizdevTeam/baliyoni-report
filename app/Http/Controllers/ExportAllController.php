@@ -28,12 +28,12 @@ class ExportAllController extends Controller
 
         // Generate all PDFs
         $files = [
-            // 'rekap_penjualan.pdf' => $this->exportPenjualan($search),
+            'rekap_penjualan.pdf' => $this->exportPenjualan($search),
             // 'rekap_perusahaan.pdf' => $this->exportPerusahaan($search),
             // 'laporan_holding.pdf' => $this->exportHolding($search),
             // 'paket_administrasi.pdf' => $this->exportPaketAdministrasi($search),
             // 'status_paket.pdf' => $this->exportStatusPaket($search),
-            'per_instansi.pdf' => $this->exportPerInstansi($search),
+            // 'per_instansi.pdf' => $this->exportPerInstansi($search),
         ];
 
         // If only one file is requested, return it directly
@@ -98,7 +98,7 @@ class ExportAllController extends Controller
         $mpdf = new Mpdf([
             'margin_left' => 10,
             'margin_right' => 10,
-            'margin_top' => 15,
+            'margin_top' => 35,
             'margin_bottom' => 15,
             'mode' => 'utf-8',
             'format' => 'A4-L',
@@ -134,9 +134,8 @@ class ExportAllController extends Controller
         $graph->Add($bplot);
         
         // Set the titles
-        $graph->title->Set('Grafik Penjualan per Bulan');
         $graph->xaxis->SetTickLabels($labels);
-        $graph->xaxis->SetLabelAngle(45);
+        $graph->xaxis->SetLabelAngle(0);
         
         // Format Y-axis labels as currency
         $graph->yaxis->SetLabelFormatCallback(function($value) {
@@ -156,7 +155,7 @@ class ExportAllController extends Controller
         
         return $tempPath;
     }
-    
+        
     //export penjualan perusahaan
     private function exportPerusahaan(string $search) {
         $rekappenjualanperusahaans = RekapPenjualanPerusahaan::with('perusahaan')
@@ -188,7 +187,7 @@ class ExportAllController extends Controller
         $mpdf = new Mpdf([
             'margin_left' => 10,
             'margin_right' => 10,
-            'margin_top' => 15,
+            'margin_top' => 35,
             'margin_bottom' => 15,
             'mode' => 'utf-8',
             'format' => 'A4-L',
@@ -277,7 +276,7 @@ class ExportAllController extends Controller
        $mpdf = new Mpdf([
            'margin_left' => 10,
            'margin_right' => 10,
-           'margin_top' => 15,
+           'margin_top' => 35,
            'margin_bottom' => 15,
            'mode' => 'utf-8',
            'format' => 'A4-L',
@@ -362,7 +361,7 @@ class ExportAllController extends Controller
         $mpdf = new Mpdf([
             'margin_left' => 10,
             'margin_right' => 10,
-            'margin_top' => 15,
+            'margin_top' => 35,
             'margin_bottom' => 15,
             'mode' => 'utf-8',
             'format' => 'A4-L',
@@ -445,7 +444,7 @@ class ExportAllController extends Controller
         $mpdf = new Mpdf([
             'margin_left' => 10,
             'margin_right' => 10,
-            'margin_top' => 15,
+            'margin_top' => 35,
             'margin_bottom' => 15,
             'mode' => 'utf-8',
             'format' => 'A4-L',
@@ -584,30 +583,4 @@ class ExportAllController extends Controller
         return $tempPath;
     }
 
-
-    private function template($data1, $data2)  {
-        return  $htmlContent = "
-        <div style='gap: 100px; width: 100%;'>
-            <div style='width: 30%; float: left; padding-right: 20px;'>
-                <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Tabel Data</h2>
-                <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
-                    <thead>
-                        <tr style='background-color: #f2f2f2;'>
-                            <th style='border: 1px solid #000; padding: 1px;'>Bulan</th>
-                            <th style='border: 1px solid #000; padding: 2px;'>Instansi</th>
-                            <th style='border: 1px solid #000; padding: 2px;'>Nilai</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {$data1}
-                    </tbody>
-                </table>
-            </div>
-            <div style='width: 65%; text-align:center; margin-left: 20px;'>
-                <h2 style='font-size: 14px; margin-bottom: 10px;'>Grafik Laporan Per Instansi</h2>
-                <img src='{$data2}' style='width: 100%; height: auto;' alt='Grafik Laporan' />
-            </div>
-        </div>
-        ";
-    }
 }

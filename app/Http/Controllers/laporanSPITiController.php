@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\LaporanSPITI;
+use App\Traits\DateValidationTraitAccSPI;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
@@ -11,6 +12,8 @@ use Illuminate\Validation\ValidationException;
 
 class laporanSPITiController extends Controller
 {
+    use DateValidationTraitAccSPI;
+
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 12);
@@ -18,9 +21,9 @@ class laporanSPITiController extends Controller
 
         $laporanspitis = LaporanSPITI::query()
         ->when($search, function($query, $search) {
-            return $query->where('bulan', 'like', "%$search%");
+            return $query->where('tanggal', 'like', "%$search%");
         })
-        ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
+        ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
         ->paginate($perPage);
 
         if ($request->ajax()) {
@@ -34,12 +37,17 @@ class laporanSPITiController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+                'tanggal' => 'required|date',
                 'aspek' => 'required',
                 'masalah' => 'required',
                 'solusi' => 'required',
                 'implementasi' => 'required',
             ]);
+
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
 
             LaporanSPITI::create($validatedData);
             return redirect()->route('laporanspiti.index')->with('success', 'Laporan SPITI berhasil ditambahkan.');
@@ -53,12 +61,17 @@ class laporanSPITiController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+                'tanggal' => 'required|date',
                 'aspek' => 'required',
                 'masalah' => 'required',
                 'solusi' => 'required',
                 'implementasi' => 'required',
             ]);
+            
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
 
             $laporanspiti->update($validatedData);
             return redirect()->route('laporanspiti.index')->with('success', 'Data berhasil diperbarui.');
@@ -104,7 +117,7 @@ class laporanSPITiController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan SPI|Halaman {PAGENO}');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan SPI - Laporan SPI IT|');
     
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "
@@ -113,7 +126,7 @@ class laporanSPITiController extends Controller
                     <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                         <thead>
                             <tr style='background-color: #f2f2f2;'>
-                            <th style='border: 1px solid #000; padding: 1px;'>Bulan</th>
+                            <th style='border: 1px solid #000; padding: 1px;'>Tanggal</th>
                             <th style='border: 1px solid #000; padding: 2px;'>Aspek</th>
                             <th style='border: 1px solid #000; padding: 2px;'>Masalah</th>
                             <th style='border: 1px solid #000; padding: 2px;'>Solusi</th>

@@ -13,11 +13,11 @@ class LaporanIzin extends Model
 
     protected $primaryKey = 'id_izin'; // Primary key custom
 
-    protected $fillable = ['bulan', 'total_izin', 'nama'];
+    protected $fillable = ['tanggal', 'total_izin', 'nama'];
 
-    // Menambahkan accessor untuk bulan dengan format 'mm/yyyy'
-    public function getBulanFormattedAttribute()
+    // Menambahkan accessor untuk date dengan format 'mm/yyyy'
+    public function getTanggalFormattedAttribute()
     {
-        return Carbon::parse($this->bulan)->translatedFormat('F - Y');
+        return Carbon::parse($this->tanggal)->translatedFormat('d F Y');
     }
 }

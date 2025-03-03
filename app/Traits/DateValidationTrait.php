@@ -2,28 +2,44 @@
 
 namespace App\Traits;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 trait DateValidationTrait
 {
-    public function isInputAllowed($bulan, &$errorMessage)
+    public function isInputAllowed($tanggal, &$errorMessage)
     {
         $currentDate = now();
-        $inputDate = Carbon::createFromFormat('Y-m', $bulan)->startOfMonth();
 
-        // Tidak boleh input untuk bulan sebelumnya
+        // Get the logged-in user's role
+        $userRole = Auth::check() ? Auth::user()->role : null;
+
+        // Superadmin bypasses all date validations
+        if ($userRole === 'superadmin') {
+            return true;
+        }
+
+        try {
+            // Convert input date to Carbon (ensure correct format)
+            $inputDate = Carbon::createFromFormat('Y-m-d', $tanggal);
+        } catch (\Exception $e) {
+            $errorMessage = 'Format tanggal tidak valid.';
+            return false;
+        }
+
+        // Input should not be from a previous month
         if ($inputDate->lt($currentDate->startOfMonth())) {
             $errorMessage = 'Input tidak diizinkan untuk bulan sebelumnya.';
             return false;
         }
 
-        // Tidak boleh input untuk bulan depan
-        if ($inputDate->gt($currentDate->startOfMonth())) {
-            $errorMessage = 'Input tidak diizinkan untuk bulan berikutnya.';
+        // Input should not be from a future month
+        if ($inputDate->gt($currentDate->endOfMonth())) {
+            $errorMessage = 'Input hanya diizinkan untuk bulan berjalan.';
             return false;
         }
 
-        // Tidak boleh input setelah tanggal 27 di bulan berjalan
-        if ($currentDate->month == $inputDate->month && $currentDate->day > 27) {
+        // Input should not be after the 27th of the current month
+        if ($inputDate->day > 27) {
             $errorMessage = 'Input tidak diizinkan setelah tanggal 27 pukul 23:59.';
             return false;
         }

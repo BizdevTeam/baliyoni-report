@@ -3,15 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\LaporanPpn;
+use App\Traits\DateValidationTraitAccSPI;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 
 class LaporanPpnController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    use DateValidationTraitAccSPI;
+
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 12);
@@ -19,9 +19,9 @@ class LaporanPpnController extends Controller
 
         $laporanppns = LaporanPpn::query()
         ->when($search, function($query, $search) {
-            return $query->where('bulan', 'like', "%$search%");
+            return $query->where('tanggal', 'like', "%$search%");
         })
-        ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
+        ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
         ->paginate($perPage);
 
               // Ubah path thumbnail agar dapat diakses dari frontend
@@ -46,26 +46,30 @@ class LaporanPpnController extends Controller
     public function store(Request $request)
     {
         try {
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            $validatedData = $request->validate([
+                'tanggal' => 'required|date',
                 'thumbnail' => 'image|mimes:jpeg,png,jpg,gif|max:2550',
                 'file' => 'mimes:xlsx,xls|max:2048',
                 'keterangan' => 'required|string',
             ]);
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
 
             if ($request->hasFile('file')) {
                 $excelFileName = date('d-m-Y') . '_' . $request->file('file')->getClientOriginalName();
                 $request->file('file')->move(public_path('files/accounting/ppn'), $excelFileName);
-                $validatedata['file'] = $excelFileName;
+                $validatedData['file'] = $excelFileName;
             }
 
             if ($request->hasFile('thumbnail')) {
                 $fileName = date('d-m-Y') . '_' . $request->file('thumbnail')->getClientOriginalName();
                 $request->file('thumbnail')->move(public_path('images/accounting/ppn'), $fileName);
-                $validatedata['thumbnail'] = $fileName;
+                $validatedData['thumbnail'] = $fileName;
             }
 
-            LaporanPpn::create($validatedata);
+            LaporanPpn::create($validatedData);
             return redirect()->route('laporanppn.index')->with('success', 'Data berhasil ditambahkan!');
 
         } catch (\Exception $e) {
@@ -79,12 +83,16 @@ class LaporanPpnController extends Controller
     public function update(Request $request, LaporanPpn $laporanppn)
     {
         try{
-            $validatedata = $request->validate([
-                'bulan' => 'required|string',
+            $validatedData = $request->validate([
+                'tanggal' => 'required|string',
                 'thumbnail' => 'image|mimes:jpeg,png,jpg,gif|max:2550',
                 'file' => 'mimes:xlsx,xls|max:2048',
                 'keterangan' => 'required|string',
             ]);
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
 
             if ($request->hasFile('thumbnail')) {
                 $destinationImages = "images/accounting/ppn/" . $laporanppn->thumbnail;
@@ -93,7 +101,7 @@ class LaporanPpnController extends Controller
                 }
                 $fileName = date('d-m-Y') . '_' . $request->file('thumbnail')->getClientOriginalName();
                 $request->file('thumbnail')->move(public_path('images/accounting/ppn'), $fileName);
-                $validatedata['thumbnail'] = $fileName;
+                $validatedData['thumbnail'] = $fileName;
             }
 
             if ($request->hasFile('file')) {
@@ -103,10 +111,10 @@ class LaporanPpnController extends Controller
                 }
                 $fileName = date('d-m-Y') . '_' . $request->file('file')->getClientOriginalName();
                 $request->file('file')->move(public_path('files/accounting/ppn'), $fileName);
-                $validatedata['file'] = $fileName;
+                $validatedData['file'] = $fileName;
             }
 
-            $laporanppn->update($validatedata);
+            $laporanppn->update($validatedData);
             
             return redirect()->route('laporanppn.index')->with('success', 'Data berhasil diubah!');
 
@@ -138,13 +146,13 @@ class LaporanPpnController extends Controller
     public function exportPDF(Request $request)
     {
         try {
-            // Validasi input bulan
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            // Validasi input date
+            $validatedData = $request->validate([
+                'tanggal' => 'required|date',
             ]);
     
-            // Ambil data laporan berdasarkan bulan yang dipilih
-            $laporans = LaporanPpn::where('bulan', $validatedata['bulan'])->get();
+            // Ambil data laporan berdasarkan date yang dipilih
+            $laporans = LaporanPpn::where('tanggal', $validatedData['tanggal'])->get();
     
             if (!$laporans) {
                 return redirect()->back()->with('error', 'Data tidak ditemukan.');
@@ -169,7 +177,7 @@ class LaporanPpnController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Accounting - PPN |Halaman {PAGENO}');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Accounting - Laporan PPN|');
     
            // Loop melalui setiap laporan dan tambahkan ke PDF
            foreach ($laporans as $index => $laporan) {
@@ -186,8 +194,8 @@ class LaporanPpnController extends Controller
             $htmlContent = "
         <div style='text-align: center; top: 0; margin: 0; padding: 0;'>
             {$imageHTML}
-                <h3 style='margin: 0; padding: 0;'>Laporan Bulan {$laporan->bulan}</h3>
-                <h3 style='margin: 0; padding: 0;'>Laporan Bulan {$laporan->bulan_formatted}</h3>
+                <h3 style='margin: 0; padding: 0;'>Keterangan : {$laporan->keterangan}</h3>
+                <h3 style='margin: 0; padding: 0;'>Laporan : {$laporan->tanggal_formatted}</h3>
         </div>
 
             ";
@@ -197,7 +205,7 @@ class LaporanPpnController extends Controller
         }
     
             // Output PDF
-            return response($mpdf->Output("Laporan_PPn_{$laporan->bulan}.pdf", 'D'))
+            return response($mpdf->Output("Laporan_PPn_{$laporan->date}.pdf", 'D'))
                 ->header('Content-Type', 'application/pdf')
                 ->header('Content-Disposition', 'attachment; filename="Laporan_PPN.pdf"');
     

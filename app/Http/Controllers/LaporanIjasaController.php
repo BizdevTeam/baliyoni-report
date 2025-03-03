@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\LaporanIjasa;
+use App\Traits\DateValidationTrait;
 use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
 use Illuminate\Support\Facades\DB;
@@ -13,6 +14,8 @@ use Illuminate\Support\Facades\Storage;
 
 class LaporanIjasaController extends Controller
 {
+    use DateValidationTrait;
+
         public function index(Request $request)
     {
         $perPage = $request->input('per_page', 12);
@@ -20,10 +23,10 @@ class LaporanIjasaController extends Controller
 
         $laporanijasas = LaporanIjasa::query()
         ->when($search, function ($query, $search) {
-            return $query->where('tanggal', 'LIKE', "%$search%")
+            return $query->where('date', 'LIKE', "%$search%")
                          ->orWhere('permasalahan', 'LIKE', "%$search%");
         })
-        ->orderBy('tanggal', 'DESC')
+        ->orderBy('date', 'DESC')
         ->paginate($perPage);
 
         if ($request->ajax()) {
@@ -36,8 +39,8 @@ class LaporanIjasaController extends Controller
     public function store(Request $request)
     {
         try {
-            $validatedata = $request->validate([
-                'tanggal' => 'required|date',
+            $validatedData = $request->validate([
+                'date' => 'required|date',
                 'jam' => 'required|date_format:H:i',
                 'permasalahan' => 'required|string',
                 'impact' => 'required|string',
@@ -46,7 +49,13 @@ class LaporanIjasaController extends Controller
                 'resolve_jam' => 'required|date_format:H:i',
             ]);
 
-            LaporanIjasa::create($validatedata);
+
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
+
+            LaporanIjasa::create($validatedData);
 
             return redirect()->route('laporanijasa.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
@@ -58,8 +67,8 @@ class LaporanIjasaController extends Controller
     public function update(Request $request, LaporanIjasa $laporanijasa)
     {
         try {
-            $validatedata = $request->validate([
-                'tanggal' => 'required|date',
+            $validatedData = $request->validate([
+                'date' => 'required|date',
                 'jam' => 'nullable|date_format:H:i',
                 'permasalahan' => 'required|string',
                 'impact' => 'required|string',
@@ -67,8 +76,13 @@ class LaporanIjasaController extends Controller
                 'resolve_tanggal' => 'required|date',
                 'resolve_jam' => 'required|date_format:H:i',
             ]);
+
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
             
-            $laporanijasa->update($validatedata);
+            $laporanijasa->update($validatedData);
 
             return redirect()->route('laporanijasa.index')->with('success', 'Data Berhasil Diupdate');
         } catch (\Exception $e) {
@@ -105,7 +119,7 @@ class LaporanIjasaController extends Controller
         ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
 
         // Tambahkan footer ke PDF
-        $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA - iJASA|Halaman {PAGENO}');
+        $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA - Laporan iJASA|');
 
         $htmlContent = "
             <div style='width: 100%;'>

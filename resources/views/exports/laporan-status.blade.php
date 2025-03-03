@@ -3,88 +3,53 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laporan Status Paket</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .title {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .subtitle {
-            font-size: 16px;
-            color: #666;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 30px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f5f5f5;
-        }
-        .chart-container {
-            width: 100%;
-            text-align: center;
-            margin-top: 30px;
-        }
-        .chart-container img {
-            max-width: 100%;
-            height: auto;
-        }
-        .total-row {
-            font-weight: bold;
-            background-color: #f9f9f9;
-        }
-    </style>
 </head>
 <body>
-    <div class="header">
-        <div class="title">Laporan Status Paket</div>
-        <div class="subtitle">Periode: {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</div>
+    <!-- Header Gambar -->
+    <div style="position: absolute; top: 0; left: 0; width: 100%; height: auto; z-index: -1;">
+        <img src="images/HEADER.png" alt="Header" style="width: 100%; height: auto;" />
     </div>
+    
+    <!-- Footer -->
+    <footer style="position: fixed; bottom: 10px; width: 100%; text-align: center; font-size: 10px;">
+        Laporan Marketing | Laporan Status Paket
+    </footer>
 
-    <table>
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>Bulan</th>
-                <th>Status</th>
-                <th>Nilai Paket</th>
-            </tr>
-        </thead>
-        <tbody>
-            @php $total = 0; @endphp
-            @foreach($statuspakets as $index => $statuspaket)
-                @php $total += $statuspaket->total_paket; @endphp
-                <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ \Carbon\Carbon::parse($statuspaket->bulan)->translatedFormat('F Y') }}</td>
-                    <td>{{ $statuspaket->status }}</td>
-                    <td>{{ $statuspaket->total_paket_formatted }}</td>
+    <!-- Konten -->
+    <div style="gap: 100px; width: 100%; margin-top: 50px;">
+        <div style="width: 30%; float: left; padding-right: 20px;">
+            <h2 style="font-size: 14px; text-align: center; margin-bottom: 10px;">Tabel Data</h2>
+            <table style="border-collapse: collapse; width: 100%; font-size: 10px;" border="1">
+                <thead>
+                    <tr style="background-color: #f2f2f2;">
+                        <th style="border: 1px solid #000; padding: 1px;">Bulan</th>
+                        <th style="border: 1px solid #000; padding: 2px;">Status </th>
+                        <th style="border: 1px solid #000; padding: 2px;">Nilai Paket</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @php $total = 0; @endphp
+                @foreach($statuspakets as $statuspaket)
+                    @php $total += $statuspaket->total_paket; @endphp
+                    <tr>
+                        <td>{{ \Carbon\Carbon::parse($statuspaket->bulan)->translatedFormat('F Y') }}</td>
+                        <td>{{ $statuspaket->status }}</td>
+                        <td>{{ $statuspaket->total_paket_formatted }}</td>
+                    </tr>
+                @endforeach
+                <tr class="total-row">
+                    <td colspan="2">Total</td>
+                    <td>{{ number_format($total, 0, ',', '.') }}</td>
                 </tr>
-            @endforeach
-            <tr class="total-row">
-                <td colspan="3">Total</td>
-                <td>{{ number_format($total, 0, ',', '.') }}</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <div class="chart-container">
-        <img src="{{ $chartImagePath }}" alt="Grafik Status Paket">
+            </tbody>
+        </table>
     </div>
+    <div style="width: 65%; text-align:center; margin-left: 20px;">
+        <h2 style="font-size: 14px; margin-bottom: 10px;">Grafik Laporan Status Paket</h2>
+        <img src="{{ $chartImagePath }}" alt="Grafik Penjualan">
+    </div>
+</div>
 </body>
 </html>

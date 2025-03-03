@@ -9,10 +9,23 @@ use Illuminate\Http\Request;
 
 class QuestionController extends Controller
 {
-    //
-    public function index()
+    public function index(Request $request)
     {
-        $questions = Question::with('answers')->get();
+        // Ambil input tanggal mulai dan tanggal akhir dari request
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+    
+        $questions = Question::query()
+            ->when($startDate, function ($query) use ($startDate) {
+                return $query->whereDate('created_at', '>=', $startDate);
+            })
+            ->when($endDate, function ($query) use ($endDate) {
+                return $query->whereDate('created_at', '<=', $endDate);
+            })
+            ->orderBy('created_at', 'desc') // Urutkan berdasarkan waktu pembuatan terbaru
+            ->paginate(10)
+            ->withQueryString();
+    
         return view('ask.questions', compact('questions'));
     }
 

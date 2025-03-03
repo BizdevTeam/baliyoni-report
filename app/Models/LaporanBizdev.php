@@ -13,7 +13,7 @@ class LaporanBizdev extends Model
     protected $primaryKey = "id_bizdev";
 
     protected $fillable = [
-        'bulan',
+        'tanggal',
         'aplikasi',
         'kondisi_bulanlalu',
         'kondisi_bulanini',
@@ -22,8 +22,8 @@ class LaporanBizdev extends Model
         'keterangan'
     ];
 
-    public function getBulanFormattedAttribute()
+    public function getTanggalFormattedAttribute()
     {
-        return Carbon::parse($this->bulan)->translatedFormat('F - Y');
+        return Carbon::parse($this->tanggal)->translatedFormat('d F Y');
     }
 }

@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('laporan_negosiasis', function (Blueprint $table) {
             $table->id('id_negosiasi');
-            $table->string('bulan');
+            $table->string('tanggal');
             $table->bigInteger('total_negosiasi');
             $table->timestamps();
 
-            $table->unique(['bulan']);
+            $table->unique(['tanggal']);
         });
     }
 

@@ -13,12 +13,12 @@ class ArusKas extends Model
 
     protected $primaryKey = 'id_aruskas'; // Primary key custom
 
-    protected $fillable = ['bulan', 'kas_masuk', 'kas_keluar'];
+    protected $fillable = ['tanggal', 'kas_masuk', 'kas_keluar'];
 
-    // Menambahkan accessor untuk bulan dengan format 'mm/yyyy'
-    public function getBulanFormattedAttribute()
+    // Menambahkan accessor untuk tanggal dengan format 'mm/yyyy'
+    public function getTanggalFormattedAttribute()
     {
-        return Carbon::parse($this->bulan)->translatedFormat('F - Y');
+        return Carbon::parse($this->tanggal)->translatedFormat('d F Y');
     }
 
     // Menambahkan accessor dengan format Rp

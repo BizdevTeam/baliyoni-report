@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\ItMultimediaTiktok;
+use App\Traits\DateValidationTrait;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 use Mpdf\Mpdf;
 
 class ItMultimediaTiktokController extends Controller
 {
+    use DateValidationTrait;
+
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 12);
@@ -17,10 +20,10 @@ class ItMultimediaTiktokController extends Controller
 
         $itmultimediatiktoks = ItMultimediaTiktok::query()
             ->when($search, function ($query, $search) {
-                return $query->where('bulan', 'like', "%$search%")
+                return $query->where('tanggal', 'like', "%$search%")
                     ->orWhere('keterangan', 'like', "%$search%");
             })
-            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC')
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
             ->paginate($perPage);
         return view('it.mutimediatiktok', compact('itmultimediatiktoks'));
     }
@@ -28,19 +31,25 @@ class ItMultimediaTiktokController extends Controller
     public function store(Request $request)
     {
         try {
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+        
+            $validatedData = $request->validate([
+                'tanggal' => 'required|date',
                 'keterangan' => 'required|string|max:255',
                 'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550'
             ]);
 
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
+
             if ($request->hasFile('gambar')) {
                 $filename = time() . $request->file('gambar')->getClientOriginalName();
                 $request->file('gambar')->move(public_path('images/it/multimediatiktok'), $filename);
-                $validatedata['gambar'] = $filename;
+                $validatedData['gambar'] = $filename;
             }
 
-            ItMultimediaTiktok::create($validatedata);
+            ItMultimediaTiktok::create($validatedData);
 
             return redirect()->route('tiktok.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
@@ -52,11 +61,16 @@ class ItMultimediaTiktokController extends Controller
     public function update(Request $request, ItMultimediaTiktok $tiktok)
     {
         try {
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            $validatedData = $request->validate([
+                'tanggal' => 'required|date',
                 'keterangan' => 'required|string|max:255',
                 'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550'
             ]);
+
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
 
             if ($request->hasFile('gambar')) {
                 $destination = "images/it/multimediatiktok/" . $tiktok->gambar;
@@ -66,10 +80,10 @@ class ItMultimediaTiktokController extends Controller
 
                 $filename = time() . $request->file('gambar')->getClientOriginalName();
                 $request->file('gambar')->move(public_path('images/it/multimediatiktok'), $filename);
-                $validatedata['gambar'] = $filename;
+                $validatedData['gambar'] = $filename;
             }
 
-            $tiktok->update($validatedata);
+            $tiktok->update($validatedData);
 
             return redirect()->route('tiktok.index')->with('success', 'Data Berhasil Diupdate');
         } catch (\Exception $e) {
@@ -98,13 +112,13 @@ class ItMultimediaTiktokController extends Controller
     public function exportPDF(Request $request)
     {
         try {
-            // Validasi input bulan
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            // Validasi input date
+            $validatedData = $request->validate([
+                'tanggal' => 'required|date',
             ]);
     
-            // Ambil semua data laporan berdasarkan bulan yang dipilih
-            $laporans = ItMultimediaTiktok::where('bulan', $validatedata['bulan'])->get();
+            // Ambil semua data laporan berdasarkan date yang dipilih
+            $laporans = ItMultimediaTiktok::where('tanggal', $validatedData['tanggal'])->get();
     
             if ($laporans->isEmpty()) {
                 return redirect()->back()->with('error', 'Data tidak ditemukan.');
@@ -129,7 +143,7 @@ class ItMultimediaTiktokController extends Controller
             ", 'O');
     
             // Tambahkan footer
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan IT - Multimedia Tiktok|Halaman {PAGENO}');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan IT - Laporan Multimedia Tiktok|');
     
             // Loop melalui setiap laporan dan tambahkan ke PDF
             foreach ($laporans as $index => $laporan) {
@@ -146,8 +160,8 @@ class ItMultimediaTiktokController extends Controller
                 $htmlContent = "
             <div style='text-align: center; top: 0; margin: 0; padding: 0;'>
                 {$imageHTML}
-                    <h3 style='margin: 0; padding: 0;'>Laporan Bulan {$laporan->bulan}</h3>
-                    <h3 style='margin: 0; padding: 0;'>Laporan Bulan {$laporan->bulan_formatted}</h3>
+                    <h3 style='margin: 0; padding: 0;'>Keterangan : {$laporan->keterangan}</h3>
+                    <h3 style='margin: 0; padding: 0;'>Laporan : {$laporan->tanggal_formatted}</h3>
             </div>
 
                 ";
@@ -156,7 +170,7 @@ class ItMultimediaTiktokController extends Controller
                 $mpdf->WriteHTML($htmlContent);
             }
             // Output PDF
-            return response($mpdf->Output("laporan_multimedia_tiktok_{$laporan->bulan}.pdf", 'D'))
+            return response($mpdf->Output("laporan_multimedia_tiktok_{$laporan->date}.pdf", 'D'))
                 ->header('Content-Type', 'application/pdf')
                 ->header('Content-Disposition', 'attachment; filename="laporan_multimedia_tiktok.pdf"');
     

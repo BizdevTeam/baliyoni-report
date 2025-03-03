@@ -13,7 +13,7 @@
     
     <!-- Footer -->
     <footer style="position: fixed; bottom: 10px; width: 100%; text-align: center; font-size: 10px;">
-        Laporan Marketing
+        Laporan Marketing | Laporan Per Instansi
     </footer>
     
     <!-- Konten -->

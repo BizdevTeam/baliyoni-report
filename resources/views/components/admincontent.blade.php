@@ -6,7 +6,7 @@
 
             <form id="chartFilterForm" method="GET" action="#" class="flex items-center justify-end gap-2">
                 <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
-                    <input type="month" id="searchInput" name="search" placeholder="Search YYYY - MM" value="{{ request('search') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
+                    <input type="date" id="searchInput" name="search" placeholder="Search YYYY - MM" value="{{ request('search') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
                 </div>
                 <button type="submit" class="justify-end bg-gradient-to-r font-medium from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm" aria-label="Search">
                     Search
@@ -138,7 +138,7 @@
                 <a href="{{ route('rekappiutangservisasp.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Rekap Piutang Servis ASP →</a>
             </div>
         </div>
-        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+        {{-- <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Rekap Pendapatan Pengiriman Daerah Bali</h1>
             <div class="bg-white shadow-md rounded-lg p-6">
                 <canvas id="chartrpdb" class="w-full h-96"></canvas>
@@ -146,7 +146,7 @@
             <div class="flex justify-end mt-4">
                 <a href="{{ route("laporansamitra.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Rekap Pendapatan Pengiriman Daerah Bali →</a>
             </div>
-        </div>
+        </div> --}}
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Rekap Pendapatan Pengiriman Luar Bali</h1>
             <div class="bg-white shadow-md rounded-lg p-6">
@@ -204,10 +204,10 @@
                     <table id="adminptbos" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
                         <thead>
                             <tr>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
                                 <th class="border border-gray-300 px-4 py-2 text-center">Pekerjaan</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Kondisi Bulan Lalu</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Kondisi Bulan Ini</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Kondisi Tanggal Lalu</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Kondisi Tanggal Ini</th>
                                 <th class="border border-gray-300 px-4 py-2 text-center">Update</th>
                                 <th class="border border-gray-300 px-4 py-2 text-center">Rencana Implementasi</th>
                                 <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
@@ -283,7 +283,7 @@
                     <table id="adminlabarugi" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
                         <thead>
                             <tr>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
                                 <th class="border border-gray-300 px-4 py-2 text-center">File</th>
                                 <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
                             </tr>
@@ -311,7 +311,7 @@
                     <table id="adminneraca" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
                         <thead>
                             <tr>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
                                 <th class="border border-gray-300 px-4 py-2 text-center">File</th>
                                 <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
                             </tr>
@@ -338,7 +338,7 @@
                     <table id="adminrasio" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
                         <thead>
                             <tr>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
                                 <th class="border border-gray-300 px-4 py-2 text-center">File</th>
                                 <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
                             </tr>
@@ -365,7 +365,7 @@
                     <table id="adminppn" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
                         <thead>
                             <tr>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
                                 <th class="border border-gray-300 px-4 py-2 text-center">File</th>
                                 <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
                             </tr>
@@ -392,7 +392,7 @@
                     <table id="admintaxplanning" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
                         <thead>
                             <tr>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
                                 <th class="border border-gray-300 px-4 py-2 text-center">File</th>
                                 <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
                             </tr>
@@ -419,10 +419,10 @@
                     <table id="adminbizdev" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
                         <thead>
                             <tr>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
                                 <th class="border border-gray-300 px-4 py-2 text-center">Aplikasi</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Kondisi Bulan Lalu</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Kondisi Bulan Ini</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Kondisi Tanggal Lalu</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Kondisi Tanggal Ini</th>
                                 <th class="border border-gray-300 px-4 py-2 text-center">Update</th>
                                 <th class="border border-gray-300 px-4 py-2 text-center">Rencana Implementasi</th>
                                 <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
@@ -446,7 +446,7 @@
                 <table id="adminspi" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
                     <thead>
                         <tr>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
+                            <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
                             <th class="border border-gray-300 px-4 py-2 text-center">Aspek</th>
                             <th class="border border-gray-300 px-4 py-2 text-center">Masalah</th>
                             <th class="border border-gray-300 px-4 py-2 text-center">Solusi</th>
@@ -470,7 +470,7 @@
                 <table id="adminspiti" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
                     <thead>
                         <tr>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
+                            <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
                             <th class="border border-gray-300 px-4 py-2 text-center">Aspek</th>
                             <th class="border border-gray-300 px-4 py-2 text-center">Masalah</th>
                             <th class="border border-gray-300 px-4 py-2 text-center">Solusi</th>
@@ -544,7 +544,7 @@
     </svg>
 </button>
 
-<!-- Modal -->
+{{-- <!-- Modal -->
 <div id="exportModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden">
     <div class="bg-white rounded-lg p-6 shadow-lg w-96">
         <h2 class="text-xl font-bold mb-4">Export PDF</h2>
@@ -552,7 +552,7 @@
         <form action="{{ route('exportall') }}" method="post">
             @csrf
             <!-- Range Month Input -->
-            <label for="month-range" class="block text-sm font-medium text-gray-700">Pilih Bulan</label>
+            <label for="month-range" class="block text-sm font-medium text-gray-700">Pilih Tanggal</label>
             <input name="search" type="month" id="month-range" class="w-full border rounded p-2 mt-2">
             
             <!-- Action Buttons -->
@@ -562,7 +562,7 @@
             </div>
         </form>
     </div>
-</div>
+</div> --}}
 
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -576,7 +576,7 @@
     // Fungsi untuk memuat data awal grafik saat halaman pertama kali dibuka
     function loadInitialChartData() {
         //laporan MARKETING
-        fetchChartData('{{ route("adminpenjualan.chart.data") }}', 'chartp', 'Bulan ');
+        fetchChartData('{{ route("adminpenjualan.chart.data") }}', 'chartp', 'Tanggal ');
         fetchChartData('{{ route("adminpp.chart.data") }}', 'chartpp', 'Perusahaan ');
         fetchChartData('{{ route("admin.chart.data") }}', 'chartl', 'Nilai Paket ');
         fetchChartData('{{ route("adminstatuspaket.chart.data") }}', 'chartsp', 'Nilai Paket ');
@@ -751,19 +751,18 @@
                         tableBody.append(`<tr><td colspan="7" class="text-center p-4">Data tidak ditemukan</td></tr>`);
                     } else {
                         response.laporanptboss.data.forEach(function(item) {
-                            // Konversi format bulan dari 'YYYY-MM' ke 'Januari 2024'
-                            const [tahun, bulan] = item.bulan.split('-');
+                            // Konversi format Tanggal dari 'YYYY-MM-DD' ke '25 Januari 2024'
+                            const [tahun, bulan, hari] = item.tanggal.split('-');
+
                             const namaBulan = [
-                                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni'
-                                , 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
                             ][parseInt(bulan, 10) - 1]; // Konversi bulan ke indeks array
 
-                            const formattedBulan = `${namaBulan} ${tahun}`; // Gabungkan nama bulan dan tahun
-
-                            // Buat baris tabel dengan formattedBulan
+                            const formattedTanggal = `${parseInt(hari, 10)} ${namaBulan} ${tahun}`; // Gabungkan hari, bulan, dan tahun
                             let row = `
                                 <tr>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${formattedBulan}</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">${formattedTanggal}</td>
                                     <td class="border border-gray-300 px-4 py-2 text-center">${item.pekerjaan}</td>
                                     <td class="border border-gray-300 px-4 py-2 text-center">${item.kondisi_bulanlalu}</td>
                                     <td class="border border-gray-300 px-4 py-2 text-center">${item.kondisi_bulanini}</td>
@@ -807,13 +806,22 @@
                     let tableBody = $("#adminijasa tbody");
                     tableBody.empty(); // Kosongkan tabel sebelum menambahkan data baru
 
-                    if (response.laporanneracas.data.length === 0) {
+                    if (response.laporanijasas.data.length === 0) {
                         tableBody.append(`<tr><td colspan="7" class="text-center p-4">Data tidak ditemukan</td></tr>`);
                     } else {
-                        response.laporanneracas.data.forEach(function(item) {
+                        response.laporanijasas.data.forEach(function(item) {
+                            // Konversi format Tanggal dari 'YYYY-MM-DD' ke '25 Januari 2024'
+                            const [tahun, bulan, hari] = item.tanggal.split('-');
+
+                            const namaBulan = [
+                                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                            ][parseInt(bulan, 10) - 1]; // Konversi bulan ke indeks array
+
+                            const formattedTanggal = `${parseInt(hari, 10)} ${namaBulan} ${tahun}`; // Gabungkan hari, bulan, dan tahun
                             let row = `
                             <tr>
-                                <td class="border border-gray-300 px-4 py-2 text-center">${item.tanggal}</td>
+                                <td class="border border-gray-300 px-4 py-2 text-center">${formattedTanggal}</td>
                                 <td class="border border-gray-300 px-4 py-2 text-center">${item.jam}</td>
                                 <td class="border border-gray-300 px-4 py-2 text-center">${item.permasalahan}</td>
                                 <td class="border border-gray-300 px-4 py-2 text-center">${item.impact}</td>
@@ -861,19 +869,19 @@
                         tableBody.append(`<tr><td colspan="7" class="text-center p-4">Data tidak ditemukan</td></tr>`);
                     } else {
                         response.laporanbizdevs.data.forEach(function(item) {
-                            // Konversi format bulan dari 'YYYY-MM' ke 'Januari 2024'
-                            const [tahun, bulan] = item.bulan.split('-');
-                            const namaBulan = [
-                                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni'
-                                , 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-                            ][parseInt(bulan, 10) - 1]; // Konversi bulan ke indeks array
+                               // Konversi format Tanggal dari 'YYYY-MM-DD' ke '25 Januari 2024'
+                               const [tahun, bulan, hari] = item.tanggal.split('-');
+                                const namaBulan = [
+                                    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                                    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                                ][parseInt(bulan, 10) - 1]; // Konversi bulan ke indeks array
 
-                            const formattedBulan = `${namaBulan} ${tahun}`; // Gabungkan nama bulan dan tahun
+                                const formattedTanggal = `${parseInt(hari, 10)} ${namaBulan} ${tahun}`; // Gabungkan hari, bulan, dan tahun
 
                             // Buat baris tabel dengan formattedBulan
                             let row = `
                                 <tr>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${formattedBulan}</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">${formattedTanggal}</td>
                                     <td class="border border-gray-300 px-4 py-2 text-center">${item.aplikasi}</td>
                                     <td class="border border-gray-300 px-4 py-2 text-center">${item.kondisi_bulanlalu}</td>
                                     <td class="border border-gray-300 px-4 py-2 text-center">${item.kondisi_bulanini}</td>
@@ -918,10 +926,19 @@
                     if (response.laporanneracas.data.length === 0) {
                         tableBody.append(`<tr><td colspan="3" class="text-center p-4">Data tidak ditemukan</td></tr>`);
                     } else {
-                        response.laporanneracas.data.forEach(function(item, index) {
+                        response.laporanneracas.data.forEach(function(item) {
+                            // Konversi format Tanggal dari 'YYYY-MM-DD' ke '25 Januari 2024'
+                           const [tahun, bulan, hari] = item.tanggal.split('-');
+                            const namaBulan = [
+                                    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                                    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                                ][parseInt(bulan, 10) - 1]; // Konversi bulan ke indeks array
+
+                                const formattedTanggal = `${parseInt(hari, 10)} ${namaBulan} ${tahun}`; // Gabungkan hari, bulan, dan tahun
+
                             let row = `
                                 <tr>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.bulan}</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">${formattedTanggal}</td>
                                     <td class="border border-gray-300 px-4 py-2 text-center">
                                         <img src="${item.gambar_url}" alt="Laporan Gambar" class="w-20 h-20 object-cover rounded-lg shadow-md cursor-pointer block mx-auto" data-index="${index}">
                                     </td>
@@ -982,7 +999,7 @@
                         response.laporanlabarugis.data.forEach(function(item, index) {
                             let row = `
                                 <tr>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.bulan}</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.tanggal}</td>
                                     <td class="border border-gray-300 px-4 py-2 text-center">
                                         <img src="${item.gambar_url}" alt="Laporan Gambar" class="w-20 h-20 object-cover rounded-lg shadow-md cursor-pointer block mx-auto" data-index="${index}">
                                     </td>
@@ -1042,7 +1059,7 @@
                         response.laporanrasios.data.forEach(function(item, index) {
                             let row = `
                                 <tr>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.bulan}</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.tanggal}</td>
                                     <td class="border border-gray-300 px-4 py-2 text-center">
                                         <img src="${item.gambar_url}" alt="Laporan Gambar" class="w-20 h-20 object-cover rounded-lg shadow-md cursor-pointer block mx-auto" data-index="${index}">
                                     </td>
@@ -1102,7 +1119,7 @@
                         response.laporanppns.data.forEach(function(item, index) {
                             let row = `
                                 <tr>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.bulan}</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.tanggal}</td>
                                     <td class="border border-gray-300 px-4 py-2 text-center">
                                         <img src="${item.gambar_url}" alt="Laporan Gambar" class="w-20 h-20 object-cover rounded-lg shadow-md cursor-pointer block mx-auto" data-index="${index}">
                                     </td>
@@ -1162,7 +1179,7 @@
                         response.laporantaxplanings.data.forEach(function(item, index) {
                             let row = `
                                 <tr>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.bulan}</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.tanggal}</td>
                                     <td class="border border-gray-300 px-4 py-2 text-center">
                                         <img src="${item.gambar_url}" alt="Laporan Gambar" class="w-20 h-20 object-cover rounded-lg shadow-md cursor-pointer block mx-auto" data-index="${index}">
                                     </td>
@@ -1223,19 +1240,19 @@
                         tableBody.append(`<tr><td colspan="7" class="text-center p-4">Data tidak ditemukan</td></tr>`);
                     } else {
                         response.laporanspis.data.forEach(function(item) {
-                            // Konversi format bulan dari 'YYYY-MM' ke 'Januari 2024'
-                            const [tahun, bulan] = item.bulan.split('-');
+                            // Konversi format Tanggal dari 'YYYY-MM-DD' ke '25 Januari 2024'
+                            const [tahun, bulan, hari] = item.tanggal.split('-');
+
                             const namaBulan = [
-                                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni'
-                                , 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
                             ][parseInt(bulan, 10) - 1]; // Konversi bulan ke indeks array
 
-                            const formattedBulan = `${namaBulan} ${tahun}`; // Gabungkan nama bulan dan tahun
-
+                            const formattedTanggal = `${parseInt(hari, 10)} ${namaBulan} ${tahun}`; // Gabungkan hari, bulan, dan tahun
                             // Buat baris tabel dengan formattedBulan
                             let row = `
                                 <tr>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${formattedBulan}</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">${formattedTanggal}</td>
                                     <td class="border border-gray-300 px-4 py-2 text-center">${item.aspek}</td>
                                     <td class="border border-gray-300 px-4 py-2 text-center">${item.masalah}</td>
                                     <td class="border border-gray-300 px-4 py-2 text-center">${item.solusi}</td>
@@ -1281,19 +1298,20 @@
                         tableBody.append(`<tr><td colspan="7" class="text-center p-4">Data tidak ditemukan</td></tr>`);
                     } else {
                         response.laporanspitis.data.forEach(function(item) {
-                            // Konversi format bulan dari 'YYYY-MM' ke 'Januari 2024'
-                            const [tahun, bulan] = item.bulan.split('-');
+                            // Konversi format Tanggal dari 'YYYY-MM-DD' ke '25 Januari 2024'
+                            const [tahun, bulan, hari] = item.tanggal.split('-');
+
                             const namaBulan = [
-                                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni'
-                                , 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
                             ][parseInt(bulan, 10) - 1]; // Konversi bulan ke indeks array
 
-                            const formattedBulan = `${namaBulan} ${tahun}`; // Gabungkan nama bulan dan tahun
+                            const formattedTanggal = `${parseInt(hari, 10)} ${namaBulan} ${tahun}`; // Gabungkan hari, bulan, dan tahun
 
                             // Buat baris tabel dengan formattedBulan
                             let row = `
                                 <tr>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${formattedBulan}</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">${formattedTanggal}</td>
                                     <td class="border border-gray-300 px-4 py-2 text-center">${item.aspek}</td>
                                     <td class="border border-gray-300 px-4 py-2 text-center">${item.masalah}</td>
                                     <td class="border border-gray-300 px-4 py-2 text-center">${item.solusi}</td>
@@ -1364,54 +1382,54 @@ function fetchImages() {
 
 
 // Fungsi untuk menampilkan atau menyembunyikan modal
-function toggleModal() {
-    const modal = document.getElementById('exportModal');
-    modal.classList.toggle('hidden');
-}
+// function toggleModal() {
+//     const modal = document.getElementById('exportModal');
+//     modal.classList.toggle('hidden');
+// }
 
-// Fungsi untuk melakukan export PDF ke semua route dengan range bulan yang dipilih
-function exportPDF() {
-    const selectedMonth = document.getElementById('month-range').value;
+// Fungsi untuk melakukan export PDF ke semua route dengan range Tanggal yang dipilih
+// // function exportPDF() {
+// //     const selectedMonth = document.getElementById('month-range').value;
     
-    if (!selectedMonth) {
-        alert("Silakan pilih bulan terlebih dahulu!");
-        return;
-    }
+// //     if (!selectedMonth) {
+// //         alert("Silakan pilih Tanggal terlebih dahulu!");
+// //         return;
+// //     }
 
-    // Kirim permintaan export ke semua endpoint secara bersamaan
-    const routes = [
-        '{{ route("marketings.rekappenjualan.exportPDF") }}',
-        '{{ route("marketings.laporanpaketadministrasi.exportPDF") }}',
-        '{{ route("marketings.statuspaket.exportPDF") }}',
-        '{{ route("marketings.laporanperinstansi.exportPDF") }}'
-    ];
+// //     // Kirim permintaan export ke semua endpoint secara bersamaan
+// //     const routes = [
+// //         '{{ route("marketings.rekappenjualan.exportPDF") }}',
+// //         '{{ route("marketings.laporanpaketadministrasi.exportPDF") }}',
+// //         '{{ route("marketings.statuspaket.exportPDF") }}',
+// //         '{{ route("marketings.laporanperinstansi.exportPDF") }}'
+// //     ];
 
-    routes.forEach(route => {
-        fetch(route, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({ month: selectedMonth })
-        })
-        .then(response => response.blob())  // Ambil file dalam bentuk blob
-        .then(blob => {
-            // Buat URL download
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `export_${route.split('/').pop()}.pdf`;  // Nama file berdasarkan route
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-        })
-        .catch(error => console.error('Error exporting:', error));
-    });
+// //     routes.forEach(route => {
+// //         fetch(route, {
+// //             method: 'POST',
+// //             headers: {
+// //                 'Content-Type': 'application/json',
+// //                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
+// //             },
+// //             body: JSON.stringify({ month: selectedMonth })
+// //         })
+// //         .then(response => response.blob())  // Ambil file dalam bentuk blob
+// //         .then(blob => {
+// //             // Buat URL download
+// //             const url = window.URL.createObjectURL(blob);
+// //             const a = document.createElement('a');
+// //             a.href = url;
+// //             a.download = `export_${route.split('/').pop()}.pdf`;  // Nama file berdasarkan route
+// //             document.body.appendChild(a);
+// //             a.click();
+// //             a.remove();
+// //         })
+// //         .catch(error => console.error('Error exporting:', error));
+// //     });
 
-    // Sembunyikan modal setelah submit
-    toggleModal();
-}
+// //     // Sembunyikan modal setelah submit
+// //     toggleModal();
+// }
 
 
 </script>

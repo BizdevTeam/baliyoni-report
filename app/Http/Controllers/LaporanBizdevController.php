@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\LaporanBizdev;
+use App\Traits\DateValidationTrait;
 use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
 use Illuminate\Support\Facades\DB;
@@ -11,6 +12,7 @@ use Illuminate\Validation\ValidationException;
 
 class LaporanBizdevController extends Controller
 {
+    use DateValidationTrait;
     // Show the view
     public function index(Request $request)
     { 
@@ -19,9 +21,9 @@ class LaporanBizdevController extends Controller
 
         $laporanbizdevs = LaporanBizdev::query()
             ->when($search, function ($query, $search) {
-                return $query->where('bulan', 'LIKE', "%$search%");
+                return $query->where('tanggal', 'LIKE', "%$search%");
             })
-            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
 
             if ($request->ajax()) {
@@ -33,8 +35,9 @@ class LaporanBizdevController extends Controller
     public function store(Request $request)
     {
         try {
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+
+            $validatedData = $request->validate([
+                'tanggal' => 'required|date',
                 'aplikasi' => 'required',
                 'kondisi_bulanlalu' => 'required',
                 'kondisi_bulanini' => 'required',
@@ -42,8 +45,13 @@ class LaporanBizdevController extends Controller
                 'rencana_implementasi' => 'required',
                 'keterangan' => 'required',
             ]);
+
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
     
-            LaporanBizdev::create($validatedata);
+            LaporanBizdev::create($validatedData);
     
             return redirect()->route('laporanbizdev.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
@@ -57,7 +65,7 @@ class LaporanBizdevController extends Controller
         try {
             // Validasi input
             $validatedData = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+                'tanggal' => 'required|date',
                 'aplikasi' => 'required',
                 'kondisi_bulanlalu' => 'required',
                 'kondisi_bulanini' => 'required',
@@ -65,6 +73,11 @@ class LaporanBizdevController extends Controller
                 'rencana_implementasi' => 'required',
                 'keterangan' => 'required',
             ]);
+
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
             // Update data
             $laporanbizdev->update($validatedData);
     
@@ -120,7 +133,7 @@ class LaporanBizdevController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan IT|Halaman {PAGENO}');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan IT - Laporan Bizdev|');
     
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "
@@ -129,7 +142,7 @@ class LaporanBizdevController extends Controller
                     <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                         <thead>
                             <tr style='background-color: #f2f2f2;'>
-                            <th style='border: 1px solid #000; padding: 1px;'>Bulan</th>
+                            <th style='border: 1px solid #000; padding: 1px;'>Tanggal</th>
                             <th style='border: 1px solid #000; padding: 2px;'>Aplikasi</th>
                             <th style='border: 1px solid #000; padding: 2px;'>Kondisi Bulan Lalu</th>
                             <th style='border: 1px solid #000; padding: 2px;'>Kondisi Bulan Ini</th>
@@ -151,7 +164,7 @@ class LaporanBizdevController extends Controller
             // Return PDF sebagai respon download
             return response($mpdf->Output('', 'S'), 200)
                 ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'attachment; filename=\"laporan_rekap_penjualan.pdf\"');
+                ->header('Content-Disposition', 'attachment; filename=\"laporan_bizdev.pdf\"');
         } catch (\Exception $e) {
             // Log error jika terjadi masalah
             Log::error('Error exporting PDF: ' . $e->getMessage());

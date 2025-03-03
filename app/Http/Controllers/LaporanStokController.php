@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\LaporanStok;
+use App\Traits\DateValidationTrait;
 use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
 use Illuminate\Validation\ValidationException;
 
 class LaporanStokController extends Controller
 {
+    use DateValidationTrait;
     // Show the view
     public function index(Request $request)
     { 
@@ -18,12 +20,12 @@ class LaporanStokController extends Controller
 
         #$query = KasHutangPiutang::query();
 
-        // Query untuk mencari berdasarkan tahun dan bulan
+        // Query untuk mencari berdasarkan tahun dan date
         $laporanstoks = LaporanStok::query()
             ->when($search, function ($query, $search) {
-                return $query->where('bulan', 'LIKE', "%$search%");
+                return $query->where('tanggal', 'LIKE', "%$search%");
             })
-            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
 
         // Hitung total untuk masing-masing kategori
@@ -34,7 +36,7 @@ class LaporanStokController extends Controller
             return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
         }
         
-        $labels = $laporanstoks->pluck('bulan')->toArray();
+        $labels = $laporanstoks->pluck('tanggal')->toArray();
         $data = $laporanstoks->pluck('stok')->toArray();
         
         // Generate random colors for each data item
@@ -56,19 +58,24 @@ class LaporanStokController extends Controller
     public function store(Request $request)
     {
         try {
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            // Validasi input
+            $validatedData = $request->validate([
+                'tanggal' => 'required|date',
                 'stok' => 'required|integer|min:0'
             ]);
-    
-            // Cek kombinasi unik bulan dan perusahaan
-            $exists = LaporanStok::where('bulan', $validatedata['bulan'])->exists();
+            
+            $errorMessage = '';
+                if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
+                    return redirect()->back()->with('error', $errorMessage);
+                }
+            // Cek kombinasi unik date dan perusahaan
+            $exists = LaporanStok::where('tanggal', $validatedData['tanggal'])->exists();
                     
             if ($exists) {
                 return redirect()->back()->with('error', 'Data Already Exists.');
             }
     
-            LaporanStok::create($validatedata);
+            LaporanStok::create($validatedData);
     
             return redirect()->route('laporanstok.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
@@ -82,11 +89,15 @@ class LaporanStokController extends Controller
         try {
             // Validasi input
             $validatedData = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+                'tanggal' => 'required|date',
                 'stok' => 'required|integer|min:0',
             ]);
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
 
-            $exists = LaporanStok::where('bulan', $validatedData['bulan'])
+            $exists = LaporanStok::where('tanggal', $validatedData['tanggal'])
                 ->where('id_stok', '!=', $laporanstok->id_stok)->exists();
 
             if ($exists) {
@@ -155,7 +166,7 @@ class LaporanStokController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
 
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Procurements|Halaman {PAGENO}');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Procurements - Laporan Stok|');
 
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "
@@ -165,7 +176,7 @@ class LaporanStokController extends Controller
                     <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                         <thead>
                             <tr style='background-color: #f2f2f2;'>
-                                <th style='border: 1px solid #000; padding: 1px;'>Bulan</th>
+                                <th style='border: 1px solid #000; padding: 1px;'>Tanggal</th>
                                 <th style='border: 1px solid #000; padding: 2px;'>Total Nilai Stok (Rp)</th>
                             </tr>
                         </thead>
@@ -206,7 +217,7 @@ class LaporanStokController extends Controller
     }
     public function getLaporanStokData()
     {
-        $data = LaporanStok::all(['bulan','stok']);
+        $data = LaporanStok::all(['tanggal','stok']);
     
         return response()->json($data);
     }
@@ -218,12 +229,12 @@ class LaporanStokController extends Controller
     
         $laporanstoks = LaporanStok::query()
         ->when($search, function ($query, $search) {
-            return $query->where('bulan', 'LIKE', "%$search%");
+            return $query->where('tanggal', 'LIKE', "%$search%");
         })
-        ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC'); // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
+        ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC'); // Urutkan berdasarkan tahun (descending) dan date (ascending)
     
         // Format label sesuai kebutuhan
-        $labels = $laporanstoks->pluck('bulan')->toArray();
+        $labels = $laporanstoks->pluck('tanggal')->toArray();
         $data = $laporanstoks->pluck('stok')->toArray();
         $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data);
     

@@ -20,8 +20,8 @@
     <!-- Theme style -->
     <!-- overlayScrollbars -->
     <link rel="stylesheet" href="{{ asset('templates/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    <script src="https://cdn.ckeditor.com/ckeditor5/38.1.0/classic/ckeditor.js"></script>
     @vite('resources/css/tailwind.css')
     @vite('resources/css/custom.css')
     @vite('resources/js/app.js')
@@ -34,6 +34,60 @@
         <!-- Navbar -->
         <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
 
+            <!-- Wrapper Alert -->
+            @if (session('success') || session('error'))
+            <div x-data="{ 
+                    showSuccess: {{ session('success') ? 'true' : 'false' }},
+                    showError: {{ session('error') ? 'true' : 'false' }}
+                }"
+                x-init="setTimeout(() => showSuccess = false, 5000); setTimeout(() => showError = false, 5000);"
+                class="fixed top-5 right-5 z-50 flex flex-col gap-3">
+        
+                <!-- Success Alert -->
+                @if (session('success'))
+                <div x-show="showSuccess" x-transition.opacity.scale.90
+                    class="bg-green-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
+                    
+                    <!-- Icon -->
+                    <span class="text-2xl">✅</span>
+        
+                    <!-- Message -->
+                    <div>
+                        <h3 class="font-bold">Success!</h3>
+                        <p class="text-sm">{{ session('success') }}</p>
+                    </div>
+        
+                    <!-- Close Button -->
+                    <button @click="showSuccess = false" class="ml-auto text-white text-lg font-bold">
+                        &times;
+                    </button>
+                </div>
+                @endif
+        
+                <!-- Error Alert -->
+                @if (session('error'))
+                <div x-show="showError" x-transition.opacity.scale.90
+                    class="bg-red-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
+                    
+                    <!-- Icon -->
+                    <span class="text-2xl">⚠️</span>
+        
+                    <!-- Message -->
+                    <div>
+                        <h3 class="font-bold">Error!</h3>
+                        <p class="text-sm">{{ session('error') }}</p>
+                    </div>
+        
+                    <!-- Close Button -->
+                    <button @click="showError = false" class="ml-auto text-white text-lg font-bold">
+                        &times;
+                    </button>
+                </div>
+                @endif
+        
+            </div>
+            @endif
+        
        <!-- Main Content -->
        <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
         <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan SPI IT</h1>
@@ -42,7 +96,7 @@
             <!-- Search -->
             <form method="GET" action="{{ route('laporanspiti.index') }}" class="flex items-center gap-2">
                 <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
-                    <input type="month" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}"
+                    <input type="date" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}"
                         class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
                 </div>
 
@@ -66,24 +120,12 @@
         <div id="formContainer" class="visible">
             <div class="mx-auto bg-white p-6 rounded-lg shadow">
 
-                <!-- Success Message -->
-                @if (session('success'))
-                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">
-                    {{ session('success') }}
-                </div>
-                @endif
-                @if (session('error'))
-                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
-                    {{ session('error') }}
-                </div>
-                @endif
-
         <!-- Event Table -->
         <div class="overflow-x-auto bg-white shadow-md">
             <table class="table-auto w-full border-collapse border border-gray-300" id="data-table">
                 <thead class="bg-gray-200">
                     <tr>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Bulan</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Aspek</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Masalah</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Solusi</th>
@@ -94,73 +136,82 @@
                 <tbody>
                     @foreach ($laporanspitis as $laporanspiti)
                         <tr class="hover:bg-gray-100">
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanspiti->bulan_formatted }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanspiti->aspek }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanspiti->masalah }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanspiti->solusi }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanspiti->implementasi }}</td>
-                            <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
-                                <!-- Edit Button -->
-                                <button class="bg-red-600 text-white px-3 py-2 rounded" data-modal-target="#editEventModal{{ $laporanspiti->id_spiti }}">
-                                    <i class="fa fa-pen"></i>
-                                    Edit
-                                </button>
-                                <!-- Delete Form -->
-                                <form method="POST" action="{{ route('laporanspiti.destroy', $laporanspiti->id_spiti) }}">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="bg-red-600 text-white px-3 py-2 rounded" onclick="return confirm('Are you sure to delete?')">
-                                        <i class="fa fa-trash"></i>
-                                        Delete
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanspiti->tanggal_formatted }}</td>
+                            <td class="border border-gray-300 px-4 py-2 content-html align-top text-justify">{!! $laporanspiti->aspek !!}</td>
+                            <td class="border border-gray-300 px-4 py-2 content-html align-top text-justify">{!! $laporanspiti->masalah !!}</td>
+                            <td class="border border-gray-300 px-4 py-2 content-html align-top text-justify">{!! $laporanspiti->solusi !!}</td>
+                            <td class="border border-gray-300 px-4 py-2 content-html align-top text-justify">{!! $laporanspiti->implementasi !!}</td>
+                            <td class="border border-gray-300 py-4 text-center">
+                                <div class="flex justify-center items-center gap-3">
+                                    <!-- Edit Button -->
+                                    <button class="text-red-600 hover:text-red-800 transition" 
+                                        data-modal-target="#editEventModal{{ $laporanspiti->id_spiti }}">
+                                        <i class="fa fa-pen text-lg"></i>
                                     </button>
-                                </form>
-                            </td>
+                                    <!-- Delete Form -->
+                                    <form method="POST" action="{{ route('laporanspiti.destroy', $laporanspiti->id_spiti) }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="text-red-600 hover:text-red-800 transition" 
+                                            onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                            <i class="fa fa-trash text-lg"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>                            
                         </tr>
-                        
-                        <!-- Modal for Edit Event -->
-                        <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="editEventModal{{ $laporanspiti->id_spiti }}">
-                            <div class="bg-white w-1/2 p-6 rounded shadow-lg">
-                                <h3 class="text-xl font-semibold mb-4">Edit Data</h3>
-                                <form method="POST" action="{{ route('laporanspiti.update', $laporanspiti->id_spiti) }}" enctype="multipart/form-data">
-                                    @csrf
-                                    @method('PUT')
-                                    <div class="space-y-4">
-                                        <div>
-                                            <label for="bulan" class="block text-sm font-medium">Bulan</label>
-                                            <input type="month" name="bulan" class="w-full p-2 border rounded" value="{{ $laporanspiti->bulan }}" required>
-                                        </div>
-                                        <div>
-                                            <label for="aspek" class="block text-sm font-medium">Aspek</label>
-                                            <textarea name="aspek" class="w-full p-2 border rounded" rows="1"
-                                                required>{{ $laporanspiti->aspek }}</textarea>
-                                        </div>
-                                        <div>
-                                            <label for="masalah" class="block text-sm font-medium">Masalah</label>
-                                            <textarea name="masalah" class="w-full p-2 border rounded" rows="1"
-                                                required>{{ $laporanspiti->masalah }}</textarea>
-                                        </div>
-                                        <div>
-                                            <label for="solusi" class="block text-sm font-medium">Solusi</label>
-                                            <textarea name="solusi" class="w-full p-2 border rounded" rows="1"
-                                                required>{{ $laporanspiti->solusi }}</textarea>
-                                        </div>
-                                        <div>
-                                            <label for="implementasi"
-                                                class="block text-sm font-medium">Implementasi</label>
-                                            <textarea name="implementasi" class="w-full p-2 border rounded" rows="1"
-                                                required>{{ $laporanspiti->implementasi }}</textarea>
-                                        </div>
-                                    </div>
-                                    <div class="mt-4 flex justify-end gap-2">
-                                        <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
-                                        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Update</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
                     @endforeach
                 </tbody>
             </table>
+        </div>
+    
+            @foreach ($laporanspitis as $laporanspiti)
+            <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="editEventModal{{ $laporanspiti->id_spiti }}">
+                <div class="bg-white w-2/3 p-6 rounded shadow-lg max-h-[80vh] overflow-y-auto">
+                    <h3 class="text-xl font-semibold mb-4">Edit Data</h3>
+                    <form method="POST" action="{{ route('laporanspiti.update', $laporanspiti->id_spiti) }}" enctype="multipart/form-data" id="editForm{{ $laporanspiti->id_spiti }}">
+                        @csrf
+                        @method('PUT')
+                        <div class="space-y-4">
+                            <div>
+                                <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                                <input type="hidden" name="tanggal" id="edit-{{ $laporanspiti->id_spiti }}-tanggal-input" value="{{ $laporanspiti->tanggal }}">
+                                <div id="edit-{{ $laporanspiti->id_spiti }}-tanggal"></div>                            
+                            </div>
+                            <div>
+                                <label for="aspek" class="block text-sm font-medium">Aspek</label>
+                                <input type="hidden" name="aspek" id="edit-{{ $laporanspiti->id_spiti }}-aspek-input" value="{{ $laporanspiti->aspek }}">
+                                <div id="edit-{{ $laporanspiti->id_spiti }}-aspek"></div>
+                            </div>
+                            <div>
+                                <label for="masalah" class="block text-sm font-medium">Masalah</label>
+                                <input type="hidden" name="masalah" id="edit-{{ $laporanspiti->id_spiti }}-masalah-input" value="{{ $laporanspiti->masalah }}">
+                                <div id="edit-{{ $laporanspiti->id_spiti }}-masalah"></div>
+                            </div>
+                            <!-- Repeat for other fields -->
+                            <div>
+                                <label for="solusi" class="block text-sm font-medium mb-1">Solusi <span class="text-red-500">*</span></label>
+                                <input type="hidden" name="solusi" id="edit-{{ $laporanspiti->id_spiti }}-solusi-input" value="{{ $laporanspiti->solusi }}" required>
+                                <div id="edit-{{ $laporanspiti->id_spiti }}-solusi"></div>
+                                <div class="text-red-500 text-sm mt-1 hidden" id="edit-solusi-error-{{ $laporanspiti->id_spiti }}">This field is required</div>
+                            </div>
+                            <!-- Repeat for other fields -->
+                            <div>
+                                <label for="implementasi" class="block text-sm font-medium mb-1">Implementasi <span class="text-red-500">*</span></label>
+                                <input type="hidden" name="implementasi" id="edit-{{ $laporanspiti->id_spiti }}-implementasi-input" value="{{ $laporanspiti->implementasi }}" required>
+                                <div id="edit-{{ $laporanspiti->id_spiti }}-implementasi"></div>
+                                <div class="text-red-500 text-sm mt-1 hidden" id="edit-implementasi-error-{{ $laporanspiti->id_spiti }}">This field is required</div>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex justify-end gap-2">
+                            <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
+                            <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            @endforeach
+
          <!-- Pagination -->
          <div class="flex justify-center items-center mt-2 mb-4 p-4 bg-gray-50 rounded-lg">
             <!-- Dropdown untuk memilih jumlah data per halaman -->
@@ -240,43 +291,66 @@
         </div>
     </div>
 
-    <!-- Modal untuk Add Event -->
-<div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">
-    <div class="bg-white w-1/2 p-6 rounded shadow-lg">
-        <h3 class="text-xl font-semibold mb-4">Add New Data</h3>
-        <form method="POST" action="{{ route('laporanspiti.store') }}" enctype="multipart/form-data">
-            @csrf
-            <div class="space-y-4">
-                <div>
-                    <label for="bulan" class="block text-sm font-medium">Bulan</label>
-                    <input type="month" name="bulan" class="w-full p-2 border rounded" required>
+    <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">
+        <div class="bg-white w-2/3 p-6 rounded shadow-lg">
+            <h3 class="text-xl font-semibold mb-4">Add New Data</h3>
+            <form method="POST" action="{{ route('laporanspiti.store') }}" enctype="multipart/form-data" id="addForm">
+                @csrf
+                <div class="space-y-4">
+                    <div>
+                        <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                        <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
+                    </div>
+                    <div>
+                        <label for="aspek" class="block text-sm font-medium">Aspek</label>
+                        <input type="hidden" name="aspek" id="aspek-input">
+                        <div id="editor-aspek"></div>
+                    </div>
+                    <div>
+                        <label for="masalah" class="block text-sm font-medium">Masalah</label>
+                        <input type="hidden" name="masalah" id="masalah-input">
+                        <div id="editor-masalah"></div>
+                    </div>
+                    <div>
+                        <label for="solusi" class="block text-sm font-medium mb-1">Solusi <span class="text-red-500">*</span></label>
+                        <input type="hidden" name="solusi" id="solusi-input" required>
+                        <div id="editor-solusi"></div>
+                        <div class="text-red-500 text-sm mt-1 hidden" id="solusi-error">This field is required</div>
+                    </div>
+                    <div>
+                        <label for="implementasi" class="block text-sm font-medium">Implementasi</label>
+                        <input type="hidden" name="implementasi" id="implementasi-input">
+                        <div id="editor-implementasi"></div>
+                    </div>
                 </div>
-                <div>
-                    <label for="aspek" class="block text-sm font-medium">Aspek</label>
-                    <input type="text" name="aspek" class="w-full p-2 border rounded">
+                <div class="mt-4 flex justify-end gap-2">
+                    <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
+                    <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Add</button>
                 </div>
-                <div>
-                    <label for="masalah" class="block text-sm font-medium">Masalah</label>
-                    <textarea name="masalah" class="w-full p-2 border rounded" rows="1"></textarea>
-                </div>
-                <div>
-                    <label for="solusi" class="block text-sm font-medium">Solusi</label>
-                    <textarea name="solusi" class="w-full p-2 border rounded" rows="1" required></textarea>
-                </div>
-                <div>
-                    <label for="implementasi" class="block text-sm font-medium">Implementasi</label>
-                    <input type="text" name="implementasi" class="w-full p-2 border rounded">
-                </div>
-            </div>
-            <div class="mt-4 flex justify-end gap-2">
-                <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
-                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Add</button>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
+    
 
 </body>
+<style>
+    /* Styling agar numbered list & bullet list tetap tampil di tabel */
+    .content-html ol {
+        list-style-type: decimal;
+        margin-left: 20px;
+    }
+
+    .content-html ul {
+        list-style-type: disc;
+        margin-left: 20px;
+    }
+
+    .content-html li {
+        margin-bottom: 4px;
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <script>
         //toogle form
         const toggleFormButton = document.getElementById('toggleFormButton');
@@ -322,7 +396,7 @@ async function exportToPDF() {
     const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
         const cells = row.querySelectorAll('td');
         return {
-                bulan: cells[0]?.innerText.trim() || '',
+                tanggal: cells[0]?.innerText.trim() || '',
                 aspek: cells[1]?.innerText.trim() || '',
                 masalah: cells[2]?.innerText.trim() || '',
                 solusi: cells[3]?.innerText.trim() || '',
@@ -331,10 +405,10 @@ async function exportToPDF() {
     });
 
     const tableContent = items
-        .filter(item => item.bulan && item.aspek && item.masalah && item.solusi && item.implementasi)
+        .filter(item => item.tanggal && item.aspek && item.masalah && item.solusi && item.implementasi)
         .map(item => `
             <tr>
-                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.bulan}</td>
+                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.tanggal}</td>
                     <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.aspek}</td>
                     <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.masalah}</td>
                     <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.solusi}</td>
@@ -391,6 +465,72 @@ function changePerPage(value) {
     
     window.location.href = url.pathname + '?' + searchParams.toString();
 }
+document.addEventListener('DOMContentLoaded', function() {
+    let editors = {};
+
+    // Fungsi untuk inisialisasi CKEditor
+    function initCKEditor(elementId, inputId) {
+        ClassicEditor
+            .create(document.querySelector(elementId), {
+                toolbar: [
+                    'bold', 'italic', '|', 
+                    'bulletedList', 'numberedList', '|', 
+                    'undo', 'redo'
+                ]
+            })
+            .then(editor => {
+                editors[elementId] = editor;
+                
+                // Set nilai awal jika ada
+                let initialValue = document.querySelector(inputId).value;
+                editor.setData(initialValue);
+
+                // Update hidden input saat ada perubahan
+                editor.model.document.on('change:data', () => {
+                    document.querySelector(inputId).value = editor.getData();
+                });
+            })
+            .catch(error => console.error('CKEditor error:', error));
+    }
+
+    // Inisialisasi CKEditor di form tambah
+    if (document.querySelector('#editor-aspek')) {
+        initCKEditor('#editor-aspek', '#aspek-input');
+    }
+    if (document.querySelector('#editor-masalah')) {
+        initCKEditor('#editor-masalah', '#masalah-input');
+    }
+    if (document.querySelector('#editor-solusi')) {
+        initCKEditor('#editor-solusi', '#solusi-input');
+    }
+    if (document.querySelector('#editor-implementasi')) {
+        initCKEditor('#editor-implementasi', '#implementasi-input');
+    }
+
+    // Inisialisasi CKEditor saat modal edit dibuka
+    document.querySelectorAll('[data-modal-target]').forEach(button => {
+        button.addEventListener('click', function() {
+            const modalId = this.getAttribute('data-modal-target');
+            const id = modalId.replace('#editEventModal', '');
+
+            if (document.querySelector(modalId)) {
+                initCKEditor(`#edit-${id}-aspek`, `#edit-${id}-aspek-input`);
+                initCKEditor(`#edit-${id}-masalah`, `#edit-${id}-masalah-input`);
+                initCKEditor(`#edit-${id}-solusi`, `#edit-${id}-solusi-input`);
+                initCKEditor(`#edit-${id}-implementasi`, `#edit-${id}-implementasi-input`);
+            }
+        });
+    });
+
+    // Fungsi untuk menutup modal
+    document.querySelectorAll('[data-modal-close]').forEach(button => {
+        button.addEventListener('click', function() {
+            const modal = this.closest('.fixed');
+            modal.classList.add('hidden');
+        });
+    });
+});
+
 
 </script>
 </html>

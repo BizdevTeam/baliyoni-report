@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('it_multimedia_instagrams', function (Blueprint $table) {
             $table->id('id_instagram');
-            $table->string('bulan');
+            $table->string('tanggal');
             $table->string('gambar')->nullable();
             $table->text('keterangan');
             $table->timestamps();

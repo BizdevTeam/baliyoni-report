@@ -1,3 +1,4 @@
+
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -13,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('laporan_tax_planings', function (Blueprint $table) {
             $table->id('id_taxplaning');
-            $table->string('bulan');
+            $table->string('tanggal');
             $table->string('gambar')->nullable();
             $table->string('file_excel')->nullable();
             $table->string('keterangan');

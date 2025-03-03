@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('status_pakets', function (Blueprint $table) {
         $table->id('id_statuspaket');
-        $table->string('bulan');
+        $table->string('tanggal');
         $table->enum('status',[
             'Surat Pesanan',
             'Surat Pertanggungjawaban',

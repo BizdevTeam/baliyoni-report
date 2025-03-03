@@ -9,7 +9,7 @@
         "amenadiel/jpgraph": "^4.1",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
-        "mpdf/mpdf": "^8.2"
+        "mpdf/mpdf": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

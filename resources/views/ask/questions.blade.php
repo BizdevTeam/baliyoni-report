@@ -45,6 +45,36 @@
                         </div>
                     </div>
 
+                    <div class="mx-auto bg-white p-8 rounded-2xl shadow-lg mt-8">
+                        <h2 class="text-2xl font-semibold text-red-600 text-center">Search by Date</h2>
+                    
+                        <form action="{{ route('questions.index') }}" method="GET" class="space-y-6">
+                            <div class="flex space-x-4">
+                                <!-- Start Date -->
+                                <div class="flex-1">
+                                    <label for="start_date" class="text-white mb-2 block">Start Date:</label>
+                                    <input type="date" name="start_date" id="start_date" value="{{ request('start_date') }}"
+                                           class="w-full p-3 rounded-lg border border-gray-300 focus:ring-4 focus:ring-red-400 focus:outline-none">
+                                </div>
+                    
+                                <!-- End Date -->
+                                <div class="flex-1">
+                                    <label for="end_date" class="text-white mb-2 block">End Date:</label>
+                                    <input type="date" name="end_date" id="end_date" value="{{ request('end_date') }}"
+                                           class="w-full p-3 rounded-lg border border-gray-300 focus:ring-4 focus:ring-red-400 focus:outline-none">
+                                </div>
+                            </div>
+                    
+                            <!-- Search Button -->
+                            <div class="flex justify-end">
+                                <button type="submit"
+                                        class="bg-red-500 text-white font-semibold py-3 px-6 rounded-lg hover:bg-red-600 transition duration-300">
+                                    Search
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-[40px] items-center justify-center">
                         <!-- List Questions -->
 
@@ -96,7 +126,7 @@
                                     <form method="POST" action="{{ route('answers.store', $question->id) }}" class="mt-8">
                                         @csrf
                                         <div class="relative flex items-center border rounded p-2">
-                                            <input type="text" name="answer" placeholder="Tambahkan Jawaban..." class="flex-1 border-none focus:outline-none p-2" required>
+                                            <input type="text" name="answer" placeholder="Tambahkan Jawaban / Saran / Masukan " class="flex-1 border-none focus:outline-none p-2" required>
                                             <button type="submit" class=" flex items-center justify-center bg-red-600 text-white py-2 px-4 rounded ml-2">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                                                     <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
@@ -114,7 +144,6 @@
                                                         </path>
                                                     </g>
                                                 </svg>
-                                                Tambah Pertanyaan
                                             </button>
                                         </div>
                                     </form>
@@ -124,7 +153,7 @@
                                         @foreach ($question->answers as $answer)
                                         <div class="flex flex-wrap  p-2 bg-gray-100 rounded mb-2">
                                             <div class="block w-full">
-                                                <p class="block text-sm text-gray-700"><strong>Jawaban:</strong> {{ $answer->answer }}</p>
+                                                <p class="block text-lg text-gray-700">{{ $answer->answer }}</p>
                                             </div>
                                             <!-- Edit Answer Button -->
 
@@ -223,7 +252,7 @@
                                     <!-- Dropdown Options (Perbaikan value yang duplikat) -->
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>
-                                            <label for="asked_by" class="block text-sm font-medium">Asked By:</label>
+                                            <label for="asked_by" class="block text-sm font-medium">Pertanyaan Dari :</label>
                                             <select name="asked_by" id="asked_by" class="w-full border rounded p-2" required>
                                                 <option value="Pimpinan">Pimpinan</option>
                                                 <option value="SPI Operasional">SPI Operasional</option>
@@ -239,7 +268,7 @@
                                         </div>
 
                                         <div>
-                                            <label for="asked_to" class="block text-sm font-medium">Asked To:</label>
+                                            <label for="asked_to" class="block text-sm font-medium"> :</label>
                                             <select name="asked_to" id="asked_to" class="w-full border rounded p-2" required>
                                                 <option value="Pimpinan">Pimpinan</option>
                                                 <option value="SPI Operasional">SPI Operasional</option>

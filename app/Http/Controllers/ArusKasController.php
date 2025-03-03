@@ -3,23 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Models\ArusKas;
+use App\Traits\DateValidationTraitAccSPI;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
 
 class ArusKasController extends Controller
 {
+    use DateValidationTraitAccSPI;
+
     public function index(Request $request)
     { 
         $perPage = $request->input('per_page', 12);
         $search = $request->input('search');
 
-        // Query untuk mencari berdasarkan tahun dan bulan
+        // Query untuk mencari berdasarkan tahun dan date
         $aruskass = ArusKas::query()
             ->when($search, function ($query, $search) {
-                return $query->where('bulan', 'LIKE', "%$search%");
+                return $query->where('tanggal', 'LIKE', "%$search%");
             })
-            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
 
         // Hitung total untuk masing-masing kategori
@@ -43,20 +46,24 @@ class ArusKasController extends Controller
     public function store(Request $request)
     {
         try {
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            $validatedData = $request->validate([
+                'tanggal' => 'required|date',
                 'kas_masuk' => 'required|integer|min:0',
                 'kas_keluar' => 'required|integer|min:0'
             ]);
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
 
-            // Cek kombinasi unik bulan dan perusahaan
-            $exists = ArusKas::where('bulan', $validatedata['bulan'])->exists();
+            // Cek kombinasi unik date dan perusahaan
+            $exists = ArusKas::where('tanggal', $validatedData['tanggal'])->exists();
     
             if ($exists) {
                 return redirect()->back()->with('error', 'Data Already Exists.');
             }
 
-            ArusKas::create($validatedata);
+            ArusKas::create($validatedData);
 
             return redirect()->route('aruskas.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
@@ -66,23 +73,28 @@ class ArusKasController extends Controller
         }
     }
 
-    public function update(Request $request, ArusKas $aruskas)
+    public function update(Request $request, ArusKas $aruska)
     {
         try {
-            $validatedata = $request->validate([
-                'bulan' => 'required|date_format:Y-m',
+            $validatedData = $request->validate([
+                'tanggal' => 'required|date',
                 'kas_masuk' => 'required|integer|min:0',
                 'kas_keluar' => 'required|integer|min:0',
             ]);
 
-            $exists = ArusKas::where('bulan', $validatedata['bulan'])
-                ->where('id_aruskas', '!=', $aruskas->id_aruskas)->exists();
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
+
+            $exists = ArusKas::where('tanggal', $validatedData['tanggal'])
+                ->where('id_aruskas', '!=', $aruska->id_aruskas)->exists();
 
             if ($exists) {
                 return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
             }
     
-            $aruskas->update($validatedata);
+            $aruska->update($validatedData);
     
             return redirect()->route('aruskas.index')->with('success', 'Data Berhasil Diupdate');
         } catch (\Exception $e) {
@@ -131,7 +143,7 @@ class ArusKasController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Accounting|Halaman {PAGENO}');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Accounting - Laporan Arus Kas|');
     
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "
@@ -141,7 +153,7 @@ class ArusKasController extends Controller
                 <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                     <thead>
                         <tr style='background-color: #f2f2f2;'>
-                            <th style='border: 1px solid #000; padding: 5px;'>Bulan/Tahun</th>
+                            <th style='border: 1px solid #000; padding: 5px;'>Tanggal</th>
                             <th style='border: 1px solid #000; padding: 5px;'>Kas Masuk (Rp)</th>
                             <th style='border: 1px solid #000; padding: 5px;'>Kas Keluar (Rp)</th>
                         </tr>
@@ -172,11 +184,10 @@ class ArusKasController extends Controller
     }
 
 
-    public function destroy(ArusKas $aruskas)
+    public function destroy(ArusKas $aruska)
     {
         try {
-            $aruskas->delete();
-
+            $aruska->delete();
             return redirect()->route('aruskas.index')->with('success', 'Data Berhasil Dihapus');
         } catch (\Exception $e) {
             Log::error('Error deleting Arus Kas data: ' . $e->getMessage());
@@ -188,12 +199,12 @@ class ArusKasController extends Controller
     { 
         $search = $request->input('search');
 
-        // Query untuk mencari berdasarkan tahun dan bulan
+        // Query untuk mencari berdasarkan tahun dan date
         $aruskass = ArusKas::query()
             ->when($search, function ($query, $search) {
-                return $query->where('bulan', 'LIKE', "%$search%");
+                return $query->where('tanggal', 'LIKE', "%$search%");
             })
-            ->orderByRaw('YEAR(bulan) DESC, MONTH(bulan) ASC') // Urutkan berdasarkan tahun (descending) dan bulan (ascending)
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->get();
 
         // Hitung total untuk masing-masing kategori

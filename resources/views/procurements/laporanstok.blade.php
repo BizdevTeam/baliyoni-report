@@ -34,6 +34,60 @@
         <!-- Navbar -->
         <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
 
+         <!-- Wrapper Alert -->
+        @if (session('success') || session('error'))
+        <div x-data="{ 
+                showSuccess: {{ session('success') ? 'true' : 'false' }},
+                showError: {{ session('error') ? 'true' : 'false' }}
+            }"
+            x-init="setTimeout(() => showSuccess = false, 3000); setTimeout(() => showError = false, 3000);"
+            class="fixed top-5 right-5 z-50 flex flex-col gap-3">
+    
+            <!-- Success Alert -->
+            @if (session('success'))
+            <div x-show="showSuccess" x-transition.opacity.scale.90
+                class="bg-green-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
+                
+                <!-- Icon -->
+                <span class="text-2xl">✅</span>
+    
+                <!-- Message -->
+                <div>
+                    <h3 class="font-bold">Success!</h3>
+                    <p class="text-sm">{{ session('success') }}</p>
+                </div>
+    
+                <!-- Close Button -->
+                <button @click="showSuccess = false" class="ml-auto text-white text-lg font-bold">
+                    &times;
+                </button>
+            </div>
+            @endif
+    
+            <!-- Error Alert -->
+            @if (session('error'))
+            <div x-show="showError" x-transition.opacity.scale.90
+                class="bg-red-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
+                
+                <!-- Icon -->
+                <span class="text-2xl">⚠️</span>
+    
+                <!-- Message -->
+                <div>
+                    <h3 class="font-bold">Error!</h3>
+                    <p class="text-sm">{{ session('error') }}</p>
+                </div>
+    
+                <!-- Close Button -->
+                <button @click="showError = false" class="ml-auto text-white text-lg font-bold">
+                    &times;
+                </button>
+            </div>
+            @endif
+    
+        </div>
+        @endif
+
         <!-- Main Content -->
         <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
             <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan Stok</h1>
@@ -42,7 +96,7 @@
                 <!-- Search -->
                 <form method="GET" action="{{ route('laporanstok.index') }}" class="flex items-center gap-2">
                     <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
-                        <input type="month" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}"
+                        <input type="date" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}"
                             class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
                     </div>
 
@@ -71,24 +125,12 @@
             <div id="formContainer" class="hidden">
                 <div class="mx-auto bg-white p-6 rounded-lg shadow">
 
-                    <!-- Success Message -->
-                    @if (session('success'))
-                    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">
-                        {{ session('success') }}
-                    </div>
-                    @endif
-                    @if (session('error'))
-                    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
-                        {{ session('error') }}
-                    </div>
-                    @endif
-
         <!-- Event Table -->
         <div class="overflow-x-auto bg-white shadow-md">
             <table class="table-auto w-full border-collapse border border-gray-300" id="data-table">
                 <thead class="bg-gray-200">
                     <tr>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Bulan/Tahun</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Total Nilai Stok</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Aksi</th>
                     </tr>
@@ -96,7 +138,7 @@
                 <tbody>
                     @foreach ($laporanstoks as $laporanstok)
                         <tr class="hover:bg-gray-100">
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanstok->bulan_formatted }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanstok->tanggal_formatted }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanstok->stok_formatted }}</td>
                             <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
                                 <!-- Edit Button -->
@@ -125,8 +167,8 @@
                                     @method('PUT')
                                     <div class="space-y-4">
                                         <div>
-                                            <label for="bulan" class="block text-sm font-medium">Bulan/Tahun</label>
-                                            <input type="month" name="bulan" class="w-full p-2 border rounded" value="{{ $laporanstok->bulan }}" required>
+                                            <label for="tanggal" class="block text-sm font-medium">Tanggal/Tahun</label>
+                                            <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $laporanstok->tanggal }}" required>
                                         </div>
                                         <div>
                                             <label for="stok" class="block text-sm font-medium">Total Stok</label>
@@ -237,8 +279,8 @@
             @csrf
             <div class="space-y-4">
                 <div>
-                    <label for="bulan" class="block text-sm font-medium">Bulan/Tahun</label>
-                    <input type="month" name="bulan" class="w-full p-2 border rounded" required>
+                    <label for="tanggal" class="block text-sm font-medium">Tanggal/Tahun</label>
+                    <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
                 </div>
                 <div>
                     <label for="stok" class="block text-sm font-medium">Total Stok</label>
@@ -254,6 +296,7 @@
 </div>
 
 </body>
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <script>
     //toogle form
     const toggleFormButton = document.getElementById('toggleFormButton');
@@ -294,15 +337,16 @@
             modal.classList.add('hidden'); // Menyembunyikan modal
         });
     });
-
+   
     var chartData = @json($chartData);
 
     var ctx = document.getElementById('chart').getContext('2d');
+
     var barChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: chartData.labels, // Label bulan
-            datasets: chartData.datasets, // Dataset total penjualan
+            labels: chartData.labels, // Label tanggal
+            datasets: chartData.datasets, // Data total penjualan
         },
         options: {
             responsive: true,
@@ -314,7 +358,7 @@
                     callbacks: {
                         label: function(tooltipItem) {
                             let value = tooltipItem.raw; // Ambil data nilai
-                            return tooltipItem.dataset.text + ': ' + value.toLocaleString(); // Format angka
+                            return tooltipItem.dataset.label + ' : ' + 'Rp ' + value.toLocaleString(); // Format angka
                         },
                     },
                 },
@@ -332,12 +376,27 @@
                     },
                     ticks: {
                         callback: function(value) {
-                            return value.toLocaleString(); // Format angka
+                            return 'Rp ' + value.toLocaleString(); // Format angka
                         },
                     },
                 },
             },
         },
+        plugins: [{
+            afterDatasetsDraw: function(chart) {
+                var ctx = chart.ctx;
+                chart.data.datasets.forEach((dataset, i) => {
+                    var meta = chart.getDatasetMeta(i);
+                    meta.data.forEach((bar, index) => {
+                        var value = dataset.data[index];
+                        ctx.fillStyle = 'black'; // Warna teks
+                        ctx.font = 'bold 15px sans-serif'; // Ukuran teks
+                        ctx.textAlign = 'center';
+                        ctx.fillText('Rp ' + value.toLocaleString(), bar.x, bar.y - 10); // Tampilkan di atas bar
+                    });
+                });
+            }
+        }]
     });
 
     async function exportToPDF() {
@@ -351,17 +410,17 @@
     const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
         const cells = row.querySelectorAll('td');
         return {
-            bulan: cells[0]?.innerText.trim() || '',
-            stok: cells[1]?.innerText.trim() || '',
+            tanggal_formatted: cells[0]?.innerText.trim() || '',
+            stok_formatted: cells[1]?.innerText.trim() || '',
         };
     });
 
     const tableContent = items
-        .filter(item => item.bulan && item.stok)
+        .filter(item => item.tanggal_formatted && item.stok_formatted)
         .map(item => `
             <tr>
-                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.bulan}</td>
-                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.stok}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.tanggal_formatted}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.stok_formatted}</td>
             </tr>
         `).join('');
 

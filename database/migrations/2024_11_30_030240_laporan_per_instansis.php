@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('laporan_per_instansis', function (Blueprint $table) {
             $table->id('id_perinstansi');
-            $table->string('bulan');
+            $table->string('tanggal');
             $table->enum('instansi',[
                 'Badung',
                 'Denpasar',
@@ -29,7 +29,7 @@ return new class extends Migration
             $table->bigInteger('nilai');
             $table->timestamps();
 
-            $table->unique(['bulan', 'instansi']);
+            $table->unique(['tanggal', 'instansi']);
         });
     }
 
