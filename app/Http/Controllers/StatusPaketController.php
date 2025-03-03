@@ -270,7 +270,7 @@ class StatusPaketController extends Controller
         ->when($search, function ($query, $search) {
             return $query->where('tanggal', 'LIKE', "%$search%");
         })
-        ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC'); // Urutkan berdasarkan tahun (descending) dan date (ascending)
+        ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC'); // Urutkan berdasarkan tahun (descending) dan date (ascending)
     
         // Format label sesuai kebutuhan
         $labels = $statuspakets->pluck('status')->toArray();

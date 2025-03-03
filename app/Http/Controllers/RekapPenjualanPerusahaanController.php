@@ -67,74 +67,61 @@ class RekapPenjualanPerusahaanController extends Controller
         public function store(Request $request)
         {
             try {
-            // Konversi tanggal agar selalu dalam format Y-m-d
-            if ($request->has('tanggal')) {
-                try {
-                    $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
-                } catch (\Exception $e) {
-                    return redirect()->back()->with('error', 'Format tanggal tidak valid.');
-                }
-            }
-
+                // Validasi input
                 $validatedData = $request->validate([
                     'tanggal' => 'required|date',
                     'perusahaan_id' => 'required|exists:perusahaans,id',
                     'total_penjualan' => 'required|integer|min:0',
                 ]);
-    
+
+                // Validasi tanggal menggunakan trait
                 $errorMessage = '';
                 if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                     return redirect()->back()->with('error', $errorMessage);
                 }
 
                 // Cek kombinasi unik date dan perusahaan_id
-                $exists = RekapPenjualanPerusahaan::where('tanggal', $request->date)
-                    ->where('perusahaan_id', $request->perusahaan_id)
+                $exists = RekapPenjualanPerusahaan::where('tanggal', $validatedData['tanggal'])
+                    ->where('perusahaan_id', $validatedData['perusahaan_id'])
                     ->exists();
-    
+
                 if ($exists) {
-                    return redirect()->back()->with('error', 'Data untuk date dan perusahaan ini sudah ada');
+                    return redirect()->back()->with('error', 'Data sudah ada.');
                 }
-    
+
+                // Simpan ke database
                 RekapPenjualanPerusahaan::create($validatedData);
                 return redirect()->route('rekappenjualanperusahaan.index')->with('success', 'Data Berhasil Ditambahkan');
+
             } catch (\Exception $e) {
                 Log::error('Error Storing Laporan Holding Data: ' . $e->getMessage());
                 return redirect()->route('rekappenjualanperusahaan.index')->with('error', 'Terjadi Kesalahan: ' . $e->getMessage());
             }
         }
-    
 
     public function update(Request $request, RekapPenjualanPerusahaan $rekappenjualanperusahaan)
     {
-        try {
-            // Konversi tanggal agar selalu dalam format Y-m-d
-            if ($request->has('tanggal')) {
-                try {
-                    $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
-                } catch (\Exception $e) {
-                    return redirect()->back()->with('error', 'Format tanggal tidak valid.');
-                }
-            }
+        try {   
+            // Validasi input
+            $validatedData = $request->validate([
+                'tanggal' => 'required|date',
+                'perusahaan_id' => 'required|exists:perusahaans,id',
+                'total_penjualan' => 'required|integer|min:0',
+            ]);
 
-                $validatedData = $request->validate([
-                    'tanggal' => 'required|date',
-                    'perusahaan_id' => 'required|exists:perusahaans,id',
-                    'total_penjualan' => 'required|integer|min:0',
-                ]);
-
+            // Validasi tanggal menggunakan trait
             $errorMessage = '';
             if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
 
-            $exists = RekapPenjualanPerusahaan::where('tanggal', $request->date)
-                ->where('perusahaan_id', $request->perusahaan_id)
-                ->where('id', '!=', $rekappenjualanperusahaan->id) // Menggunakan model binding
+            // Cek kombinasi unik date dan perusahaan_id
+            $exists = RekapPenjualanPerusahaan::where('tanggal', $validatedData['tanggal'])
+                ->where('perusahaan_id', $validatedData['perusahaan_id'])
                 ->exists();
 
             if ($exists) {
-                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
+                return redirect()->back()->with('error', 'Tidak dapat diubah, data untuk tanggal dan perusahaan ini sudah ada.');
             }
     
             // Update data
@@ -256,7 +243,7 @@ class RekapPenjualanPerusahaanController extends Controller
         ->when($search, function ($query, $search) {
             return $query->where('tanggal', 'LIKE', "%$search%");
         })
-        ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Order by year (desc) and month (asc)
+        ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Order by year (desc) and month (asc)
         ->get();  
 
         // Siapkan data untuk chart

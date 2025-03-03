@@ -265,7 +265,7 @@ class LaporanPerInstansiController extends Controller
     public function showChart()
     {
         // Ambil data dari database
-        $laporanperinstansis = LaporanPerInstansi::orderByRaw('YEAR(date) DESC, MONTH(date) ASC')->get();
+        $laporanperinstansis = LaporanPerInstansi::orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')->get();
     
         // Siapkan data untuk chart
         $labels = $laporanperinstansis->map(function($item) {

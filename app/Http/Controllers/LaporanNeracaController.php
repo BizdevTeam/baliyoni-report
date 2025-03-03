@@ -222,7 +222,7 @@ class LaporanNeracaController extends Controller
         $images = LaporanNeraca::select('gambar')
             ->whereNotNull('gambar')
             ->when($search, function ($query, $search) {
-                return $query->where('date', 'like', "%$search%");
+                return $query->where('tanggal', 'like', "%$search%");
             })
             ->get()
             ->map(function ($item) {

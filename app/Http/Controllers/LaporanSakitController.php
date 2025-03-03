@@ -243,7 +243,7 @@ class LaporanSakitController extends Controller
     public function showChart()
     {
         // Ambil data dari database
-        $laporansakits = LaporanSakit::orderByRaw('YEAR(date) DESC, MONTH(date) ASC')->get();
+        $laporansakits = LaporanSakit::orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')->get();
     
         // Siapkan data untuk chart
         $labels = $laporansakits->pluck('nama')->toArray();

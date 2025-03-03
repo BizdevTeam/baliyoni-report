@@ -136,7 +136,7 @@
                 <tbody>
                     @foreach ($laporanspitis as $laporanspiti)
                         <tr class="hover:bg-gray-100">
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanspiti->date_formatted }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanspiti->tanggal_formatted }}</td>
                             <td class="border border-gray-300 px-4 py-2 content-html align-top text-justify">{!! $laporanspiti->aspek !!}</td>
                             <td class="border border-gray-300 px-4 py-2 content-html align-top text-justify">{!! $laporanspiti->masalah !!}</td>
                             <td class="border border-gray-300 px-4 py-2 content-html align-top text-justify">{!! $laporanspiti->solusi !!}</td>
@@ -174,9 +174,9 @@
                         @method('PUT')
                         <div class="space-y-4">
                             <div>
-                                <label for="date" class="block text-sm font-medium">Tanggal</label>
-                                <input type="hidden" name="date" id="edit-{{ $laporanspiti->id_spiti }}-date-input" value="{{ $laporanspiti->date }}">
-                                <div id="edit-{{ $laporanspiti->id_spiti }}-date"></div>                            
+                                <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                                <input type="hidden" name="tanggal" id="edit-{{ $laporanspiti->id_spiti }}-tanggal-input" value="{{ $laporanspiti->tanggal }}">
+                                <div id="edit-{{ $laporanspiti->id_spiti }}-tanggal"></div>                            
                             </div>
                             <div>
                                 <label for="aspek" class="block text-sm font-medium">Aspek</label>
@@ -298,8 +298,8 @@
                 @csrf
                 <div class="space-y-4">
                     <div>
-                        <label for="date" class="block text-sm font-medium">Bulan</label>
-                        <input type="date" name="date" class="w-full p-2 border rounded" required>
+                        <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                        <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
                     </div>
                     <div>
                         <label for="aspek" class="block text-sm font-medium">Aspek</label>
@@ -396,7 +396,7 @@ async function exportToPDF() {
     const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
         const cells = row.querySelectorAll('td');
         return {
-                date: cells[0]?.innerText.trim() || '',
+                tanggal: cells[0]?.innerText.trim() || '',
                 aspek: cells[1]?.innerText.trim() || '',
                 masalah: cells[2]?.innerText.trim() || '',
                 solusi: cells[3]?.innerText.trim() || '',
@@ -405,10 +405,10 @@ async function exportToPDF() {
     });
 
     const tableContent = items
-        .filter(item => item.date && item.aspek && item.masalah && item.solusi && item.implementasi)
+        .filter(item => item.tanggal && item.aspek && item.masalah && item.solusi && item.implementasi)
         .map(item => `
             <tr>
-                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.date}</td>
+                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.tanggal}</td>
                     <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.aspek}</td>
                     <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.masalah}</td>
                     <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.solusi}</td>

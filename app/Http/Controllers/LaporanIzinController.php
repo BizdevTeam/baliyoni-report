@@ -250,7 +250,7 @@ class LaporanIzinController extends Controller
     public function showChart()
     {
         // Ambil data dari database
-        $laporanizins = LaporanIzin::orderByRaw('YEAR(date) DESC, MONTH(date) ASC')->get();
+        $laporanizins = LaporanIzin::orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')->get();
     
         // Siapkan data untuk chart
         $labels = $laporanizins->pluck('nama')->toArray();

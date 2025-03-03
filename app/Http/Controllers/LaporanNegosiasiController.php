@@ -253,7 +253,7 @@ class LaporanNegosiasiController extends Controller
         ->when($search, function ($query, $search) {
             return $query->where('tanggal', 'LIKE', "%$search%");
         })
-        ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Order by year (desc) and month (asc)
+        ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Order by year (desc) and month (asc)
         ->get();  
 
         // Siapkan data untuk chart

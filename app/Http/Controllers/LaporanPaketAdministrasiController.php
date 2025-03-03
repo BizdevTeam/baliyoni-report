@@ -66,14 +66,7 @@ class LaporanPaketAdministrasiController extends Controller
     public function store(Request $request)
     {
         try {
-            // Konversi tanggal agar selalu dalam format Y-m-d
-            if ($request->has('tanggal')) {
-                try {
-                    $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
-                } catch (\Exception $e) {
-                    return redirect()->back()->with('error', 'Format tanggal tidak valid.');
-                }
-            }
+            // Validasi input
             $validatedData = $request->validate([
                 'tanggal' => 'required|date',
                 'website' => [
@@ -98,12 +91,12 @@ class LaporanPaketAdministrasiController extends Controller
             ->where('website', $validatedData['website'])->exists();
             
             if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
+                return redirect()->back()->with('error', 'Data sudah ada.');
             }
     
             LaporanPaketAdministrasi::create($validatedData);
-    
             return redirect()->route('laporanpaketadministrasi.index')->with('success', 'Data Berhasil Ditambahkan');
+
         } catch (\Exception $e) {
             Log::error('Error Storing Rekap Penjualan Data: ' . $e->getMessage());
             Log::info('Perusahaan input:', [$request->input('website')]);
@@ -139,7 +132,7 @@ class LaporanPaketAdministrasiController extends Controller
             ->where('id_laporanpaket', '!=', $laporanpaketadministrasi->id_laporanpaket)->exists();
 
             if ($exists) {
-                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
+                return redirect()->back()->with('error', 'Tidak dapat diubah, data sudah ada.');
             }
     
             // Update data
@@ -272,7 +265,7 @@ class LaporanPaketAdministrasiController extends Controller
         ->when($search, function ($query, $search) {
             return $query->where('tanggal', 'LIKE', "%$search%");
         })
-        ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Order by year (desc) and month (asc)
+        ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Order by year (desc) and month (asc)
         ->get();  
     // Siapkan data untuk chart
     $labels = $laporanpaketadministrasis->pluck('website')->toArray();

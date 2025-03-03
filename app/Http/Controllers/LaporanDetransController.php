@@ -276,43 +276,58 @@ class LaporanDetransController extends Controller
     }
 
     public function showChart(Request $request)
-    {
-        $search = $request->input('search');
+{
+    $search = $request->input('search');
 
-        // Ambil data dari database
-        $laporandetrans = LaporanDetrans::query()
+    // Ambil data dari database
+    $laporandetrans = LaporanDetrans::query()
         ->when($search, function ($query, $search) {
             return $query->where('tanggal', 'LIKE', "%$search%");
         })
-        ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC') // Order by year (desc) and month (asc)
-        ->get();  
+        ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
+        ->get();
 
-        // Siapkan data untuk chart
-        $labels = $laporandetrans->map(function ($item) {
-            return \Carbon\Carbon::parse($item->date)->translatedFormat('F - Y');
-        })->toArray();
+    // Hitung total pengiriman
+    $months = $laporandetrans->sortBy('tanggal')->map(function ($item) {
+        return \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F - Y');
+    })->unique()->values()->toArray();
     
-        $data = $laporandetrans->pluck('total_pengiriman')->toArray();
-        $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data);
+    // Kelompokkan data berdasarkan pelaksana dan bulan
+    $groupedData = [];
+    foreach ($laporandetrans as $item) {
+        $month = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F - Y');
+        $groupedData[$item->pelaksana][$month] = $item->total_pengiriman;
+    }
     
-        $chartData = [
-            'labels' => $labels,
-            'datasets' => [
-                [
-                    'label' => 'Total Paket',
-                    'data' => $data,
-                    'backgroundColor' => $backgroundColors,
-                ],
-            ],
+    // Siapkan warna untuk setiap pelaksana
+    $colorMap = [
+        'Pengiriman Daerah Bali (SAMITRA)' => 'rgba(255, 0, 0, 0.7)',
+        'Pengiriman Luar Daerah (DETRANS)' => 'rgba(0, 0, 0, 0.7)',
+    ];
+    $defaultColor = 'rgba(128, 128, 128, 0.7)';
+    
+    // Bangun datasets
+    $datasets = [];
+    foreach ($groupedData as $pelaksana => $monthData) {
+        $data = [];
+        foreach ($months as $month) {
+            $data[] = $monthData[$month] ?? 0; // Isi 0 jika tidak ada data di bulan tertentu
+        }
+        
+        $datasets[] = [
+            'label' => $pelaksana,
+            'data' => $data,
+            'backgroundColor' => $colorMap[$pelaksana] ?? $defaultColor,
         ];
+    }
     
-        // Kembalikan data dalam format JSON
-        return response()->json($chartData);
-    }
-    private function getRandomRGBAA($opacity = 0.7)
-    {
-        return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
-    }
-
+    $chartData = [
+        'labels' => $months,
+        'datasets' => $datasets,
+    ];
+    
+    // Kembalikan data dalam format JSON
+    return response()->json($chartData);
+}
 }
 

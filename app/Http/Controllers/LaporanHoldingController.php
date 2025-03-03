@@ -260,7 +260,7 @@ class LaporanHoldingController extends Controller
                                  $q->where('nama_perusahaan', 'LIKE', "%$search%");
                              });
             })
-            ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC')
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
             ->get();
 
         $labels = $laporanholdings->map(function ($item) {

@@ -249,7 +249,7 @@ class LaporanCutiController extends Controller
     public function showChart()
     {
         // Ambil data dari database
-        $laporancutis = LaporanCuti::orderByRaw('YEAR(date) DESC, MONTH(date) ASC')->get();
+        $laporancutis = LaporanCuti::orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')->get();
     
         // Siapkan data untuk chart
         $labels = $laporancutis->pluck('nama')->toArray();

@@ -258,7 +258,7 @@ class LaporanTerlambatController extends Controller
     public function showChart()
     {
         // Ambil data dari database
-        $laporanterlambats = LaporanTerlambat::orderByRaw('YEAR(date) DESC, MONTH(date) ASC')->get();
+        $laporanterlambats = LaporanTerlambat::orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')->get();
     
         // Siapkan data untuk chart
         $labels = $laporanterlambats->pluck('nama')->toArray();
