@@ -68,14 +68,7 @@ class LaporanHoldingController extends Controller
     public function store(Request $request)
     {
         try {
-            if ($request->has('tanggal')) {
-                try {
-                    $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
-                } catch (\Exception $e) {
-                    return redirect()->back()->with('error', 'Format tanggal tidak valid.');
-                }
-            }
-
+            // Validasi input
             $validatedData = $request->validate([
                 'tanggal' => 'required|date',
                 'perusahaan_id' => 'required|exists:perusahaans,id',
@@ -107,15 +100,7 @@ class LaporanHoldingController extends Controller
     public function update(Request $request, LaporanHolding $laporanholding)
     {
         try {
-
-            if ($request->has('tanggal')) {
-                try {
-                    $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
-                } catch (\Exception $e) {
-                    return redirect()->back()->with('error', 'Format tanggal tidak valid.');
-                }
-            }
-
+            // Validasi input
             $validatedData = $request->validate([
                 'tanggal' => 'required|date',
                 'perusahaan_id' => 'required|exists:perusahaans,id',

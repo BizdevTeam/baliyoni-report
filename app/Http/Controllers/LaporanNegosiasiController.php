@@ -62,15 +62,7 @@ class LaporanNegosiasiController extends Controller
     public function store(Request $request)
     {
         try {
-            // Konversi tanggal agar selalu dalam format Y-m-d
-            if ($request->has('tanggal')) {
-                try {
-                    $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
-                } catch (\Exception $e) {
-                    return redirect()->back()->with('error', 'Format tanggal tidak valid.');
-                }
-            }
-
+            //validasi input
             $validatedData = $request->validate([
                 'tanggal' => 'required|date',
                 'total_negosiasi' => 'required|integer|min:0'
@@ -99,14 +91,6 @@ class LaporanNegosiasiController extends Controller
     public function update(Request $request, LaporanNegosiasi $laporannegosiasi)
     {
         try {
-              // Konversi tanggal agar selalu dalam format Y-m-d
-              if ($request->has('tanggal')) {
-                try {
-                    $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
-                } catch (\Exception $e) {
-                    return redirect()->back()->with('error', 'Format tanggal tidak valid.');
-                }
-            }
             // Validasi input
             $validatedData = $request->validate([
                 'tanggal' => 'required|date',

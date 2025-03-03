@@ -91,15 +91,6 @@ class LaporanOutletController extends Controller
     public function update(Request $request, LaporanOutlet $laporanoutlet)
     {
         try {
-            // Konversi tanggal agar selalu dalam format Y-m-d
-            if ($request->has('tanggal')) {
-                try {
-                    $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
-                } catch (\Exception $e) {
-                    return redirect()->back()->with('error', 'Format tanggal tidak valid.');
-                }
-            }
-
             // Validasi input
             $validatedData = $request->validate([
                 'tanggal' => 'required|date',
