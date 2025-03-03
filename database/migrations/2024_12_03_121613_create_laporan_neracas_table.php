@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('laporan_neracas', function (Blueprint $table) {
             $table->id('id_neraca');
-            $table->string('date');
+            $table->string('tanggal');
             $table->string('gambar')->nullable();
             $table->string('file_excel')->nullable();
             $table->string('keterangan');

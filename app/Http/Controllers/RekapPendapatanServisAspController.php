@@ -62,15 +62,7 @@ class RekapPendapatanServisAspController extends Controller
     public function store(Request $request)
     {
         try {
-               // Konversi tanggal agar selalu dalam format Y-m-d
-               if ($request->has('tanggal')) {
-                try {
-                    $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
-                } catch (\Exception $e) {
-                    return redirect()->back()->with('error', 'Format tanggal tidak valid.');
-                }
-            }
-
+            // Validasi input
             $validatedData = $request->validate([
                 'tanggal' => 'required|date',
                 'pelaksana' => [
@@ -96,18 +88,13 @@ class RekapPendapatanServisAspController extends Controller
             ->where('pelaksana', $validatedData['pelaksana'])
             ->exists();
 
-            if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
-            }
-    
-
             // Cek kombinasi unik date dan perusahaan
             $exists = RekapPendapatanServisAsp::where('tanggal', $validatedData['tanggal'])
             ->where('pelaksana', $validatedData['pelaksana'])
             ->exists();
 
             if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
+                return redirect()->back()->with('error', 'Data sudah ada.');
             }
     
             RekapPendapatanServisAsp::create($validatedData);
@@ -127,14 +114,6 @@ class RekapPendapatanServisAspController extends Controller
     public function update(Request $request, RekapPendapatanServisAsp $rekappendapatanservisasp)
     {
         try {
-              // Konversi tanggal agar selalu dalam format Y-m-d
-              if ($request->has('tanggal')) {
-                try {
-                    $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
-                } catch (\Exception $e) {
-                    return redirect()->back()->with('error', 'Format tanggal tidak valid.');
-                }
-            }
             // Validasi input
             $validatedData = $request->validate([
                 'tanggal' => 'required|date',

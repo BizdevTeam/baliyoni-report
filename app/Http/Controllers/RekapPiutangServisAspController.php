@@ -62,15 +62,6 @@ class RekapPiutangServisAspController extends Controller
 
     public function store(Request $request)
     {
-        // Konversi tanggal agar selalu dalam format Y-m-d
-        if ($request->has('tanggal')) {
-            try {
-                $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
-            } catch (\Exception $e) {
-                return redirect()->back()->with('error', 'Format tanggal tidak valid.');
-            }
-        }
-
         try {
             $validatedData = $request->validate([
                 'tanggal' => 'required|date',
@@ -97,7 +88,7 @@ class RekapPiutangServisAspController extends Controller
             ->exists();
 
             if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
+                return redirect()->back()->with('error', 'Data sudah ada.');
             }
     
             RekapPiutangServisAsp::create($validatedData);
@@ -117,14 +108,6 @@ class RekapPiutangServisAspController extends Controller
     public function update(Request $request, RekapPiutangServisAsp $rekappiutangservisasp)
     {
         try {
-            // Konversi tanggal agar selalu dalam format Y-m-d
-            if ($request->has('tanggal')) {
-            try {
-                $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
-            } catch (\Exception $e) {
-                return redirect()->back()->with('error', 'Format tanggal tidak valid.');
-                }
-            }
             // Validasi input
             $validatedData = $request->validate([
                 'tanggal' => 'required|date',
@@ -138,7 +121,6 @@ class RekapPiutangServisAspController extends Controller
                     'CV. ELKA MANDIRI (50%)-DETRAN'
                 ]),
             ],
-
                 'nilai_piutang' => 'required|integer|min:0',
             ]);
 
@@ -152,7 +134,7 @@ class RekapPiutangServisAspController extends Controller
             ->where('id_rpiutangsasp', '!=', $rekappiutangservisasp->id_rpiutangsasp)->exists();
 
             if ($exists) {
-                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
+                return redirect()->back()->with('error', 'TIdak dapat diubah, data sudah ada.');
             }
     
             // Update data
