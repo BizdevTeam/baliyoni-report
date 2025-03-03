@@ -61,14 +61,7 @@ class LaporanPerInstansiController extends Controller
     public function store(Request $request)
     {
         try {
-                      // Konversi tanggal agar selalu dalam format Y-m-d
-            if ($request->has('tanggal')) {
-                try {
-                    $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
-                } catch (\Exception $e) {
-                    return redirect()->back()->with('error', 'Format tanggal tidak valid.');
-                }
-            }
+            // Validasi input
             $validatedData = $request->validate([
                 'tanggal' => 'required|date',
                 'instansi' => [
@@ -99,7 +92,7 @@ class LaporanPerInstansiController extends Controller
             ->where('instansi', $validatedData['instansi'])->exists();
             
             if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
+                return redirect()->back()->with('error', 'Data sudah ada.');
             }
     
             LaporanPerInstansi::create($validatedData);
@@ -146,7 +139,7 @@ class LaporanPerInstansiController extends Controller
             ->where('id_perinstansi', '!=', $laporanperinstansi->id_perinstansi)->exists();
 
             if ($exists) {
-                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
+                return redirect()->back()->with('error', 'TIdak dapat diubah, data sudah ada.');
             }
     
             // Update data

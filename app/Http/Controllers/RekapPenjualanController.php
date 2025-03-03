@@ -141,7 +141,7 @@ class RekapPenjualanController extends Controller
                 ->exists();
     
             if ($exists) {
-                return redirect()->back()->with('error', 'Data dengan tanggal tersebut sudah ada.');
+                return redirect()->back()->with('error', 'TIdak dapat diubah, data sudah ada.');
             }
     
             // Update data
