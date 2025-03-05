@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ArusKasController;
+use App\Http\Controllers\EvaluasiController;
 use App\Http\Controllers\ExportAllController;
 use App\Http\Controllers\LaporanPpnController;
 use App\Http\Controllers\LaporanCutiController;
@@ -247,6 +248,9 @@ Route::middleware(['web'])->group(function () {
         Route::put('/answers/{id}', [QuestionController::class, 'updateAnswer'])->name('answers.update');
         Route::delete('/answers/{id}', [QuestionController::class, 'destroyAnswer'])->name('answers.destroy');
         Route::patch('/questions/{id}/toggle-close', [QuestionController::class, 'toggleClose'])->name('questions.toggle-close');
+    });
+    Route::prefix('evaluasi')->group(function () {
+        Route::resource('evaluasi', EvaluasiController::class);
     });
     
     Route::get('/rekap-penjualan', [PerusahaanController::class, 'penjualanPerusahaan'])->name('rekap.penjualan');

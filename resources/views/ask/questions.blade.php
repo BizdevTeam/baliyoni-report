@@ -49,56 +49,52 @@
                         <h2 class="text-2xl font-semibold text-red-600 text-center">Search by Date</h2>
                     
                         <form action="{{ route('questions.index') }}" method="GET" class="space-y-6">
-                            <div class="flex space-x-4">
+                            <div class="flex items-end gap-4">
                                 <!-- Start Date -->
                                 <div class="flex-1">
-                                    <label for="start_date" class="text-white mb-2 block">Start Date:</label>
+                                    <label for="start_date" class="text-gray-700 mb-2 block">Start Date:</label>
                                     <input type="date" name="start_date" id="start_date" value="{{ request('start_date') }}"
                                            class="w-full p-3 rounded-lg border border-gray-300 focus:ring-4 focus:ring-red-400 focus:outline-none">
                                 </div>
-                    
                                 <!-- End Date -->
                                 <div class="flex-1">
-                                    <label for="end_date" class="text-white mb-2 block">End Date:</label>
+                                    <label for="end_date" class="text-gray-700 mb-2 block">End Date:</label>
                                     <input type="date" name="end_date" id="end_date" value="{{ request('end_date') }}"
                                            class="w-full p-3 rounded-lg border border-gray-300 focus:ring-4 focus:ring-red-400 focus:outline-none">
                                 </div>
-                            </div>
-                    
-                            <!-- Search Button -->
-                            <div class="flex justify-end">
-                                <button type="submit"
-                                        class="bg-red-500 text-white font-semibold py-3 px-6 rounded-lg hover:bg-red-600 transition duration-300">
-                                    Search
-                                </button>
+                                <!-- Search Button -->
+                                <div>
+                                    <button type="submit"
+                                            class="bg-red-500 text-white font-semibold py-3 px-6 rounded-lg hover:bg-red-600 transition duration-300">
+                                        Search
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     </div>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-[40px] items-center justify-center">
-                        <!-- List Questions -->
-
-                        <div id="questionId" class=" items-center">
-                            @foreach ($questions as $question)
-                            <div class="p-4 border rounded mb-4 shadow">
-                                <div class="flex flex-wrap">
-                                    <div class="block w-full">
-                                        <h2 class="block text-lg font-bold text-gray-800">Question: {{ $question->question }}</h2>
-                                        <p class="block text-sm text-gray-600">Asked By: {{ $question->asked_by }} | Asked To: {{ $question->asked_to }}</p>
-                                        <p class="block text-sm text-gray-600">Created At: {{ $question->created_at->format('l, j F Y H:i:s') }}</p>
+                    <div class="w-full">
+                        <div class="grid grid-cols-1 gap-4 mt-10 w-full">
+                            <div id="questionId" class="w-full">
+                                @foreach ($questions as $question)
+                                <div class="p-4 border rounded-lg shadow-md bg-white w-full mb-6">
+                                    <div class="w-full">
+                                        <h2 class="text-lg font-bold text-gray-800">Question: {{ $question->question }}</h2>
+                                        <p class="text-sm text-gray-600">Asked By: {{ $question->asked_by }} | Asked To: {{ $question->asked_to }}</p>
+                                        <p class="text-sm text-gray-600">Created At: {{ $question->created_at->format('l, j F Y H:i:s') }}</p>
                                     </div>
-
+                                    
                                     <!-- Form Edit Pertanyaan -->
-                                    <form method="POST" action="{{ route('questions.update', $question->id) }}" id="edit-question-{{ $question->id }}" class="hidden w-full bg-white shadow-md rounded-lg p-4 mt-4 mb-4">
+                                    <form method="POST" action="{{ route('questions.update', $question->id) }}" id="edit-question-{{ $question->id }}" class="hidden w-full bg-gray-50 shadow-md rounded-lg p-4 mt-4">
                                         @csrf
                                         @method('PUT')
-                                        <textarea name="question" class="w-full border rounded p-2" required>{{ $question->question }}</textarea>
-                                        <button type="submit" class="mt-2 bg-green-600 text-white py-1 px-4 rounded">Simpan</button>
+                                        <textarea name="question" class="w-full border rounded p-2 focus:ring focus:ring-green-400" required>{{ $question->question }}</textarea>
+                                        <button type="submit" class="mt-2 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700">Simpan</button>
                                     </form>
-
-                                    <!-- Edit Question Button -->
-                                    <div class="flex justify-end w-full gap-2">
-                                        <button onclick="toggleForm('edit-question-{{ $question->id }}')" class="flex items-center gap-2 bg-blue-600 text-white py-2 px-4 rounded">
+                                    
+                                    <!-- Edit & Delete Buttons -->
+                                    <div class="flex justify-end gap-2 mt-2">
+                                        <button onclick="toggleForm('edit-question-{{ $question->id }}')" class="text-red-500 py-2 px-4 rounded">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                                                 <path fill="currentColor" d="M6 22q-.825 0-1.412-.587T4 20V4q0-.825.588-1.412T6 2h8l6 6v3q-.575.125-1.075.4t-.925.7l-6 5.975V22zm8 0v-3.075l5.525-5.5q.225-.225.5-.325t.55-.1q.3 0 .575.113t.5.337l.925.925q.2.225.313.5t.112.55t-.1.563t-.325.512l-5.5 5.5zm6.575-5.6l.925-.975l-.925-.925l-.95.95zM13 9h5l-5-5l5 5l-5-5z"/>
                                             </svg>
@@ -106,114 +102,76 @@
                                         <form method="POST" action="{{ route('questions.destroy', $question->id) }}">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="flex items-center gap-2 bg-red-600 text-white py-2 px-4  rounded">
+                                            <button type="submit" class="text-red-600 py-2 px-4 rounded" onclick="return confirm('Apakah Anda yakin ingin menghapus pertanyaan ini?')">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                                                     <path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z"/>
                                                 </svg>
+                                            </button>
                                         </form>
                                     </div>
-                                </div>
-
-                                <!-- Toggle button to show/hide answers -->
-                                <div class="flex justify-start items-center mt-4">
-                                    <button onclick="toggleAnswerSection('answers-{{ $question->id }}')" class=" flex text-red-600 content-end end-0 text-end font-semibold hover:underline">
-                                        Tampilkan Jawaban                                    
-                                    </button>
-                                </div>
-
-                                <!-- Answers Section (hidden by default) -->
-                                <div id="answers-{{ $question->id }}" class="mt-8 hidden">
-                                    <form method="POST" action="{{ route('answers.store', $question->id) }}" class="mt-8">
-                                        @csrf
-                                        <div class="relative flex items-center border rounded p-2">
-                                            <input type="text" name="answer" placeholder="Tambahkan Jawaban / Saran / Masukan " class="flex-1 border-none focus:outline-none p-2" required>
-                                            <button type="submit" class=" flex items-center justify-center bg-red-600 text-white py-2 px-4 rounded ml-2">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                                    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-                                                        <path stroke-dasharray="64" stroke-dashoffset="64" d="M13 3l6 6v12h-14v-18h8">
-                                                            <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0"/>
-                                                        </path>
-                                                        <path stroke-dasharray="14" stroke-dashoffset="14" stroke-width="1" d="M12.5 3v5.5h6.5">
-                                                            <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.7s" dur="0.2s" values="14;0"/>
-                                                        </path>
-                                                        <path stroke-dasharray="8" stroke-dashoffset="8" d="M9 14h6">
-                                                            <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.9s" dur="0.2s" values="8;0"/>
-                                                        </path>
-                                                        <path stroke-dasharray="8" stroke-dashoffset="8" d="M12 11v6">
-                                                            <animate fill="freeze" attributeName="stroke-dashoffset" begin="1.1s" dur="0.2s" values="8;0"/>
-                                                        </path>
-                                                    </g>
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </form>
-
-                                    <!-- Answers -->
-                                    <div class="mt-8">
-                                        @foreach ($question->answers as $answer)
-                                        <div class="flex flex-wrap  p-2 bg-gray-100 rounded mb-2">
-                                            <div class="block w-full">
-                                                <p class="block text-lg text-gray-700">{{ $answer->answer }}</p>
+                                    
+                                    <!-- Toggle button to show/hide answers -->
+                                    <div class="mt-4">
+                                        <button onclick="toggleAnswerSection('answers-{{ $question->id }}', this)" class="text-red-600 font-semibold flex items-center gap-2 hover:underline">
+                                            <svg id="icon-{{ $question->id }}" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                                <path fill="currentColor" d="m12 15.4l-6-6L7.4 8l4.6 4.6L16.6 8L18 9.4z"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    
+                                    <!-- Answers Section -->
+                                    <div id="answers-{{ $question->id }}" class="mt-4 hidden">
+                                        <form method="POST" action="{{ route('answers.store', $question->id) }}" class="mt-4">
+                                            @csrf
+                                            <div class="relative flex items-center border rounded p-2">
+                                                <input type="text" name="answer" placeholder="Tambahkan Jawaban / Saran / Masukan" class="flex-1 border-none focus:outline-none p-2" required>
+                                                <button type="submit" class="bg-red-600 text-white py-2 px-4 rounded ml-2 hover:bg-red-700">Kirim</button>
                                             </div>
-                                            <!-- Edit Answer Button -->
-
-                                            <!-- Form Edit Jawaban -->
-                                            <form method="POST" action="{{ route('answers.update', $answer->id) }}" id="edit-answer-{{ $answer->id }}" class="hidden bg-white shadow-md rounded-lg p-4 w-full mt-4 mb-4">
-                                                @csrf
-                                                @method('PUT')
-
-                                                <label for="answer" class="block text-sm font-medium text-gray-700 mb-2">Edit Answer</label>
-
-                                                <textarea name="answer" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-green-400 focus:outline-none" required>{{ $answer->answer }}</textarea>
-
-                                                <div class="flex justify-end gap-2 mt-4">
-                                                    <button type="button" class="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition-all duration-300" onclick="document.getElementById('edit-answer-{{ $answer->id }}').classList.add('hidden');">
-                                                        Cancel
-                                                    </button>
-
-                                                    <button type="submit" class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-all duration-300">
-                                                        Save
-                                                    </button>
-                                                </div>
-                                            </form>
-
-                                            <div class="flex justify-end w-full gap-2">
-                                                <!-- Edit Button -->
-                                                <button 
-                                                    onclick="toggleForm('edit-answer-{{ $answer->id }}')" 
-                                                    class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors duration-200 py-2 px-4 "
-                                                >
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                                                        <path fill="currentColor" d="M6 22q-.825 0-1.412-.587T4 20V4q0-.825.588-1.412T6 2h8l6 6v3q-.575.125-1.075.4t-.925.7l-6 5.975V22zm8 0v-3.075l5.525-5.5q.225-.225.5-.325t.55-.1q.3 0 .575.113t.5.337l.925.925q.2.225.313.5t.112.55t-.1.563t-.325.512l-5.5 5.5zm6.575-5.6l.925-.975l-.925-.925l-.95.95zM13 9h5l-5-5l5 5l-5-5z"/>
-                                                    </svg>
-                                                </button>
-                                            
-                                                <!-- Delete Form -->
-                                                <form 
-                                                    method="POST" 
-                                                    action="{{ route('answers.destroy', $answer->id) }}"
-                                                    class="m-0"
-                                                >
+                                        </form>
+                                        
+                                        <!-- Answers List -->
+                                        <div class="mt-4">
+                                            @foreach ($question->answers as $answer)
+                                            <div class="p-4 bg-gray-100 rounded-lg mb-2">
+                                                <p class="text-lg text-gray-700">{{ $answer->answer }}</p>
+                                                
+                                                <!-- Form Edit Jawaban -->
+                                                <form method="POST" action="{{ route('answers.update', $answer->id) }}" id="edit-answer-{{ $answer->id }}" class="hidden bg-white shadow-md rounded-lg p-4 mt-4">
                                                     @csrf
-                                                    @method('DELETE')
-                                                    <button 
-                                                        type="submit" 
-                                                        class="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded transition-colors duration-200"
-                                                        onclick="return confirm('Apakah Anda yakin ingin menghapus jawaban ini?')"
-                                                    >
+                                                    @method('PUT')
+                                                    <textarea name="answer" class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-green-400 focus:outline-none" required>{{ $answer->answer }}</textarea>
+                                                    <div class="flex justify-end gap-2 mt-2">
+                                                        <button type="button" class="bg-red-500 text-white py-2 px-4 rounded" onclick="toggleForm('edit-answer-{{ $answer->id }}')">Batal</button>
+                                                        <button type="submit" class="bg-red-500 text-white py-2 px-4 rounded">Simpan</button>
+                                                    </div>
+                                                </form>
+                                                
+                                                <!-- Edit & Delete Answer Buttons -->
+                                                <div class="flex justify-end gap-2 mt-2">
+                                                    <button onclick="toggleForm('edit-answer-{{ $answer->id }}')" class="text-red-600 py-2 px-4 rounded">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                                                            <path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z"/>
+                                                            <path fill="currentColor" d="M6 22q-.825 0-1.412-.587T4 20V4q0-.825.588-1.412T6 2h8l6 6v3q-.575.125-1.075.4t-.925.7l-6 5.975V22zm8 0v-3.075l5.525-5.5q.225-.225.5-.325t.55-.1q.3 0 .575.113t.5.337l.925.925q.2.225.313.5t.112.55t-.1.563t-.325.512l-5.5 5.5zm6.575-5.6l.925-.975l-.925-.925l-.95.95zM13 9h5l-5-5l5 5l-5-5z"/>
                                                         </svg>
                                                     </button>
-                                                </form>
+                                                    <form method="POST" action="{{ route('answers.destroy', $answer->id) }}">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="text-red-600 py-2 px-4 rounded" onclick="return confirm('Apakah Anda yakin ingin menghapus jawaban ini?')">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                                                <path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z"/>
+                                                            </svg> 
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </div>
+                                            @endforeach
                                         </div>
-                                        @endforeach
                                     </div>
                                 </div>
+                                @endforeach
                             </div>
-                            @endforeach
                         </div>
+                    </div>
 
                          <!-- Floating Action Button -->
                     <button onclick="openModal()" class="w-[100px] h-[100px] fixed bottom-8 right-8 bg-red-600 text-white p-4 rounded-full shadow-lg hover:bg-red-700 transition-all flex items-center justify-center">
@@ -240,7 +198,6 @@
                                     </svg>
                                 </button>
                             </div>
-
                             <form method="POST" action="{{ route('questions.store') }}" onsubmit="closeModal()">
                                 @csrf
                                 <div class="space-y-4">
@@ -336,10 +293,18 @@
                 }
             }
 
-            function toggleAnswerSection(id) {
-                var section = document.getElementById(id);
-                section.classList.toggle('hidden');
+            function toggleAnswerSection(answerId, button) {
+            let answerSection = document.getElementById(answerId);
+            let icon = button.querySelector("svg path");
+
+            if (answerSection.style.display === "none" || answerSection.style.display === "") {
+                answerSection.style.display = "block";
+                icon.setAttribute("d", "m12 10.8l-4.6 4.6L6 14l6-6l6 6l-1.4 1.4z");
+            } else {
+                answerSection.style.display = "none";
+                icon.setAttribute("d", "m12 15.4l-6-6L7.4 8l4.6 4.6L16.6 8L18 9.4z");
             }
+        }
 
             function openModal() {
             // Set tanggal dan waktu otomatis
