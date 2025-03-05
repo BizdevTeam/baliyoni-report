@@ -51,6 +51,7 @@ class LaporanLabaRugiController extends Controller
                 'file_excel' => 'mimes:xlsx,xls|max:2048',
                 'keterangan' => 'required|string|max:255'
             ]);
+            
             $errorMessage = '';
             if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);

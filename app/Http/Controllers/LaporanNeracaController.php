@@ -19,10 +19,10 @@ class LaporanNeracaController extends Controller
 
         $laporanneracas = LaporanNeraca::query()
         ->when($search, function($query, $search) {
-            return $query->where('date', 'like', "%$search%")
+            return $query->where('tanggal', 'like', "%$search%")
                          ->orWhere('keterangan', 'like', "%$search%");
         })
-        ->orderByRaw('YEAR(date) DESC, MONTH(date) ASC')
+        ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
         ->paginate($perPage);
 
             // Ubah path gambar agar dapat diakses dari frontend
@@ -44,13 +44,13 @@ class LaporanNeracaController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550',
                 'file_excel' => '   mimes:xlsx,xls|max:2048',
                 'keterangan' => 'required|string|max:255'
             ]);
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
     
@@ -80,14 +80,14 @@ class LaporanNeracaController extends Controller
         try {
             $fileRules = $neraca->file_excel ? 'nullable|mimes:xlsx,xls|max:2048' : 'mimes:xlsx,xls|max:2048';
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
                 'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550',
                 'file_excel' => $fileRules,
                 'keterangan' => 'required|string|max:255'
             ]);
 
             $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['date'], $errorMessage)) {
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
 
@@ -148,11 +148,11 @@ class LaporanNeracaController extends Controller
         try {
             // Validasi input date
             $validatedData = $request->validate([
-                'date' => 'required|date',
+                'tanggal' => 'required|date',
             ]);
     
             // Ambil data laporan berdasarkan date yang dipilih
-            $laporans = LaporanNeraca::where('date', $validatedData['date'])->get();
+            $laporans = LaporanNeraca::where('tanggal', $validatedData['tanggal'])->get();
     
             if (!$laporans) {
                 return redirect()->back()->with('error', 'Data tidak ditemukan.');

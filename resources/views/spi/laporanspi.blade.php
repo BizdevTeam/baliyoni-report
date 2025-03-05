@@ -333,22 +333,22 @@
 
 
 </body>
-<style>
-/* Styling agar numbered list & bullet list tetap tampil di tabel */
-.content-html ol {
-list-style-type: decimal;
-margin-left: 20px;
-}
+    <style>
+    /* Styling agar numbered list & bullet list tetap tampil di tabel */
+    .content-html ol {
+    list-style-type: decimal;
+    margin-left: 20px;
+    }
 
-.content-html ul {
-list-style-type: disc;
-margin-left: 20px;
-}
+    .content-html ul {
+    list-style-type: disc;
+    margin-left: 20px;
+    }
 
-.content-html li {
-margin-bottom: 4px;
-}
-</style>
+    .content-html li {
+    margin-bottom: 4px;
+    }
+    </style>
 
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <script>

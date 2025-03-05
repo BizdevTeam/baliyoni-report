@@ -120,10 +120,10 @@ class RekapPenjualanPerusahaanController extends Controller
                 ->where('perusahaan_id', $validatedData['perusahaan_id'])
                 ->exists();
 
-                if ($exists) {
-                    return redirect()->back()->with('error', 'TIdak dapat diubah, data sudah ada.');
-                }
-    
+            if ($exists) {
+                return redirect()->back()->with('error', 'TIdak dapat diubah, data sudah ada.');
+            }
+
             // Update data
             $rekappenjualanperusahaan->update($validatedData);
     

@@ -16,72 +16,64 @@ class LaporanDetransController extends Controller
     use DateValidationTrait;
 
     public function index(Request $request)
-{ 
-    $perPage = $request->input('per_page', 12);
-    $search = $request->input('search');
-
-    $laporandetrans = LaporanDetrans::query()
-        ->when($search, function ($query, $search) {
-            return $query->where('tanggal', 'LIKE', "%$search%");
-        })
-        ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
-        ->paginate($perPage);
-
-    // Calculate total (if needed)
-    $totalPengiriman = $laporandetrans->sum('total_pengiriman');
-    $months = $laporandetrans->sortBy('tanggal')->map(function ($item) {
-        return \Carbon\Carbon::parse($item->date)->translatedFormat('F - Y');
-    })->unique()->values()->toArray();
+    { 
+        $perPage = $request->input('per_page', 12);
+        $search = $request->input('search');
     
-    // Kelompokkan data berdasarkan pelaksana dan date
-    $groupedData = [];
-    foreach ($laporandetrans as $item) {
-        $month = \Carbon\Carbon::parse($item->date)->translatedFormat('F - Y');
-        $groupedData[$item->pelaksana][$month] = $item->total_pengiriman;
-    }
+        $laporandetrans = LaporanDetrans::query()
+            ->when($search, function ($query, $search) {
+                return $query->where('tanggal', 'LIKE', "%$search%");
+            })
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
+            ->paginate($perPage);
     
-    // Siapkan warna untuk setiap pelaksana
-    $colorMap = [
-        'Pengiriman Daerah Bali (SAMITRA)' => 'rgba(255, 0, 0, 0.7)',
-        'Pengiriman Luar Daerah (DETRANS)' => 'rgba(0, 0, 0, 0.7)',
-    ];
-    $defaultColor = 'rgba(128, 128, 128, 0.7)';
-    
-    // Bangun datasets
-    $datasets = [];
-    foreach ($groupedData as $pelaksana => $monthData) {
-        $data = [];
-        foreach ($months as $month) {
-            $data[] = $monthData[$month] ?? 0; // Isi 0 jika data date tidak ada
+        // Ambil semua bulan yang ada dalam data
+        $months = $laporandetrans->sortBy('tanggal')->map(function ($item) {
+            return \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F - Y');
+        })->unique()->values()->toArray();
+        
+        // Kelompokkan data berdasarkan pelaksana dan bulan tanpa akumulasi
+        $groupedData = [];
+        foreach ($laporandetrans as $item) {
+            $month = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F - Y');
+            $groupedData[$item->pelaksana][$month][] = $item->total_pengiriman; // Simpan sebagai array
         }
         
-        $datasets[] = [
-            'label' => $pelaksana,
-            'data' => $data,
-            'backgroundColor' => $colorMap[$pelaksana] ?? $defaultColor,
+        // Siapkan warna untuk setiap pelaksana
+        $colorMap = [
+            'Pengiriman Daerah Bali (SAMITRA)' => 'rgba(255, 0, 0, 0.7)',
+            'Pengiriman Luar Daerah (DETRANS)' => 'rgba(0, 0, 0, 0.7)',
         ];
+        $defaultColor = 'rgba(128, 128, 128, 0.7)';
+        
+        // Bangun datasets tanpa akumulasi
+        $datasets = [];
+        foreach ($groupedData as $pelaksana => $monthData) {
+            $data = [];
+            foreach ($months as $month) {
+                $data[] = isset($monthData[$month]) ? array_sum($monthData[$month]) : 0; // Tidak akumulasi, hanya total per bulan
+            }
+            
+            $datasets[] = [
+                'label' => $pelaksana,
+                'data' => $data,
+                'backgroundColor' => $colorMap[$pelaksana] ?? $defaultColor,
+            ];
+        }
+        
+        $chartData = [
+            'labels' => $months,
+            'datasets' => $datasets,
+        ];
+    
+        return view('supports.laporandetrans', compact('laporandetrans', 'chartData'));
     }
     
-    $chartData = [
-        'labels' => $months,
-        'datasets' => $datasets,
-    ];
-
-    return view('supports.laporandetrans', compact('laporandetrans', 'chartData'));
-}
 
     public function store(Request $request)
     {
         try {
-              // Konversi tanggal agar selalu dalam format Y-m-d
-              if ($request->has('tanggal')) {
-                try {
-                    $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
-                } catch (\Exception $e) {
-                    return redirect()->back()->with('error', 'Format tanggal tidak valid.');
-                }
-            }
-
+            //validasi input
             $validatedData = $request->validate([
                 'tanggal' => 'required|date',
                 'pelaksana' => [
@@ -94,22 +86,21 @@ class LaporanDetransController extends Controller
                 'total_pengiriman' => 'required|integer|min:0',
             ]);
 
-            $errorMessage = '';
-                if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
-                    return redirect()->back()->with('error', $errorMessage);
-                }
+        $errorMessage = '';
+        if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
+            return redirect()->back()->with('error', $errorMessage);
+        }
 
-       // Cek kombinasi unik date dan perusahaan
-       $exists = LaporanDetrans::where('tanggal', $validatedData['tanggal'])
-       ->where('pelaksana', $validatedData['pelaksana'])
-       ->exists();
+        // Cek kombinasi unik date dan perusahaan
+        $exists = LaporanDetrans::where('tanggal', $validatedData['tanggal'])
+        ->where('pelaksana', $validatedData['pelaksana'])
+        ->exists();
 
-       if ($exists) {
-           return redirect()->back()->with('error', 'Data Already Exists.');
-       }
+        if ($exists) {
+            return redirect()->back()->with('error', 'Data sudah ada.');
+        }
 
-    
-            LaporanDetrans::create($validatedData);
+        LaporanDetrans::create($validatedData);
     
             return redirect()->route('laporandetrans.index')->with('success', 'Data Berhasil Ditambahkan');
         } catch (\Exception $e) {
@@ -121,15 +112,6 @@ class LaporanDetransController extends Controller
     public function update(Request $request, LaporanDetrans $laporandetran)
     {
         try {
-              // Konversi tanggal agar selalu dalam format Y-m-d
-              if ($request->has('tanggal')) {
-                try {
-                    $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
-                } catch (\Exception $e) {
-                    return redirect()->back()->with('error', 'Format tanggal tidak valid.');
-                }
-            }
-            
             // Validasi input
             $validatedData = $request->validate([
                 'tanggal' => 'required|date',
@@ -153,16 +135,15 @@ class LaporanDetransController extends Controller
           ->where('pelaksana', $validatedData['pelaksana'])
           ->where('id_detrans', '!=', $laporandetran->id_detrans)->exists();
 
-          if ($exists) {
-              return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
-          }
-  
+        if ($exists) {
+            return redirect()->back()->with('error', 'TIdak dapat diubah, data sudah ada.');
+        }
 
-            // Update data
-            $laporandetran->update($validatedData);
+        // Update data
+        $laporandetran->update($validatedData);
     
-            // Redirect dengan pesan sukses
-            return redirect()->route('laporandetrans.index')->with('success', 'Data berhasil diperbarui.');
+        // Redirect dengan pesan sukses
+        return redirect()->route('laporandetrans.index')->with('success', 'Data berhasil diperbarui.');
         } catch (ValidationException $e) {
             // Tangani error validasi
             return redirect()
@@ -171,7 +152,7 @@ class LaporanDetransController extends Controller
                 ->withInput();
         } catch (\Exception $e) {
             // Tangani error umum dan log untuk debugging
-            Log::error('Error updating Laporan Detrans Data: ' . $e->getMessage());
+            Log::error('Error updating Data: ' . $e->getMessage());
             return redirect()
                 ->route('laporandetrans.index')
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
@@ -287,16 +268,16 @@ class LaporanDetransController extends Controller
         ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
         ->get();
 
-    // Hitung total pengiriman
+    // Ambil semua bulan yang ada dalam data
     $months = $laporandetrans->sortBy('tanggal')->map(function ($item) {
         return \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F - Y');
     })->unique()->values()->toArray();
     
-    // Kelompokkan data berdasarkan pelaksana dan bulan
+    // Kelompokkan data berdasarkan pelaksana dan bulan tanpa akumulasi
     $groupedData = [];
     foreach ($laporandetrans as $item) {
         $month = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F - Y');
-        $groupedData[$item->pelaksana][$month] = $item->total_pengiriman;
+        $groupedData[$item->pelaksana][$month][] = $item->total_pengiriman; // Simpan sebagai array
     }
     
     // Siapkan warna untuk setiap pelaksana
@@ -306,12 +287,12 @@ class LaporanDetransController extends Controller
     ];
     $defaultColor = 'rgba(128, 128, 128, 0.7)';
     
-    // Bangun datasets
+    // Bangun datasets tanpa akumulasi
     $datasets = [];
     foreach ($groupedData as $pelaksana => $monthData) {
         $data = [];
         foreach ($months as $month) {
-            $data[] = $monthData[$month] ?? 0; // Isi 0 jika tidak ada data di bulan tertentu
+            $data[] = isset($monthData[$month]) ? array_sum($monthData[$month]) : 0; // Tidak akumulasi, hanya total per bulan
         }
         
         $datasets[] = [

@@ -150,7 +150,7 @@
                             <tr class="even:bg-gray-50 odd:bg-white hover:bg-gray-100 transition duration-300">
                                 <td class="px-6 py-4 text-center text-pretty border-b" data-aos="fade-right"
                                     data-aos-duration="400"
-                                    data-aos-easing="ease-out-sine">{{ $laporanneraca->date_formatted }}</td>
+                                    data-aos-easing="ease-out-sine">{{ $laporanneraca->tanggal_formatted }}</td>
                                 <td class="px-6 py-4 text-center text-pretty border-b overflow-hidden " data-aos="fade-right"
                                     data-aos-duration="400"
                                     data-aos-easing="ease-out-sine">
@@ -202,8 +202,8 @@
                                         @method('PUT')
                                         <div class="space-y-3">
                                             <div>
-                                                <label for="date" class="block text-sm font-medium">Tanggal</label>
-                                                <input type="date" name="date" class="w-full p-2 border rounded" value="{{ $laporanneraca->date }}" required>
+                                                <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                                                <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $laporanneraca->tanggal }}" required>
                                             </div>
                                             <div>
                                                 <label for="gambar" class="block text-sm font-medium">Thumbnail</label>
@@ -229,7 +229,7 @@
                                         </div>
                                         <div class="mt-2 flex justify-end gap-2">
                                             <button type="button" class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-1.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm" data-modal-close>Close</button>
-                                            <button type="submit" class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-1.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm">Update</button>
+                                            <button type="submit" class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-1.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm">Uptanggal</button>
                                         </div>
                                     </form>
                                 </div>
@@ -278,8 +278,8 @@
                 
                             <form action="{{ route('neraca.exportPDF') }}" method="POST">
                                 @csrf
-                                <label for="date" class="block text-gray-700 font-medium mb-2 text-center">Pilih Tanggal:</label>
-                                <input type="date" id="date" name="date" required
+                                <label for="tanggal" class="block text-gray-700 font-medium mb-2 text-center">Pilih Tanggal:</label>
+                                <input type="date" id="tanggal" name="tanggal" required
                                     class="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-red-500">
                                 
                                 <button type="submit"
@@ -304,8 +304,8 @@
                         @csrf
                         <div class="space-y-3">
                             <div>
-                                <label for="date" class="block text-sm font-medium">Tanggal</label>
-                                <input type="date" name="date" class="w-full p-2 border rounded" required>
+                                <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                                <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
                             </div>
                             <div>
                                 <label for="gambar" class="block text-sm font-medium">Gambar</label>

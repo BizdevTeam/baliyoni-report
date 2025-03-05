@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('laporan_neracas', function (Blueprint $table) {
-            $table->id('id_neraca');
-            $table->string('tanggal');
-            $table->string('gambar')->nullable();
-            $table->string('file_excel')->nullable();
-            $table->string('keterangan');
+        Schema::create('evaluasis', function (Blueprint $table) {
+            $table->id();
+            $table->string('divisi');
+            $table->string('target_realisasi');
+            $table->string('analisa_penyimpangan');
+            $table->string('alternative_solusi');
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('laporan_neracas');
+        Schema::dropIfExists('evaluasis');
     }
 };

@@ -60,7 +60,7 @@ class ArusKasController extends Controller
             $exists = ArusKas::where('tanggal', $validatedData['tanggal'])->exists();
     
             if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
+                return redirect()->back()->with('error', 'Data sudah ada.');
             }
 
             ArusKas::create($validatedData);
@@ -91,7 +91,7 @@ class ArusKasController extends Controller
                 ->where('id_aruskas', '!=', $aruska->id_aruskas)->exists();
 
             if ($exists) {
-                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
+                return redirect()->back()->with('error', 'TIdak dapat diubah, data sudah ada.');
             }
     
             $aruska->update($validatedData);

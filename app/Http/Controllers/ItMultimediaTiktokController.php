@@ -31,7 +31,7 @@ class ItMultimediaTiktokController extends Controller
     public function store(Request $request)
     {
         try {
-        
+            
             $validatedData = $request->validate([
                 'tanggal' => 'required|date',
                 'keterangan' => 'required|string|max:255',
@@ -61,6 +61,7 @@ class ItMultimediaTiktokController extends Controller
     public function update(Request $request, ItMultimediaTiktok $tiktok)
     {
         try {
+
             $validatedData = $request->validate([
                 'tanggal' => 'required|date',
                 'keterangan' => 'required|string|max:255',
