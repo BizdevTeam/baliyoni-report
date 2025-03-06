@@ -235,8 +235,6 @@ class RekapPenjualanController extends Controller
         }
     }
 
-
-
     public function destroy(RekapPenjualan $rekappenjualan)
     {
         try {
