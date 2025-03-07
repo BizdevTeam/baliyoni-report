@@ -25,13 +25,26 @@ class ItMultimediaTiktokController extends Controller
             })
             ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
             ->paginate($perPage);
+            
+              // Ubah path gambar agar dapat diakses dari frontend
+              $itmultimediatiktoks->getCollection()->transform(function ($item) {
+                $item->gambar_url = !empty($item->gambar) && file_exists(public_path("images/it/multimediatiktok/{$item->gambar}"))
+                    ? asset("images/it/multimediatiktok/{$item->gambar}")
+                    : asset("images/no-image.png"); // Placeholder jika tidak ada gambar
+        
+                return $item;
+            });
+        
+            if ($request->ajax()) {
+                return response()->json(['itmultimediatiktoks' => $itmultimediatiktoks]);
+            }
+
         return view('it.mutimediatiktok', compact('itmultimediatiktoks'));
     }
 
     public function store(Request $request)
     {
         try {
-            
             $validatedData = $request->validate([
                 'tanggal' => 'required|date',
                 'keterangan' => 'required|string|max:255',

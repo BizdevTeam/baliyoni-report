@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\LaporanStok;
 use App\Traits\DateValidationTrait;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
 use Illuminate\Validation\ValidationException;
@@ -36,7 +37,10 @@ class LaporanStokController extends Controller
             return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
         }
         
-        $labels = $laporanstoks->pluck('tanggal')->toArray();
+        $labels = $laporanstoks->map(function ($item) {
+            $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
+            return $formattedDate;
+        })->toArray();
         $data = $laporanstoks->pluck('stok')->toArray();
         
         // Generate random colors for each data item
@@ -224,17 +228,17 @@ class LaporanStokController extends Controller
 
     public function showChart(Request $request)
     {
-
         $search = $request->input('search');
-    
+
         $laporanstoks = LaporanStok::query()
-        ->when($search, function ($query, $search) {
-            return $query->where('tanggal', 'LIKE', "%$search%");
-        })
-        ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC'); // Urutkan berdasarkan tahun (descending) dan date (ascending)
+            ->when($search, function ($query, $search) {
+                return $query->where('tanggal', 'LIKE', "%$search%");
+            })
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
+            ->get(); // Ambil data terlebih dahulu
     
-        // Format label sesuai kebutuhan
-        $labels = $laporanstoks->pluck('tanggal')->toArray();
+        // Format tanggal menjadi "F Y" (contoh: "March 2025")
+        $labels = $laporanstoks->map(fn($item) => Carbon::parse($item->tanggal)->translatedFormat('F Y'))->toArray();
         $data = $laporanstoks->pluck('stok')->toArray();
         $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data);
     

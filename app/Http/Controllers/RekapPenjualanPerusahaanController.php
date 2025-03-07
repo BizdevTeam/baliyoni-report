@@ -43,7 +43,7 @@ class RekapPenjualanPerusahaanController extends Controller
         }
         
         $labels = $rekappenjualanperusahaans->map(function($item) {
-            $formattedDate = \Carbon\Carbon::parse($item->date)->translatedFormat('F Y');
+            $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
             return $item->perusahaan->nama_perusahaan. ' - ' . $formattedDate;
         })->toArray();
         $data = $rekappenjualanperusahaans->pluck('total_penjualan')->toArray();

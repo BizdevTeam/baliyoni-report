@@ -39,7 +39,10 @@ class LaporanIzinController extends Controller
             return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
         }
         
-        $labels = $laporanizins->pluck('nama')->toArray();
+        $labels = $laporanizins->map(function($item) {
+            $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
+            return $item->nama. ' - ' .$formattedDate;
+        })->toArray();        
         $data = $laporanizins->pluck('total_izin')->toArray();
         
         // Generate random colors for each data item

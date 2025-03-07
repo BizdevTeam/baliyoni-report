@@ -25,6 +25,19 @@ class ItMultimediaInstagramController extends Controller
             })
             ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
             ->paginate($perPage);
+            
+              // Ubah path gambar agar dapat diakses dari frontend
+              $itmultimediainstagrams->getCollection()->transform(function ($item) {
+                $item->gambar_url = !empty($item->gambar) && file_exists(public_path("images/it/multimediainstagram/{$item->gambar}"))
+                    ? asset("images/it/multimediainstagram/{$item->gambar}")
+                    : asset("images/no-image.png"); // Placeholder jika tidak ada gambar
+        
+                return $item;
+            });
+        
+            if ($request->ajax()) {
+                return response()->json(['itmultimediainstagrams' => $itmultimediainstagrams]);
+            }
 
         return view('it.multimediainstagram', compact('itmultimediainstagrams'));
     }

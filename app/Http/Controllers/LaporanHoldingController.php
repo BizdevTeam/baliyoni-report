@@ -36,10 +36,9 @@ class LaporanHoldingController extends Controller
         // Prepare chart data
         $labels = $laporanholdings->map(function ($item) {
             // Format the month using Carbon’s translatedFormat() as defined in your model accessor
-            $formattedDate = \Carbon\Carbon::parse($item->date)->translatedFormat('F Y');
+            $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
             return $item->perusahaan->nama_perusahaan . ' - ' . $formattedDate;
         })->toArray();
-
         $data = $laporanholdings->pluck('nilai')->toArray();
 
         // Generate random colors for each data point
