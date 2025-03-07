@@ -543,30 +543,27 @@
         <rect width="30" height="30" fill="currentColor" mask="url(#lineMdCloudAltPrintFilledLoop0)" />
     </svg>
 </button>
-
-{{-- <!-- Modal -->
-<div id="exportModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden">
+<div id="exportModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-50">
     <div class="bg-white rounded-lg p-6 shadow-lg w-96">
         <h2 class="text-xl font-bold mb-4">Export PDF</h2>
-
-        <form action="{{ route('exportall') }}" method="post">
-            @csrf
-            <!-- Range Month Input -->
-            <label for="month-range" class="block text-sm font-medium text-gray-700">Pilih Tanggal</label>
-            <input name="search" type="month" id="month-range" class="w-full border rounded p-2 mt-2">
-            
-            <!-- Action Buttons -->
-            <div class="flex justify-end mt-4 gap-2">
-                <button onclick="toggleModal()" class="bg-gray-500 text-white py-2 px-4 rounded">Batal</button>
-                <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded">Export</button>
-            </div>
-        </form>
+        <p class="mb-4">Apakah Anda ingin mengekspor laporan penjualan ke PDF?</p>
+        <div class="flex justify-end space-x-2">
+            <button id="cancelExportBtn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">
+                Batal
+            </button>
+            <button id="confirmExportBtn" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                Ekspor PDF
+            </button>
+        </div>
     </div>
-</div> --}}
+</div>
 
+<!-- Loading Indicator -->
+<div id="loadingIndicator" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-white"></div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!-- DataTables -->
@@ -591,7 +588,6 @@
         //laporan SUPPORTS
         fetchChartPieData('{{ route("adminpendapatanservisasp.chart.data") }}', 'chartlrp', 'Nilai Pendapatan ');
         fetchChartPieData('{{ route("adminpiutangservisasp.chart.data") }}', 'chartlrps', 'Nilai Piutang ');
-        fetchChartData('{{ route("adminpendapatanpengirimanbali.chart.data") }}', 'chartrpdb', 'Nilai Pendapatan ');
         fetchChartData('{{ route("adminpendapatanpengirimanluarbali.chart.data") }}', 'chartrplb', 'Nilai Pendapatan ');
 
         //laporan HRGA
@@ -634,7 +630,6 @@
         //laporan SUPPORTS
         fetchChartPieData('{{ route("adminpendapatanservisasp.chart.data") }}' + queryString, 'chartlrp');
         fetchChartPieData('{{ route("adminpiutangservisasp.chart.data") }}' + queryString, 'chartlrps');
-        fetchChartData('{{ route("adminpendapatanpengirimanbali.chart.data") }}' + queryString, 'chartrpdb');
         fetchChartData('{{ route("adminpendapatanpengirimanluarbali.chart.data") }}' + queryString, 'chartrplb');
 
         //laporan HRGA
@@ -649,48 +644,65 @@
 
     });
 
-
     function fetchChartData(url, canvasId, title) {
-        fetch(url)
-            .then(response => response.json())
-            .then(chartData => {
-                let chartCanvas = document.getElementById(canvasId);
-                if (chartCanvas.chart) {
-                    chartCanvas.chart.destroy();
-                }
+    fetch(url)
+        .then(response => response.json())
+        .then(chartData => {
+            let chartCanvas = document.getElementById(canvasId);
+            if (chartCanvas.chart) {
+                chartCanvas.chart.destroy();
+            }
 
-                chartData.labels = chartData.labels.slice(0, 12);
-                chartData.datasets.forEach(dataset => {
+            // Batasi jumlah label dan data
+            chartData.labels = chartData.labels.slice(0, 12);
+            chartData.datasets.forEach(dataset => {
                 dataset.data = dataset.data.slice(0, 12);
             });
-                chartCanvas.chart = new Chart(chartCanvas.getContext('2d'), {
-                    type: 'bar'
-                    , data: {
-                        labels: chartData.labels
-                        , datasets: chartData.datasets
-                    , }
-                    , options: {
-                        responsive: true
-                        , plugins: {
-                            legend: {
-                                display: false
+
+            chartCanvas.chart = new Chart(chartCanvas.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: chartData.labels,
+                    datasets: chartData.datasets
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: title
                             }
-                        , }
-                        , scales: {
-                            x: {
-                                title: {
-                                    display: true
-                                    , text: title
-                                }
-                            }
-                            , y: {
-                                beginAtZero: true
-                            }
-                        , }
-                    , }
-                , });
-            })
-            .catch(error => console.error('Error fetching chart data:', error));
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    animation: {
+                        onComplete: function() {
+                            var ctx = chartCanvas.chart.ctx;
+                            ctx.font = 'bold 15px sans-serif';
+                            ctx.textAlign = 'center';
+                            ctx.fillStyle = 'black';
+                            
+                            chartCanvas.chart.data.datasets.forEach((dataset, i) => {
+                                var meta = chartCanvas.chart.getDatasetMeta(i);
+                                meta.data.forEach((bar, index) => {
+                                    var value = dataset.data[index];
+                                    ctx.fillText(value.toLocaleString(), bar.x, bar.y - 10);
+                                });
+                            });
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => console.error('Error fetching chart data:', error));
     }
 
     function fetchChartPieData(url, canvasId, title) {
@@ -980,7 +992,6 @@
         });
     });
 
-
     //laporan laba rugi
         $(document).ready(function() {
         function fetchLaporanLabaRugi(search = '') {
@@ -1221,7 +1232,6 @@
         });
     });
 
-
     //tabel laporan SPI OPERASIONAL
     $(document).ready(function() {
         function fetchLaporanSPI(search = '') {
@@ -1380,56 +1390,130 @@ function fetchImages() {
 
 }
 
+function toggleModal() {
+    const exportModal = document.getElementById('exportModal');
+    if (exportModal) {
+        exportModal.classList.toggle('hidden');
+    }
+}
 
-// Fungsi untuk menampilkan atau menyembunyikan modal
-// function toggleModal() {
-//     const modal = document.getElementById('exportModal');
-//     modal.classList.toggle('hidden');
-// }
+document.addEventListener('DOMContentLoaded', function() {
+    const exportButton = document.getElementById('exportButton'); // Existing export button
+    const exportModal = document.getElementById('exportModal');
+    const cancelExportBtn = document.getElementById('cancelExportBtn');
+    const confirmExportBtn = document.getElementById('confirmExportBtn');
 
-// Fungsi untuk melakukan export PDF ke semua route dengan range Tanggal yang dipilih
-// // function exportPDF() {
-// //     const selectedMonth = document.getElementById('month-range').value;
-    
-// //     if (!selectedMonth) {
-// //         alert("Silakan pilih Tanggal terlebih dahulu!");
-// //         return;
-// //     }
+    // Function to show modal
+    function showExportModal() {
+        exportModal.classList.remove('hidden');
+    }
 
-// //     // Kirim permintaan export ke semua endpoint secara bersamaan
-// //     const routes = [
-// //         '{{ route("marketings.rekappenjualan.exportPDF") }}',
-// //         '{{ route("marketings.laporanpaketadministrasi.exportPDF") }}',
-// //         '{{ route("marketings.statuspaket.exportPDF") }}',
-// //         '{{ route("marketings.laporanperinstansi.exportPDF") }}'
-// //     ];
+    // Function to hide modal
+    function hideExportModal() {
+        exportModal.classList.add('hidden');
+    }
 
-// //     routes.forEach(route => {
-// //         fetch(route, {
-// //             method: 'POST',
-// //             headers: {
-// //                 'Content-Type': 'application/json',
-// //                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
-// //             },
-// //             body: JSON.stringify({ month: selectedMonth })
-// //         })
-// //         .then(response => response.blob())  // Ambil file dalam bentuk blob
-// //         .then(blob => {
-// //             // Buat URL download
-// //             const url = window.URL.createObjectURL(blob);
-// //             const a = document.createElement('a');
-// //             a.href = url;
-// //             a.download = `export_${route.split('/').pop()}.pdf`;  // Nama file berdasarkan route
-// //             document.body.appendChild(a);
-// //             a.click();
-// //             a.remove();
-// //         })
-// //         .catch(error => console.error('Error exporting:', error));
-// //     });
+    // Event listener for export button to show modal
+    if (exportButton) {
+        exportButton.addEventListener('click', showExportModal);
+    }
 
-// //     // Sembunyikan modal setelah submit
-// //     toggleModal();
-// }
+    // Cancel button closes the modal
+    cancelExportBtn.addEventListener('click', hideExportModal);
+
+    // Confirm export button
+    confirmExportBtn.addEventListener('click', function() {
+        // Hide modal
+        hideExportModal();
+
+        // Dispatch custom event to trigger export
+        document.dispatchEvent(new Event('triggerPDFExport'));
+    });
+
+    // Optional: Close modal if clicking outside
+    exportModal.addEventListener('click', function(event) {
+        if (event.target === exportModal) {
+            hideExportModal();
+        }
+    });
+});
+
+
+//export pdf 
+async function exportToPDF1() {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    if (!csrfToken) {
+        alert('CSRF token tidak ditemukan. Pastikan meta tag CSRF disertakan.');
+        return;
+    }
+
+    // Ambil data dari tabel
+    const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
+        const cells = row.querySelectorAll('td');
+        return {
+            tanggal: cells[0]?.innerText.trim() || '',
+            perusahaan: cells[1]?.innerText.trim() || '',
+            total_penjualan_formatted: cells[2]?.innerText.trim() || '',
+        };
+    });
+
+    const tableContent = items
+        .filter(item => item.tanggal && item.perusahaan && item.total_penjualan_formatted)
+        .map(item => `
+            <tr>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.tanggal}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.perusahaan}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.total_penjualan_formatted}</td>
+            </tr>
+        `).join('');
+
+    const chartCanvas = document.querySelector('#chartpp');
+    if (!chartCanvas) {
+        alert('Elemen canvas grafik tidak ditemukan.');
+        return;
+    }
+
+    const chartBase64 = chartCanvas.toDataURL();
+
+    try {
+        const response = await fetch('/exportall', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                table2: tableContent,
+                chart2: chartBase64,
+            }),
+        });
+
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Laporan_rekap_penjualan_perusahaan.pdf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        } else {
+            const errorData = await response.json();
+            alert(errorData.message || 'Gagal mengekspor PDF.');
+        }
+    } catch (error) {
+        console.error('Error exporting to PDF:', error);
+        alert('Terjadi kesalahan saat mengekspor PDF.');
+    }
+}
+
+// Add event listener to trigger export
+document.addEventListener('DOMContentLoaded', function() {
+    // Custom event listener for export
+    document.addEventListener('triggerPDFExport', function(e) {
+        exportToPDF1();
+    });
+});
 
 
 </script>

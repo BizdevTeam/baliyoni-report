@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ArusKasController;
 use App\Http\Controllers\EvaluasiController;
 use App\Http\Controllers\ExportAllController;
+use App\Http\Controllers\ExportPdfAllController;
 use App\Http\Controllers\LaporanPpnController;
 use App\Http\Controllers\LaporanCutiController;
 use App\Http\Controllers\LaporanIzinController;
@@ -40,6 +41,7 @@ use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\LaporanBizdevGambarController;
 use App\Http\Controllers\IjasaGambarController;
 use App\Http\Controllers\PerusahaanController;
+
 
 Route::middleware(['web'])->group(function () {
     // Accounting
@@ -256,7 +258,7 @@ Route::middleware(['web'])->group(function () {
     Route::get('/rekap-penjualan', [PerusahaanController::class, 'penjualanPerusahaan'])->name('rekap.penjualan');
     Route::get('/laporan-holding', [PerusahaanController::class, 'laporanHolding'])->name('laporan.holding');
     
-    Route::post('/exportall',[ExportAllController::class,'exportAll'])->name('exportall');
+    Route::post('/exportall', [ExportPdfAllController::class, 'exportall'])->name('exportall');
 
 });
 

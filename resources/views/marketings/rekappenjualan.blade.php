@@ -420,7 +420,7 @@
         }]
     });
 
-   // JavaScript Function
+// JavaScript Function
 async function exportToPDF() {
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
     if (!csrfToken) {
@@ -432,16 +432,16 @@ async function exportToPDF() {
     const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
         const cells = row.querySelectorAll('td');
         return {
-            tanggal_formatted: cells[0]?.innerText.trim() || '',
+            tanggal: cells[0]?.innerText.trim() || '',
             total_penjualan_formatted: cells[1]?.innerText.trim() || '',
         };
     });
 
     const tableContent = items
-        .filter(item => item.tanggal_formatted && item.total_penjualan_formatted)
+        .filter(item => item.tanggal && item.total_penjualan_formatted)
         .map(item => `
             <tr>
-                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.tanggal_formatted}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.tanggal}</td>
                 <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.total_penjualan_formatted}</td>
             </tr>
         `).join('');
@@ -504,6 +504,72 @@ function changePerPage(value) {
     
     window.location.href = url.pathname + '?' + searchParams.toString();
 }
+
+async function exportToPDF1() {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    if (!csrfToken) {
+        alert('CSRF token tidak ditemukan. Pastikan meta tag CSRF disertakan.');
+        return;
+    }
+
+    // Ambil data dari tabel
+    const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
+        const cells = row.querySelectorAll('td');
+        return {
+            tanggal_formatted: cells[0]?.innerText.trim() || '',
+            total_penjualan_formatted: cells[1]?.innerText.trim() || '',
+        };
+    });
+
+    const tableContent = items
+        .filter(item => item.tanggal_formatted && item.total_penjualan_formatted)
+        .map(item => `
+            <tr>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.tanggal_formatted}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.total_penjualan_formatted}</td>
+            </tr>
+        `).join('');
+
+    const chartCanvas = document.querySelector('#chart');
+    if (!chartCanvas) {
+        alert('Elemen canvas grafik tidak ditemukan.');
+        return;
+    }
+
+    const chartBase64 = chartCanvas.toDataURL();
+
+    try {
+        const response = await fetch('/exportall', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                table1: tableContent,
+                chart1: chartBase64,
+            }),
+        });
+
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Laporan_rekap_penjualan.pdf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        } else {
+            const errorData = await response.json();
+            alert(errorData.message || 'Gagal mengekspor PDF.');
+        }
+    } catch (error) {
+        console.error('Error exporting to PDF:', error);
+        alert('Terjadi kesalahan saat mengekspor PDF.');
+    }
+}
+
 
 </script>
 

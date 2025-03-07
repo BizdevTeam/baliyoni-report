@@ -7,9 +7,11 @@
     "require": {
         "php": "^8.2",
         "amenadiel/jpgraph": "^4.1",
+        "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
-        "mpdf/mpdf": "*"
+        "mpdf/mpdf": "*",
+        "setasign/fpdi": "^2.6"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
