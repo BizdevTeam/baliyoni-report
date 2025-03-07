@@ -39,7 +39,10 @@ class LaporanCutiController extends Controller
             return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
         }
         
-        $labels = $laporancutis->pluck('nama')->toArray();
+        $labels = $laporancutis->map(function($item) {
+            $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
+            return $item->nama. ' - ' .$formattedDate;
+        })->toArray();        
         $data = $laporancutis->pluck('total_cuti')->toArray();
         
         // Generate random colors for each data item

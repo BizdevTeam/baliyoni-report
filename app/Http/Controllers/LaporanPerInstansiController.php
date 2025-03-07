@@ -38,7 +38,10 @@ class LaporanPerInstansiController extends Controller
             return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
         }
         
-        $labels = $laporanperinstansis->pluck('instansi')->toArray();
+        $labels = $laporanperinstansis->map(function($item) {
+            $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F - Y');
+            return $item->instansi . ' - ' . $formattedDate;
+        })->toArray();
         $data = $laporanperinstansis->pluck('nilai')->toArray();
         
         // Generate random colors for each data item
@@ -262,7 +265,7 @@ class LaporanPerInstansiController extends Controller
     
         // Siapkan data untuk chart
         $labels = $laporanperinstansis->map(function($item) {
-            $formattedDate = \Carbon\Carbon::parse($item->date)->translatedFormat('F - Y');
+            $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F - Y');
             return $item->instansi . ' - ' . $formattedDate;
         })->toArray();
         $data = $laporanperinstansis->pluck('nilai')->toArray();

@@ -241,10 +241,9 @@ class LaporanNegosiasiController extends Controller
         ->get();  
 
         // Siapkan data untuk chart
-        $labels = $laporannegosiasis->map(function($item) {
-            $formattedDate = \Carbon\Carbon::parse($item->date)->translatedFormat('F - Y');
-            return $item->perusahaan . ' - ' . $formattedDate;
-        })->toArray();
+        $labels = $laporannegosiasis->pluck('tanggal')->map(function ($date) {
+            return \Carbon\Carbon::parse($date)->translatedFormat('F - Y');
+        })->toArray();   
         $data = $laporannegosiasis->pluck('total_negosiasi')->toArray();
         $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data);
     

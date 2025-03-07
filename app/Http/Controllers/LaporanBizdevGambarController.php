@@ -24,6 +24,20 @@ class LaporanBizdevGambarController extends Controller
             })
             ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
             ->paginate($perPage);
+
+            // Ubah path gambar agar dapat diakses dari frontend
+            $laporanbizdevgambars->getCollection()->transform(function ($item) {
+            $item->gambar_url = !empty($item->gambar) && file_exists(public_path("images/it/laporanbizdevgambar/{$item->gambar}"))
+                ? asset("images/it/laporanbizdevgambar/{$item->gambar}")
+                : asset("images/no-image.png"); // Placeholder jika tidak ada gambar
+    
+            return $item;
+            });
+        
+            if ($request->ajax()) {
+                return response()->json(['laporanbizdevgambars' => $laporanbizdevgambars]);
+            }
+
         return view('it.laporanbizdevgambar', compact('laporanbizdevgambars'));
     }
 

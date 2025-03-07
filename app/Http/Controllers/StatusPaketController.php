@@ -38,7 +38,7 @@ class StatusPaketController extends Controller
         }
         
         $labels = $statuspakets->map(function($item) {
-            $formattedDate = \Carbon\Carbon::parse($item->date)->translatedFormat('F - Y');
+            $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F - Y');
             return $item->status . ' - ' . $formattedDate;
         })->toArray();
         $data = $statuspakets->pluck('total_paket')->toArray();

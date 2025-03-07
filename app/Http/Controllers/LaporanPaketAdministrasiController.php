@@ -40,7 +40,7 @@ class LaporanPaketAdministrasiController extends Controller
         }
         
         $labels = $laporanpaketadministrasis->map(function($item) {
-            $formattedDate = \Carbon\Carbon::parse($item->date)->translatedFormat('F Y');
+            $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
             return $item->website . ' - ' . $formattedDate;
         })->toArray();
         $data = $laporanpaketadministrasis->pluck('total_paket')->toArray();
