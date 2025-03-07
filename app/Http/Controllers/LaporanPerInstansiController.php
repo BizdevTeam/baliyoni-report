@@ -265,7 +265,7 @@ class LaporanPerInstansiController extends Controller
     
         // Siapkan data untuk chart
         $labels = $laporanperinstansis->map(function($item) {
-            $formattedDate = \Carbon\Carbon::parse($item->date)->translatedFormat('F - Y');
+            $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F - Y');
             return $item->instansi . ' - ' . $formattedDate;
         })->toArray();
         $data = $laporanperinstansis->pluck('nilai')->toArray();

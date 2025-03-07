@@ -38,7 +38,7 @@
             <div class="mx-auto bg-white p-6 rounded-lg shadow">
                 <div class="p-6">
                     <div class="relative font-sans before:absolute before:w-full before:h-full before:inset-0 before:bg-black before:opacity-50 before:z-10">
-                        <img src="https://readymadeui.com/cardImg.webp" alt="Banner Image" class="absolute inset-0 w-full h-full object-cover" />
+                    <img src="{{ asset("images/question.jpg") }}" alt="Banner Image" class="absolute inset-0 w-full h-full object-cover" />
                         <div class="min-h-[350px] relative z-40 h-full max-w-[1500px] mx-auto flex flex-col justify-center items-center text-center text-white p-6">
                             <h2 class="text-[100px] font-bold">FAQ</h2>
                             <p class="sm:text-lg text-base text-center">Rapat Bulanan Baliyoni</p>
@@ -173,8 +173,8 @@
                         </div>
                     </div>
 
-                         <!-- Floating Action Button -->
-                    <button onclick="openModal()" class="w-[100px] h-[100px] fixed bottom-8 right-8 bg-red-600 text-white p-4 rounded-full shadow-lg hover:bg-red-700 transition-all flex items-center justify-center">
+                    <!-- Floating Action Button -->
+                    <button onclick="openModal()" class="w-[80px] h-[80px] fixed bottom-8 right-8 bg-red-600 text-white p-4 rounded-full shadow-lg hover:bg-red-700 transition-all flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                         </svg>

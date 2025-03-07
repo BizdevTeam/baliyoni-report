@@ -240,8 +240,8 @@ class LaporanOutletController extends Controller
         ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC'); // Urutkan berdasarkan tahun (descending) dan date (ascending)
     
         // Format label sesuai kebutuhan
-        $labels = $laporanoutlets->pluck('tanggal')->map(function ($date) {
-            return \Carbon\Carbon::parse($date)->translatedFormat('F - Y');
+        $labels = $laporanoutlets->pluck('tanggal')->map(function ($tanggal) {
+            return \Carbon\Carbon::parse($tanggal)->translatedFormat('F - Y');
         })->toArray();      
         $data = $laporanoutlets->pluck('total_pembelian')->toArray();
         $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data);
