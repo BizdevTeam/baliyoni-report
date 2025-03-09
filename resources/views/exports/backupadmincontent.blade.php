@@ -1,19 +1,20 @@
-    <div id="admincontent" class="content-wrapper ml-72 p-4 transition-all duration-300">
-        <!-- Grafik Laporan Paket Administrasi -->
-        <div class="p-4 ">
-            <h1 class="mt-10 text-4xl font-bold text-red-600">Dash<span class="text-red-600">board</span></h1>
-            <div class="flex justify-end mb-4">
+<div id="admincontent" class="content-wrapper ml-72 p-4 transition-all duration-300">
+    <!-- Grafik Laporan Paket Administrasi -->
+    <div class="p-4 ">
+        <h1 class="mt-10 text-4xl font-bold text-red-600">Dash<span class="text-red-600">board</span></h1>
+        <div class="flex justify-end mb-4">
 
-                <form id="chartFilterForm" method="GET" action="#" class="flex items-center justify-end gap-2">
-                    <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
-                        <input type="date" id="searchInput" name="search" placeholder="Search YYYY - MM" value="{{ request('search') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
-                    </div>
-                    <button type="submit" class="justify-end bg-gradient-to-r font-medium from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm" aria-label="Search">
-                        Search
-                    </button>
-                </form>
-            </div>
+            <form id="chartFilterForm" method="GET" action="#" class="flex items-center justify-end gap-2">
+                <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
+                    <input type="date" id="searchInput" name="search" placeholder="Search YYYY - MM" value="{{ request('search') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
+                </div>
+                <button type="submit" class="justify-end bg-gradient-to-r font-medium from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm" aria-label="Search">
+                    Search
+                </button>
+            </form>
+
         </div>
+    </div>
 
     <!-- LAPORAN MARKETING -->
     <div id="gridContainer" class="grid gap-6 grid-cols-1">
@@ -75,7 +76,6 @@
         </div>
 
         <!-- LAPORAN PROCUREMENTS -->
-        
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Pembelian (HOLDING)</h1>
             <div class="bg-white shadow-md rounded-lg p-6">
@@ -138,7 +138,15 @@
                 <a href="{{ route('rekappiutangservisasp.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Rekap Piutang Servis ASP →</a>
             </div>
         </div>
-
+        {{-- <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Rekap Pendapatan Pengiriman Daerah Bali</h1>
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <canvas id="chartrpdb" class="w-full h-96"></canvas>
+            </div>
+            <div class="flex justify-end mt-4">
+                <a href="{{ route("laporansamitra.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Rekap Pendapatan Pengiriman Daerah Bali →</a>
+            </div>
+        </div> --}}
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Rekap Pengiriman</h1>
             <div class="bg-white shadow-md rounded-lg p-6">
@@ -149,10 +157,148 @@
             </div>
         </div>
 
-        <!-- LAPORAN ACCOUNTING -->
+        <!-- LAPORAN HRGA -->
 
-         <!-- LAPORAN LABA RUGI -->
+        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Sakit</h1>
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <canvas id="charts" class="w-full h-96"></canvas>
+            </div>
+            <div class="flex justify-end mt-4">
+                <a href="{{ route("laporansakit.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Sakit →</a>
+            </div>
+        </div>
+        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Izin</h1>
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <canvas id="chartizin" class="w-full h-96"></canvas>
+            </div>
+            <div class="flex justify-end mt-4">
+                <a href="{{ route("laporanizin.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Izin →</a>
+            </div>
+        </div>
+        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Cuti</h1>
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <canvas id="chartcuti" class="w-full h-96"></canvas>
+            </div>
+            <div class="flex justify-end mt-4">
+                <a href="{{ route("laporancuti.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Cuti →</a>
+            </div>
+        </div>
+        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Terlambat</h1>
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <canvas id="chartterlambat" class="w-full h-96"></canvas>
+            </div>
+            <div class="flex justify-end mt-4">
+                <a href="{{ route("laporanterlambat.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Terlambat →</a>
+            </div>
+        </div>
+
+         <!-- LAPORAN HRGA -->
          <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Tabel Laporan PT BOS</h1>
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <div class="max-w-[600px] md:max-w-none mx-auto md:mx-0 overflow-x-auto"> <!-- Responsive container -->
+                    <table id="adminptbos" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
+                        <thead>
+                            <tr>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Pekerjaan</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Kondisi Tanggal Lalu</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Kondisi Tanggal Ini</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Update</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Rencana Implementasi</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="flex justify-end mt-4">
+                    <a href="{{ route('laporanptbos.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan PT BOS →</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Tabel Laporan iJASA</h1>
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <div class="max-w-[600px] md:max-w-none mx-auto md:mx-0 overflow-x-auto"> <!-- Responsive container -->
+                    <table id="adminijasa" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
+                    <thead>
+                        <tr>
+                            <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
+                            <th class="border border-gray-300 px-4 py-2 text-center">Jam</th>
+                            <th class="border border-gray-300 px-4 py-2 text-center">Permasalahan</th>
+                            <th class="border border-gray-300 px-4 py-2 text-center">Impact</th>
+                            <th class="border border-gray-300 px-4 py-2 text-center">Troubleshooting</th>
+                            <th class="border border-gray-300 px-4 py-2 text-center">Resolve Tanggal</th>
+                            <th class="border border-gray-300 px-4 py-2 text-center">Resolve Jam</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                </div>
+                <div class="flex justify-end mt-4">
+                    <a href="{{ route("laporanijasa.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan iJASA →</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- LAPORAN iJASA Gambar-->
+        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Tabel Laporan iJASA Gambar</h1>
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <div class="max-w-[600px] md:max-w-none mx-auto md:mx-0 overflow-x-auto"> <!-- Container pembatas dan scroll -->
+                    <table id="adminijasagambar" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
+                        <thead>
+                            <tr>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">File</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="flex justify-end mt-4">
+                    <a href="{{ route('ijasagambar.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan iJASA Gambar →</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- LAPORAN ACCOUNTING -->
+        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Kas Hutang Piutang Stok</h1>
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <div class="w-full h-full max-w-[600px] max-h-[600px] mx-auto"> <!-- Container pembatas -->
+                    <canvas id="chartkhps" class="w-full h-full"></canvas>
+                </div>
+            </div>
+            <div class="flex justify-end mt-4">
+                <a href="{{ route("khps.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Kas Hutang Piutang Stok →</a>
+            </div>
+        </div>
+
+    <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Arus Kas</h1>
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <div class="w-full h-full max-w-[600px] max-h-[600px] mx-auto"> <!-- Container pembatas -->
+                <canvas id="chartak" class="w-full h-full"></canvas>
+                </div>
+            </div>
+            <div class="flex justify-end mt-4">
+                <a href="{{ route("khps.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Arus Kas →</a>
+            </div>
+        </div>
+
+        <!-- LAPORAN LABA RUGI -->
+        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Laporan Laba Rugi</h1>
             <div class="bg-white shadow-md rounded-lg p-6">
                 <div class="max-w-[600px] md:max-w-none mx-auto md:mx-0 overflow-x-auto"> <!-- Container pembatas dan scroll -->
@@ -232,31 +378,6 @@
                 </div>
              </div>
 
-         <!-- LAPORAN ACCOUNTING -->
-         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
-            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Kas Hutang Piutang Stok</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <div class="w-full h-full max-w-[600px] max-h-[600px] mx-auto"> <!-- Container pembatas -->
-                    <canvas id="chartkhps" class="w-full h-full"></canvas>
-                </div>
-            </div>
-            <div class="flex justify-end mt-4">
-                <a href="{{ route("khps.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Kas Hutang Piutang Stok →</a>
-            </div>
-        </div>
-
-    <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
-            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Arus Kas</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <div class="w-full h-full max-w-[600px] max-h-[600px] mx-auto"> <!-- Container pembatas -->
-                <canvas id="chartak" class="w-full h-full"></canvas>
-                </div>
-            </div>
-            <div class="flex justify-end mt-4">
-                <a href="{{ route("aruskas.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Arus Kas →</a>
-            </div>
-        </div>
-
         <!-- LAPORAN PPN -->
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Laporan PPN</h1>
@@ -311,7 +432,28 @@
                 </div>
              </div>
 
-        <!-- LAPORAN IT -->
+        <!-- LAPORAN IT Multimedia Tiktok-->
+        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Tabel Laporan Multimedia Tiktok</h1>
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <div class="max-w-[600px] md:max-w-none mx-auto md:mx-0 overflow-x-auto"> <!-- Container pembatas dan scroll -->
+                    <table id="admintiktok" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
+                        <thead>
+                            <tr>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">File</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="flex justify-end mt-4">
+                    <a href="{{ route('tiktok.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Multimedia Tiktok →</a>
+                </div>
+            </div>
+        </div>
 
         <!-- LAPORAN IT Multimedia Instagram-->
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
@@ -332,29 +474,6 @@
                 </div>
                 <div class="flex justify-end mt-4">
                     <a href="{{ route('multimediainstagram.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Multimedia Instagram →</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- LAPORAN IT Multimedia Tiktok-->
-        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
-            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Tabel Laporan Multimedia Tiktok</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <div class="max-w-[600px] md:max-w-none mx-auto md:mx-0 overflow-x-auto"> <!-- Container pembatas dan scroll -->
-                    <table id="admintiktok" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
-                        <thead>
-                            <tr>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">File</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="flex justify-end mt-4">
-                    <a href="{{ route('tiktok.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Multimedia Tiktok →</a>
                 </div>
             </div>
         </div>
@@ -406,120 +525,6 @@
                 <div class="flex justify-end mt-4">
                     <a href="{{ route('laporanbizdevgambar.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Bizdev Gambar →</a>
                 </div>
-            </div>
-        </div>
-
-        <!-- LAPORAN HRGA -->
-        <!-- LAPORAN HRGA -->
-        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
-            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Tabel Laporan PT BOS</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <div class="max-w-[600px] md:max-w-none mx-auto md:mx-0 overflow-x-auto"> <!-- Responsive container -->
-                    <table id="adminptbos" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
-                        <thead>
-                            <tr>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Pekerjaan</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Kondisi Tanggal Lalu</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Kondisi Tanggal Ini</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Update</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Rencana Implementasi</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="flex justify-end mt-4">
-                    <a href="{{ route('laporanptbos.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan PT BOS →</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
-            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Tabel Laporan iJASA</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <div class="max-w-[600px] md:max-w-none mx-auto md:mx-0 overflow-x-auto"> <!-- Responsive container -->
-                    <table id="adminijasa" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
-                    <thead>
-                        <tr>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Jam</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Permasalahan</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Impact</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Troubleshooting</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Resolve Tanggal</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Resolve Jam</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-                </div>
-                <div class="flex justify-end mt-4">
-                    <a href="{{ route("laporanijasa.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan iJASA →</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- LAPORAN iJASA Gambar-->
-        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
-            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Tabel Laporan iJASA Gambar</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <div class="max-w-[600px] md:max-w-none mx-auto md:mx-0 overflow-x-auto"> <!-- Container pembatas dan scroll -->
-                    <table id="adminijasagambar" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
-                        <thead>
-                            <tr>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">File</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="flex justify-end mt-4">
-                    <a href="{{ route('ijasagambar.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan iJASA Gambar →</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
-            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Sakit</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <canvas id="charts" class="w-full h-96"></canvas>
-            </div>
-            <div class="flex justify-end mt-4">
-                <a href="{{ route("laporansakit.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Sakit →</a>
-            </div>
-        </div>
-        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
-            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Izin</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <canvas id="chartizin" class="w-full h-96"></canvas>
-            </div>
-            <div class="flex justify-end mt-4">
-                <a href="{{ route("laporanizin.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Izin →</a>
-            </div>
-        </div>
-        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
-            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Cuti</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <canvas id="chartcuti" class="w-full h-96"></canvas>
-            </div>
-            <div class="flex justify-end mt-4">
-                <a href="{{ route("laporancuti.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Cuti →</a>
-            </div>
-        </div>
-        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
-            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Terlambat</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <canvas id="chartterlambat" class="w-full h-96"></canvas>
-            </div>
-            <div class="flex justify-end mt-4">
-                <a href="{{ route("laporanterlambat.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Terlambat →</a>
             </div>
         </div>
 
@@ -1905,6 +1910,125 @@ function triggerPDFExport() {
         .catch(error => console.error("Error exporting PDF:", error));
     });
 }
+
+function toggleModal() {
+    const exportModal = document.getElementById('exportModal');
+    if (exportModal) {
+        exportModal.classList.toggle('hidden');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const exportButton = document.getElementById('exportButton'); // Existing export button
+    const exportModal = document.getElementById('exportModal');
+    const cancelExportBtn = document.getElementById('cancelExportBtn');
+    const confirmExportBtn = document.getElementById('confirmExportBtn');
+
+    // Function to show modal
+    function showExportModal() {
+        exportModal.classList.remove('hidden');
+    }
+
+    // Function to hide modal
+    function hideExportModal() {
+        exportModal.classList.add('hidden');
+    }
+
+    // Event listener for export button to show modal
+    if (exportButton) {
+        exportButton.addEventListener('click', showExportModal);
+    }
+
+    // Cancel button closes the modal
+    cancelExportBtn.addEventListener('click', hideExportModal);
+
+    // Confirm export button
+    confirmExportBtn.addEventListener('click', function() {
+        // Hide modal
+        hideExportModal();
+
+        // Dispatch custom event to trigger export
+        document.dispatchEvent(new Event('triggerPDFExport'));
+    });
+
+    // Optional: Close modal if clicking outside
+    exportModal.addEventListener('click', function(event) {
+        if (event.target === exportModal) {
+            hideExportModal();
+        }
+    });
+});
+
+
+//export pdf 
+async function exportToPDF1() {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    if (!csrfToken) {
+        alert('CSRF token tidak ditemukan. Pastikan meta tag CSRF disertakan.');
+        return;
+    }
+
+    // Ambil data dari tabel
+    const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
+        const cells = row.querySelectorAll('td');
+        return {
+            tanggal: cells[0]?.innerText.trim() || '',
+            perusahaan: cells[1]?.innerText.trim() || '',
+            total_penjualan_formatted: cells[2]?.innerText.trim() || '',
+        };
+    });
+
+    const tableContent = items
+        .filter(item => item.tanggal && item.perusahaan && item.total_penjualan_formatted)
+        .map(item => `
+            <tr>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.tanggal}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.perusahaan}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.total_penjualan_formatted}</td>
+            </tr>
+        `).join('');
+
+    const chartCanvas = document.querySelector('#chartpp');
+    if (!chartCanvas) {
+        alert('Elemen canvas grafik tidak ditemukan.');
+        return;
+    }
+
+    const chartBase64 = chartCanvas.toDataURL();
+
+    try {
+        const response = await fetch('/exportall', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                table2: tableContent,
+                chart2: chartBase64,
+            }),
+        });
+
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Laporan_rekap_penjualan_perusahaan.pdf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        } else {
+            const errorData = await response.json();
+            alert(errorData.message || 'Gagal mengekspor PDF.');
+        }
+    } catch (error) {
+        console.error('Error exporting to PDF:', error);
+        alert('Terjadi kesalahan saat mengekspor PDF.');
+    }
+}
+
+// Add event listener to trigger export
 
 
 </script>

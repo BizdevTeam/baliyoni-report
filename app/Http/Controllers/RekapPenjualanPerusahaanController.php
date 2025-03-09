@@ -236,43 +236,56 @@ class RekapPenjualanPerusahaanController extends Controller
 
     public function showChart(Request $request)
     {
-        $search = $request->input('search');
+    $search = $request->input('search');
+    $startMonth = $request->input('start_month');
+    $endMonth = $request->input('end_month');
 
-        // Ambil data dari database
-        $rekappenjualanperusahaans = RekapPenjualanPerusahaan::query()
-        ->when($search, function ($query, $search) {
-            return $query->where('tanggal', 'LIKE', "%$search%");
-        })
-        ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Order by year (desc) and month (asc)
-        ->get();  
-
-        // Siapkan data untuk chart
-        $labels = $rekappenjualanperusahaans->map(function($item) {
-            $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F - Y');
-            return $item->perusahaan->nama_perusahaan . ' - ' . $formattedDate;
-        })->toArray();
-        $data = $rekappenjualanperusahaans->pluck('total_penjualan')->toArray();
-        $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data);
+    // Ambil data dari database
+    $query = RekapPenjualanPerusahaan::query();
     
-        $chartData = [
-            'labels' => $labels,
-            'datasets' => [
-                [
-                    'label' => 'Total Paket',
-                    'data' => $data,
-                    'backgroundColor' => $backgroundColors,
-                ],
+    // Filter berdasarkan tanggal jika ada
+    if ($search) {
+        $query->where('tanggal', 'LIKE', "%$search%");
+    }
+    
+    // Filter berdasarkan range bulan-tahun jika keduanya diisi
+    if ($startMonth && $endMonth) {
+        $startDate = \Carbon\Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+        $endDate = \Carbon\Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+        
+        $query->whereBetween('tanggal', [$startDate, $endDate]);
+    }
+    
+    $rekappenjualanperusahaans = $query
+        ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
+        ->get();
+
+    // Siapkan data untuk chart
+    $labels = $rekappenjualanperusahaans->map(function($item) {
+        $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F - Y');
+        return $item->perusahaan->nama_perusahaan . ' - ' . $formattedDate;
+    })->toArray();
+    $data = $rekappenjualanperusahaans->pluck('total_penjualan')->toArray();
+    $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data);
+
+    $chartData = [
+        'labels' => $labels,
+        'datasets' => [
+            [
+                'label' => 'Total Paket',
+                'data' => $data,
+                'backgroundColor' => $backgroundColors,
             ],
-        ];
-    
-        // Kembalikan data dalam format JSON
-        return response()->json($chartData);
-    }
-    
-    private function getRandomRGBAA($opacity = 0.7)
-    {
-        return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
-    }
+        ],
+    ];
 
+    // Kembalikan data dalam format JSON
+    return response()->json($chartData);
+}
+
+private function getRandomRGBAA($opacity = 0.7)
+{
+    return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
+}
 }
 
