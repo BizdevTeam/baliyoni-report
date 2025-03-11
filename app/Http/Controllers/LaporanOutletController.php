@@ -232,12 +232,26 @@ class LaporanOutletController extends Controller
     {
 
         $search = $request->input('search');
-    
-        $laporanoutlets = LaporanOutlet::query()
-        ->when($search, function ($query, $search) {
-            return $query->where('tanggal', 'LIKE', "%$search%");
-        })
-        ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC'); // Urutkan berdasarkan tahun (descending) dan date (ascending)
+        $startMonth = $request->input('start_month');
+        $endMonth = $request->input('end_month');
+        
+        $query = LaporanOutlet::query();
+            // Filter berdasarkan tanggal jika ada
+        if ($search) {
+            $query->where('tanggal', 'LIKE', "%$search%");
+        }
+        
+        // Filter berdasarkan range bulan-tahun jika keduanya diisi
+        if ($startMonth && $endMonth) {
+            $startDate = \Carbon\Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+            $endDate = \Carbon\Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+            
+            $query->whereBetween('tanggal', [$startDate, $endDate]);
+        }
+        
+        $laporanoutlets = $query
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
+            ->get();
     
         // Format label sesuai kebutuhan
         $labels = $laporanoutlets->pluck('tanggal')->map(function ($tanggal) {

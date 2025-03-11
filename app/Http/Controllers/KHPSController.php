@@ -204,13 +204,25 @@ class KHPSController extends Controller
     public function showChart(Request $request)
     { 
         $search = $request->input('search');
-
-        // Query untuk mencari berdasarkan tahun dan date
-        $kashutangpiutangstoks = KasHutangPiutang::query()
-            ->when($search, function ($query, $search) {
-                return $query->where('tanggal', 'LIKE', "%$search%");
-            })
-            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
+        $startMonth = $request->input('start_month');
+        $endMonth = $request->input('end_month');
+        
+        $query = KasHutangPiutang::query();
+            // Filter berdasarkan tanggal jika ada
+        if ($search) {
+            $query->where('tanggal', 'LIKE', "%$search%");
+        }
+        
+        // Filter berdasarkan range bulan-tahun jika keduanya diisi
+        if ($startMonth && $endMonth) {
+            $startDate = \Carbon\Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+            $endDate = \Carbon\Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+            
+            $query->whereBetween('tanggal', [$startDate, $endDate]);
+        }
+        
+        $kashutangpiutangstoks = $query
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
             ->get();
 
         // Hitung total untuk masing-masing kategori

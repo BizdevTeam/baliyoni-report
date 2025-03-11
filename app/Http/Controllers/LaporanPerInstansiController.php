@@ -258,10 +258,31 @@ class LaporanPerInstansiController extends Controller
             return redirect()->route('laporanperinstansi.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
     }
-    public function showChart()
+    public function showChart(Request $request)
     {
+        $search = $request->input('search');
+        $startMonth = $request->input('start_month');
+        $endMonth = $request->input('end_month');
+    
         // Ambil data dari database
-        $laporanperinstansis = LaporanPerInstansi::orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')->get();
+        $query = LaporanPerInstansi::query();
+        
+        // Filter berdasarkan tanggal jika ada
+        if ($search) {
+            $query->where('tanggal', 'LIKE', "%$search%");
+        }
+        
+        // Filter berdasarkan range bulan-tahun jika keduanya diisi
+        if ($startMonth && $endMonth) {
+            $startDate = \Carbon\Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+            $endDate = \Carbon\Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+            
+            $query->whereBetween('tanggal', [$startDate, $endDate]);
+        }
+        
+        $laporanperinstansis = $query
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
+            ->get();
     
         // Siapkan data untuk chart
         $labels = $laporanperinstansis->map(function($item) {

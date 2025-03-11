@@ -213,39 +213,44 @@ class LaporanLabaRugiController extends Controller
             return redirect()->back()->with('error', 'Gagal mengekspor PDF: ' . $e->getMessage());
         }
     }
-// Controller
-public function getGambar(Request $request)
-{
-    try {
-        $search = $request->input('search');
 
-        $images = LaporanLabaRugi::select('gambar')
-            ->whereNotNull('gambar')
-            ->when($search, function ($query, $search) {
-                return $query->where('tanggal', 'like', "%$search%");
-            })
-            ->get()
-            ->map(function ($item) {
-                // Pastikan gambar tidak kosong dan benar-benar ada di direktori
-                $imagePath = public_path('images/accounting/labarugi/'.$item->gambar);
-
-                if (!empty($item->gambar) && file_exists($imagePath)) {
-                    return [
-                        'gambar' => asset('images/accounting/labarugi/'.$item->gambar) // Path yang benar
-                    ];
-                }
-
+    public function getGambar(Request $request)
+    {
+        try {
+            $search = $request->input('search');
+            $startMonth = $request->input('start_month');
+            $endMonth = $request->input('end_month');
+    
+            // Inisialisasi query
+            $query = LaporanLabaRugi::query()->whereNotNull('gambar');
+    
+            // Filter berdasarkan tanggal jika ada
+            if ($search) {
+                $query->where('tanggal', 'LIKE', "%$search%");
+            }
+    
+            // Filter berdasarkan range bulan-tahun jika keduanya diisi
+            if ($startMonth && $endMonth) {
+                $startDate = \Carbon\Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+                $endDate = \Carbon\Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+    
+                $query->whereBetween('tanggal', [$startDate, $endDate]);
+            }
+    
+            // Ambil gambar yang valid atau gambar default
+            $images = $query->select('gambar')->get()->map(function ($item) {
+                $imagePath = public_path('images/accounting/labarugi/' . $item->gambar);
+    
                 return [
-                    'gambar' => asset('images/no-image.png') // Placeholder jika gambar tidak ditemukan
+                    'gambar' => (!empty($item->gambar) && file_exists($imagePath))
+                        ? asset('images/accounting/labarugi/' . $item->gambar)
+                        : asset('images/no-image.png')
                 ];
             });
-
-        return response()->json($images);
-    } catch (\Exception $e) {
-        return response()->json(['error' => $e->getMessage()], 500);
-    }
-}
-
-
-
+    
+            return response()->json($images);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }    
 }

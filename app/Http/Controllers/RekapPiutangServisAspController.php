@@ -272,14 +272,26 @@ class RekapPiutangServisAspController extends Controller
     public function showChart(Request $request)
     {
         $search = $request->input('search');
-    
-        // Ambil data dari database
-        $rekappiutangservisasps = RekapPiutangServisAsp::query()
-            ->when($search, function ($query, $search) {
-                return $query->where('tanggal', 'LIKE', "%$search%");
-            })
-            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Order by year (desc) and month (asc)
-            ->get();  
+        $startMonth = $request->input('start_month');
+        $endMonth = $request->input('end_month');
+        
+        $query = RekapPiutangServisAsp::query();
+            // Filter berdasarkan tanggal jika ada
+        if ($search) {
+            $query->where('tanggal', 'LIKE', "%$search%");
+        }
+        
+        // Filter berdasarkan range bulan-tahun jika keduanya diisi
+        if ($startMonth && $endMonth) {
+            $startDate = \Carbon\Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+            $endDate = \Carbon\Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+            
+            $query->whereBetween('tanggal', [$startDate, $endDate]);
+        }
+        
+        $rekappiutangservisasps = $query
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
+            ->get();
     
         // Siapkan data untuk chart
         $labels = $rekappiutangservisasps->pluck('pelaksana')->toArray(); // Nama pelaksana

@@ -1,14 +1,16 @@
+@if (Auth::check())
+<div class="user-info mb-4">
     <div id="admincontent" class="content-wrapper ml-72 p-4 transition-all duration-300">
         <!-- Grafik Laporan Paket Administrasi -->
         <div class="p-4 ">
             <h1 class="mt-10 text-4xl font-bold text-red-600">Dash<span class="text-red-600">board</span></h1>
-            <div class="flex justify-end mb-4">
-
-                <form id="chartFilterForm" method="GET" action="#" class="flex items-center justify-end gap-2">
+            <div class="flex justify-end mb-4 gap-4">
+                <!-- Search by Date -->
+                <form id="dateFilterForm" method="GET" action="#" class="flex items-center gap-2">
                     <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
                         <input type="date" id="searchInput" name="search" placeholder="Search YYYY - MM" value="{{ request('search') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
                     </div>
-                    <button type="submit" class="justify-end bg-gradient-to-r font-medium from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm" aria-label="Search">
+                    <button type="submit" class="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm" aria-label="Search Date">
                         Search
                     </button>
                 </form>
@@ -17,9 +19,8 @@
 
     <!-- LAPORAN MARKETING -->
     <div id="gridContainer" class="grid gap-6 grid-cols-1">
-        <!-- Card 1 -->
-
-        <!-- LAPORAN MARKETING -->
+        <!-- MARKETING: Tampil untuk Superadmin & Marketing -->
+        @if(in_array(Auth::user()->role, ['superadmin', 'marketing']))
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Rekap Penjualan</h1>
             <div class="bg-white shadow-md rounded-lg p-6">
@@ -73,9 +74,10 @@
                 <a href="{{ route("laporanperinstansi.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Per Instansi →</a>
             </div>
         </div>
+        @endif
 
-        <!-- LAPORAN PROCUREMENTS -->
-        
+        <!-- PROCUREMENT: Tampil untuk Superadmin & Procurement -->
+        @if(in_array(Auth::user()->role, ['superadmin', 'procurement']))
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Pembelian (HOLDING)</h1>
             <div class="bg-white shadow-md rounded-lg p-6">
@@ -114,8 +116,10 @@
                 <a href="{{ route("laporannegosiasi.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Negosiasi →</a>
             </div>
         </div>
+        @endif
 
-        <!-- LAPORAN SUPPORTS -->
+        <!-- MARKETING: Tampil untuk Superadmin & Marketing -->
+        @if(in_array(Auth::user()->role, ['superadmin', 'support']))
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Rekap Pendapatan Servis ASP</h1>
             <div class="bg-white shadow-md rounded-lg p-6">
@@ -148,9 +152,11 @@
                 <a href="{{ route("laporandetrans.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Rekap Pendapatan Pengiriman→</a>
             </div>
         </div>
+        @endif
 
         <!-- LAPORAN ACCOUNTING -->
-
+         <!-- ACCOUNTING: Tampil untuk Superadmin & Accounting -->
+         @if(in_array(Auth::user()->role, ['superadmin', 'accounting']))
          <!-- LAPORAN LABA RUGI -->
          <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Laporan Laba Rugi</h1>
@@ -310,9 +316,10 @@
                     <img id="modalImage" class="mx-auto my-auto object-center max-w-full max-h-[90vh] rounded-lg shadow-lg z-50">
                 </div>
              </div>
+             @endif
 
-        <!-- LAPORAN IT -->
-
+        <!-- IT: Tampil untuk Superadmin & IT -->
+        @if(in_array(Auth::user()->role, ['superadmin', 'it']))
         <!-- LAPORAN IT Multimedia Instagram-->
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Tabel Laporan Multimedia Instagram</h1>
@@ -408,9 +415,10 @@
                 </div>
             </div>
         </div>
+        @endif
 
-        <!-- LAPORAN HRGA -->
-        <!-- LAPORAN HRGA -->
+         <!-- HRGA & Lainnya -->
+         @if(in_array(Auth::user()->role, ['superadmin', 'hrga']))
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Tabel Laporan PT BOS</h1>
             <div class="bg-white shadow-md rounded-lg p-6">
@@ -522,7 +530,10 @@
                 <a href="{{ route("laporanterlambat.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Terlambat →</a>
             </div>
         </div>
+        @endif
 
+        <!-- SPI: Tampil untuk Superadmin & SPI -->
+        @if(in_array(Auth::user()->role, ['superadmin', 'spi']))
         <!-- LAPORAN SPI -->
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Tabel Laporan SPI Operasional</h1>
@@ -571,78 +582,20 @@
                 </div>
             </div>
         </div>
+        @endif
     </div>
 </div>
 </div>
+@endif
 
-<button id="exportFloatingButton" class="fixed bottom-48 right-6 w-20 h-20 justify-center rounded-full bg-red-600 font-medium text-white px-4 py-3 hover:shadow-xl transition duration-300 ease-in-out transform hover:scale-105 flex items-center gap-2">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-        <mask id="lineMdCloudAltPrintFilledLoop0">
-            <g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-                <path stroke-dasharray="64" stroke-dashoffset="64" d="M7 19h11c2.21 0 4 -1.79 4 -4c0 -2.21 -1.79 -4 -4 -4h-1v-1c0 -2.76 -2.24 -5 -5 -5c-2.42 0 -4.44 1.72 -4.9 4h-0.1c-2.76 0 -5 2.24 -5 5c0 2.76 2.24 5 5 5Z">
-                    <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0" />
-                    <set fill="freeze" attributeName="opacity" begin="0.7s" to="0" />
-                </path>
-                <g fill="#fff" stroke="none" opacity="0">
-                    <circle cx="12" cy="10" r="6">
-                        <animate attributeName="cx" begin="0.7s" dur="30s" repeatCount="indefinite" values="12;11;12;13;12" />
-                    </circle>
-                    <rect width="9" height="8" x="8" y="12" />
-                    <rect width="15" height="12" x="1" y="8" rx="6">
-                        <animate attributeName="x" begin="0.7s" dur="21s" repeatCount="indefinite" values="1;0;1;2;1" />
-                    </rect>
-                    <rect width="13" height="10" x="10" y="10" rx="5">
-                        <animate attributeName="x" begin="0.7s" dur="17s" repeatCount="indefinite" values="10;9;10;11;10" />
-                    </rect>
-                    <set fill="freeze" attributeName="opacity" begin="0.7s" to="1" />
-                </g>
-                <g fill="#000" fill-opacity="0" stroke="none">
-                    <circle cx="12" cy="10" r="4">
-                        <animate attributeName="cx" begin="0.7s" dur="30s" repeatCount="indefinite" values="12;11;12;13;12" />
-                    </circle>
-                    <rect width="9" height="6" x="8" y="12" />
-                    <rect width="11" height="8" x="3" y="10" rx="4">
-                        <animate attributeName="x" begin="0.7s" dur="21s" repeatCount="indefinite" values="3;2;3;4;3" />
-                    </rect>
-                    <rect width="9" height="6" x="12" y="12" rx="3">
-                        <animate attributeName="x" begin="0.7s" dur="17s" repeatCount="indefinite" values="12;11;12;13;12" />
-                    </rect>
-                    <set fill="freeze" attributeName="fill-opacity" begin="0.7s" to="1" />
-                    <animate fill="freeze" attributeName="opacity" begin="0.7s" dur="0.5s" values="1;0" />
-                </g>
-                <g stroke="none">
-                    <path fill="#fff" d="M6 11h12v0h-12z">
-                        <animate fill="freeze" attributeName="d" begin="1.3s" dur="0.22s" values="M6 11h12v0h-12z;M6 11h12v11h-12z" />
-                    </path>
-                    <path fill="#000" d="M8 13h8v0h-8z">
-                        <animate fill="freeze" attributeName="d" begin="1.34s" dur="0.14s" values="M8 13h8v0h-8z;M8 13h8v7h-8z" />
-                    </path>
-                    <path fill="#fff" fill-opacity="0" d="M9 12h6v1H9zM9 14h6v1H9zM9 16h6v1H9zM9 18h6v1H9z">
-                        <animate fill="freeze" attributeName="fill-opacity" begin="1.4s" dur="0.1s" values="0;1" />
-                        <animateMotion begin="1.5s" calcMode="linear" dur="1.5s" path="M0 0v2" repeatCount="indefinite" />
-                    </path>
-                </g>
-            </g>
-        </mask>
-        <rect width="30" height="30" fill="currentColor" mask="url(#lineMdCloudAltPrintFilledLoop0)" />
-    </svg>
-</button>
 
-<div id="exportModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-50">
-    <div class="bg-white rounded-lg p-6 shadow-lg w-96">
-        <h2 class="text-xl font-bold mb-4">Export PDF</h2>
-        <p class="mb-4">Apakah Anda ingin mengekspor laporan penjualan ke PDF?</p>
-        <div class="flex justify-end space-x-2">
-            <button id="cancelExportBtn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">Batal</button>
-            <button id="confirmExportBtn" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Ekspor PDF</button>
-        </div>
-    </div>
-</div>
 
 <!-- Loading Indicator -->
 <div id="loadingIndicator" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden z-50">
     <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-white"></div>
 </div>
+
+<x-floating-popover/>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <!-- jQuery -->
@@ -682,47 +635,61 @@
         fetchChartPieData('{{ route("adminak.chart.data") }}', 'chartak', 'Nilai Piutang ');
     }
 
-    // Memanggil fungsi loadInitialChartData saat halaman dimuat
     document.addEventListener("DOMContentLoaded", loadInitialChartData);
 
-    document.getElementById('chartFilterForm').addEventListener('submit', function(event) {
-        event.preventDefault(); // Mencegah reload halaman
+    function fetchCharts(queryParams = {}) {
+        let queryString = new URLSearchParams(queryParams).toString();
+        queryString = queryString ? `?${queryString}` : '';
 
-        let searchValue = document.getElementById('searchInput').value;
-        let queryString = '';
-
-        if (searchValue) {
-            queryString += `?search=${searchValue}`;
-        }
-
-        //laporan MARKETING
+        // laporan MARKETING
         fetchChartDataWRp('{{ route("adminpenjualan.chart.data") }}' + queryString, 'chartp');
         fetchChartDataWRp('{{ route("adminpp.chart.data") }}' + queryString, 'chartpp');
         fetchChartDataWRp('{{ route("admin.chart.data") }}' + queryString, 'chartl');
         fetchChartDataNRp('{{ route("adminstatuspaket.chart.data") }}' + queryString, 'chartsp');
         fetchChartDataNRp('{{ route("adminperinstansi.chart.data") }}' + queryString, 'chartpi');
 
-        //laporan PROCUREMENTS
+        // laporan PROCUREMENTS
         fetchChartDataWRp('{{ route("adminholding.chart.data") }}' + queryString, 'chartph');
         fetchChartDataWRp('{{ route("adminstok.chart.data") }}' + queryString, 'chartls');
         fetchChartDataWRp('{{ route("adminoutlet.chart.data") }}' + queryString, 'chartpo');
         fetchChartDataWRp('{{ route("adminnegosiasi.chart.data") }}' + queryString, 'chartln');
 
-        //laporan SUPPORTS
+        // laporan SUPPORTS
         fetchChartPieData('{{ route("adminpendapatanservisasp.chart.data") }}' + queryString, 'chartlrp');
         fetchChartPieData('{{ route("adminpiutangservisasp.chart.data") }}' + queryString, 'chartlrps');
         fetchChartDataWRp('{{ route("adminpendapatanpengirimanluarbali.chart.data") }}' + queryString, 'chartrplb');
 
-        //laporan HRGA
+        // laporan HRGA
         fetchChartDataNRp('{{ route("adminsakit.chart.data") }}' + queryString, 'charts');
         fetchChartDataNRp('{{ route("adminizin.chart.data") }}' + queryString, 'chartizin');
         fetchChartDataNRp('{{ route("admincuti.chart.data") }}' + queryString, 'chartcuti');
         fetchChartDataNRp('{{ route("adminterlambat.chart.data") }}' + queryString, 'chartterlambat');
 
-        //laporan ACCOUNTING
+        // laporan ACCOUNTING
         fetchChartPieData('{{ route("adminkhps.chart.data") }}' + queryString, 'chartkhps');
         fetchChartPieData('{{ route("adminak.chart.data") }}' + queryString, 'chartak');
+    }
 
+    document.getElementById('dateFilterForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        let searchValue = document.getElementById('searchInput').value.trim();
+        let queryParams = {};
+        if (searchValue) {
+            queryParams['search'] = searchValue;
+        }
+        fetchCharts(queryParams);
+    });
+
+    document.getElementById('monthFilterForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        let startMonth = document.getElementById('startMonth').value;
+        let endMonth = document.getElementById('endMonth').value;
+        let queryParams = {};
+        if (startMonth && endMonth) {
+            queryParams['start_month'] = startMonth;
+            queryParams['end_month'] = endMonth;
+        }
+        fetchCharts(queryParams);
     });
 
     //fetch menggunakan Rp
@@ -1838,10 +1805,6 @@ function fetchImages() {
             }
         });
     });
-
-
-
-
 
 // Fungsi untuk menampilkan atau menyembunyikan modal
 function toggleModal() {
