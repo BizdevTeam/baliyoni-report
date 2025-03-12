@@ -40,7 +40,10 @@ class RekapPiutangServisAspController extends Controller
             return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
         }
         
-        $labels = $rekappiutangservisasps->pluck('pelaksana')->toArray();
+        // Gabungkan pelaksana dan nilai_pendapatan untuk label
+        $labels = $rekappiutangservisasps->map(function ($item) {
+            return $item->pelaksana . ' ('. 'Rp'. ' ' . number_format($item->nilai_piutang) . ')';
+        })->toArray();
         $data = $rekappiutangservisasps->pluck('nilai_piutang')->toArray();
         
         // Generate random colors for each data item
@@ -272,17 +275,31 @@ class RekapPiutangServisAspController extends Controller
     public function showChart(Request $request)
     {
         $search = $request->input('search');
+        $startMonth = $request->input('start_month');
+        $endMonth = $request->input('end_month');
+        
+        $query = RekapPiutangServisAsp::query();
+            // Filter berdasarkan tanggal jika ada
+        if ($search) {
+            $query->where('tanggal', 'LIKE', "%$search%");
+        }
+        
+        // Filter berdasarkan range bulan-tahun jika keduanya diisi
+        if ($startMonth && $endMonth) {
+            $startDate = \Carbon\Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+            $endDate = \Carbon\Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+            
+            $query->whereBetween('tanggal', [$startDate, $endDate]);
+        }
+        
+        $rekappiutangservisasps = $query
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
+            ->get();
     
-        // Ambil data dari database
-        $rekappiutangservisasps = RekapPiutangServisAsp::query()
-            ->when($search, function ($query, $search) {
-                return $query->where('tanggal', 'LIKE', "%$search%");
-            })
-            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Order by year (desc) and month (asc)
-            ->get();  
-    
-        // Siapkan data untuk chart
-        $labels = $rekappiutangservisasps->pluck('pelaksana')->toArray(); // Nama pelaksana
+        // Gabungkan pelaksana dan nilai_pendapatan untuk label
+        $labels = $rekappiutangservisasps->map(function ($item) {
+            return $item->pelaksana . ' ('. 'Rp'. ' ' . number_format($item->nilai_piutang) . ')';
+        })->toArray();        
         $data = $rekappiutangservisasps->pluck('nilai_piutang')->toArray(); // Nilai pendapatan
         $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data); // Warna acak untuk pie chart
     

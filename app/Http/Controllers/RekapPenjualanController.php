@@ -249,14 +249,26 @@ class RekapPenjualanController extends Controller
     public function showChart(Request $request)
     {
         $search = $request->input('search');
-
-        // Query RekapPenjualan with optional search filter
-        $rekappenjualans = RekapPenjualan::query()
-            ->when($search, function ($query, $search) {
-                return $query->where('tanggal', 'LIKE', "%$search%");
-            })
-            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Order by year (desc) and month (asc)
-            ->get(); // Fetch results as a collection
+        $startMonth = $request->input('start_month');
+        $endMonth = $request->input('end_month');
+        
+        $query = RekapPenjualan::query();
+            // Filter berdasarkan tanggal jika ada
+        if ($search) {
+            $query->where('tanggal', 'LIKE', "%$search%");
+        }
+        
+        // Filter berdasarkan range bulan-tahun jika keduanya diisi
+        if ($startMonth && $endMonth) {
+            $startDate = \Carbon\Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+            $endDate = \Carbon\Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+            
+            $query->whereBetween('tanggal', [$startDate, $endDate]);
+        }
+        
+        $rekappenjualans = $query
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
+            ->get();
 
         $rekappenjualans->map(function ($item) {
             $item->total_penjualan_formatted = 'Rp ' . number_format($item->total_penjualan, 0, ',', '.');
@@ -265,7 +277,7 @@ class RekapPenjualanController extends Controller
 
         // Format labels as "Month - Year"
         $labels = $rekappenjualans->map(function ($item) {
-            return \Carbon\Carbon::parse($item->date)->translatedFormat('F - Y');
+            return \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F - Y');
         })->toArray();
 
         // Numeric data for the chart
@@ -274,16 +286,16 @@ class RekapPenjualanController extends Controller
         // Generate random background colors for each data point
         $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data);
 
-        return response()->json([
-            'labels' => $labels, // Properly formatted labels
-            'datasets' => [
-                [
-                    'label' => 'Total Penjualan', // Label for the dataset
-                    'data' => $data, // Numeric data for chart rendering
-                    'backgroundColor' => $backgroundColors, // Random colors
-                ],
+    return response()->json([
+        'labels' => $labels, // Properly formatted labels
+        'datasets' => [
+            [
+                'label' => 'Total Penjualan', // Label for the dataset
+                'data' => $data, // Numeric data for chart rendering
+                'backgroundColor' => $backgroundColors, // Random colors
             ],
-        ]);
+        ],
+    ]);
     }
 
     private function getRandomRGBAA($opacity = 0.7)

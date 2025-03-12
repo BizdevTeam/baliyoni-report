@@ -31,9 +31,19 @@ class KHPSController extends Controller
         $totalPiutang = $kashutangpiutangstoks->sum('piutang');
         $totalStok = $kashutangpiutangstoks->sum('stok');
 
-        // Siapkan data untuk chart
+        // Format angka menjadi format rupiah atau format angka biasa
+        $formattedKas = number_format($totalKas, 0, ',', '.');
+        $formattedHutang = number_format($totalHutang, 0, ',', '.');
+        $formattedPiutang = number_format($totalPiutang, 0, ',', '.');
+        $formattedStok = number_format($totalStok, 0, ',', '.');
+
         $chartData = [
-            'labels' => ['Kas', 'Hutang', 'Piutang', 'Stok'],
+            'labels' => [
+                "Kas : Rp $formattedKas",
+                "Hutang : Rp $formattedHutang",
+                "Piutang : Rp $formattedPiutang",
+                "Stok : Rp $formattedStok",
+            ],
             'datasets' => [
                 [
                     'data' => [$totalKas, $totalHutang, $totalPiutang, $totalStok],
@@ -204,13 +214,25 @@ class KHPSController extends Controller
     public function showChart(Request $request)
     { 
         $search = $request->input('search');
-
-        // Query untuk mencari berdasarkan tahun dan date
-        $kashutangpiutangstoks = KasHutangPiutang::query()
-            ->when($search, function ($query, $search) {
-                return $query->where('tanggal', 'LIKE', "%$search%");
-            })
-            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
+        $startMonth = $request->input('start_month');
+        $endMonth = $request->input('end_month');
+        
+        $query = KasHutangPiutang::query();
+            // Filter berdasarkan tanggal jika ada
+        if ($search) {
+            $query->where('tanggal', 'LIKE', "%$search%");
+        }
+        
+        // Filter berdasarkan range bulan-tahun jika keduanya diisi
+        if ($startMonth && $endMonth) {
+            $startDate = \Carbon\Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+            $endDate = \Carbon\Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+            
+            $query->whereBetween('tanggal', [$startDate, $endDate]);
+        }
+        
+        $kashutangpiutangstoks = $query
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
             ->get();
 
         // Hitung total untuk masing-masing kategori
@@ -219,9 +241,19 @@ class KHPSController extends Controller
         $totalPiutang = $kashutangpiutangstoks->sum('piutang');
         $totalStok = $kashutangpiutangstoks->sum('stok');
 
-        // Siapkan data untuk chart
+        // Format angka menjadi format rupiah atau format angka biasa
+        $formattedKas = number_format($totalKas, 0, ',', '.');
+        $formattedHutang = number_format($totalHutang, 0, ',', '.');
+        $formattedPiutang = number_format($totalPiutang, 0, ',', '.');
+        $formattedStok = number_format($totalStok, 0, ',', '.');
+
         $chartData = [
-            'labels' => ['Kas', 'Hutang', 'Piutang', 'Stok'],
+            'labels' => [
+                "Kas : Rp $formattedKas",
+                "Hutang : Rp $formattedHutang",
+                "Piutang : Rp $formattedPiutang",
+                "Stok : Rp $formattedStok",
+            ],
             'datasets' => [
                 [
                     'data' => [$totalKas, $totalHutang, $totalPiutang, $totalStok],

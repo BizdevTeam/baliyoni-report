@@ -236,19 +236,29 @@ class LaporanHoldingController extends Controller
     public function showChart(Request $request)
     {
         $search = $request->input('search');
+        $startMonth = $request->input('start_month');
+        $endMonth = $request->input('end_month');
 
-        $laporanholdings = LaporanHolding::with('perusahaan')
-            ->when($search, function ($query, $search) {
-                return $query->where('tanggal', 'LIKE', "%$search%")
-                             ->orWhereHas('perusahaan', function ($q) use ($search) {
-                                 $q->where('nama_perusahaan', 'LIKE', "%$search%");
-                             });
-            })
-            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
-            ->get();
+        $query = LaporanHolding::query();
+        // Filter berdasarkan tanggal jika ada
+        if ($search) {
+            $query->where('tanggal', 'LIKE', "%$search%");
+        }
+        
+        // Filter berdasarkan range bulan-tahun jika keduanya diisi
+        if ($startMonth && $endMonth) {
+            $startDate = \Carbon\Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+            $endDate = \Carbon\Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+            
+            $query->whereBetween('tanggal', [$startDate, $endDate]);
+        }
+
+        $laporanholdings = $query
+        ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
+        ->get();
 
         $labels = $laporanholdings->map(function ($item) {
-            $formattedDate = \Carbon\Carbon::parse($item->date)->translatedFormat('F - Y');
+            $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F - Y');
             return $item->perusahaan->nama_perusahaan . ' - ' . $formattedDate;
         })->toArray();
         $data = $laporanholdings->pluck('nilai')->toArray();

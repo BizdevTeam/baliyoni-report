@@ -255,15 +255,29 @@ class StatusPaketController extends Controller
 
     public function showChart(Request $request)
     {
-
         $search = $request->input('search');
+        $startMonth = $request->input('start_month');
+        $endMonth = $request->input('end_month');
     
-        $statuspakets = StatusPaket::query()
-        ->when($search, function ($query, $search) {
-            return $query->where('tanggal', 'LIKE', "%$search%");
-        })
-        ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC'); // Urutkan berdasarkan tahun (descending) dan date (ascending)
-    
+        // Ambil data dari database
+        $query = StatusPaket::query();
+        // Filter berdasarkan tanggal jika ada
+        if ($search) {
+            $query->where('tanggal', 'LIKE', "%$search%");
+        }
+        
+        // Filter berdasarkan range bulan-tahun jika keduanya diisi
+        if ($startMonth && $endMonth) {
+            $startDate = \Carbon\Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+            $endDate = \Carbon\Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+            
+            $query->whereBetween('tanggal', [$startDate, $endDate]);
+        }
+        
+        $statuspakets = $query
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
+            ->get();    
+
         // Format label sesuai kebutuhan
         $labels = $statuspakets->pluck('status')->toArray();
         $data = $statuspakets->pluck('total_paket')->toArray();

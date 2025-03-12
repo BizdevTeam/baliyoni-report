@@ -16,49 +16,51 @@ class RekapPendapatanServisAspController extends Controller
     use DateValidationTrait;
     // lempar data ke view blade
     public function index(Request $request)
-    { 
+    {
         $perPage = $request->input('per_page', 12);
         $search = $request->input('search');
-
-        #$query = KasHutangPiutang::query();
-
+    
         // Query untuk mencari berdasarkan tahun dan date
         $rekappendapatanservisasps = RekapPendapatanServisAsp::query()
             ->when($search, function ($query, $search) {
                 return $query->where('tanggal', 'LIKE', "%$search%")
                              ->orWhere('pelaksana', 'like', "%$search%");
             })
-            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
             ->paginate($perPage);
-
+    
         // Hitung total untuk masing-masing kategori
         $totalPenjualan = $rekappendapatanservisasps->sum('nilai_pendapatan');
-
-        // Siapkan data untuk chart
+    
+        // Fungsi untuk menghasilkan warna RGBA secara acak
         function getRandomRGBA($opacity = 0.7) {
             return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
         }
-        
-        $labels = $rekappendapatanservisasps->pluck('pelaksana')->toArray();
+    
+        // Gabungkan pelaksana dan nilai_pendapatan untuk label
+        $labels = $rekappendapatanservisasps->map(function ($item) {
+            return $item->pelaksana . ' ('. 'Rp'. ' ' . number_format($item->nilai_pendapatan) . ')';
+        })->toArray();
+    
         $data = $rekappendapatanservisasps->pluck('nilai_pendapatan')->toArray();
-        
+    
         // Generate random colors for each data item
         $backgroundColors = array_map(fn() => getRandomRGBA(), $data);
-        
+    
         $chartData = [
-            'labels' => $labels, // Labels untuk chart
+            'labels' => $labels, // Labels dengan pelaksana dan nilai_pendapatan
             'datasets' => [
                 [
-                    'label' => 'Grafik Rekap Pendapatan Servis ASP', // Nama dataset
-                    'text' => 'Nilai Pendapatan Servis ASP', // Nama dataset
-                    'data' => $data, // Data untuk chart
-                    'backgroundColor' => $backgroundColors, // Warna batang random
+                    'label' => 'Grafik Rekap Pendapatan Servis ASP',
+                    'text' => 'Nilai Pendapatan Servis ASP',
+                    'data' => $data,
+                    'backgroundColor' => $backgroundColors,
                 ],
             ],
         ];
-        
-        return view('supports.rekappendapatanservisasp', compact('rekappendapatanservisasps', 'chartData'));    }
-
+    
+        return view('supports.rekappendapatanservisasp', compact('rekappendapatanservisasps', 'chartData'));
+    }    
     public function store(Request $request)
     {
         try {
@@ -263,17 +265,31 @@ class RekapPendapatanServisAspController extends Controller
     public function showChart(Request $request)
 {
     $search = $request->input('search');
+    $startMonth = $request->input('start_month');
+    $endMonth = $request->input('end_month');
+    
+    $query = RekapPendapatanServisAsp::query();
+        // Filter berdasarkan tanggal jika ada
+    if ($search) {
+        $query->where('tanggal', 'LIKE', "%$search%");
+    }
+    
+    // Filter berdasarkan range bulan-tahun jika keduanya diisi
+    if ($startMonth && $endMonth) {
+        $startDate = \Carbon\Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+        $endDate = \Carbon\Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+        
+        $query->whereBetween('tanggal', [$startDate, $endDate]);
+    }
+    
+    $rekappendapatanservisasps = $query
+        ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
+        ->get();
 
-    // Ambil data dari database
-    $rekappendapatanservisasps = RekapPendapatanServisAsp::query()
-        ->when($search, function ($query, $search) {
-            return $query->where('tanggal', 'LIKE', "%$search%");
-        })
-        ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Order by year (desc) and month (asc)
-        ->get();  
-
-    // Siapkan data untuk chart
-    $labels = $rekappendapatanservisasps->pluck('pelaksana')->toArray(); // Nama pelaksana
+    // Gabungkan pelaksana dan nilai_pendapatan untuk label
+    $labels = $rekappendapatanservisasps->map(function ($item) {
+        return $item->pelaksana . ' ('. 'Rp'. ' ' . number_format($item->nilai_pendapatan) . ')';
+    })->toArray();    
     $data = $rekappendapatanservisasps->pluck('nilai_pendapatan')->toArray(); // Nilai pendapatan
     $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data); // Warna acak untuk pie chart
 

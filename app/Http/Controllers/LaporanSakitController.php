@@ -243,10 +243,30 @@ class LaporanSakitController extends Controller
         }
     }
 
-    public function showChart()
+
+    public function showChart(Request $request)    
     {
-        // Ambil data dari database
-        $laporansakits = LaporanSakit::orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')->get();
+        $search = $request->input('search');
+        $startMonth = $request->input('start_month');
+        $endMonth = $request->input('end_month');
+        
+        $query = LaporanSakit::query();
+            // Filter berdasarkan tanggal jika ada
+        if ($search) {
+            $query->where('tanggal', 'LIKE', "%$search%");
+        }
+        
+        // Filter berdasarkan range bulan-tahun jika keduanya diisi
+        if ($startMonth && $endMonth) {
+            $startDate = \Carbon\Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+            $endDate = \Carbon\Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+            
+            $query->whereBetween('tanggal', [$startDate, $endDate]);
+        }
+        
+        $laporansakits = $query
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
+            ->get();
     
         // Siapkan data untuk chart
         $labels = $laporansakits->pluck('nama')->toArray();

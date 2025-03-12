@@ -362,17 +362,21 @@
 
     var chartData = @json($chartData);
 
-    var chartData = @json($chartData);
-
-var ctx = document.getElementById('chart').getContext('2d');
+    var ctx = document.getElementById('chart').getContext('2d');
     var pieChart = new Chart(ctx, {
-        type: 'pie', 
-        data: chartData, 
+        type: 'pie',
+        data: chartData,
         options: {
             responsive: true,
             plugins: {
                 legend: {
                     position: 'top',
+                    labels: {
+                        font: {
+                            size: 15, // Ukuran font 15px
+                            weight: 'bold' // Membuat teks bold
+                        }
+                    }
                 },
                 tooltip: {
                     callbacks: {

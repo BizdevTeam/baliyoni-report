@@ -229,13 +229,26 @@ class LaporanStokController extends Controller
     public function showChart(Request $request)
     {
         $search = $request->input('search');
-
-        $laporanstoks = LaporanStok::query()
-            ->when($search, function ($query, $search) {
-                return $query->where('tanggal', 'LIKE', "%$search%");
-            })
+        $startMonth = $request->input('start_month');
+        $endMonth = $request->input('end_month');
+        
+        $query = LaporanStok::query();
+            // Filter berdasarkan tanggal jika ada
+        if ($search) {
+            $query->where('tanggal', 'LIKE', "%$search%");
+        }
+        
+        // Filter berdasarkan range bulan-tahun jika keduanya diisi
+        if ($startMonth && $endMonth) {
+            $startDate = \Carbon\Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+            $endDate = \Carbon\Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+            
+            $query->whereBetween('tanggal', [$startDate, $endDate]);
+        }
+        
+        $laporanstoks = $query
             ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
-            ->get(); // Ambil data terlebih dahulu
+            ->get();
     
         // Format tanggal menjadi "F Y" (contoh: "March 2025")
         $labels = $laporanstoks->map(fn($item) => Carbon::parse($item->tanggal)->translatedFormat('F Y'))->toArray();

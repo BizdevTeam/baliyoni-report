@@ -1,26 +1,26 @@
-@if (Auth::check())
-<div class="user-info mb-4">
-    <div id="admincontent" class="content-wrapper ml-72 p-4 transition-all duration-300">
-        <!-- Grafik Laporan Paket Administrasi -->
-        <div class="p-4 ">
-            <h1 class="mt-10 text-4xl font-bold text-red-600">Dash<span class="text-red-600">board</span></h1>
-            <div class="flex justify-end mb-4 gap-4">
-                <!-- Search by Date -->
-                <form id="dateFilterForm" method="GET" action="#" class="flex items-center gap-2">
-                    <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
-                        <input type="date" id="searchInput" name="search" placeholder="Search YYYY - MM" value="{{ request('search') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
-                    </div>
-                    <button type="submit" class="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm" aria-label="Search Date">
-                        Search
-                    </button>
-                </form>
-            </div>
+<div id="admincontent" class="content-wrapper ml-72 p-4 transition-all duration-300">
+    <!-- Grafik Laporan Paket Administrasi -->
+    <div class="p-4 ">
+        <h1 class="mt-10 text-4xl font-bold text-red-600">Dash<span class="text-red-600">board</span></h1>
+        <div class="flex justify-end mb-4">
+
+            <form id="chartFilterForm" method="GET" action="#" class="flex items-center justify-end gap-2">
+                <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
+                    <input type="date" id="searchInput" name="search" placeholder="Search YYYY - MM" value="{{ request('search') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
+                </div>
+                <button type="submit" class="justify-end bg-gradient-to-r font-medium from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm" aria-label="Search">
+                    Search
+                </button>
+            </form>
+
         </div>
+    </div>
 
     <!-- LAPORAN MARKETING -->
     <div id="gridContainer" class="grid gap-6 grid-cols-1">
-        <!-- MARKETING: Tampil untuk Superadmin & Marketing -->
-        @if(in_array(Auth::user()->role, ['superadmin', 'marketing']))
+        <!-- Card 1 -->
+
+        <!-- LAPORAN MARKETING -->
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Rekap Penjualan</h1>
             <div class="bg-white shadow-md rounded-lg p-6">
@@ -74,10 +74,8 @@
                 <a href="{{ route("laporanperinstansi.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Per Instansi →</a>
             </div>
         </div>
-        @endif
 
-        <!-- PROCUREMENT: Tampil untuk Superadmin & Procurement -->
-        @if(in_array(Auth::user()->role, ['superadmin', 'procurement']))
+        <!-- LAPORAN PROCUREMENTS -->
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Pembelian (HOLDING)</h1>
             <div class="bg-white shadow-md rounded-lg p-6">
@@ -116,10 +114,8 @@
                 <a href="{{ route("laporannegosiasi.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Negosiasi →</a>
             </div>
         </div>
-        @endif
 
-        <!-- MARKETING: Tampil untuk Superadmin & Marketing -->
-        @if(in_array(Auth::user()->role, ['superadmin', 'support']))
+        <!-- LAPORAN SUPPORTS -->
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Rekap Pendapatan Servis ASP</h1>
             <div class="bg-white shadow-md rounded-lg p-6">
@@ -142,7 +138,15 @@
                 <a href="{{ route('rekappiutangservisasp.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Rekap Piutang Servis ASP →</a>
             </div>
         </div>
-
+        {{-- <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Rekap Pendapatan Pengiriman Daerah Bali</h1>
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <canvas id="chartrpdb" class="w-full h-96"></canvas>
+            </div>
+            <div class="flex justify-end mt-4">
+                <a href="{{ route("laporansamitra.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Rekap Pendapatan Pengiriman Daerah Bali →</a>
+            </div>
+        </div> --}}
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Rekap Pengiriman</h1>
             <div class="bg-white shadow-md rounded-lg p-6">
@@ -152,13 +156,149 @@
                 <a href="{{ route("laporandetrans.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Rekap Pendapatan Pengiriman→</a>
             </div>
         </div>
-        @endif
+
+        <!-- LAPORAN HRGA -->
+
+        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Sakit</h1>
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <canvas id="charts" class="w-full h-96"></canvas>
+            </div>
+            <div class="flex justify-end mt-4">
+                <a href="{{ route("laporansakit.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Sakit →</a>
+            </div>
+        </div>
+        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Izin</h1>
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <canvas id="chartizin" class="w-full h-96"></canvas>
+            </div>
+            <div class="flex justify-end mt-4">
+                <a href="{{ route("laporanizin.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Izin →</a>
+            </div>
+        </div>
+        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Cuti</h1>
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <canvas id="chartcuti" class="w-full h-96"></canvas>
+            </div>
+            <div class="flex justify-end mt-4">
+                <a href="{{ route("laporancuti.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Cuti →</a>
+            </div>
+        </div>
+        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Terlambat</h1>
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <canvas id="chartterlambat" class="w-full h-96"></canvas>
+            </div>
+            <div class="flex justify-end mt-4">
+                <a href="{{ route("laporanterlambat.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Terlambat →</a>
+            </div>
+        </div>
+
+         <!-- LAPORAN HRGA -->
+         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Tabel Laporan PT BOS</h1>
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <div class="max-w-[600px] md:max-w-none mx-auto md:mx-0 overflow-x-auto"> <!-- Responsive container -->
+                    <table id="adminptbos" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
+                        <thead>
+                            <tr>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Pekerjaan</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Kondisi Tanggal Lalu</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Kondisi Tanggal Ini</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Update</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Rencana Implementasi</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="flex justify-end mt-4">
+                    <a href="{{ route('laporanptbos.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan PT BOS →</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Tabel Laporan iJASA</h1>
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <div class="max-w-[600px] md:max-w-none mx-auto md:mx-0 overflow-x-auto"> <!-- Responsive container -->
+                    <table id="adminijasa" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
+                    <thead>
+                        <tr>
+                            <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
+                            <th class="border border-gray-300 px-4 py-2 text-center">Jam</th>
+                            <th class="border border-gray-300 px-4 py-2 text-center">Permasalahan</th>
+                            <th class="border border-gray-300 px-4 py-2 text-center">Impact</th>
+                            <th class="border border-gray-300 px-4 py-2 text-center">Troubleshooting</th>
+                            <th class="border border-gray-300 px-4 py-2 text-center">Resolve Tanggal</th>
+                            <th class="border border-gray-300 px-4 py-2 text-center">Resolve Jam</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                </div>
+                <div class="flex justify-end mt-4">
+                    <a href="{{ route("laporanijasa.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan iJASA →</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- LAPORAN iJASA Gambar-->
+        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Tabel Laporan iJASA Gambar</h1>
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <div class="max-w-[600px] md:max-w-none mx-auto md:mx-0 overflow-x-auto"> <!-- Container pembatas dan scroll -->
+                    <table id="adminijasagambar" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
+                        <thead>
+                            <tr>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">File</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="flex justify-end mt-4">
+                    <a href="{{ route('ijasagambar.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan iJASA Gambar →</a>
+                </div>
+            </div>
+        </div>
 
         <!-- LAPORAN ACCOUNTING -->
-         <!-- ACCOUNTING: Tampil untuk Superadmin & Accounting -->
-         @if(in_array(Auth::user()->role, ['superadmin', 'accounting']))
-         <!-- LAPORAN LABA RUGI -->
-         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Kas Hutang Piutang Stok</h1>
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <div class="w-full h-full max-w-[600px] max-h-[600px] mx-auto"> <!-- Container pembatas -->
+                    <canvas id="chartkhps" class="w-full h-full"></canvas>
+                </div>
+            </div>
+            <div class="flex justify-end mt-4">
+                <a href="{{ route("khps.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Kas Hutang Piutang Stok →</a>
+            </div>
+        </div>
+
+    <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Arus Kas</h1>
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <div class="w-full h-full max-w-[600px] max-h-[600px] mx-auto"> <!-- Container pembatas -->
+                <canvas id="chartak" class="w-full h-full"></canvas>
+                </div>
+            </div>
+            <div class="flex justify-end mt-4">
+                <a href="{{ route("khps.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Arus Kas →</a>
+            </div>
+        </div>
+
+        <!-- LAPORAN LABA RUGI -->
+        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Laporan Laba Rugi</h1>
             <div class="bg-white shadow-md rounded-lg p-6">
                 <div class="max-w-[600px] md:max-w-none mx-auto md:mx-0 overflow-x-auto"> <!-- Container pembatas dan scroll -->
@@ -238,31 +378,6 @@
                 </div>
              </div>
 
-         <!-- LAPORAN ACCOUNTING -->
-         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
-            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Kas Hutang Piutang Stok</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <div class="w-full h-full max-w-[600px] max-h-[600px] mx-auto"> <!-- Container pembatas -->
-                    <canvas id="chartkhps" class="w-full h-full"></canvas>
-                </div>
-            </div>
-            <div class="flex justify-end mt-4">
-                <a href="{{ route("khps.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Kas Hutang Piutang Stok →</a>
-            </div>
-        </div>
-
-    <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
-            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Arus Kas</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <div class="w-full h-full max-w-[600px] max-h-[600px] mx-auto"> <!-- Container pembatas -->
-                <canvas id="chartak" class="w-full h-full"></canvas>
-                </div>
-            </div>
-            <div class="flex justify-end mt-4">
-                <a href="{{ route("aruskas.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Arus Kas →</a>
-            </div>
-        </div>
-
         <!-- LAPORAN PPN -->
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Laporan PPN</h1>
@@ -316,32 +431,6 @@
                     <img id="modalImage" class="mx-auto my-auto object-center max-w-full max-h-[90vh] rounded-lg shadow-lg z-50">
                 </div>
              </div>
-             @endif
-
-        <!-- IT: Tampil untuk Superadmin & IT -->
-        @if(in_array(Auth::user()->role, ['superadmin', 'it']))
-        <!-- LAPORAN IT Multimedia Instagram-->
-        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
-            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Tabel Laporan Multimedia Instagram</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <div class="max-w-[600px] md:max-w-none mx-auto md:mx-0 overflow-x-auto"> <!-- Container pembatas dan scroll -->
-                    <table id="admininstagram" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
-                        <thead>
-                            <tr>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">File</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="flex justify-end mt-4">
-                    <a href="{{ route('multimediainstagram.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Multimedia Instagram →</a>
-                </div>
-            </div>
-        </div>
 
         <!-- LAPORAN IT Multimedia Tiktok-->
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
@@ -362,6 +451,29 @@
                 </div>
                 <div class="flex justify-end mt-4">
                     <a href="{{ route('tiktok.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Multimedia Tiktok →</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- LAPORAN IT Multimedia Instagram-->
+        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Tabel Laporan Multimedia Instagram</h1>
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <div class="max-w-[600px] md:max-w-none mx-auto md:mx-0 overflow-x-auto"> <!-- Container pembatas dan scroll -->
+                    <table id="admininstagram" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
+                        <thead>
+                            <tr>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">File</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="flex justify-end mt-4">
+                    <a href="{{ route('multimediainstagram.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Multimedia Instagram →</a>
                 </div>
             </div>
         </div>
@@ -415,125 +527,7 @@
                 </div>
             </div>
         </div>
-        @endif
 
-         <!-- HRGA & Lainnya -->
-         @if(in_array(Auth::user()->role, ['superadmin', 'hrga']))
-        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
-            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Tabel Laporan PT BOS</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <div class="max-w-[600px] md:max-w-none mx-auto md:mx-0 overflow-x-auto"> <!-- Responsive container -->
-                    <table id="adminptbos" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
-                        <thead>
-                            <tr>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Pekerjaan</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Kondisi Tanggal Lalu</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Kondisi Tanggal Ini</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Update</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Rencana Implementasi</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="flex justify-end mt-4">
-                    <a href="{{ route('laporanptbos.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan PT BOS →</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
-            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Tabel Laporan iJASA</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <div class="max-w-[600px] md:max-w-none mx-auto md:mx-0 overflow-x-auto"> <!-- Responsive container -->
-                    <table id="adminijasa" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
-                    <thead>
-                        <tr>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Jam</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Permasalahan</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Impact</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Troubleshooting</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Resolve Tanggal</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Resolve Jam</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-                </div>
-                <div class="flex justify-end mt-4">
-                    <a href="{{ route("laporanijasa.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan iJASA →</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- LAPORAN iJASA Gambar-->
-        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
-            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Tabel Laporan iJASA Gambar</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <div class="max-w-[600px] md:max-w-none mx-auto md:mx-0 overflow-x-auto"> <!-- Container pembatas dan scroll -->
-                    <table id="adminijasagambar" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
-                        <thead>
-                            <tr>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">File</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="flex justify-end mt-4">
-                    <a href="{{ route('ijasagambar.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan iJASA Gambar →</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
-            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Sakit</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <canvas id="charts" class="w-full h-96"></canvas>
-            </div>
-            <div class="flex justify-end mt-4">
-                <a href="{{ route("laporansakit.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Sakit →</a>
-            </div>
-        </div>
-        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
-            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Izin</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <canvas id="chartizin" class="w-full h-96"></canvas>
-            </div>
-            <div class="flex justify-end mt-4">
-                <a href="{{ route("laporanizin.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Izin →</a>
-            </div>
-        </div>
-        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
-            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Cuti</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <canvas id="chartcuti" class="w-full h-96"></canvas>
-            </div>
-            <div class="flex justify-end mt-4">
-                <a href="{{ route("laporancuti.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Cuti →</a>
-            </div>
-        </div>
-        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
-            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Terlambat</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <canvas id="chartterlambat" class="w-full h-96"></canvas>
-            </div>
-            <div class="flex justify-end mt-4">
-                <a href="{{ route("laporanterlambat.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Terlambat →</a>
-            </div>
-        </div>
-        @endif
-
-        <!-- SPI: Tampil untuk Superadmin & SPI -->
-        @if(in_array(Auth::user()->role, ['superadmin', 'spi']))
         <!-- LAPORAN SPI -->
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Tabel Laporan SPI Operasional</h1>
@@ -582,20 +576,78 @@
                 </div>
             </div>
         </div>
-        @endif
     </div>
 </div>
 </div>
-@endif
 
+<button id="exportFloatingButton" class="fixed bottom-48 right-6 w-20 h-20 justify-center rounded-full bg-red-600 font-medium text-white px-4 py-3 hover:shadow-xl transition duration-300 ease-in-out transform hover:scale-105 flex items-center gap-2">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+        <mask id="lineMdCloudAltPrintFilledLoop0">
+            <g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                <path stroke-dasharray="64" stroke-dashoffset="64" d="M7 19h11c2.21 0 4 -1.79 4 -4c0 -2.21 -1.79 -4 -4 -4h-1v-1c0 -2.76 -2.24 -5 -5 -5c-2.42 0 -4.44 1.72 -4.9 4h-0.1c-2.76 0 -5 2.24 -5 5c0 2.76 2.24 5 5 5Z">
+                    <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0" />
+                    <set fill="freeze" attributeName="opacity" begin="0.7s" to="0" />
+                </path>
+                <g fill="#fff" stroke="none" opacity="0">
+                    <circle cx="12" cy="10" r="6">
+                        <animate attributeName="cx" begin="0.7s" dur="30s" repeatCount="indefinite" values="12;11;12;13;12" />
+                    </circle>
+                    <rect width="9" height="8" x="8" y="12" />
+                    <rect width="15" height="12" x="1" y="8" rx="6">
+                        <animate attributeName="x" begin="0.7s" dur="21s" repeatCount="indefinite" values="1;0;1;2;1" />
+                    </rect>
+                    <rect width="13" height="10" x="10" y="10" rx="5">
+                        <animate attributeName="x" begin="0.7s" dur="17s" repeatCount="indefinite" values="10;9;10;11;10" />
+                    </rect>
+                    <set fill="freeze" attributeName="opacity" begin="0.7s" to="1" />
+                </g>
+                <g fill="#000" fill-opacity="0" stroke="none">
+                    <circle cx="12" cy="10" r="4">
+                        <animate attributeName="cx" begin="0.7s" dur="30s" repeatCount="indefinite" values="12;11;12;13;12" />
+                    </circle>
+                    <rect width="9" height="6" x="8" y="12" />
+                    <rect width="11" height="8" x="3" y="10" rx="4">
+                        <animate attributeName="x" begin="0.7s" dur="21s" repeatCount="indefinite" values="3;2;3;4;3" />
+                    </rect>
+                    <rect width="9" height="6" x="12" y="12" rx="3">
+                        <animate attributeName="x" begin="0.7s" dur="17s" repeatCount="indefinite" values="12;11;12;13;12" />
+                    </rect>
+                    <set fill="freeze" attributeName="fill-opacity" begin="0.7s" to="1" />
+                    <animate fill="freeze" attributeName="opacity" begin="0.7s" dur="0.5s" values="1;0" />
+                </g>
+                <g stroke="none">
+                    <path fill="#fff" d="M6 11h12v0h-12z">
+                        <animate fill="freeze" attributeName="d" begin="1.3s" dur="0.22s" values="M6 11h12v0h-12z;M6 11h12v11h-12z" />
+                    </path>
+                    <path fill="#000" d="M8 13h8v0h-8z">
+                        <animate fill="freeze" attributeName="d" begin="1.34s" dur="0.14s" values="M8 13h8v0h-8z;M8 13h8v7h-8z" />
+                    </path>
+                    <path fill="#fff" fill-opacity="0" d="M9 12h6v1H9zM9 14h6v1H9zM9 16h6v1H9zM9 18h6v1H9z">
+                        <animate fill="freeze" attributeName="fill-opacity" begin="1.4s" dur="0.1s" values="0;1" />
+                        <animateMotion begin="1.5s" calcMode="linear" dur="1.5s" path="M0 0v2" repeatCount="indefinite" />
+                    </path>
+                </g>
+            </g>
+        </mask>
+        <rect width="30" height="30" fill="currentColor" mask="url(#lineMdCloudAltPrintFilledLoop0)" />
+    </svg>
+</button>
 
+<div id="exportModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-50">
+    <div class="bg-white rounded-lg p-6 shadow-lg w-96">
+        <h2 class="text-xl font-bold mb-4">Export PDF</h2>
+        <p class="mb-4">Apakah Anda ingin mengekspor laporan penjualan ke PDF?</p>
+        <div class="flex justify-end space-x-2">
+            <button id="cancelExportBtn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">Batal</button>
+            <button id="confirmExportBtn" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Ekspor PDF</button>
+        </div>
+    </div>
+</div>
 
 <!-- Loading Indicator -->
 <div id="loadingIndicator" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden z-50">
     <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-white"></div>
 </div>
-
-<x-floating-popover/>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <!-- jQuery -->
@@ -635,61 +687,47 @@
         fetchChartPieData('{{ route("adminak.chart.data") }}', 'chartak', 'Nilai Piutang ');
     }
 
+    // Memanggil fungsi loadInitialChartData saat halaman dimuat
     document.addEventListener("DOMContentLoaded", loadInitialChartData);
 
-    function fetchCharts(queryParams = {}) {
-        let queryString = new URLSearchParams(queryParams).toString();
-        queryString = queryString ? `?${queryString}` : '';
+    document.getElementById('chartFilterForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Mencegah reload halaman
 
-        // laporan MARKETING
+        let searchValue = document.getElementById('searchInput').value;
+        let queryString = '';
+
+        if (searchValue) {
+            queryString += `?search=${searchValue}`;
+        }
+
+        //laporan MARKETING
         fetchChartDataWRp('{{ route("adminpenjualan.chart.data") }}' + queryString, 'chartp');
         fetchChartDataWRp('{{ route("adminpp.chart.data") }}' + queryString, 'chartpp');
         fetchChartDataWRp('{{ route("admin.chart.data") }}' + queryString, 'chartl');
         fetchChartDataNRp('{{ route("adminstatuspaket.chart.data") }}' + queryString, 'chartsp');
         fetchChartDataNRp('{{ route("adminperinstansi.chart.data") }}' + queryString, 'chartpi');
 
-        // laporan PROCUREMENTS
+        //laporan PROCUREMENTS
         fetchChartDataWRp('{{ route("adminholding.chart.data") }}' + queryString, 'chartph');
         fetchChartDataWRp('{{ route("adminstok.chart.data") }}' + queryString, 'chartls');
         fetchChartDataWRp('{{ route("adminoutlet.chart.data") }}' + queryString, 'chartpo');
         fetchChartDataWRp('{{ route("adminnegosiasi.chart.data") }}' + queryString, 'chartln');
 
-        // laporan SUPPORTS
+        //laporan SUPPORTS
         fetchChartPieData('{{ route("adminpendapatanservisasp.chart.data") }}' + queryString, 'chartlrp');
         fetchChartPieData('{{ route("adminpiutangservisasp.chart.data") }}' + queryString, 'chartlrps');
         fetchChartDataWRp('{{ route("adminpendapatanpengirimanluarbali.chart.data") }}' + queryString, 'chartrplb');
 
-        // laporan HRGA
+        //laporan HRGA
         fetchChartDataNRp('{{ route("adminsakit.chart.data") }}' + queryString, 'charts');
         fetchChartDataNRp('{{ route("adminizin.chart.data") }}' + queryString, 'chartizin');
         fetchChartDataNRp('{{ route("admincuti.chart.data") }}' + queryString, 'chartcuti');
         fetchChartDataNRp('{{ route("adminterlambat.chart.data") }}' + queryString, 'chartterlambat');
 
-        // laporan ACCOUNTING
+        //laporan ACCOUNTING
         fetchChartPieData('{{ route("adminkhps.chart.data") }}' + queryString, 'chartkhps');
         fetchChartPieData('{{ route("adminak.chart.data") }}' + queryString, 'chartak');
-    }
 
-    document.getElementById('dateFilterForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        let searchValue = document.getElementById('searchInput').value.trim();
-        let queryParams = {};
-        if (searchValue) {
-            queryParams['search'] = searchValue;
-        }
-        fetchCharts(queryParams);
-    });
-
-    document.getElementById('monthFilterForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        let startMonth = document.getElementById('startMonth').value;
-        let endMonth = document.getElementById('endMonth').value;
-        let queryParams = {};
-        if (startMonth && endMonth) {
-            queryParams['start_month'] = startMonth;
-            queryParams['end_month'] = endMonth;
-        }
-        fetchCharts(queryParams);
     });
 
     //fetch menggunakan Rp
@@ -834,14 +872,8 @@
                         responsive: true
                         , plugins: {
                             legend: {
-                                position: 'top',
-                                labels: {
-                                    font: {
-                                        size: 15, // Ukuran font 15px
-                                        weight: 'bold' // Membuat teks bold
-                                    }
-                                }
-                            },
+                                display: true
+                            }, // Tampilkan legend
                             tooltip: {
                                 callbacks: {
                                     label: function(context) {
@@ -1109,17 +1141,16 @@
     });
 
     //laporan laba rugi
-    $(document).ready(function() {
-        // Fungsi untuk mengambil data laporan laba rugi
-        function fetchLaporanLabaRugi(search = '', start_month = '', end_month = '') {
+        $(document).ready(function() {
+        function fetchLaporanLabaRugi(search = '') {
             $.ajax({
                 url: "{{ route('labarugi.index') }}",
                 type: "GET",
-                data: { search: search, start_month: start_month, end_month: end_month },
+                data: { search: search },
                 dataType: "json",
                 success: function(response) {
                     let tableBody = $("#adminlabarugi tbody");
-                    tableBody.empty(); // Bersihkan isi tabel
+                    tableBody.empty(); // Clear table before adding new data
 
                     if (response.laporanlabarugis.data.length === 0) {
                         tableBody.append(`<tr><td colspan="3" class="text-center p-4">Data tidak ditemukan</td></tr>`);
@@ -1127,10 +1158,10 @@
                         response.laporanlabarugis.data.forEach(function(item, index) {
                             const [tahun, bulan, hari] = item.tanggal.split('-');
                             const namaBulan = [
-                                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-                                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-                            ][parseInt(bulan, 10) - 1];
-                            const formattedTanggal = `${parseInt(hari, 10)} ${namaBulan} ${tahun}`;
+                                    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                                    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                                ][parseInt(bulan, 10) - 1]; // Konversi bulan ke indeks array
+                                const formattedTanggal = `${parseInt(hari, 10)} ${namaBulan} ${tahun}`; // Gabungkan hari, bulan, dan tahun
 
                             let row = `
                                 <tr>
@@ -1144,8 +1175,8 @@
                             tableBody.append(row);
                         });
 
-                        // Event listener untuk memperbesar gambar saat diklik
-                        $(".cursor-pointer").on("click", function() {
+                        // Event listener for enlarging the image on click
+                        $(".cursor-pointer").on("click", function(e) {
                             let imgSrc = $(this).attr("src");
                             $("#modalImage").attr("src", imgSrc);
                             $("#imageModal").fadeIn();
@@ -1161,13 +1192,11 @@
         // Jalankan fungsi saat halaman dimuat
         fetchLaporanLabaRugi();
 
-        // Event listener untuk form pencarian dan filter (gabungan search, start_month, end_month)
-        $("#monthFilterForm").on("submit", function(e) {
+        // Event listener untuk form pencarian
+        $("#chartFilterForm").on("submit", function(e) {
             e.preventDefault(); // Mencegah form melakukan reload halaman
-            let searchValue = $("#searchInput").val().trim();
-            let startMonth = $("#startMonth").val();
-            let endMonth = $("#endMonth").val();
-            fetchLaporanLabaRugi(searchValue, startMonth, endMonth);
+            let searchValue = $("#searchInput").val();
+            fetchLaporanLabaRugi(searchValue);
         });
 
         // Event untuk menutup modal saat klik di luar gambar
@@ -1815,68 +1844,191 @@ function fetchImages() {
         });
     });
 
-// // Fungsi untuk menampilkan atau menyembunyikan modal
-// function toggleModal() {
-//     document.getElementById('exportModal').classList.toggle('hidden');
-// }
 
-// document.addEventListener('DOMContentLoaded', function() {
-//     const exportFloatingButton = document.getElementById('exportFloatingButton');
-//     const exportModal = document.getElementById('exportModal');
-//     const cancelExportBtn = document.getElementById('cancelExportBtn');
-//     const confirmExportBtn = document.getElementById('confirmExportBtn');
 
-//     // Event listener untuk tombol floating & modal
-//     exportFloatingButton.addEventListener('click', toggleModal);
-//     cancelExportBtn.addEventListener('click', toggleModal);
+
+
+// Fungsi untuk menampilkan atau menyembunyikan modal
+function toggleModal() {
+    document.getElementById('exportModal').classList.toggle('hidden');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const exportFloatingButton = document.getElementById('exportFloatingButton');
+    const exportModal = document.getElementById('exportModal');
+    const cancelExportBtn = document.getElementById('cancelExportBtn');
+    const confirmExportBtn = document.getElementById('confirmExportBtn');
+
+    // Event listener untuk tombol floating & modal
+    exportFloatingButton.addEventListener('click', toggleModal);
+    cancelExportBtn.addEventListener('click', toggleModal);
     
-//     confirmExportBtn.addEventListener('click', function() {
-//         toggleModal(); // Tutup modal setelah konfirmasi
-//         triggerPDFExport(); // Panggil fungsi ekspor
-//     });
-// });
+    confirmExportBtn.addEventListener('click', function() {
+        toggleModal(); // Tutup modal setelah konfirmasi
+        triggerPDFExport(); // Panggil fungsi ekspor
+    });
+});
 
-// // Fungsi untuk melakukan ekspor PDF
-// function triggerPDFExport() {
-//     const routes = [
-//         "/rekappenjualanperusahaan/export-pdf",
-//         "/rekappenjualan/export-pdf",
-//         "/laporanpaketadministrasi/export-pdf",
-//         "/statuspaket/export-pdf",
-//         "/laporanperinstansi/export-pdf"
-//     ];
+// Fungsi untuk melakukan ekspor PDF
+function triggerPDFExport() {
+    const routes = [
+        "/rekappenjualanperusahaan/export-pdf",
+        "/rekappenjualan/export-pdf",
+        "/laporanpaketadministrasi/export-pdf",
+        "/statuspaket/export-pdf",
+        "/laporanperinstansi/export-pdf"
+    ];
 
-//     routes.forEach(route => {
-//         fetch(route, {
-//             method: "POST",
-//             headers: {
-//                 "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-//                 "Content-Type": "application/json"
-//             },
-//             body: JSON.stringify({})
-//         })
-//         .then(response => {
-//             if (!response.ok) {
-//                 throw new Error(`HTTP error! Status: ${response.status}`);
-//             }
-//             return response.blob();
-//         })
-//         .then(blob => {
-//             if (blob.size === 0) {
-//                 throw new Error("File PDF kosong! Periksa kembali data yang diekspor.");
-//             }
+    routes.forEach(route => {
+        fetch(route, {
+            method: "POST",
+            headers: {
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({})
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            if (blob.size === 0) {
+                throw new Error("File PDF kosong! Periksa kembali data yang diekspor.");
+            }
 
-//             const url = window.URL.createObjectURL(blob);
-//             const a = document.createElement("a");
-//             a.href = url;
-//             a.download = "export.pdf";
-//             document.body.appendChild(a);
-//             a.click();
-//             a.remove();
-//         })
-//         .catch(error => console.error("Error exporting PDF:", error));
-//     });
-// }
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "export.pdf";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        })
+        .catch(error => console.error("Error exporting PDF:", error));
+    });
+}
+
+function toggleModal() {
+    const exportModal = document.getElementById('exportModal');
+    if (exportModal) {
+        exportModal.classList.toggle('hidden');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const exportButton = document.getElementById('exportButton'); // Existing export button
+    const exportModal = document.getElementById('exportModal');
+    const cancelExportBtn = document.getElementById('cancelExportBtn');
+    const confirmExportBtn = document.getElementById('confirmExportBtn');
+
+    // Function to show modal
+    function showExportModal() {
+        exportModal.classList.remove('hidden');
+    }
+
+    // Function to hide modal
+    function hideExportModal() {
+        exportModal.classList.add('hidden');
+    }
+
+    // Event listener for export button to show modal
+    if (exportButton) {
+        exportButton.addEventListener('click', showExportModal);
+    }
+
+    // Cancel button closes the modal
+    cancelExportBtn.addEventListener('click', hideExportModal);
+
+    // Confirm export button
+    confirmExportBtn.addEventListener('click', function() {
+        // Hide modal
+        hideExportModal();
+
+        // Dispatch custom event to trigger export
+        document.dispatchEvent(new Event('triggerPDFExport'));
+    });
+
+    // Optional: Close modal if clicking outside
+    exportModal.addEventListener('click', function(event) {
+        if (event.target === exportModal) {
+            hideExportModal();
+        }
+    });
+});
+
+
+//export pdf 
+async function exportToPDF1() {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    if (!csrfToken) {
+        alert('CSRF token tidak ditemukan. Pastikan meta tag CSRF disertakan.');
+        return;
+    }
+
+    // Ambil data dari tabel
+    const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
+        const cells = row.querySelectorAll('td');
+        return {
+            tanggal: cells[0]?.innerText.trim() || '',
+            perusahaan: cells[1]?.innerText.trim() || '',
+            total_penjualan_formatted: cells[2]?.innerText.trim() || '',
+        };
+    });
+
+    const tableContent = items
+        .filter(item => item.tanggal && item.perusahaan && item.total_penjualan_formatted)
+        .map(item => `
+            <tr>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.tanggal}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.perusahaan}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.total_penjualan_formatted}</td>
+            </tr>
+        `).join('');
+
+    const chartCanvas = document.querySelector('#chartpp');
+    if (!chartCanvas) {
+        alert('Elemen canvas grafik tidak ditemukan.');
+        return;
+    }
+
+    const chartBase64 = chartCanvas.toDataURL();
+
+    try {
+        const response = await fetch('/exportall', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                table2: tableContent,
+                chart2: chartBase64,
+            }),
+        });
+
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Laporan_rekap_penjualan_perusahaan.pdf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        } else {
+            const errorData = await response.json();
+            alert(errorData.message || 'Gagal mengekspor PDF.');
+        }
+    } catch (error) {
+        console.error('Error exporting to PDF:', error);
+        alert('Terjadi kesalahan saat mengekspor PDF.');
+    }
+}
+
+// Add event listener to trigger export
 
 
 </script>

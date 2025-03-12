@@ -37,15 +37,6 @@ class LaporanPtBosController extends Controller
     public function store(Request $request)
     {
         try {
-            // Konversi tanggal agar selalu dalam format Y-m-d
-            if ($request->has('tanggal')) {
-                try {
-                    $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
-                } catch (\Exception $e) {
-                    return redirect()->back()->with('error', 'Format tanggal tidak valid.');
-                }
-            }
-
             $validatedData = $request->validate([
                 'tanggal' => 'required|date',
                 'pekerjaan' => 'required|string',
@@ -73,15 +64,6 @@ class LaporanPtBosController extends Controller
     public function update(Request $request, LaporanPtBos $laporanptbo)
     {
         try {
-            // Konversi tanggal agar selalu dalam format Y-m-d
-            if ($request->has('tanggal')) {
-                try {
-                    $request->merge(['tanggal' => \Carbon\Carbon::parse($request->date)->format('Y-m-d')]);
-                } catch (\Exception $e) {
-                    return redirect()->back()->with('error', 'Format tanggal tidak valid.');
-                }
-            }
-
             $validatedData = $request->validate([
                 'tanggal' => 'required|date',
                 'pekerjaan' => 'required|string',
