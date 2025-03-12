@@ -7,6 +7,8 @@ use App\Models\LaporanTaxPlaning;
 use App\Traits\DateValidationTraitAccSPI;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
+use Carbon\Carbon;
+use Exception;
 
 class LaporanTaxPlaningController extends Controller
 {
@@ -16,22 +18,38 @@ class LaporanTaxPlaningController extends Controller
     {
         $perPage = $request->input('per_page', 12);
         $search = $request->input('search');
+        $startMonth = $request->input('start_month');
+        $endMonth = $request->input('end_month');
 
-        $laporantaxplanings = LaporanTaxPlaning::query()
-        ->when($search, function($query, $search) {
-            return $query->where('tanggal', 'like', "%$search%")
-                         ->orWhere('keterangan', 'like', "%$search%");
-        })
-        ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
-        ->paginate($perPage);
+        $query = LaporanTaxPlaning::query();
+    
+        // Filter berdasarkan tanggal jika ada
+        if (!empty($search)) {
+            $query->where('tanggal', 'LIKE', "%$search%");
+        }
+    
+        // Filter berdasarkan range bulan-tahun jika keduanya diisi
+        if (!empty($startMonth) && !empty($endMonth)) {
+            try {
+                $startDate = Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+                $endDate = Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+                $query->whereBetween('tanggal', [$startDate, $endDate]);
+            } catch (Exception $e) {
+                return response()->json(['error' => 'Format tanggal tidak valid. Gunakan format Y-m.'], 400);
+            }
+        }
+        // Ambil data dengan pagination
+        $laporantaxplanings = $query->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
+                                  ->paginate($perPage);
+    
 
-              // Ubah path gambar agar dapat diakses dari frontend
-              $laporantaxplanings->getCollection()->transform(function ($item) {
-                $item->gambar_url = !empty($item->gambar) && file_exists(public_path("images/accounting/taxplaning/{$item->gambar}"))
-                    ? asset("images/accounting/taxplaning/{$item->gambar}")
-                    : asset("images/no-image.png"); // Placeholder jika tidak ada gambar
-        
-                return $item;
+            // Ubah path gambar agar dapat diakses dari frontend
+            $laporantaxplanings->getCollection()->transform(function ($item) {
+            $item->gambar_url = !empty($item->gambar) && file_exists(public_path("images/accounting/taxplaning/{$item->gambar}"))
+                ? asset("images/accounting/taxplaning/{$item->gambar}")
+                : asset("images/no-image.png"); // Placeholder jika tidak ada gambar
+    
+            return $item;
             });
         
             if ($request->ajax()) {

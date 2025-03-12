@@ -7,6 +7,8 @@ use App\Models\LaporanNeraca;
 use App\Traits\DateValidationTraitAccSPI;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
+use Carbon\Carbon;
+use Exception;
 
 class LaporanNeracaController extends Controller
 {
@@ -16,14 +18,28 @@ class LaporanNeracaController extends Controller
 
         $perPage = $request->input('per_page', 12);
         $search = $request->input('search');
+        $startMonth = $request->input('start_month');
+        $endMonth = $request->input('end_month');
 
-        $laporanneracas = LaporanNeraca::query()
-        ->when($search, function($query, $search) {
-            return $query->where('tanggal', 'like', "%$search%")
-                         ->orWhere('keterangan', 'like', "%$search%");
-        })
-        ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
-        ->paginate($perPage);
+        $query = LaporanNeraca::query();
+        // Filter berdasarkan tanggal jika ada
+        if (!empty($search)) {
+            $query->where('tanggal', 'LIKE', "%$search%");
+        }
+
+        // Filter berdasarkan range bulan-tahun jika keduanya diisi
+        if (!empty($startMonth) && !empty($endMonth)) {
+            try {
+                $startDate = Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+                $endDate = Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+                $query->whereBetween('tanggal', [$startDate, $endDate]);
+            } catch (Exception $e) {
+                return response()->json(['error' => 'Format tanggal tidak valid. Gunakan format Y-m.'], 400);
+            }
+        }
+        // Ambil data dengan pagination
+        $laporanneracas = $query->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
+                                  ->paginate($perPage);
 
             // Ubah path gambar agar dapat diakses dari frontend
             $laporanneracas->getCollection()->transform(function ($item) {

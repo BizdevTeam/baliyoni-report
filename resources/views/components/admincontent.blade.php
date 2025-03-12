@@ -864,15 +864,13 @@
 
     //tabel laporan pt bos
     $(document).ready(function() {
-        function fetchLaporanPTBOS(search = '') {
+        function fetchLaporanPTBOS(search = '', start_month = '', end_month = '') {
             $.ajax({
-                url: "{{ route('laporanptbos.index') }}"
-                , type: "GET"
-                , data: {
-                    search: search
-                }, // Kirim parameter search ke server
-                dataType: "json"
-                , success: function(response) {
+                url: "{{ route('laporanptbos.index') }}",
+                type: "GET",
+                data: { search: search, start_month: start_month, end_month: end_month },
+                dataType: "json",
+                success: function(response) {
                     let tableBody = $("#adminptbos tbody");
                     tableBody.empty(); // Kosongkan tabel sebelum menambahkan data baru
 
@@ -913,22 +911,24 @@
         // Jalankan fungsi saat halaman dimuat
         fetchLaporanPTBOS();
 
-        // Event listener untuk form pencarian
-        $("#chartFilterForm").on("submit", function(e) {
+        // Event listener untuk form pencarian dan filter (gabungan search, start_month, end_month)
+        $("#monthFilterForm").on("submit", function(e) {
             e.preventDefault(); // Mencegah form melakukan reload halaman
-            let searchValue = $("#searchInput").val();
-            fetchLaporanPTBOS(searchValue);
+            let searchValue = $("#searchInput").val().trim();
+            let startMonth = $("#startMonth").val();
+            let endMonth = $("#endMonth").val();
+            fetchLaporanPTBOS(searchValue, startMonth, endMonth);
         });
     });
 
     //tabel laporan iJASA
     $(document).ready(function() {
-        function fetchLaporaniJASA(search = '') {
+        function fetchLaporaniJASA(search = '', start_month = '', end_month = '') {
             $.ajax({
                 url: "{{ route('laporanijasa.index') }}"
                 , type: "GET"
                 , data: {
-                    search: search
+                    search: search, start_month: start_month, end_month: end_month
                 }, // Kirim parameter search ke server
                 dataType: "json"
                 , success: function(response) {
@@ -972,21 +972,23 @@
         fetchLaporaniJASA();
 
         // Event listener untuk form pencarian
-        $("#chartFilterForm").on("submit", function(e) {
+        $("#monthFilterForm").on("submit", function(e) {
             e.preventDefault(); // Mencegah form melakukan reload halaman
-            let searchValue = $("#searchInput").val();
-            fetchLaporaniJASA(searchValue);
+            let searchValue = $("#searchInput").val().trim();
+            let startMonth = $("#startMonth").val();
+            let endMonth = $("#endMonth").val();
+            fetchLaporaniJASA(searchValue, startMonth, endMonth);
         });
     });
 
     //tabel laporan BIZDEV
     $(document).ready(function() {
-        function fetchLaporanBizdev(search = '') {
+        function fetchLaporanBizdev(search = '', start_month = '', end_month = '') {
             $.ajax({
                 url: "{{ route('laporanbizdev.index') }}"
                 , type: "GET"
                 , data: {
-                    search: search
+                    search: search, start_month: start_month, end_month: end_month
                 }, // Kirim parameter search ke server
                 dataType: "json"
                 , success: function(response) {
@@ -1032,20 +1034,22 @@
         fetchLaporanBizdev();
 
         // Event listener untuk form pencarian
-        $("#chartFilterForm").on("submit", function(e) {
+        $("#monthFilterForm").on("submit", function(e) {
             e.preventDefault(); // Mencegah form melakukan reload halaman
-            let searchValue = $("#searchInput").val();
-            fetchLaporanBizdev(searchValue);
+            let searchValue = $("#searchInput").val().trim();
+            let startMonth = $("#startMonth").val();
+            let endMonth = $("#endMonth").val();
+            fetchLaporanBizdev(searchValue, startMonth, endMonth);
         });
     });
 
     //laporan neraca
     $(document).ready(function() {
-        function fetchLaporanNeraca(search = '') {
+        function fetchLaporanNeraca(search = '', start_month = '', end_month = '') {
             $.ajax({
                 url: "{{ route('neraca.index') }}",
                 type: "GET",
-                data: { search: search },
+                data: { search: search, start_month: start_month, end_month: end_month },
                 dataType: "json",
                 success: function(response) {
                     let tableBody = $("#adminneraca tbody");
@@ -1094,10 +1098,12 @@
         fetchLaporanNeraca();
 
         // Event listener untuk form pencarian
-        $("#chartFilterForm").on("submit", function(e) {
+        $("#monthFilterForm").on("submit", function(e) {
             e.preventDefault(); // Mencegah form melakukan reload halaman
-            let searchValue = $("#searchInput").val();
-            fetchLaporanNeraca(searchValue);
+            let searchValue = $("#searchInput").val().trim();
+            let startMonth = $("#startMonth").val();
+            let endMonth = $("#endMonth").val();
+            fetchLaporanNeraca(searchValue, startMonth, endMonth);
         });
 
         // Event untuk menutup modal saat klik di luar gambar
@@ -1180,11 +1186,11 @@
 
     //laporan rasio
         $(document).ready(function() {
-        function fetchLaporanRasio(search = '') {
+        function fetchLaporanRasio(search = '', start_month = '', end_month = '') {
             $.ajax({
                 url: "{{ route('rasio.index') }}",
                 type: "GET",
-                data: { search: search },
+                data: { search: search, start_month: start_month, end_month: end_month },
                 dataType: "json",
                 success: function(response) {
                     let tableBody = $("#adminrasio tbody");
@@ -1230,10 +1236,12 @@
         fetchLaporanRasio();
 
         // Event listener untuk form pencarian
-        $("#chartFilterForm").on("submit", function(e) {
+        $("#monthFilterForm").on("submit", function(e) {
             e.preventDefault(); // Mencegah form melakukan reload halaman
-            let searchValue = $("#searchInput").val();
-            fetchLaporanRasio(searchValue);
+            let searchValue = $("#searchInput").val().trim();
+            let startMonth = $("#startMonth").val();
+            let endMonth = $("#endMonth").val();
+            fetchLaporanRasio(searchValue, startMonth, endMonth);
         });
 
         // Event untuk menutup modal saat klik di luar gambar
@@ -1246,11 +1254,11 @@
 
     //laporan ppn
         $(document).ready(function() {
-        function fetchLaporanPPn(search = '') {
+        function fetchLaporanPPn(search = '', start_month = '', end_month = '') {
             $.ajax({
                 url: "{{ route('laporanppn.index') }}",
                 type: "GET",
-                data: { search: search },
+                data: { search: search, start_month: start_month, end_month: end_month },
                 dataType: "json",
                 success: function(response) {
                     let tableBody = $("#adminppn tbody");
@@ -1299,10 +1307,12 @@
         fetchLaporanPPn();
 
         // Event listener untuk form pencarian
-        $("#chartFilterForm").on("submit", function(e) {
+        $("#monthFilterForm").on("submit", function(e) {
             e.preventDefault(); // Mencegah form melakukan reload halaman
-            let searchValue = $("#searchInput").val();
-            fetchLaporanPPn(searchValue);
+            let searchValue = $("#searchInput").val().trim();
+            let startMonth = $("#startMonth").val();
+            let endMonth = $("#endMonth").val();
+            fetchLaporanPPn(searchValue, startMonth, endMonth);
         });
 
         // Event untuk menutup modal saat klik di luar gambar
@@ -1315,11 +1325,11 @@
 
     //laporan tax planning
         $(document).ready(function() {
-        function fetchLaporanTaxPlanning(search = '') {
+        function fetchLaporanTaxPlanning(search = '', start_month = '', end_month = '') {
             $.ajax({
                 url: "{{ route('taxplaning.index') }}",
                 type: "GET",
-                data: { search: search },
+                data: { search: search, start_month: start_month, end_month: end_month },
                 dataType: "json",
                 success: function(response) {
                     let tableBody = $("#admintaxplanning tbody");
@@ -1368,10 +1378,12 @@
         fetchLaporanTaxPlanning();
 
         // Event listener untuk form pencarian
-        $("#chartFilterForm").on("submit", function(e) {
+        $("#monthFilterForm").on("submit", function(e) {
             e.preventDefault(); // Mencegah form melakukan reload halaman
-            let searchValue = $("#searchInput").val();
-            fetchLaporanTaxPlanning(searchValue);
+            let searchValue = $("#searchInput").val().trim();
+            let startMonth = $("#startMonth").val();
+            let endMonth = $("#endMonth").val();
+            fetchLaporanTaxPlanning(searchValue, startMonth, endMonth);
         });
 
         // Event untuk menutup modal saat klik di luar gambar
@@ -1384,12 +1396,12 @@
 
     //tabel laporan SPI OPERASIONAL
     $(document).ready(function() {
-        function fetchLaporanSPI(search = '') {
+        function fetchLaporanSPI(search = '', start_month = '', end_month = '') {
             $.ajax({
                 url: "{{ route('laporanspi.index') }}"
                 , type: "GET"
                 , data: {
-                    search: search
+                    search: search, start_month: start_month, end_month: end_month 
                 }, // Kirim parameter search ke server
                 dataType: "json"
                 , success: function(response) {
@@ -1433,21 +1445,23 @@
         fetchLaporanSPI();
 
         // Event listener untuk form pencarian
-        $("#chartFilterForm").on("submit", function(e) {
+        $("#monthFilterForm").on("submit", function(e) {
             e.preventDefault(); // Mencegah form melakukan reload halaman
-            let searchValue = $("#searchInput").val();
-            fetchLaporanSPI(searchValue);
+            let searchValue = $("#searchInput").val().trim();
+            let startMonth = $("#startMonth").val();
+            let endMonth = $("#endMonth").val();
+            fetchLaporanSPI(searchValue, startMonth, endMonth);
         });
     });
 
     //tabel laporan SPI IT
     $(document).ready(function() {
-        function fetchLaporanSPITI(search = '') {
+        function fetchLaporanSPITI(search = '', start_month = '', end_month = '') {
             $.ajax({
                 url: "{{ route('laporanspiti.index') }}"
                 , type: "GET"
                 , data: {
-                    search: search
+                    search: search, start_month: start_month, end_month: end_month 
                 }, // Kirim parameter search ke server
                 dataType: "json"
                 , success: function(response) {
@@ -1492,10 +1506,12 @@
         fetchLaporanSPITI();
 
         // Event listener untuk form pencarian
-        $("#chartFilterForm").on("submit", function(e) {
+        $("#monthFilterForm").on("submit", function(e) {
             e.preventDefault(); // Mencegah form melakukan reload halaman
-            let searchValue = $("#searchInput").val();
-            fetchLaporanSPITI(searchValue);
+            let searchValue = $("#searchInput").val().trim();
+            let startMonth = $("#startMonth").val();
+            let endMonth = $("#endMonth").val();
+            fetchLaporanSPITI(searchValue, startMonth, endMonth);
         });
     });
 
@@ -1503,49 +1519,13 @@
     fetchImages();
 });
 
-function fetchImages() {
-    $.ajax({
-        url: "{{ route('adminlabarugi.gambar') }}", // Route yang diperbaiki
-        type: "GET",
-        
-        dataType: "json",
-        success: function (data) {
-            const container = $("#image-container");
-            container.empty();
-
-            if (data.length === 0) {
-                container.html(`<div class="w-full text-center items-center align-center py-4">
-                                  <span class="text-gray-500 text-lg">Tidak ada gambar tersedia</span>
-                                </div>`);
-                return;
-            }
-
-            data.forEach(item => {
-                if (item.gambar) {
-                    let img = `<div class="flex justify-center items-center"> <!-- Tambahkan div wrapper untuk centering -->
-                                <img src="${item.gambar}" 
-                                    alt="Thumbnail" 
-                                    class="w-48 h-48 object-cover rounded-lg shadow-lg cursor-pointer hover:scale-105 transition-transform mx-auto">
-                            </div>`;
-                    container.append(img);
-                }
-            });
-        },
-        error: function (xhr, status, error) {
-            console.error("Error:", status, error);
-            console.error("Detail:", xhr.responseText);
-            $("#image-container").html(`<div class="text-red-500">Gagal memuat gambar</div>`);
-        }
-    });
-}
-
     //laporan ijasa gambar 
     $(document).ready(function() {
-        function fetchLaporaniJASAGambar(search = '') {
+        function fetchLaporaniJASAGambar(search = '', start_month = '', end_month = '') {
             $.ajax({
                 url: "{{ route('ijasagambar.index') }}",
                 type: "GET",
-                data: { search: search },
+                data: { search: search, start_month: start_month, end_month: end_month },
                 dataType: "json",
                 success: function(response) {
                     let tableBody = $("#adminijasagambar tbody");
@@ -1594,10 +1574,12 @@ function fetchImages() {
         fetchLaporaniJASAGambar();
 
         // Event listener untuk form pencarian
-        $("#chartFilterForm").on("submit", function(e) {
+        $("#monthFilterForm").on("submit", function(e) {
             e.preventDefault(); // Mencegah form melakukan reload halaman
-            let searchValue = $("#searchInput").val();
-            fetchLaporaniJASAGambar(searchValue);
+            let searchValue = $("#searchInput").val().trim();
+            let startMonth = $("#startMonth").val();
+            let endMonth = $("#endMonth").val();
+            fetchLaporaniJASAGambar(searchValue, startMonth, endMonth);
         });
 
         // Event untuk menutup modal saat klik di luar gambar
@@ -1610,11 +1592,11 @@ function fetchImages() {
 
     //laporan multimedia tiktok
     $(document).ready(function() {
-        function fetchLaporanTiktok(search = '') {
+        function fetchLaporanTiktok(search = '', start_month = '', end_month = '') {
             $.ajax({
                 url: "{{ route('tiktok.index') }}",
                 type: "GET",
-                data: { search: search },
+                data: {  search: search, start_month: start_month, end_month: end_month },
                 dataType: "json",
                 success: function(response) {
                     let tableBody = $("#admintiktok tbody");
@@ -1663,10 +1645,12 @@ function fetchImages() {
         fetchLaporanTiktok();
 
         // Event listener untuk form pencarian
-        $("#chartFilterForm").on("submit", function(e) {
+        $("#monthFilterForm").on("submit", function(e) {
             e.preventDefault(); // Mencegah form melakukan reload halaman
-            let searchValue = $("#searchInput").val();
-            fetchLaporanTiktok(searchValue);
+            let searchValue = $("#searchInput").val().trim();
+            let startMonth = $("#startMonth").val();
+            let endMonth = $("#endMonth").val();
+            fetchLaporanTiktok(searchValue, startMonth, endMonth);
         });
 
         // Event untuk menutup modal saat klik di luar gambar
@@ -1679,11 +1663,11 @@ function fetchImages() {
     
     //laporan multimedia instagram
     $(document).ready(function() {
-        function fetchLaporanInstagram(search = '') {
+        function fetchLaporanInstagram(search = '', start_month = '', end_month = '') {
             $.ajax({
                 url: "{{ route('multimediainstagram.index') }}",
                 type: "GET",
-                data: { search: search },
+                data: { search: search, start_month: start_month, end_month: end_month  },
                 dataType: "json",
                 success: function(response) {
                     let tableBody = $("#admininstagram tbody");
@@ -1732,10 +1716,12 @@ function fetchImages() {
         fetchLaporanInstagram();
 
         // Event listener untuk form pencarian
-        $("#chartFilterForm").on("submit", function(e) {
+        $("#monthFilterForm").on("submit", function(e) {
             e.preventDefault(); // Mencegah form melakukan reload halaman
-            let searchValue = $("#searchInput").val();
-            fetchLaporanInstagram(searchValue);
+            let searchValue = $("#searchInput").val().trim();
+            let startMonth = $("#startMonth").val();
+            let endMonth = $("#endMonth").val();
+            fetchLaporanInstagram(searchValue, startMonth, endMonth);
         });
 
         // Event untuk menutup modal saat klik di luar gambar
@@ -1748,11 +1734,11 @@ function fetchImages() {
 
     //laporan bizdev gambar
     $(document).ready(function() {
-        function fetchLaporanBizdevGambar(search = '') {
+        function fetchLaporanBizdevGambar(search = '', start_month = '', end_month = '') {
             $.ajax({
                 url: "{{ route('laporanbizdevgambar.index') }}",
                 type: "GET",
-                data: { search: search },
+                data: { search: search, start_month: start_month, end_month: end_month },
                 dataType: "json",
                 success: function(response) {
                     let tableBody = $("#adminbizdevgambar tbody");
@@ -1801,10 +1787,12 @@ function fetchImages() {
         fetchLaporanBizdevGambar();
 
         // Event listener untuk form pencarian
-        $("#chartFilterForm").on("submit", function(e) {
+        $("#monthFilterForm").on("submit", function(e) {
             e.preventDefault(); // Mencegah form melakukan reload halaman
-            let searchValue = $("#searchInput").val();
-            fetchLaporanBizdevGambar(searchValue);
+            let searchValue = $("#searchInput").val().trim();
+            let startMonth = $("#startMonth").val();
+            let endMonth = $("#endMonth").val();
+            fetchLaporanBizdevGambar(searchValue, startMonth, endMonth);
         });
 
         // Event untuk menutup modal saat klik di luar gambar

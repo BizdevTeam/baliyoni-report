@@ -7,6 +7,8 @@ use App\Traits\DateValidationTraitAccSPI;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
+use Carbon\Carbon;
+use Exception;
 
 class LaporanRasioController extends Controller
 {
@@ -15,20 +17,36 @@ class LaporanRasioController extends Controller
     {
         $perPage = $request->input('per_page', 12);
         $search = $request->input('search');
+        $startMonth = $request->input('start_month');
+        $endMonth = $request->input('end_month');
+    
+        $query = LaporanRasio::query();
+    
+        // Filter berdasarkan tanggal jika ada
+        if (!empty($search)) {
+            $query->where('tanggal', 'LIKE', "%$search%");
+        }
+    
+        // Filter berdasarkan range bulan-tahun jika keduanya diisi
+        if (!empty($startMonth) && !empty($endMonth)) {
+            try {
+                $startDate = Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+                $endDate = Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+                $query->whereBetween('tanggal', [$startDate, $endDate]);
+            } catch (Exception $e) {
+                return response()->json(['error' => 'Format tanggal tidak valid. Gunakan format Y-m.'], 400);
+            }
+        }
 
-        $laporanrasios = LaporanRasio::query()
-        ->when($search, function($query, $search) {
-            return $query->where('tanggal', 'like', "%$search%")
-                         ->orWhere('keterangan', 'like', "%$search%");
-        })
-        ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
+        // Ambil data dengan pagination
+        $laporanrasios = $query->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
         ->paginate($perPage);
 
-            // Ubah path gambar agar dapat diakses dari frontend
-            $laporanrasios->getCollection()->transform(function ($item) {
-                $item->gambar_url = !empty($item->gambar) && file_exists(public_path("images/accounting/rasio/{$item->gambar}"))
-                    ? asset("images/accounting/rasio/{$item->gambar}")
-                    : asset("images/no-image.png"); // Placeholder jika tidak ada gambar
+        // Ubah path gambar agar dapat diakses dari frontend
+        $laporanrasios->getCollection()->transform(function ($item) {
+            $item->gambar_url = !empty($item->gambar) && file_exists(public_path("images/accounting/rasio/{$item->gambar}"))
+                ? asset("images/accounting/rasio/{$item->gambar}")
+                : asset("images/no-image.png"); // Placeholder jika tidak ada gambar
         
                 return $item;
             });

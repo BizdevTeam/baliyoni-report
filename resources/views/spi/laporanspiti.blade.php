@@ -175,8 +175,7 @@
                         <div class="space-y-4">
                             <div>
                                 <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
-                                <input type="hidden" name="tanggal" id="edit-{{ $laporanspiti->id_spiti }}-tanggal-input" value="{{ $laporanspiti->tanggal }}">
-                                <div id="edit-{{ $laporanspiti->id_spiti }}-tanggal"></div>                            
+                                <input type="date" name="tanggal" id="edit-{{ $laporanspiti->id_spiti }}-tanggal-input" value="{{ $laporanspiti->tanggal }}" class="w-full p-2 border rounded">                           
                             </div>
                             <div>
                                 <label for="aspek" class="block text-sm font-medium">Aspek</label>
