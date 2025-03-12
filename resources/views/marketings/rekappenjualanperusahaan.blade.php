@@ -88,7 +88,7 @@
     </div>
     @endif
      
-            <!-- Main Content -->
+        <!-- Main Content -->
         <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
             <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan Rekap Penjualan Perusahaan</h1>
 
