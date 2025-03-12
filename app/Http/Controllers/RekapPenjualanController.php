@@ -277,7 +277,7 @@ class RekapPenjualanController extends Controller
 
         // Format labels as "Month - Year"
         $labels = $rekappenjualans->map(function ($item) {
-            return \Carbon\Carbon::parse($item->date)->translatedFormat('F - Y');
+            return \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F - Y');
         })->toArray();
 
         // Numeric data for the chart

@@ -363,25 +363,31 @@
     var chartData = @json($chartData);
 
     var ctx = document.getElementById('chart').getContext('2d');
-        var pieChart = new Chart(ctx, {
-            type: 'pie', 
-            data: chartData, 
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(tooltipItem) {
-                                return tooltipItem.label + ': ' + tooltipItem.raw.toLocaleString(); // Menampilkan data dengan format angka
-                            }
+    var pieChart = new Chart(ctx, {
+        type: 'pie',
+        data: chartData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        font: {
+                            size: 15, // Ukuran font 15px
+                            weight: 'bold' // Membuat teks bold
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            return tooltipItem.label + ': ' + tooltipItem.raw.toLocaleString(); // Menampilkan data dengan format angka
                         }
                     }
                 }
             }
-        });
+        }
+    });
 
     async function exportToPDF() {
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;

@@ -44,7 +44,7 @@ class RekapPenjualanPerusahaanController extends Controller
         
         $labels = $rekappenjualanperusahaans->map(function($item) {
             $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
-            return $item->perusahaan->nama_perusahaan. ' - ' . $formattedDate;
+            return $item->perusahaan->nama_perusahaan.' - ' . $formattedDate;
         })->toArray();
         $data = $rekappenjualanperusahaans->pluck('total_penjualan')->toArray();
         // Generate random colors for each data item

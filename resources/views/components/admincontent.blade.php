@@ -834,8 +834,14 @@
                         responsive: true
                         , plugins: {
                             legend: {
-                                display: true
-                            }, // Tampilkan legend
+                                position: 'top',
+                                labels: {
+                                    font: {
+                                        size: 15, // Ukuran font 15px
+                                        weight: 'bold' // Membuat teks bold
+                                    }
+                                }
+                            },
                             tooltip: {
                                 callbacks: {
                                     label: function(context) {
@@ -1103,16 +1109,17 @@
     });
 
     //laporan laba rugi
-        $(document).ready(function() {
-        function fetchLaporanLabaRugi(search = '') {
+    $(document).ready(function() {
+        // Fungsi untuk mengambil data laporan laba rugi
+        function fetchLaporanLabaRugi(search = '', start_month = '', end_month = '') {
             $.ajax({
                 url: "{{ route('labarugi.index') }}",
                 type: "GET",
-                data: { search: search },
+                data: { search: search, start_month: start_month, end_month: end_month },
                 dataType: "json",
                 success: function(response) {
                     let tableBody = $("#adminlabarugi tbody");
-                    tableBody.empty(); // Clear table before adding new data
+                    tableBody.empty(); // Bersihkan isi tabel
 
                     if (response.laporanlabarugis.data.length === 0) {
                         tableBody.append(`<tr><td colspan="3" class="text-center p-4">Data tidak ditemukan</td></tr>`);
@@ -1120,10 +1127,10 @@
                         response.laporanlabarugis.data.forEach(function(item, index) {
                             const [tahun, bulan, hari] = item.tanggal.split('-');
                             const namaBulan = [
-                                    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-                                    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-                                ][parseInt(bulan, 10) - 1]; // Konversi bulan ke indeks array
-                                const formattedTanggal = `${parseInt(hari, 10)} ${namaBulan} ${tahun}`; // Gabungkan hari, bulan, dan tahun
+                                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                            ][parseInt(bulan, 10) - 1];
+                            const formattedTanggal = `${parseInt(hari, 10)} ${namaBulan} ${tahun}`;
 
                             let row = `
                                 <tr>
@@ -1137,8 +1144,8 @@
                             tableBody.append(row);
                         });
 
-                        // Event listener for enlarging the image on click
-                        $(".cursor-pointer").on("click", function(e) {
+                        // Event listener untuk memperbesar gambar saat diklik
+                        $(".cursor-pointer").on("click", function() {
                             let imgSrc = $(this).attr("src");
                             $("#modalImage").attr("src", imgSrc);
                             $("#imageModal").fadeIn();
@@ -1154,11 +1161,13 @@
         // Jalankan fungsi saat halaman dimuat
         fetchLaporanLabaRugi();
 
-        // Event listener untuk form pencarian
-        $("#chartFilterForm").on("submit", function(e) {
+        // Event listener untuk form pencarian dan filter (gabungan search, start_month, end_month)
+        $("#monthFilterForm").on("submit", function(e) {
             e.preventDefault(); // Mencegah form melakukan reload halaman
-            let searchValue = $("#searchInput").val();
-            fetchLaporanLabaRugi(searchValue);
+            let searchValue = $("#searchInput").val().trim();
+            let startMonth = $("#startMonth").val();
+            let endMonth = $("#endMonth").val();
+            fetchLaporanLabaRugi(searchValue, startMonth, endMonth);
         });
 
         // Event untuk menutup modal saat klik di luar gambar
@@ -1806,68 +1815,68 @@ function fetchImages() {
         });
     });
 
-// Fungsi untuk menampilkan atau menyembunyikan modal
-function toggleModal() {
-    document.getElementById('exportModal').classList.toggle('hidden');
-}
+// // Fungsi untuk menampilkan atau menyembunyikan modal
+// function toggleModal() {
+//     document.getElementById('exportModal').classList.toggle('hidden');
+// }
 
-document.addEventListener('DOMContentLoaded', function() {
-    const exportFloatingButton = document.getElementById('exportFloatingButton');
-    const exportModal = document.getElementById('exportModal');
-    const cancelExportBtn = document.getElementById('cancelExportBtn');
-    const confirmExportBtn = document.getElementById('confirmExportBtn');
+// document.addEventListener('DOMContentLoaded', function() {
+//     const exportFloatingButton = document.getElementById('exportFloatingButton');
+//     const exportModal = document.getElementById('exportModal');
+//     const cancelExportBtn = document.getElementById('cancelExportBtn');
+//     const confirmExportBtn = document.getElementById('confirmExportBtn');
 
-    // Event listener untuk tombol floating & modal
-    exportFloatingButton.addEventListener('click', toggleModal);
-    cancelExportBtn.addEventListener('click', toggleModal);
+//     // Event listener untuk tombol floating & modal
+//     exportFloatingButton.addEventListener('click', toggleModal);
+//     cancelExportBtn.addEventListener('click', toggleModal);
     
-    confirmExportBtn.addEventListener('click', function() {
-        toggleModal(); // Tutup modal setelah konfirmasi
-        triggerPDFExport(); // Panggil fungsi ekspor
-    });
-});
+//     confirmExportBtn.addEventListener('click', function() {
+//         toggleModal(); // Tutup modal setelah konfirmasi
+//         triggerPDFExport(); // Panggil fungsi ekspor
+//     });
+// });
 
-// Fungsi untuk melakukan ekspor PDF
-function triggerPDFExport() {
-    const routes = [
-        "/rekappenjualanperusahaan/export-pdf",
-        "/rekappenjualan/export-pdf",
-        "/laporanpaketadministrasi/export-pdf",
-        "/statuspaket/export-pdf",
-        "/laporanperinstansi/export-pdf"
-    ];
+// // Fungsi untuk melakukan ekspor PDF
+// function triggerPDFExport() {
+//     const routes = [
+//         "/rekappenjualanperusahaan/export-pdf",
+//         "/rekappenjualan/export-pdf",
+//         "/laporanpaketadministrasi/export-pdf",
+//         "/statuspaket/export-pdf",
+//         "/laporanperinstansi/export-pdf"
+//     ];
 
-    routes.forEach(route => {
-        fetch(route, {
-            method: "POST",
-            headers: {
-                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({})
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.blob();
-        })
-        .then(blob => {
-            if (blob.size === 0) {
-                throw new Error("File PDF kosong! Periksa kembali data yang diekspor.");
-            }
+//     routes.forEach(route => {
+//         fetch(route, {
+//             method: "POST",
+//             headers: {
+//                 "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+//                 "Content-Type": "application/json"
+//             },
+//             body: JSON.stringify({})
+//         })
+//         .then(response => {
+//             if (!response.ok) {
+//                 throw new Error(`HTTP error! Status: ${response.status}`);
+//             }
+//             return response.blob();
+//         })
+//         .then(blob => {
+//             if (blob.size === 0) {
+//                 throw new Error("File PDF kosong! Periksa kembali data yang diekspor.");
+//             }
 
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "export.pdf";
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-        })
-        .catch(error => console.error("Error exporting PDF:", error));
-    });
-}
+//             const url = window.URL.createObjectURL(blob);
+//             const a = document.createElement("a");
+//             a.href = url;
+//             a.download = "export.pdf";
+//             document.body.appendChild(a);
+//             a.click();
+//             a.remove();
+//         })
+//         .catch(error => console.error("Error exporting PDF:", error));
+//     });
+// }
 
 
 </script>

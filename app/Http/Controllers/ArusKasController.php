@@ -16,7 +16,7 @@ class ArusKasController extends Controller
     { 
         $perPage = $request->input('per_page', 12);
         $search = $request->input('search');
-
+    
         // Query untuk mencari berdasarkan tahun dan date
         $aruskass = ArusKas::query()
             ->when($search, function ($query, $search) {
@@ -24,22 +24,30 @@ class ArusKasController extends Controller
             })
             ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
-
+    
         // Hitung total untuk masing-masing kategori
-        $totalKas = $aruskass->sum('kas_masuk');
-        $totalHutang = $aruskass->sum('kas_keluar');
-
-        // Siapkan data untuk chart
+        $kasMasuk = $aruskass->sum('kas_masuk');   
+        $kasKeluar = $aruskass->sum('kas_keluar');
+    
+        // Format angka menjadi format rupiah atau format angka biasa
+        $formattedKasMasuk = number_format($kasMasuk, 0, ',', '.');
+        $formattedKasKeluar = number_format($kasKeluar, 0, ',', '.');
+    
+        // Siapkan data untuk chart dengan menampilkan nilai
         $chartData = [
-            'labels' => ['Kas Masuk', 'Kas Keluar'],
+            'labels' => [
+                "Kas Masuk: Rp $formattedKasMasuk",
+                "Kas Keluar: Rp $formattedKasKeluar"
+            ],
             'datasets' => [
                 [
-                    'data' => [$totalKas, $totalHutang],
+                    'data' => [$kasMasuk, $kasKeluar],
                     'backgroundColor' => ['#FF6384', '#36A2EB'], // Warna untuk pie chart
                     'hoverBackgroundColor' => ['#FF4757', '#3B8BEB'],
                 ],
             ],
         ];
+    
         return view('accounting.aruskas', compact('aruskass', 'chartData'));
     }
 
@@ -220,15 +228,22 @@ class ArusKasController extends Controller
             ->get();
 
         // Hitung total untuk masing-masing kategori
-        $totalKas = $aruskass->sum('kas_masuk');
-        $totalHutang = $aruskass->sum('kas_keluar');
-
-        // Siapkan data untuk chart
+        $kasMasuk = $aruskass->sum('kas_masuk');   
+        $kasKeluar = $aruskass->sum('kas_keluar');
+    
+        // Format angka menjadi format rupiah atau format angka biasa
+        $formattedKasMasuk = number_format($kasMasuk, 0, ',', '.');
+        $formattedKasKeluar = number_format($kasKeluar, 0, ',', '.');
+    
+        // Siapkan data untuk chart dengan menampilkan nilai
         $chartData = [
-            'labels' => ['Kas Masuk', 'Kas Keluar'],
+            'labels' => [
+                "Kas Masuk : Rp $formattedKasMasuk",
+                "Kas Keluar : Rp $formattedKasKeluar"
+            ],
             'datasets' => [
                 [
-                    'data' => [$totalKas, $totalHutang],
+                    'data' => [$kasMasuk, $kasKeluar],
                     'backgroundColor' => ['#FF6384', '#36A2EB'], // Warna untuk pie chart
                     'hoverBackgroundColor' => ['#FF4757', '#3B8BEB'],
                 ],

@@ -31,9 +31,19 @@ class KHPSController extends Controller
         $totalPiutang = $kashutangpiutangstoks->sum('piutang');
         $totalStok = $kashutangpiutangstoks->sum('stok');
 
-        // Siapkan data untuk chart
+        // Format angka menjadi format rupiah atau format angka biasa
+        $formattedKas = number_format($totalKas, 0, ',', '.');
+        $formattedHutang = number_format($totalHutang, 0, ',', '.');
+        $formattedPiutang = number_format($totalPiutang, 0, ',', '.');
+        $formattedStok = number_format($totalStok, 0, ',', '.');
+
         $chartData = [
-            'labels' => ['Kas', 'Hutang', 'Piutang', 'Stok'],
+            'labels' => [
+                "Kas : Rp $formattedKas",
+                "Hutang : Rp $formattedHutang",
+                "Piutang : Rp $formattedPiutang",
+                "Stok : Rp $formattedStok",
+            ],
             'datasets' => [
                 [
                     'data' => [$totalKas, $totalHutang, $totalPiutang, $totalStok],
@@ -231,9 +241,19 @@ class KHPSController extends Controller
         $totalPiutang = $kashutangpiutangstoks->sum('piutang');
         $totalStok = $kashutangpiutangstoks->sum('stok');
 
-        // Siapkan data untuk chart
+        // Format angka menjadi format rupiah atau format angka biasa
+        $formattedKas = number_format($totalKas, 0, ',', '.');
+        $formattedHutang = number_format($totalHutang, 0, ',', '.');
+        $formattedPiutang = number_format($totalPiutang, 0, ',', '.');
+        $formattedStok = number_format($totalStok, 0, ',', '.');
+
         $chartData = [
-            'labels' => ['Kas', 'Hutang', 'Piutang', 'Stok'],
+            'labels' => [
+                "Kas : Rp $formattedKas",
+                "Hutang : Rp $formattedHutang",
+                "Piutang : Rp $formattedPiutang",
+                "Stok : Rp $formattedStok",
+            ],
             'datasets' => [
                 [
                     'data' => [$totalKas, $totalHutang, $totalPiutang, $totalStok],
