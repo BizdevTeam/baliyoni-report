@@ -123,8 +123,7 @@
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Rekap Pendapatan Servis ASP</h1>
             <div class="bg-white shadow-md rounded-lg p-6">
-                <div class="w-full h-full max-w-[600px] max-h-[600px] mx-auto"> <!-- Container pembatas -->
-                    <canvas id="chartlrp" class="w-full h-full"></canvas>
+                    <canvas id="chartlrp" class="w-full h-96"></canvas>
                 </div>
             </div>
             <div class="flex justify-end mt-4">
@@ -134,8 +133,7 @@
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Rekap Piutang Servis ASP</h1>
             <div class="bg-white shadow-md rounded-lg p-6">
-                <div class="w-full h-full max-w-[600px] max-h-[600px] mx-auto"> <!-- Container pembatas -->
-                    <canvas id="chartlrps" class="w-full h-full"></canvas>
+                    <canvas id="chartlrps" class="w-full h-96"></canvas>
                 </div>
             </div>
             <div class="flex justify-end mt-4">
@@ -620,8 +618,8 @@
         fetchChartDataWRp('{{ route("adminnegosiasi.chart.data") }}', 'chartln', 'Nilai Negosiasi ');
 
         //laporan SUPPORTS
-        fetchChartPieData('{{ route("adminpendapatanservisasp.chart.data") }}', 'chartlrp', 'Nilai Pendapatan ');
-        fetchChartPieData('{{ route("adminpiutangservisasp.chart.data") }}', 'chartlrps', 'Nilai Piutang ');
+        fetchChartDataWRp('{{ route("adminpendapatanservisasp.chart.data") }}', 'chartlrp', 'Nilai Pendapatan ');
+        fetchChartDataWRp('{{ route("adminpiutangservisasp.chart.data") }}', 'chartlrps', 'Nilai Piutang ');
         fetchChartDataWRp('{{ route("adminpendapatanpengirimanluarbali.chart.data") }}', 'chartrplb', 'Nilai Pendapatan ');
 
         //laporan HRGA
@@ -655,8 +653,8 @@
         fetchChartDataWRp('{{ route("adminnegosiasi.chart.data") }}' + queryString, 'chartln');
 
         // laporan SUPPORTS
-        fetchChartPieData('{{ route("adminpendapatanservisasp.chart.data") }}' + queryString, 'chartlrp');
-        fetchChartPieData('{{ route("adminpiutangservisasp.chart.data") }}' + queryString, 'chartlrps');
+        fetchChartDataWRp('{{ route("adminpendapatanservisasp.chart.data") }}' + queryString, 'chartlrp');
+        fetchChartDataWRp('{{ route("adminpiutangservisasp.chart.data") }}' + queryString, 'chartlrps');
         fetchChartDataWRp('{{ route("adminpendapatanpengirimanluarbali.chart.data") }}' + queryString, 'chartrplb');
 
         // laporan HRGA

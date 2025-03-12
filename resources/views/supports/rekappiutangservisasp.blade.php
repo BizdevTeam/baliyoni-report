@@ -363,30 +363,62 @@
     var chartData = @json($chartData);
 
     var ctx = document.getElementById('chart').getContext('2d');
-    var pieChart = new Chart(ctx, {
-        type: 'pie',
-        data: chartData,
+
+    var barChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: chartData.labels, // Label tanggal
+            datasets: chartData.datasets, // Data total penjualan
+        },
         options: {
             responsive: true,
             plugins: {
                 legend: {
-                    position: 'top',
-                    labels: {
-                        font: {
-                            size: 15, // Ukuran font 15px
-                            weight: 'bold' // Membuat teks bold
-                        }
-                    }
+                    display: false, // Sembunyikan legenda
                 },
                 tooltip: {
                     callbacks: {
                         label: function(tooltipItem) {
-                            return tooltipItem.label + ': ' + tooltipItem.raw.toLocaleString(); // Menampilkan data dengan format angka
-                        }
-                    }
-                }
+                            let value = tooltipItem.raw; // Ambil data nilai
+                            return tooltipItem.dataset.label + ' : ' + 'Rp ' + value.toLocaleString(); // Format angka
+                        },
+                    },
+                },
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: false, // Sembunyikan label sumbu X
+                    },
+                },
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: false, // Sembunyikan label sumbu Y
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return 'Rp ' + value.toLocaleString(); // Format angka
+                        },
+                    },
+                },
+            },
+        },
+        plugins: [{
+            afterDatasetsDraw: function(chart) {
+                var ctx = chart.ctx;
+                chart.data.datasets.forEach((dataset, i) => {
+                    var meta = chart.getDatasetMeta(i);
+                    meta.data.forEach((bar, index) => {
+                        var value = dataset.data[index];
+                        ctx.fillStyle = 'black'; // Warna teks
+                        ctx.font = 'bold 15px sans-serif'; // Ukuran teks
+                        ctx.textAlign = 'center';
+                        ctx.fillText('Rp ' + value.toLocaleString(), bar.x, bar.y - 10); // Tampilkan di atas bar
+                    });
+                });
             }
-        }
+        }]
     });
 
     async function exportToPDF() {
