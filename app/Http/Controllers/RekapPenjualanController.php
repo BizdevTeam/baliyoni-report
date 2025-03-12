@@ -47,7 +47,7 @@ class RekapPenjualanController extends Controller
         });
 
         $labels = $rekappenjualans->map(function ($item) {
-            $formattedDate = \Carbon\Carbon::parse($item->date)->translatedFormat('F Y');
+            $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
             return $formattedDate;
         })->toArray();
         $data = $rekappenjualans->pluck('total_penjualan')->toArray();

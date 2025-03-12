@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use Carbon\Carbon;
+use Exception;
 
 class laporanSPITiController extends Controller
 {
@@ -18,13 +20,29 @@ class laporanSPITiController extends Controller
     {
         $perPage = $request->input('per_page', 12);
         $search = $request->input('search');
-
-        $laporanspitis = LaporanSPITI::query()
-        ->when($search, function($query, $search) {
-            return $query->where('tanggal', 'like', "%$search%");
-        })
-        ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
-        ->paginate($perPage);
+        $startMonth = $request->input('start_month');
+        $endMonth = $request->input('end_month');
+    
+        $query = LaporanSPITI::query();
+    
+        // Filter berdasarkan tanggal jika ada
+        if (!empty($search)) {
+            $query->where('tanggal', 'LIKE', "%$search%");
+        }
+    
+        // Filter berdasarkan range bulan-tahun jika keduanya diisi
+        if (!empty($startMonth) && !empty($endMonth)) {
+            try {
+                $startDate = Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+                $endDate = Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+                $query->whereBetween('tanggal', [$startDate, $endDate]);
+            } catch (Exception $e) {
+                return response()->json(['error' => 'Format tanggal tidak valid. Gunakan format Y-m.'], 400);
+            }
+        }
+        // Ambil data dengan pagination
+        $laporanspitis = $query->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
+                                  ->paginate($perPage);
 
         if ($request->ajax()) {
             return response()->json(['laporanspitis' => $laporanspitis]);

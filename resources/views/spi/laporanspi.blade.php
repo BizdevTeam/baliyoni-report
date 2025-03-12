@@ -175,8 +175,7 @@
                 <div class="space-y-4">
                     <div>
                         <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
-                        <input type="hidden" name="tanggal" id="edit-{{ $laporanspi->id_spi }}-tanggal-input" value="{{ $laporanspi->tanggal }}">
-                        <div id="edit-{{ $laporanspi->id_spi }}-tanggal"></div>                            
+                        <input type="date" name="tanggal" id="edit-{{ $laporanspi->id_spi }}-tanggal-input" value="{{ $laporanspi->tanggal }}" class="w-full p-2 border rounded">                      
                     </div>
                     <div>
                         <label for="aspek" class="block text-sm font-medium">Aspek</label>
@@ -292,11 +291,12 @@
 </div>
 
 <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">
-<div class="bg-white w-2/3 p-6 rounded shadow-lg">
-    <h3 class="text-xl font-semibold mb-4">Add New Data</h3>
-    <form method="POST" action="{{ route('laporanspi.store') }}" enctype="multipart/form-data" id="addForm">
-        @csrf
-        <div class="space-y-4">
+    <div class="bg-white w-2/3 max-h-[90vh] p-6 rounded shadow-lg flex flex-col">
+        <h3 class="text-xl font-semibold mb-4">Add New Data</h3>
+        
+        <!-- Area Formulir dengan Scroll -->
+        <form method="POST" action="{{ route('laporanspi.store') }}" enctype="multipart/form-data" id="addForm" class="flex-grow overflow-y-auto space-y-4 pr-2">
+            @csrf
             <div>
                 <label for="tanggal" class="block text-sm font-medium">Bulan</label>
                 <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
@@ -322,14 +322,17 @@
                 <input type="hidden" name="implementasi" id="implementasi-input">
                 <div id="editor-implementasi"></div>
             </div>
-        </div>
-        <div class="mt-4 flex justify-end gap-2">
+        </form>
+
+        <!-- Tombol di Bawah yang Tetap Terlihat -->
+        <div class="mt-4 flex justify-end gap-2 sticky bottom-0 bg-white py-4">
             <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
-            <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Add</button>
+            <button type="submit" form="addForm" class="bg-red-600 text-white px-4 py-2 rounded">Add</button>
         </div>
-    </form>
+    </div>
 </div>
-</div>
+
+
 
 
 </body>

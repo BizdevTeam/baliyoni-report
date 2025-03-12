@@ -7,6 +7,8 @@ use App\Traits\DateValidationTraitAccSPI;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
+use Exception;
 
 class LaporanPpnController extends Controller
 {
@@ -16,13 +18,29 @@ class LaporanPpnController extends Controller
     {
         $perPage = $request->input('per_page', 12);
         $search = $request->input('search');
+        $startMonth = $request->input('start_month');
+        $endMonth = $request->input('end_month');
+    
+        $query = LaporanPpn::query();
 
-        $laporanppns = LaporanPpn::query()
-        ->when($search, function($query, $search) {
-            return $query->where('tanggal', 'like', "%$search%");
-        })
-        ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
-        ->paginate($perPage);
+        // Filter berdasarkan tanggal jika ada
+        if (!empty($search)) {
+            $query->where('tanggal', 'LIKE', "%$search%");
+        }
+    
+        // Filter berdasarkan range bulan-tahun jika keduanya diisi
+        if (!empty($startMonth) && !empty($endMonth)) {
+            try {
+                $startDate = Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+                $endDate = Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+                $query->whereBetween('tanggal', [$startDate, $endDate]);
+            } catch (Exception $e) {
+                return response()->json(['error' => 'Format tanggal tidak valid. Gunakan format Y-m.'], 400);
+            }
+        }
+        // Ambil data dengan pagination
+        $laporanppns = $query->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
+                                  ->paginate($perPage);
 
               // Ubah path thumbnail agar dapat diakses dari frontend
         $laporanppns->getCollection()->transform(function ($item) {
