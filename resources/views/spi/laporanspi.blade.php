@@ -137,7 +137,7 @@
             @foreach ($laporanspis as $laporanspi)
                 <tr class="hover:bg-gray-100">
                     <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanspi->tanggal_formatted }}</td>
-                    <td class="border border-gray-300 px-4 py-2 content-html align-top text-justify">{!! $laporanspi->aspek !!}</td>
+                    <td class="border border-gray-300 px-4 py-2 content-html align-center text-justify">{!! $laporanspi->aspek !!}</td>
                     <td class="border border-gray-300 px-4 py-2 content-html align-top text-justify">{!! $laporanspi->masalah !!}</td>
                     <td class="border border-gray-300 px-4 py-2 content-html align-top text-justify">{!! $laporanspi->solusi !!}</td>
                     <td class="border border-gray-300 px-4 py-2 content-html align-top text-justify">{!! $laporanspi->implementasi !!}</td>
