@@ -65,7 +65,6 @@ class LaporanIzinController extends Controller
     public function store(Request $request)
     {
         try {
-
             $validatedData = $request->validate([
                 'tanggal' => 'required|date',
                 'nama' => 'required|string',
