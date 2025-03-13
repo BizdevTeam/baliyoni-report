@@ -125,7 +125,6 @@
             <div class="bg-white shadow-md rounded-lg p-6">
                     <canvas id="chartlrp" class="w-full h-96"></canvas>
                 </div>
-            </div>
             <div class="flex justify-end mt-4">
                 <a href="{{ route("rekappendapatanservisasp.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Rekap Pendapatan Servis ASP →</a>
             </div>
@@ -135,7 +134,6 @@
             <div class="bg-white shadow-md rounded-lg p-6">
                     <canvas id="chartlrps" class="w-full h-96"></canvas>
                 </div>
-            </div>
             <div class="flex justify-end mt-4">
                 <a href="{{ route('rekappiutangservisasp.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Rekap Piutang Servis ASP →</a>
             </div>
