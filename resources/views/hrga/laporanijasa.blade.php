@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="{{ asset('templates/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    <script src="https://cdn.ckeditor.com/ckeditor5/38.1.0/classic/ckeditor.js"></script>
     @vite('resources/css/tailwind.css')
     @vite('resources/css/custom.css')
     @vite('resources/js/app.js')
@@ -91,7 +92,6 @@
         <!-- Main Content -->
        <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
         <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan iJASA</h1>
-
         <div class="flex items-center justify-end transition-all duration-500 mt-8 p-4">
             <!-- Search -->
             <form method="GET" action="{{ route('laporanijasa.index') }}" class="flex items-center gap-2">
@@ -138,11 +138,11 @@
                 <tbody>
                     @foreach ($laporanijasas as $laporanijasa)
                         <tr class="hover:bg-gray-100">
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanijasa->date_formatted }}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanijasa->tanggal_formatted }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ \Carbon\Carbon::parse($laporanijasa->jam)->format('H:i') }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanijasa->permasalahan }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanijasa->impact }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanijasa->troubleshooting }}</td>
+                            <td class="border border-gray-300 px-4 py-2 content-html align-center text-justify">{!!$laporanijasa->permasalahan !!}</td>
+                            <td class="border border-gray-300 px-4 py-2 content-html align-center text-justify">{!! $laporanijasa->impact !!}</td>
+                            <td class="border border-gray-300 px-4 py-2 content-html align-center text-justify">{!! $laporanijasa->troubleshooting !!}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanijasa->resolve_tanggal_formatted }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ \Carbon\Carbon::parse($laporanijasa->resolve_jam)->format('H:i') }}</td>                       
                             <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
@@ -163,7 +163,7 @@
                             </td>
                         </tr>
                         <!-- Modal for Edit Event -->
-                        <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="editEventModal{{ $laporanijasa->id_ijasa }}">
+                        <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden overflow-y-auto" id="editEventModal{{ $laporanijasa->id_ijasa }}">
                             <div class="bg-white w-1/2 p-6 rounded shadow-lg">
                                 <h3 class="text-xl font-semibold mb-4">Edit Data</h3>
                                 <form method="POST" action="{{ route('laporanijasa.update', $laporanijasa->id_ijasa) }}" enctype="multipart/form-data">
@@ -171,24 +171,34 @@
                                     @method('PUT')
                                     <div class="space-y-4">
                                         <div>
-                                            <label for="date" class="block text-sm font-medium">Tanggal</label>
-                                            <input type="date" name="date" class="w-full p-2 border rounded" value="{{ $laporanijasa->date }}" required>
+                                            <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                                            <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $laporanijasa->tanggal }}" required>
                                         </div>
                                         <div>
                                             <label for="jam" class="block text-sm font-medium">Jam</label>
-                                            <input type="time" name="jam" class="w-full p-2 border rounded" value="{{ \Carbon\Carbon::parse($laporanijasa->jam)->format('H:i') }}" required>
+                                            <div class="relative">
+                                                <div class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
+                                                    <svg class="w-4 h-4 text-gray-50 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                                        <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z" clip-rule="evenodd"/>
+                                                    </svg>
+                                                </div>
+                                                <input type="time" name="jam" id="jam" class="bg-gray-50 border leading-none border-gray-600 text-black text-sm rounded-lg block w-full p-2.5" value="{{ \Carbon\Carbon::parse($laporanijasa->jam)->format('H:i') }}"  required />
+                                            </div> 
                                         </div>
                                         <div>
                                             <label for="permasalahan" class="block text-sm font-medium">Permasalahan</label>
-                                            <input type="text" name="permasalahan" class="w-full p-2 border rounded" value="{{ $laporanijasa->permasalahan }}" required>
+                                            <input type="hidden" name="permasalahan" class="w-full p-2 border rounded" id="edit-{{ $laporanijasa->id_ijasa }}-permasalahan-input" value="{{ $laporanijasa->permasalahan }}" required>
+                                            <div id="edit-{{ $laporanijasa->id_ijasa }}-permasalahan"></div>
                                         </div>
                                         <div>
                                             <label for="impact" class="block text-sm font-medium">Impact</label>
-                                            <input type="text" name="impact" class="w-full p-2 border rounded" value="{{ $laporanijasa->impact }}" required>
+                                            <input type="hidden" name="impact" class="w-full p-2 border rounded" id="edit-{{ $laporanijasa->id_ijasa }}-impact-input" value="{{ $laporanijasa->impact }}" required>
+                                            <div id="edit-{{ $laporanijasa->id_ijasa }}-impact"></div>
                                         </div>
                                         <div>
                                             <label for="troubleshooting" class="block text-sm font-medium">Troubleshooting</label>
-                                            <input type="text" name="troubleshooting" class="w-full p-2 border rounded" value="{{ $laporanijasa->troubleshooting }}" required>
+                                            <input type="hidden" name="troubleshooting" class="w-full p-2 border rounded" id="edit-{{ $laporanijasa->id_ijasa }}-troubleshooting-input" value="{{ $laporanijasa->troubleshooting }}" required>
+                                            <div id="edit-{{ $laporanijasa->id_ijasa }}-troubleshooting"></div>
                                         </div>
                                         <div>
                                             <label for="resolve_tanggal" class="block text-sm font-medium">Resolve Tanggal</label>
@@ -196,7 +206,14 @@
                                         </div>
                                         <div>
                                             <label for="resolve_jam" class="block text-sm font-medium">Resolve Jam</label>
-                                            <input type="time" name="resolve_jam" class="w-full p-2 border rounded" value="{{ \Carbon\Carbon::parse($laporanijasa->resolve_jam)->format('H:i') }}" required>
+                                            <div class="relative">
+                                                <div class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
+                                                    <svg class="w-4 h-4 text-gray-50 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                                        <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z" clip-rule="evenodd"/>
+                                                    </svg>
+                                                </div>
+                                                <input type="time" name="resolve_jam" id="resolve_jam" class="mb-4 bg-gray-50 border leading-none border-gray-600 text-black text-sm rounded-lg block w-full p-2.5" value="{{ \Carbon\Carbon::parse($laporanijasa->resolve_jam)->format('H:i') }}"  required />
+                                            </div> 
                                         </div>
                                     </div>
                                     <div class="mt-4 flex justify-end gap-2">
@@ -290,49 +307,86 @@
     
 <!-- Modal untuk Add Event -->
 <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">
-    <div class="bg-white w-1/2 p-6 rounded shadow-lg">
+    <div class="bg-white w-1/2 max-h-[90vh] p-6 rounded shadow-lg flex flex-col">
         <h3 class="text-xl font-semibold mb-4">Add New Data</h3>
-        <form method="POST" action="{{ route('laporanijasa.store') }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('laporanijasa.store') }}" enctype="multipart/form-data" id="addForm" class="flex-grow overflow-y-auto space-y-4 pr-2">
             @csrf
             <div class="space-y-4">
                 <div>
-                    <label for="date" class="block text-sm font-medium">Tanggal</label>
-                    <input type="date" name="date" class="w-full p-2 border rounded" required>
+                    <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                    <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
                 </div>
                 <div>
-                    <label for="jam" class="block text-sm font-medium">Jam</label>
-                    <input type="time" name="jam" class="w-full p-2 border rounded" value="{{ old('jam') }}" required>
+                    <label for="time" class="block mb-2 text-sm font-medium text-black">Jam</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
+                            <svg class="w-4 h-4 text-gray-50 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <input type="time" name="jam" id="jam" class="bg-gray-50 border leading-none border-gray-600 text-black text-sm rounded-lg block w-full p-2.5" required />
+                    </div>             
                 </div>
                 <div>
                     <label for="permasalahan" class="block text-sm font-medium">Permasalahan</label>
-                    <input type="text" name="permasalahan" class="w-full p-2 border rounded" required>
+                    <input type="hidden" name="permasalahan" id="permasalahan-input" class="w-full p-2 border rounded" required>
+                    <div id="editor-permasalahan"></div>
+                    <div class="text-red-500 text-sm mt-1 hidden" id="input-permasalahan">This field is required</div>
                 </div>
                 <div>
                     <label for="impact" class="block text-sm font-medium">Impact</label>
-                    <input type="text" name="impact" class="w-full p-2 border rounded" required>
+                    <input type="hidden" name="impact" id="impact-input" class="w-full p-2 border rounded" required>
+                    <div id="editor-impact"></div>
+                    <div class="text-red-500 text-sm mt-1 hidden" id="input-impact">This field is required</div>
                 </div>
                 <div>
                     <label for="troubleshooting" class="block text-sm font-medium">Trobleshooting</label>
-                    <input type="text" name="troubleshooting" class="w-full p-2 border rounded" required>
+                    <input type="hidden" name="troubleshooting" id="troubleshooting-input" class="w-full p-2 border rounded" required>
+                    <div id="editor-troubleshooting"></div>
+                    <div class="text-red-500 text-sm mt-1 hidden" id="input-troubleshooting">This field is required</div>
                 </div>
                 <div>
                     <label for="resolve_tanggal" class="block text-sm font-medium">Resolve Tanggal</label>
                     <input type="date" name="resolve_tanggal" class="w-full p-2 border rounded" value="{{ old('resolve_tanggal') }}" required>
                 </div>
                 <div>
-                    <label for="resolve_jam" class="block text-sm font-medium">Resolve Jam</label>
-                    <input type="time" name="resolve_jam" class="w-full p-2 border rounded" required>
+                    <label for="resolve_jam" class="block mb-2 text-sm font-medium text-black">Resolve Jam</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
+                            <svg class="w-4 h-4 text-gray-50 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <input type="time" name="resolve_jam" id="resolve_jam" class="mb-4 bg-gray-50 border leading-none border-gray-600 text-black text-sm rounded-lg block w-full p-2.5" required />
+                    </div>             
                 </div>
             </div>
-            <div class="mt-4 flex justify-end gap-2">
+            <div class="mt-4 flex justify-end gap-2 sticky bottom-0 bg-white py-4">
                 <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
-                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Add</button>
+                <button type="submit" form="addForm" class="bg-red-600 text-white px-4 py-2 rounded">Add</button>
             </div>
         </form>
     </div>
 </div>
 
 </body>
+<style>
+    /* Styling agar numbered list & bullet list tetap tampil di tabel */
+    .content-html ol {
+    list-style-type: decimal;
+    margin-left: 20px;
+    }
+
+    .content-html ul {
+    list-style-type: disc;
+    margin-left: 20px;
+    }
+
+    .content-html li {
+    margin-bottom: 4px;
+    }
+</style>
+
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <script>
         //toogle form
@@ -367,6 +421,68 @@
         });
     });
 
+    document.addEventListener('DOMContentLoaded', function() {
+    let editors = {};
+
+    // Fungsi untuk inisialisasi CKEditor
+    function initCKEditor(elementId, inputId) {
+        ClassicEditor
+            .create(document.querySelector(elementId), {
+                toolbar: [
+                    'bold', 'italic', '|', 
+                    'bulletedList', 'numberedList', '|', 
+                    'undo', 'redo'
+                ]
+            })
+            .then(editor => {
+                editors[elementId] = editor;
+                
+                // Set nilai awal jika ada
+                let initialValue = document.querySelector(inputId).value;
+                editor.setData(initialValue);
+
+                // Update hidden input saat ada perubahan
+                editor.model.document.on('change:data', () => {
+                    document.querySelector(inputId).value = editor.getData();
+                });
+            })
+            .catch(error => console.error('CKEditor error:', error));
+        }
+
+        // Inisialisasi CKEditor di form tambah
+        if (document.querySelector('#editor-permasalahan')) {
+            initCKEditor('#editor-permasalahan', '#permasalahan-input');
+        }
+        if (document.querySelector('#editor-impact')) {
+            initCKEditor('#editor-impact', '#impact-input');
+        }
+        if (document.querySelector('#editor-troubleshooting')) {
+            initCKEditor('#editor-troubleshooting', '#troubleshooting-input');
+        }
+
+        // Inisialisasi CKEditor saat modal edit dibuka
+        document.querySelectorAll('[data-modal-target]').forEach(button => {
+            button.addEventListener('click', function() {
+                const modalId = this.getAttribute('data-modal-target');
+                const id = modalId.replace('#editEventModal', '');
+
+                if (document.querySelector(modalId)) {
+                    initCKEditor(`#edit-${id}-permasalahan`, `#edit-${id}-permasalahan-input`);
+                    initCKEditor(`#edit-${id}-impact`, `#edit-${id}-impact-input`);
+                    initCKEditor(`#edit-${id}-troubleshooting`, `#edit-${id}-troubleshooting-input`);
+                }
+            });
+        });
+
+        // Fungsi untuk menutup modal
+        document.querySelectorAll('[data-modal-close]').forEach(button => {
+            button.addEventListener('click', function() {
+                const modal = this.closest('.fixed');
+                modal.classList.add('hidden');
+            });
+        });
+    });
+
     async function exportToPDF() {
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
     if (!csrfToken) {
@@ -378,27 +494,27 @@
     const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
         const cells = row.querySelectorAll('td');
         return {
-                date: cells[0]?.innerText.trim() || '',
-                jam: cells[1]?.innerText.trim() || '',
-                permasalahan: cells[2]?.innerText.trim() || '',
-                impact: cells[3]?.innerText.trim() || '',
-                troubleshooting: cells[4]?.innerText.trim() || '',
-                resolve_tanggal: cells[5]?.innerText.trim() || '',
-                resolve_jam: cells[6]?.innerText.trim() || '',
+                tanggal: cells[0]?.innerHTML.trim() || '',
+                jam: cells[1]?.innerHTML.trim() || '',
+                permasalahan: cells[2]?.innerHTML.trim() || '',
+                impact: cells[3]?.innerHTML.trim() || '',
+                troubleshooting: cells[4]?.innerHTML.trim() || '',
+                resolve_tanggal: cells[5]?.innerHTML.trim() || '',
+                resolve_jam: cells[6]?.innerHTML.trim() || '',
         };
     });
 
     const tableContent = items
-        .filter(item => item.date && item.jam)
+        .filter(item => item.tanggal && item.jam)
         .map(item => `
             <tr>
-                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.date}</td>
-                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.jam}</td>
-                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.permasalahan}</td>
-                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.impact}</td>
-                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.troubleshooting}</td>
-                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.resolve_tanggal}</td>
-                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.resolve_jam}</td>
+                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.tanggal}</td>
+                    <td style="border: 1px solid #000; padding: 8px; ">${item.jam}</td>
+                    <td style="border: 1px solid #000; padding: 8px; ">${item.permasalahan}</td>
+                    <td style="border: 1px solid #000; padding: 8px; ">${item.impact}</td>
+                    <td style="border: 1px solid #000; padding: 8px; ">${item.troubleshooting}</td>
+                    <td style="border: 1px solid #000; padding: 8px; ">${item.resolve_tanggal}</td>
+                    <td style="border: 1px solid #000; padding: 8px; ">${item.resolve_jam}</td>
             </tr>
         `).join('');
 

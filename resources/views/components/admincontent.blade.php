@@ -362,31 +362,6 @@
         </div>
 
         <!-- LAPORAN IT -->
-        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
-            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Tabel Laporan Bizdev</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <div class="max-w-[600px] md:max-w-none mx-auto md:mx-0 overflow-x-auto"> <!-- Container pembatas dan scroll -->
-                    <table id="adminbizdev" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
-                        <thead>
-                            <tr>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Aplikasi</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Kondisi Tanggal Lalu</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Kondisi Tanggal Ini</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Update</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Rencana Implementasi</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="flex justify-end mt-4">
-                    <a href="{{ route('laporanbizdev.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Bizdev →</a>
-                </div>
-            </div>
-        </div>
 
         <!-- LAPORAN IT Bizdev Gambar -->
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
@@ -916,127 +891,80 @@
         });
     });
 
-    //tabel laporan iJASA
     $(document).ready(function() {
-        function fetchLaporaniJASA(search = '', start_month = '', end_month = '') {
-            $.ajax({
-                url: "{{ route('laporanijasa.index') }}"
-                , type: "GET"
-                , data: {
-                    search: search, start_month: start_month, end_month: end_month
-                }, // Kirim parameter search ke server
-                dataType: "json"
-                , success: function(response) {
-                    let tableBody = $("#adminijasa tbody");
-                    tableBody.empty(); // Kosongkan tabel sebelum menambahkan data baru
+    function decodeEntities(encodedString) {
+        let textarea = document.createElement("textarea");
+        textarea.innerHTML = encodedString;
+        return textarea.value;
+    }
 
-                    if (response.laporanijasas.data.length === 0) {
-                        tableBody.append(`<tr><td colspan="7" class="text-center p-4">Data tidak ditemukan</td></tr>`);
-                    } else {
-                        response.laporanijasas.data.forEach(function(item) {
-                            // Konversi format Tanggal dari 'YYYY-MM-DD' ke '25 Januari 2024'
-                            const [tahun, bulan, hari] = item.date.split('-');
-                            const namaBulan = [
-                                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-                                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-                            ][parseInt(bulan, 10) - 1]; // Konversi bulan ke indeks array
+    function formatTanggal(dateString) {
+        const [tahun, bulan, hari] = dateString.split('-');
+        const namaBulan = [
+            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        ][parseInt(bulan, 10) - 1]; // Konversi bulan ke indeks array
 
-                            const formattedTanggal = `${parseInt(hari, 10)} ${namaBulan} ${tahun}`; // Gabungkan hari, bulan, dan tahun
-                            let row = `
-                            <tr>
-                                <td class="border border-gray-300 px-4 py-2 text-center">${formattedTanggal}</td>
-                                <td class="border border-gray-300 px-4 py-2 text-center">${item.jam}</td>
-                                <td class="border border-gray-300 px-4 py-2 text-center">${item.permasalahan}</td>
-                                <td class="border border-gray-300 px-4 py-2 text-center">${item.impact}</td>
-                                <td class="border border-gray-300 px-4 py-2 text-center">${item.troubleshooting}</td>
-                                <td class="border border-gray-300 px-4 py-2 text-center">${item.resolve_tanggal}</td>
-                                <td class="border border-gray-300 px-4 py-2 text-center">${item.resolve_jam}</td>
-                            </tr>
+        return `${parseInt(hari, 10)} ${namaBulan} ${tahun}`;
+    }
+
+    function fetchLaporaniJASA(search = '', start_month = '', end_month = '') {
+        $.ajax({
+            url: "{{ route('laporanijasa.index') }}",
+            type: "GET",
+            data: { search: search, start_month: start_month, end_month: end_month },
+            dataType: "json",
+            success: function(response) {
+                let tableBody = $("#adminijasa tbody");
+                tableBody.empty(); // Kosongkan tabel sebelum menambahkan data baru
+
+                if (response.laporanijasas.data.length === 0) {
+                    tableBody.append(`<tr><td colspan="7" class="text-center p-4">Data tidak ditemukan</td></tr>`);
+                } else {
+                    response.laporanijasas.data.forEach(function(item) {
+                        let formattedTanggal = formatTanggal(item.tanggal);
+                        let formattedResolveTanggal = formatTanggal(item.resolve_tanggal);
+
+                        let row = `
+                        <tr>
+                            <td class="border border-gray-300 px-4 py-2 text-center">${formattedTanggal}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">${item.jam}</td>
+                            <td class="border border-gray-300 px-4 py-2">
+                                <div class="ck-content">${decodeEntities(item.permasalahan)}</div>
+                            </td>
+                            <td class="border border-gray-300 px-4 py-2">
+                                <div class="ck-content">${decodeEntities(item.impact)}</div>
+                            </td>
+                            <td class="border border-gray-300 px-4 py-2">
+                                <div class="ck-content">${decodeEntities(item.troubleshooting)}</div>
+                            </td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">${formattedResolveTanggal}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">${item.resolve_jam}</td>
+                        </tr>
                         `;
-                            tableBody.append(row);
-                        });
-                    }
+                        tableBody.append(row);
+                    });
                 }
-                , error: function(xhr, status, error) {
-                    console.error("Error fetching data:", error);
-                }
-            });
-        }
-
-        // Jalankan fungsi saat halaman dimuat
-        fetchLaporaniJASA();
-
-        // Event listener untuk form pencarian
-        $("#monthFilterForm").on("submit", function(e) {
-            e.preventDefault(); // Mencegah form melakukan reload halaman
-            let searchValue = $("#searchInput").val().trim();
-            let startMonth = $("#startMonth").val();
-            let endMonth = $("#endMonth").val();
-            fetchLaporaniJASA(searchValue, startMonth, endMonth);
+            },
+            error: function(xhr, status, error) {
+                console.error("Error fetching data:", error);
+            }
         });
+    }
+
+    // Jalankan fungsi saat halaman dimuat
+    fetchLaporaniJASA();
+
+    // Event listener untuk form pencarian
+    $("#monthFilterForm").on("submit", function(e) {
+        e.preventDefault(); // Mencegah form melakukan reload halaman
+        let searchValue = $("#searchInput").val().trim();
+        let startMonth = $("#startMonth").val();
+        let endMonth = $("#endMonth").val();
+        fetchLaporaniJASA(searchValue, startMonth, endMonth);
     });
+});
 
-    //tabel laporan BIZDEV
-    $(document).ready(function() {
-        function fetchLaporanBizdev(search = '', start_month = '', end_month = '') {
-            $.ajax({
-                url: "{{ route('laporanbizdev.index') }}"
-                , type: "GET"
-                , data: {
-                    search: search, start_month: start_month, end_month: end_month
-                }, // Kirim parameter search ke server
-                dataType: "json"
-                , success: function(response) {
-                    let tableBody = $("#adminbizdev tbody");
-                    tableBody.empty(); // Kosongkan tabel sebelum menambahkan data baru
-
-                    if (response.laporanbizdevs.data.length === 0) {
-                        tableBody.append(`<tr><td colspan="7" class="text-center p-4">Data tidak ditemukan</td></tr>`);
-                    } else {
-                        response.laporanbizdevs.data.forEach(function(item) {
-                               // Konversi format Tanggal dari 'YYYY-MM-DD' ke '25 Januari 2024'
-                               const [tahun, bulan, hari] = item.tanggal.split('-');
-                                const namaBulan = [
-                                    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-                                    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-                                ][parseInt(bulan, 10) - 1]; // Konversi bulan ke indeks array
-
-                                const formattedTanggal = `${parseInt(hari, 10)} ${namaBulan} ${tahun}`; // Gabungkan hari, bulan, dan tahun
-
-                            // Buat baris tabel dengan formattedBulan
-                            let row = `
-                                <tr>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${formattedTanggal}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.aplikasi}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.kondisi_bulanlalu}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.kondisi_bulanini}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.update}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.rencana_implementasi}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.keterangan}</td>
-                                </tr>
-                            `;
-                            tableBody.append(row);
-                        });
-                    }
-                }
-                , error: function(xhr, status, error) {
-                    console.error("Error fetching data:", error);
-                }
-            });
-        }
-
-        // Jalankan fungsi saat halaman dimuat
-        fetchLaporanBizdev();
-
-        // Event listener untuk form pencarian
-        $("#monthFilterForm").on("submit", function(e) {
-            e.preventDefault(); // Mencegah form melakukan reload halaman
-            let searchValue = $("#searchInput").val().trim();
-            let startMonth = $("#startMonth").val();
-            let endMonth = $("#endMonth").val();
-            fetchLaporanBizdev(searchValue, startMonth, endMonth);
-        });
-    });
 
     //laporan neraca
     $(document).ready(function() {
@@ -1397,58 +1325,66 @@
     }
 
     function fetchLaporanSPI(search = '', start_month = '', end_month = '') {
-        $.ajax({
-            url: "{{ route('laporanspi.index') }}",
-            type: "GET",
-            data: {
-                search: search, start_month: start_month, end_month: end_month 
-            },
-            dataType: "json",
-            success: function(response) {
-                let tableBody = $("#adminspi tbody");
-                tableBody.empty();
+    $.ajax({
+        url: "{{ route('laporanspi.index') }}",
+        type: "GET",
+        data: {
+            search: search, start_month: start_month, end_month: end_month 
+        },
+        dataType: "json",
+        success: function(response) {
+            let tableBody = $("#adminspi tbody");
+            tableBody.empty();
 
-                if (response.laporanspis.data.length === 0) {
-                    tableBody.append(`<tr><td colspan="7" class="text-center p-4">Data tidak ditemukan</td></tr>`);
-                } else {
-                    response.laporanspis.data.forEach(function(item) {
-                        const [tahun, bulan, hari] = item.tanggal.split('-');
-                        const namaBulan = [
-                            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-                            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-                        ][parseInt(bulan, 10) - 1];
-                        const formattedTanggal = `${parseInt(hari, 10)} ${namaBulan} ${tahun}`;
+            if (response.laporanspis.data.length === 0) {
+                tableBody.append(`<tr><td colspan="7" class="text-center p-4">Data tidak ditemukan</td></tr>`);
+            } else {
+                response.laporanspis.data.forEach(function(item) {
+                    const [tahun, bulan, hari] = item.tanggal.split('-');
+                    const namaBulan = [
+                        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                    ][parseInt(bulan, 10) - 1];
+                    const formattedTanggal = `${parseInt(hari, 10)} ${namaBulan} ${tahun}`;
 
-                        let row = `
-                            <tr>
-                                <td class="border border-gray-300 px-4 py-2 text-center">${formattedTanggal}</td>
-                                <td class="border border-gray-300 px-4 py-2 text-center">${decodeEntities(item.aspek)}</td>
-                                <td class="border border-gray-300 px-4 py-2 text-justify">${decodeEntities(item.masalah)}</td>
-                                <td class="border border-gray-300 px-4 py-2 text-justify">${decodeEntities(item.solusi)}</td>
-                                <td class="border border-gray-300 px-4 py-2 text-justify">${decodeEntities(item.implementasi)}</td>
-                            </tr>
-                        `;
-                        tableBody.append(row);
-                    });
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error("Error fetching data:", error);
-                }
-            });
+                    // Don't use decodeEntities for HTML content
+                    // Use the raw HTML directly with proper styling
+                    let row = `
+                        <tr>
+                            <td class="border border-gray-300 px-4 py-2 text-center">${formattedTanggal}</td>
+                            <td class="border border-gray-300 px-4 py-2">
+                                <div class="ck-content">${item.aspek}</div>
+                            </td>
+                            <td class="border border-gray-300 px-4 py-2">
+                                <div class="ck-content">${item.masalah}</div>
+                            </td>
+                            <td class="border border-gray-300 px-4 py-2">
+                                <div class="ck-content">${item.solusi}</div>
+                            </td>
+                            <td class="border border-gray-300 px-4 py-2">
+                                <div class="ck-content">${item.implementasi}</div>
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.append(row);
+                });
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error fetching data:", error);
         }
-
-        fetchLaporanSPI();
-
-        $("#monthFilterForm").on("submit", function(e) {
-            e.preventDefault();
-            let searchValue = $("#searchInput").val().trim();
-            let startMonth = $("#startMonth").val();
-            let endMonth = $("#endMonth").val();
-            fetchLaporanSPI(searchValue, startMonth, endMonth);
-        });
     });
+}
+    fetchLaporanSPI();
 
+    $("#monthFilterForm").on("submit", function(e) {
+        e.preventDefault();
+        let searchValue = $("#searchInput").val().trim();
+        let startMonth = $("#startMonth").val();
+        let endMonth = $("#endMonth").val();
+        fetchLaporanSPI(searchValue, startMonth, endMonth);
+    });
+});
 
     //tabel laporan SPI IT
     $(document).ready(function() {
@@ -1482,10 +1418,18 @@
                             let row = `
                                 <tr>
                                     <td class="border border-gray-300 px-4 py-2 text-center">${formattedTanggal}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.aspek}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.masalah}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.solusi}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.implementasi}</td>
+                                    <td class="border border-gray-300 px-4 py-2">
+                                        <div class="ck-content">${item.aspek}</div>
+                                    </td>
+                                    <td class="border border-gray-300 px-4 py-2">
+                                        <div class="ck-content">${item.masalah}</div>
+                                    </td>
+                                    <td class="border border-gray-300 px-4 py-2">
+                                        <div class="ck-content">${item.solusi}</div>
+                                    </td>
+                                    <td class="border border-gray-300 px-4 py-2">
+                                        <div class="ck-content">${item.implementasi}</div>
+                                    </td>
                                 </tr>
                             `;
                             tableBody.append(row);
