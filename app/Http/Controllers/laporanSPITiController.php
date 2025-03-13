@@ -137,18 +137,41 @@ class laporanSPITiController extends Controller
             // Tambahkan footer ke PDF
             $mpdf->SetFooter('{DATE j-m-Y}|Laporan SPI - Laporan SPI IT|');
     
-            // Buat konten tabel dengan gaya CSS yang lebih ketat
+            // Set CSS untuk memastikan formatting CKEditor dipertahankan
+            $styleCSS = "
+            ul, ol {
+                padding-left: 20px;
+                margin: 5px 0;
+            }
+            li {
+                margin-bottom: 3px;
+            }
+            p {
+                margin: 5px 0;
+            }
+            strong, b {
+                font-weight: bold;
+            }
+            em, i {
+                font-style: italic;
+            }
+        ";
+        
+            // Buat konten tabel dengan style tambahan untuk CKEditor
             $htmlContent = "
+                <style>
+                    {$styleCSS}
+                </style>
                 <div style='width: 100%;'>
                     <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Tabel Data</h2>
                     <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                         <thead>
                             <tr style='background-color: #f2f2f2;'>
-                            <th style='border: 1px solid #000; padding: 1px;'>Tanggal</th>
-                            <th style='border: 1px solid #000; padding: 2px;'>Aspek</th>
-                            <th style='border: 1px solid #000; padding: 2px;'>Masalah</th>
-                            <th style='border: 1px solid #000; padding: 2px;'>Solusi</th>
-                            <th style='border: 1px solid #000; padding: 2px;'>Implementasi</th>
+                                <th style='border: 1px solid #000; padding: 1px;'>Tanggal</th>
+                                <th style='border: 1px solid #000; padding: 2px;'>Aspek</th>
+                                <th style='border: 1px solid #000; padding: 2px;'>Masalah</th>
+                                <th style='border: 1px solid #000; padding: 2px;'>Solusi</th>
+                                <th style='border: 1px solid #000; padding: 2px;'>Implementasi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -157,10 +180,10 @@ class laporanSPITiController extends Controller
                     </table>
                 </div>
             ";
-    
+
             // Tambahkan konten ke PDF
             $mpdf->WriteHTML($htmlContent);
-    
+            
             // Return PDF sebagai respon download
             return response($mpdf->Output('', 'S'), 200)
                 ->header('Content-Type', 'application/pdf')

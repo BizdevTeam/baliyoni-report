@@ -150,7 +150,6 @@
         </div>
         @endif
 
-        <!-- LAPORAN ACCOUNTING -->
          <!-- ACCOUNTING: Tampil untuk Superadmin & Accounting -->
          @if(in_array(Auth::user()->role, ['superadmin', 'accounting']))
          <!-- LAPORAN LABA RUGI -->
@@ -1390,65 +1389,66 @@
         });
     });
 
-    //tabel laporan SPI OPERASIONAL
     $(document).ready(function() {
-        function fetchLaporanSPI(search = '', start_month = '', end_month = '') {
-            $.ajax({
-                url: "{{ route('laporanspi.index') }}"
-                , type: "GET"
-                , data: {
-                    search: search, start_month: start_month, end_month: end_month 
-                }, // Kirim parameter search ke server
-                dataType: "json"
-                , success: function(response) {
-                    let tableBody = $("#adminspi tbody");
-                    tableBody.empty(); // Kosongkan tabel sebelum menambahkan data baru
+    function decodeEntities(encodedString) {
+        let textarea = document.createElement("textarea");
+        textarea.innerHTML = encodedString;
+        return textarea.value;
+    }
 
-                    if (response.laporanspis.data.length === 0) {
-                        tableBody.append(`<tr><td colspan="7" class="text-center p-4">Data tidak ditemukan</td></tr>`);
-                    } else {
-                        response.laporanspis.data.forEach(function(item) {
-                            // Konversi format Tanggal dari 'YYYY-MM-DD' ke '25 Januari 2024'
-                            const [tahun, bulan, hari] = item.tanggal.split('-');
+    function fetchLaporanSPI(search = '', start_month = '', end_month = '') {
+        $.ajax({
+            url: "{{ route('laporanspi.index') }}",
+            type: "GET",
+            data: {
+                search: search, start_month: start_month, end_month: end_month 
+            },
+            dataType: "json",
+            success: function(response) {
+                let tableBody = $("#adminspi tbody");
+                tableBody.empty();
 
-                            const namaBulan = [
-                                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-                                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-                            ][parseInt(bulan, 10) - 1]; // Konversi bulan ke indeks array
+                if (response.laporanspis.data.length === 0) {
+                    tableBody.append(`<tr><td colspan="7" class="text-center p-4">Data tidak ditemukan</td></tr>`);
+                } else {
+                    response.laporanspis.data.forEach(function(item) {
+                        const [tahun, bulan, hari] = item.tanggal.split('-');
+                        const namaBulan = [
+                            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                        ][parseInt(bulan, 10) - 1];
+                        const formattedTanggal = `${parseInt(hari, 10)} ${namaBulan} ${tahun}`;
 
-                            const formattedTanggal = `${parseInt(hari, 10)} ${namaBulan} ${tahun}`; // Gabungkan hari, bulan, dan tahun
-                            // Buat baris tabel dengan formattedBulan
-                            let row = `
-                                <tr>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${formattedTanggal}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.aspek}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.masalah}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.solusi}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.implementasi}</td>
-                                </tr>
-                            `;
-                            tableBody.append(row);
-                        });
-                    }
+                        let row = `
+                            <tr>
+                                <td class="border border-gray-300 px-4 py-2 text-center">${formattedTanggal}</td>
+                                <td class="border border-gray-300 px-4 py-2 text-center">${decodeEntities(item.aspek)}</td>
+                                <td class="border border-gray-300 px-4 py-2 text-justify">${decodeEntities(item.masalah)}</td>
+                                <td class="border border-gray-300 px-4 py-2 text-justify">${decodeEntities(item.solusi)}</td>
+                                <td class="border border-gray-300 px-4 py-2 text-justify">${decodeEntities(item.implementasi)}</td>
+                            </tr>
+                        `;
+                        tableBody.append(row);
+                    });
                 }
-                , error: function(xhr, status, error) {
-                    console.error("Error fetching data:", error);
+            },
+            error: function(xhr, status, error) {
+                console.error("Error fetching data:", error);
                 }
             });
         }
 
-        // Jalankan fungsi saat halaman dimuat
         fetchLaporanSPI();
 
-        // Event listener untuk form pencarian
         $("#monthFilterForm").on("submit", function(e) {
-            e.preventDefault(); // Mencegah form melakukan reload halaman
+            e.preventDefault();
             let searchValue = $("#searchInput").val().trim();
             let startMonth = $("#startMonth").val();
             let endMonth = $("#endMonth").val();
             fetchLaporanSPI(searchValue, startMonth, endMonth);
         });
     });
+
 
     //tabel laporan SPI IT
     $(document).ready(function() {
