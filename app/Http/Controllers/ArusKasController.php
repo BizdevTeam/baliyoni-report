@@ -42,8 +42,8 @@ class ArusKasController extends Controller
             'datasets' => [
                 [
                     'data' => [$kasMasuk, $kasKeluar],
-                    'backgroundColor' => ['#FF6384', '#36A2EB'], // Warna untuk pie chart
-                    'hoverBackgroundColor' => ['#FF4757', '#3B8BEB'],
+                    'backgroundColor' => ['#1c64f2', '#ff2323'], // Warna untuk pie chart
+                    'hoverBackgroundColor' => ['#2b6cb0', '#dc2626'],
                 ],
             ],
         ];
@@ -244,8 +244,8 @@ class ArusKasController extends Controller
             'datasets' => [
                 [
                     'data' => [$kasMasuk, $kasKeluar],
-                    'backgroundColor' => ['#FF6384', '#36A2EB'], // Warna untuk pie chart
-                    'hoverBackgroundColor' => ['#FF4757', '#3B8BEB'],
+                    'backgroundColor' => ['#1c64f2', '#ff2323'], // Warna untuk pie chart
+                    'hoverBackgroundColor' => ['#2b6cb0', '#dc2626'],
                 ],
             ],
         ];

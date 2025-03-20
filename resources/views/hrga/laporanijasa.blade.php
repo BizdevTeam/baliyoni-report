@@ -65,30 +65,28 @@
      </div>
      @endif
 
-     <!-- Error Alert -->
-     @if (session('error'))
-     <div x-show="showError" x-transition.opacity.scale.90
-         class="bg-red-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
-         
-         <!-- Icon -->
-         <span class="text-2xl">⚠️</span>
+        <!-- Error Alert -->
+        @if (session('error'))
+        <div x-show="showError" x-transition.opacity.scale.90
+            class="bg-red-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
+            
+            <!-- Icon -->
+            <span class="text-2xl">⚠️</span>
 
-         <!-- Message -->
-         <div>
-             <h3 class="font-bold">Error!</h3>
-             <p class="text-sm">{{ session('error') }}</p>
-         </div>
+            <!-- Message -->
+            <div>
+                <h3 class="font-bold">Error!</h3>
+                <p class="text-sm">{{ session('error') }}</p>
+            </div>
 
-         <!-- Close Button -->
-         <button @click="showError = false" class="ml-auto text-white text-lg font-bold">
-             &times;
-         </button>
-     </div>
-     @endif
-
- </div>
- @endif
-
+            <!-- Close Button -->
+            <button @click="showError = false" class="ml-auto text-white text-lg font-bold">
+                &times;
+            </button>
+        </div>
+        @endif
+    </div>
+    @endif
         <!-- Main Content -->
        <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
         <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan iJASA</h1>
@@ -161,10 +159,10 @@
                                     </button>
                                 </form>
                             </td>
-                        </tr>
+                        </tr>   
                         <!-- Modal for Edit Event -->
                         <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden overflow-y-auto" id="editEventModal{{ $laporanijasa->id_ijasa }}">
-                            <div class="bg-white w-1/2 p-6 rounded shadow-lg">
+                            <div class="bg-white w-1/2 p-6 rounded shadow-lg ">
                                 <h3 class="text-xl font-semibold mb-4">Edit Data</h3>
                                 <form method="POST" action="{{ route('laporanijasa.update', $laporanijasa->id_ijasa) }}" enctype="multipart/form-data">
                                     @csrf

@@ -20,9 +20,6 @@ class RekapPiutangServisAspController extends Controller
         $perPage = $request->input('per_page', 12);
         $search = $request->input('search');
 
-        #$query = KasHutangPiutang::query();
-
-        // Query untuk mencari berdasarkan tahun dan date
         $rekappiutangservisasps = RekapPiutangServisAsp::query()
             ->when($search, function ($query, $search) {
                 return $query->where('tanggal', 'LIKE', "%$search%")
@@ -35,10 +32,14 @@ class RekapPiutangServisAspController extends Controller
         // Hitung total untuk masing-masing kategori
         $totalPenjualan = $rekappiutangservisasps->sum('nilai_piutang');
 
-        // Siapkan data untuk chart
-        function getRandomRGBA($opacity = 0.7) {
-            return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
-        }
+        // Warna tetap untuk setiap pelaksana
+        $pelaksanaColors = [
+            'CV. ARI DISTRIBUTION CENTER' => 'rgba(255, 99, 132, 0.7)',
+            'CV. BALIYONI COMPUTER' => 'rgba(54, 162, 235, 0.7)',
+            'PT. NABA TECHNOLOGY SOLUTIONS' => 'rgba(255, 206, 86, 0.7)',
+            'CV. ELKA MANDIRI (50%)-SAMITRA' => 'rgba(75, 192, 192, 0.7)',
+            'CV. ELKA MANDIRI (50%)-DETRAN' => 'rgba(153, 102, 255, 0.7)'
+        ];
         
         // Gabungkan pelaksana dan nilai_pendapatan untuk label
         $labels = $rekappiutangservisasps->map(function ($item) {
@@ -47,7 +48,7 @@ class RekapPiutangServisAspController extends Controller
         $data = $rekappiutangservisasps->pluck('nilai_piutang')->toArray();
         
         // Generate random colors for each data item
-        $backgroundColors = array_map(fn() => getRandomRGBA(), $data);
+        $backgroundColors = $rekappiutangservisasps->map(fn($item) => $pelaksanaColors[$item->pelaksana] ?? 'rgba(0, 0, 0, 0.7)')->toArray();
         
         $chartData = [
             'labels' => $labels, // Labels untuk chart
@@ -295,13 +296,22 @@ class RekapPiutangServisAspController extends Controller
         $rekappiutangservisasps = $query
             ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
             ->get();
+
+        $pelaksanaColors = [
+            'CV. ARI DISTRIBUTION CENTER' => 'rgba(255, 99, 132, 0.7)',
+            'CV. BALIYONI COMPUTER' => 'rgba(54, 162, 235, 0.7)',
+            'PT. NABA TECHNOLOGY SOLUTIONS' => 'rgba(255, 206, 86, 0.7)',
+            'CV. ELKA MANDIRI (50%)-SAMITRA' => 'rgba(75, 192, 192, 0.7)',
+            'CV. ELKA MANDIRI (50%)-DETRAN' => 'rgba(153, 102, 255, 0.7)'
+        ];
     
         // Gabungkan pelaksana dan nilai_pendapatan untuk label
         $labels = $rekappiutangservisasps->map(function ($item) {
             return $item->pelaksana . ' ('. 'Rp'. ' ' . number_format($item->nilai_piutang) . ')';
         })->toArray();        
         $data = $rekappiutangservisasps->pluck('nilai_piutang')->toArray(); // Nilai pendapatan
-        $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data); // Warna acak untuk pie chart
+        
+        $backgroundColors = $rekappiutangservisasps->map(fn($item) => $pelaksanaColors[$item->pelaksana] ?? 'rgba(0, 0, 0, 0.7)')->toArray();
     
         // Format data untuk Pie Chart
         $chartData = [
@@ -319,9 +329,5 @@ class RekapPiutangServisAspController extends Controller
         return response()->json($chartData);
     }
     
-    private function getRandomRGBAA($opacity = 0.7)
-    {
-        return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
-    }
 }
 

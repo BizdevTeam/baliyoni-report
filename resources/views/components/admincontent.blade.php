@@ -579,9 +579,9 @@
         //laporan MARKETING
         fetchChartDataWRp('{{ route("adminpenjualan.chart.data") }}', 'chartp', 'Tanggal ');
         fetchChartDataWRp('{{ route("adminpp.chart.data") }}', 'chartpp', 'Perusahaan ');
-        fetchChartDataWRp('{{ route("admin.chart.data") }}', 'chartl', 'Nilai Paket ');
-        fetchChartDataNRp('{{ route("adminstatuspaket.chart.data") }}', 'chartsp', 'Nilai Paket ');
-        fetchChartDataNRp('{{ route("adminperinstansi.chart.data") }}', 'chartpi', 'Nilai Paket ');
+        fetchChartPaket('{{ route("admin.chart.data") }}', 'chartl', 'Nilai Paket ');
+        fetchChartPaket('{{ route("adminstatuspaket.chart.data") }}', 'chartsp', 'Nilai Paket ');
+        fetchChartDataWRp('{{ route("adminperinstansi.chart.data") }}', 'chartpi', 'Nilai Paket ');
 
         //laporan PROCUREMENTS
         fetchChartDataWRp('{{ route("adminholding.chart.data") }}', 'chartph', 'Perusahaan');
@@ -595,10 +595,10 @@
         fetchChartDataWRp('{{ route("adminpendapatanpengirimanluarbali.chart.data") }}', 'chartrplb', 'Nilai Pendapatan ');
 
         //laporan HRGA
-        fetchChartDataNRp('{{ route("adminsakit.chart.data") }}', 'charts', 'Nama Karyawan');
-        fetchChartDataNRp('{{ route("adminizin.chart.data") }}', 'chartizin', 'Nama Karyawan');
-        fetchChartDataNRp('{{ route("admincuti.chart.data") }}', 'chartcuti', 'Nama Karyawan');
-        fetchChartDataNRp('{{ route("adminterlambat.chart.data") }}', 'chartterlambat', 'Nama Karyawan');
+        fetchChartHRGA('{{ route("adminsakit.chart.data") }}', 'charts', 'Nama Karyawan');
+        fetchChartHRGA('{{ route("adminizin.chart.data") }}', 'chartizin', 'Nama Karyawan');
+        fetchChartHRGA('{{ route("admincuti.chart.data") }}', 'chartcuti', 'Nama Karyawan');
+        fetchChartHRGA('{{ route("adminterlambat.chart.data") }}', 'chartterlambat', 'Nama Karyawan');
 
         //laporan ACCOUNTING
         fetchChartPieData('{{ route("adminkhps.chart.data") }}', 'chartkhps', 'Nilai Pendapatan ');
@@ -614,8 +614,8 @@
         // laporan MARKETING
         fetchChartDataWRp('{{ route("adminpenjualan.chart.data") }}' + queryString, 'chartp');
         fetchChartDataWRp('{{ route("adminpp.chart.data") }}' + queryString, 'chartpp');
-        fetchChartDataWRp('{{ route("admin.chart.data") }}' + queryString, 'chartl');
-        fetchChartDataNRp('{{ route("adminstatuspaket.chart.data") }}' + queryString, 'chartsp');
+        fetchChartPaket('{{ route("admin.chart.data") }}' + queryString, 'chartl');
+        fetchChartPaket('{{ route("adminstatuspaket.chart.data") }}' + queryString, 'chartsp');
         fetchChartDataNRp('{{ route("adminperinstansi.chart.data") }}' + queryString, 'chartpi');
 
         // laporan PROCUREMENTS
@@ -785,6 +785,128 @@
         })
         .catch(error => console.error('Error fetching chart data:', error));
     }
+    //fetch chart tanpa Rp
+    function fetchChartPaket(url, canvasId, title) {
+    fetch(url)
+        .then(response => response.json())
+        .then(chartData => {
+            let chartCanvas = document.getElementById(canvasId);
+            if (chartCanvas.chart) {
+                chartCanvas.chart.destroy();
+            }
+
+            // Batasi jumlah label dan data
+            chartData.labels = chartData.labels.slice(0, 12);
+            chartData.datasets.forEach(dataset => {
+                dataset.data = dataset.data.slice(0, 12);
+            });
+
+            chartCanvas.chart = new Chart(chartCanvas.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: chartData.labels,
+                    datasets: chartData.datasets
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: title
+                            }
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    animation: {
+                        onComplete: function() {
+                            var ctx = chartCanvas.chart.ctx;
+                            ctx.font = 'bold 15px sans-serif';
+                            ctx.textAlign = 'center';
+                            ctx.fillStyle = 'black';
+                            
+                            chartCanvas.chart.data.datasets.forEach((dataset, i) => {
+                                var meta = chartCanvas.chart.getDatasetMeta(i);
+                                meta.data.forEach((bar, index) => {
+                                    var value = dataset.data[index];
+                                    ctx.fillText(value + ' Paket'.toLocaleString(), bar.x, bar.y - 10);
+                                });
+                            });
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => console.error('Error fetching chart data:', error));
+    }
+    //fetch chart tanpa Rp
+    function fetchChartHRGA(url, canvasId, title) {
+    fetch(url)
+        .then(response => response.json())
+        .then(chartData => {
+            let chartCanvas = document.getElementById(canvasId);
+            if (chartCanvas.chart) {
+                chartCanvas.chart.destroy();
+            }
+
+            // Batasi jumlah label dan data
+            chartData.labels = chartData.labels.slice(0, 12);
+            chartData.datasets.forEach(dataset => {
+                dataset.data = dataset.data.slice(0, 12);
+            });
+
+            chartCanvas.chart = new Chart(chartCanvas.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: chartData.labels,
+                    datasets: chartData.datasets
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: title
+                            }
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    animation: {
+                        onComplete: function() {
+                            var ctx = chartCanvas.chart.ctx;
+                            ctx.font = 'bold 15px sans-serif';
+                            ctx.textAlign = 'center';
+                            ctx.fillStyle = 'black';
+                            
+                            chartCanvas.chart.data.datasets.forEach((dataset, i) => {
+                                var meta = chartCanvas.chart.getDatasetMeta(i);
+                                meta.data.forEach((bar, index) => {
+                                    var value = dataset.data[index];
+                                    ctx.fillText(value + ' Kali'.toLocaleString(), bar.x, bar.y - 10);
+                                });
+                            });
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => console.error('Error fetching chart data:', error));
+    }
 
     function fetchChartPieData(url, canvasId, title) {
         fetch(url)
@@ -834,6 +956,11 @@
 
     //tabel laporan pt bos
     $(document).ready(function() {
+    function decodeEntities(encodedString) {
+        let textarea = document.createElement("textarea");
+        textarea.innerHTML = encodedString;
+        return textarea.value;
+    }
         function fetchLaporanPTBOS(search = '', start_month = '', end_month = '') {
             $.ajax({
                 url: "{{ route('laporanptbos.index') }}",
@@ -860,19 +987,31 @@
                             let row = `
                                 <tr>
                                     <td class="border border-gray-300 px-4 py-2 text-center">${formattedTanggal}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.pekerjaan}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.kondisi_bulanlalu}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.kondisi_bulanini}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.update}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.rencana_implementasi}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.keterangan}</td>
+                                    <td class="border border-gray-300 px-4 py-2">
+                                        <div class="ck-content text-justify">${item.pekerjaan}</div>
+                                    </td>
+                                    <td class="border border-gray-300 px-4 py-2">
+                                        <div class="ck-content text-justify">${item.kondisi_bulanlalu}</div>
+                                    </td>
+                                    <td class="border border-gray-300 px-4 py-2">
+                                        <div class="ck-content text-justify">${item.kondisi_bulanini}</div>
+                                    </td>
+                                    <td class="border border-gray-300 px-4 py-2">
+                                        <div class="ck-content text-justify">${item.update}</div>
+                                    </td>
+                                    <td class="border border-gray-300 px-4 py-2">
+                                        <div class="ck-content text-justify">${item.rencana_implementasi}</div>
+                                    </td>
+                                    <td class="border border-gray-300 px-4 py-2">
+                                        <div class="ck-content text-justify">${item.keterangan}</div>
+                                    </td>
                                 </tr>
                             `;
                             tableBody.append(row);
                         });
                     }
-                }
-                , error: function(xhr, status, error) {
+                },
+                error: function(xhr, status, error) {
                     console.error("Error fetching data:", error);
                 }
             });
@@ -930,13 +1069,13 @@
                             <td class="border border-gray-300 px-4 py-2 text-center">${formattedTanggal}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">${item.jam}</td>
                             <td class="border border-gray-300 px-4 py-2">
-                                <div class="ck-content">${decodeEntities(item.permasalahan)}</div>
+                                <div class="ck-content text-justify">${decodeEntities(item.permasalahan)}</div>
                             </td>
                             <td class="border border-gray-300 px-4 py-2">
-                                <div class="ck-content">${decodeEntities(item.impact)}</div>
+                                <div class="ck-content text-justify">${decodeEntities(item.impact)}</div>
                             </td>
                             <td class="border border-gray-300 px-4 py-2">
-                                <div class="ck-content">${decodeEntities(item.troubleshooting)}</div>
+                                <div class="ck-content text-justify">${decodeEntities(item.troubleshooting)}</div>
                             </td>
                             <td class="border border-gray-300 px-4 py-2 text-center">${formattedResolveTanggal}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">${item.resolve_jam}</td>
@@ -1356,13 +1495,13 @@
                                 <div class="ck-content">${item.aspek}</div>
                             </td>
                             <td class="border border-gray-300 px-4 py-2">
-                                <div class="ck-content">${item.masalah}</div>
+                                <div class="ck-content text-justify">${item.masalah}</div>
                             </td>
                             <td class="border border-gray-300 px-4 py-2">
-                                <div class="ck-content">${item.solusi}</div>
+                                <div class="ck-content text-justify">${item.solusi}</div>
                             </td>
                             <td class="border border-gray-300 px-4 py-2">
-                                <div class="ck-content">${item.implementasi}</div>
+                                <div class="ck-content text-justify">${item.implementasi}</div>
                             </td>
                         </tr>
                     `;
@@ -1419,16 +1558,16 @@
                                 <tr>
                                     <td class="border border-gray-300 px-4 py-2 text-center">${formattedTanggal}</td>
                                     <td class="border border-gray-300 px-4 py-2">
-                                        <div class="ck-content">${item.aspek}</div>
+                                        <div class="ck-content text-justify">${item.aspek}</div>
                                     </td>
                                     <td class="border border-gray-300 px-4 py-2">
-                                        <div class="ck-content">${item.masalah}</div>
+                                        <div class="ck-content text-justify">${item.masalah}</div>
                                     </td>
                                     <td class="border border-gray-300 px-4 py-2">
-                                        <div class="ck-content">${item.solusi}</div>
+                                        <div class="ck-content text-justify">${item.solusi}</div>
                                     </td>
                                     <td class="border border-gray-300 px-4 py-2">
-                                        <div class="ck-content">${item.implementasi}</div>
+                                        <div class="ck-content text-justify">${item.implementasi}</div>
                                     </td>
                                 </tr>
                             `;
@@ -1703,7 +1842,9 @@
                                     <td class="border border-gray-300 px-4 py-2 text-center">
                                         <img src="${item.gambar_url}" alt="Laporan Gambar" class="w-20 h-20 object-cover rounded-lg shadow-md cursor-pointer block mx-auto" data-index="${index}">
                                     </td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.keterangan}</td>
+                                    <td class="border border-gray-300 px-4 py-2">
+                                        <div class="ck-content text-justify">${item.kendala}</div>
+                                    </td>                                
                                 </tr>
                             `;
                             tableBody.append(row);
@@ -1742,70 +1883,6 @@
             }
         });
     });
-
-// // Fungsi untuk menampilkan atau menyembunyikan modal
-// function toggleModal() {
-//     document.getElementById('exportModal').classList.toggle('hidden');
-// }
-
-// document.addEventListener('DOMContentLoaded', function() {
-//     const exportFloatingButton = document.getElementById('exportFloatingButton');
-//     const exportModal = document.getElementById('exportModal');
-//     const cancelExportBtn = document.getElementById('cancelExportBtn');
-//     const confirmExportBtn = document.getElementById('confirmExportBtn');
-
-//     // Event listener untuk tombol floating & modal
-//     exportFloatingButton.addEventListener('click', toggleModal);
-//     cancelExportBtn.addEventListener('click', toggleModal);
-    
-//     confirmExportBtn.addEventListener('click', function() {
-//         toggleModal(); // Tutup modal setelah konfirmasi
-//         triggerPDFExport(); // Panggil fungsi ekspor
-//     });
-// });
-
-// // Fungsi untuk melakukan ekspor PDF
-// function triggerPDFExport() {
-//     const routes = [
-//         "/rekappenjualanperusahaan/export-pdf",
-//         "/rekappenjualan/export-pdf",
-//         "/laporanpaketadministrasi/export-pdf",
-//         "/statuspaket/export-pdf",
-//         "/laporanperinstansi/export-pdf"
-//     ];
-
-//     routes.forEach(route => {
-//         fetch(route, {
-//             method: "POST",
-//             headers: {
-//                 "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-//                 "Content-Type": "application/json"
-//             },
-//             body: JSON.stringify({})
-//         })
-//         .then(response => {
-//             if (!response.ok) {
-//                 throw new Error(`HTTP error! Status: ${response.status}`);
-//             }
-//             return response.blob();
-//         })
-//         .then(blob => {
-//             if (blob.size === 0) {
-//                 throw new Error("File PDF kosong! Periksa kembali data yang diekspor.");
-//             }
-
-//             const url = window.URL.createObjectURL(blob);
-//             const a = document.createElement("a");
-//             a.href = url;
-//             a.download = "export.pdf";
-//             document.body.appendChild(a);
-//             a.click();
-//             a.remove();
-//         })
-//         .catch(error => console.error("Error exporting PDF:", error));
-//     });
-// }
-
 
 </script>
 

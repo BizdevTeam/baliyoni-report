@@ -19,34 +19,38 @@ class RekapPendapatanServisAspController extends Controller
     {
         $perPage = $request->input('per_page', 12);
         $search = $request->input('search');
-    
+
         // Query untuk mencari berdasarkan tahun dan date
         $rekappendapatanservisasps = RekapPendapatanServisAsp::query()
             ->when($search, function ($query, $search) {
                 return $query->where('tanggal', 'LIKE', "%$search%")
-                             ->orWhere('pelaksana', 'like', "%$search%");
+                            ->orWhere('pelaksana', 'like', "%$search%");
             })
             ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
             ->paginate($perPage);
-    
+
         // Hitung total untuk masing-masing kategori
         $totalPenjualan = $rekappendapatanservisasps->sum('nilai_pendapatan');
-    
-        // Fungsi untuk menghasilkan warna RGBA secara acak
-        function getRandomRGBA($opacity = 0.7) {
-            return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
-        }
-    
+
+        // Warna tetap untuk setiap pelaksana
+        $pelaksanaColors = [
+            'CV. ARI DISTRIBUTION CENTER' => 'rgba(255, 99, 132, 0.7)',
+            'CV. BALIYONI COMPUTER' => 'rgba(54, 162, 235, 0.7)',
+            'PT. NABA TECHNOLOGY SOLUTIONS' => 'rgba(255, 206, 86, 0.7)',
+            'CV. ELKA MANDIRI (50%)-SAMITRA' => 'rgba(75, 192, 192, 0.7)',
+            'CV. ELKA MANDIRI (50%)-DETRAN' => 'rgba(153, 102, 255, 0.7)'
+        ];
+
         // Gabungkan pelaksana dan nilai_pendapatan untuk label
         $labels = $rekappendapatanservisasps->map(function ($item) {
-            return $item->pelaksana . ' ('. 'Rp'. ' ' . number_format($item->nilai_pendapatan) . ')';
+            return $item->pelaksana . ' (Rp ' . number_format($item->nilai_pendapatan) . ')';
         })->toArray();
-    
+
         $data = $rekappendapatanservisasps->pluck('nilai_pendapatan')->toArray();
-    
-        // Generate random colors for each data item
-        $backgroundColors = array_map(fn() => getRandomRGBA(), $data);
-    
+
+        // Gunakan warna tetap berdasarkan pelaksana
+        $backgroundColors = $rekappendapatanservisasps->map(fn($item) => $pelaksanaColors[$item->pelaksana] ?? 'rgba(0, 0, 0, 0.7)')->toArray();
+
         $chartData = [
             'labels' => $labels, // Labels dengan pelaksana dan nilai_pendapatan
             'datasets' => [
@@ -58,9 +62,10 @@ class RekapPendapatanServisAspController extends Controller
                 ],
             ],
         ];
-    
+
         return view('supports.rekappendapatanservisasp', compact('rekappendapatanservisasps', 'chartData'));
-    }    
+    }
+
     public function store(Request $request)
     {
         try {
@@ -285,13 +290,21 @@ class RekapPendapatanServisAspController extends Controller
     $rekappendapatanservisasps = $query
         ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
         ->get();
+    
+    $pelaksanaColors = [
+        'CV. ARI DISTRIBUTION CENTER' => 'rgba(255, 99, 132, 0.7)',
+        'CV. BALIYONI COMPUTER' => 'rgba(54, 162, 235, 0.7)',
+        'PT. NABA TECHNOLOGY SOLUTIONS' => 'rgba(255, 206, 86, 0.7)',
+        'CV. ELKA MANDIRI (50%)-SAMITRA' => 'rgba(75, 192, 192, 0.7)',
+        'CV. ELKA MANDIRI (50%)-DETRAN' => 'rgba(153, 102, 255, 0.7)'
+    ];
 
     // Gabungkan pelaksana dan nilai_pendapatan untuk label
     $labels = $rekappendapatanservisasps->map(function ($item) {
         return $item->pelaksana . ' ('. 'Rp'. ' ' . number_format($item->nilai_pendapatan) . ')';
     })->toArray();    
     $data = $rekappendapatanservisasps->pluck('nilai_pendapatan')->toArray(); // Nilai pendapatan
-    $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data); // Warna acak untuk pie chart
+    $backgroundColors = $rekappendapatanservisasps->map(fn($item) => $pelaksanaColors[$item->pelaksana] ?? 'rgba(0, 0, 0, 0.7)')->toArray();
 
     // Format data untuk Pie Chart
     $chartData = [
@@ -308,12 +321,5 @@ class RekapPendapatanServisAspController extends Controller
     // Kembalikan data dalam format JSON
     return response()->json($chartData);
 }
-
-private function getRandomRGBAA($opacity = 0.7)
-{
-    return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
-}
-
-
 }
 

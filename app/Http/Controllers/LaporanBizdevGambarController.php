@@ -63,7 +63,7 @@ class LaporanBizdevGambarController extends Controller
         try {
             $validatedData = $request->validate([
                 'tanggal' => 'required|date',
-                'keterangan' => 'required|string|max:255',
+                'kendala' => 'required|string|max:255',
                 'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550'
             ]);
 
@@ -92,7 +92,7 @@ class LaporanBizdevGambarController extends Controller
         try {
             $validatedData = $request->validate([
                 'tanggal' => 'required|date',
-                'keterangan' => 'required|string|max:255',
+                'kendala' => 'required|string|max:255',
                 'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550'
             ]);
 
@@ -139,75 +139,92 @@ class LaporanBizdevGambarController extends Controller
     }
 
     public function exportPDF(Request $request)
-    {
-        try {
-            // Validasi input date
-            $validatedData = $request->validate([
-                'tanggal' => 'required|date',
-            ]);
-    
-            // Ambil semua data laporan berdasarkan date yang dipilih
-            $laporans = LaporanBizdevGambar::where('tanggal', $validatedData['tanggal'])->get();
-    
-            if ($laporans->isEmpty()) {
-                return redirect()->back()->with('error', 'Data tidak ditemukan.');
-            }
-    
-            // Inisialisasi mPDF
-            $mpdf = new \Mpdf\Mpdf([
-                'orientation' => 'L',
-                'margin_left' => 10,
-                'margin_right' => 10,
-                'margin_top' => 35,
-                'margin_bottom' => 20,
-                'format' => 'A4',
-            ]);
-    
-            // Tambahkan header
-            $headerImagePath = public_path('images/HEADER.png');
-            $mpdf->SetHTMLHeader("
-                <div style='position: absolute; top: 0; left: 0; width: 100%; height: auto; z-index: -1;'>
-                    <img src='{$headerImagePath}' alt='Header' style='width: 100%; height: auto;' />
-                </div>
-            ", 'O');
-    
-            // Tambahkan footer
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan IT - Laporan Bizdev Gambar|');
-    
-            // Loop melalui setiap laporan dan tambahkan ke PDF
-            foreach ($laporans as $index => $laporan) {
-                $imageHTML = '';
-    
-                if (!empty($laporan->gambar) && file_exists(public_path("images/it/laporanbizdevgambar/{$laporan->gambar}"))) {
-                    $imagePath = public_path("images/it/laporanbizdevgambar/{$laporan->gambar}");
-                    $imageHTML = "<img src='{$imagePath}' style='width: auto; max-height: 500px; text-align:center;' />";
-                } else {
-                    $imageHTML = "<p style='text-align: center; color: red; font-weight: bold;'>Gambar tidak tersedia</p>";
-                }
-    
-                // Konten untuk setiap laporan
-                $htmlContent = "
-            <div style='text-align: center; top: 0; margin: 0; padding: 0;'>
-                {$imageHTML}
-                    <h3 style='margin: 0; padding: 0;'>Keterangan : {$laporan->keterangan}</h3>
-                    <h3 style='margin: 0; padding: 0;'>Laporan : {$laporan->tanggal_formatted}</h3>
-            </div>
+{
+    try {
+        // Validasi input date
+        $validatedData = $request->validate([
+            'tanggal' => 'required|date',
+        ]);
 
-                ";
-    
-                // Tambahkan ke PDF
-                $mpdf->WriteHTML($htmlContent);
-            }
-    
-            // Output PDF
-            return response($mpdf->Output("laporan_bizdev_gambar_{$validatedData['tanggal']}.pdf", 'D'))
-                ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'attachment; filename="laporan_bizdev_gambar.pdf"');
-    
-        } catch (\Exception $e) {
-            Log::error('Error exporting PDF: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Gagal mengekspor PDF: ' . $e->getMessage());
+        // Ambil semua data laporan berdasarkan date yang dipilih
+        $laporans = LaporanBizdevGambar::where('tanggal', $validatedData['tanggal'])->get();
+
+        if ($laporans->isEmpty()) {
+            return redirect()->back()->with('error', 'Data tidak ditemukan.');
         }
-    }
+
+        // Inisialisasi mPDF
+        $mpdf = new \Mpdf\Mpdf([
+            'orientation' => 'L',
+            'margin_left' => 10,
+            'margin_right' => 10,
+            'margin_top' => 35,
+            'margin_bottom' => 20,
+            'format' => 'A4',
+        ]);
+
+        // Tambahkan header
+        $headerImagePath = public_path('images/HEADER.png');
+        $mpdf->SetHTMLHeader("<div style='position: absolute; top: 0; left: 0; width: 100%; height: auto; z-index: -1;'>
+            <img src='{$headerImagePath}' alt='Header' style='width: 100%; height: auto;' />
+        </div>", 'O');
+
+        // Tambahkan footer
+        $mpdf->SetFooter('{DATE j-m-Y}|Laporan IT - Laporan Bizdev Gambar|');
+
+        // Loop melalui setiap laporan dan tambahkan ke PDF
+        foreach ($laporans as $index => $laporan) {
+            $imageHTML = '';
+
+            if (!empty($laporan->gambar) && file_exists(public_path("images/it/laporanbizdevgambar/{$laporan->gambar}"))) {
+                $imagePath = public_path("images/it/laporanbizdevgambar/{$laporan->gambar}");
+                $imageHTML = "<img src='{$imagePath}' style='width: auto; max-height: 500px; text-align:center;' />";
+            } else {
+                $imageHTML = "<p style='text-align: center; color: red; font-weight: bold;'>Gambar tidak tersedia</p>";
+            }
+
+            // Konten untuk setiap laporan
+            $htmlContent = "
+                <div style='text-align: center; top: 0; margin: 0; padding: 0;'>
+                    {$imageHTML}
+                </div>
+            ";
+            
+            // Tambahkan ke PDF
+            $mpdf->WriteHTML($htmlContent);
+        }
+
+        // Tambahkan halaman baru untuk tabel kendala dan tanggal
+        $mpdf->AddPage();
+        $tableContent = "<h2 style='text-align: center;'>Daftar Kendala</h2>
+            <table border='1' style='width: 100%; border-collapse: collapse;'>
+                <thead>
+                    <tr>
+                        <th style='padding: 8px; background-color: #f2f2f2;'>Kendala</th>
+                        <th style='padding: 8px; background-color: #f2f2f2;'>Tanggal</th>
+                    </tr>
+                </thead>
+                <tbody>";
+        
+        foreach ($laporans as $laporan) {
+            $tableContent .= "<tr>
+                <td style='padding: 8px;'>" . $laporan->tanggal_formatted . "</td>
+                <td style='padding: 8px;'>" . $laporan->kendala . "</td>
+            </tr>";
+        }
+
+        $tableContent .= "</tbody></table>";
+        $mpdf->WriteHTML($tableContent);
+
+        // Output PDF
+        return response($mpdf->Output("laporan_bizdev_gambar_{$validatedData['tanggal']}.pdf", 'D'))
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename="laporan_bizdev_gambar.pdf"');
     
+    } catch (\Exception $e) {
+        Log::error('Error exporting PDF: ' . $e->getMessage());
+        return redirect()->back()->with('error', 'Gagal mengekspor PDF: ' . $e->getMessage());
+    }
+}
+
 }

@@ -49,10 +49,8 @@ class LaporanPaketAdministrasiController extends Controller
         $backgroundColors = array_map(fn() => getRandomRGBA(), $data);
         
         $chartData = [
-            'labels' => $labels, // Labels untuk chart
             'datasets' => [
                 [
-                    'label' => 'Grafik Laporan Paket Administrasi', // Nama dataset
                     'text' => 'Total Paket', // Nama dataset
                     'data' => $data, // Data untuk chart
                     'backgroundColor' => $backgroundColors, // Warna batang random
