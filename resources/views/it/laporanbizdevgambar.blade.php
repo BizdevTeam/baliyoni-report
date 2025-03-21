@@ -21,6 +21,7 @@
     <!-- Theme style -->
     <!-- overlayScrollbars -->
     <link rel="stylesheet" href="{{ asset('templates/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
+    <script src="https://cdn.ckeditor.com/ckeditor5/38.1.0/classic/ckeditor.js"></script>
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
     @vite('resources/css/tailwind.css')
@@ -130,7 +131,7 @@
                         <tr>
                             <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
                             <th class="border border-gray-300 px-4 py-2 text-center">File</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
+                            <th class="border border-gray-300 px-4 py-2 text-center">Kendala</th>
                             <th class="border border-gray-300 px-4 py-2 text-center">Action</th>
                         </tr>
                     </thead>
@@ -147,7 +148,7 @@
                                     @endif
                                 </div>
                                 </td>
-                                <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanbizdevgambar->keterangan }}</td>
+                                <td class="border border-gray-300 px-4 py-2 content-html align-center text-justify">{!! $laporanbizdevgambar->kendala !!}</td>
                                 <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
                                     <!-- Edit Button -->
                                     <button class="bg-transparent text-red-600 px-3 py-2 rounded" data-modal-target="#editEventModal{{ $laporanbizdevgambar->id_laporan_bizdev_gambar }}">
@@ -184,8 +185,9 @@
                                                 </div>
                                             </div>
                                             <div>
-                                                <label for="keterangan" class="block text-sm font-medium">Keterangan</label>
-                                                <textarea name="keterangan" class="w-full p-2 border rounded" rows="3" required>{{ $laporanbizdevgambar->keterangan }}</textarea>
+                                                <label for="kendala" class="block text-sm font-medium">kendala</label>
+                                                <input type="hidden" name="kendala" class="w-full p-2 border rounded" id="edit-{{ $laporanbizdevgambar->id_laporan_bizdev_gambar }}-kendala-input" value="{{ $laporanbizdevgambar->kendala }}" required></input>
+                                                <div id="edit-{{ $laporanbizdevgambar->id_laporan_bizdev_gambar }}-kendala"></div>
                                             </div>
                                         </div>
                                         <div class="mt-4 flex justify-end gap-2">
@@ -273,8 +275,10 @@
                         <input type="file" name="gambar" class="w-full p-2 border rounded">
                     </div>
                     <div>
-                        <label for="keterangan" class="block text-sm font-medium">Keterangan</label>
-                        <textarea name="keterangan" class="w-full p-2 border rounded" rows="3" required></textarea>
+                        <label for="kendala" class="block text-sm font-medium">kendala</label>
+                        <input type="hidden" name="kendala" id="kendala-input" class="w-full p-2 border rounded">
+                        <div id="editor-kendala"></div>
+                        <div class="text-red-500 text-sm mt-1 hidden" id="input-kendala">This field is required</div>
                     </div>
                 </div>
                 <div class="mt-4 flex justify-end gap-2">
@@ -293,8 +297,23 @@
                 </div>
             </div>
 
-    </body>
-    
+</body>
+<style>
+    /* Styling agar numbered list & bullet list tetap tampil di tabel */
+    .content-html ol {
+    list-style-type: decimal;
+    margin-left: 20px;
+    }
+
+    .content-html ul {
+    list-style-type: disc;
+    margin-left: 20px;
+    }
+
+    .content-html li {
+    margin-bottom: 4px;
+    }
+</style>    
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <script>
      //toogle form
@@ -329,6 +348,59 @@
         });
     });
 
+    document.addEventListener('DOMContentLoaded', function() {
+    let editors = {};
+
+    // Fungsi untuk inisialisasi CKEditor
+    function initCKEditor(elementId, inputId) {
+        ClassicEditor
+            .create(document.querySelector(elementId), {
+                toolbar: [
+                    'bold', 'italic', '|', 
+                    'bulletedList', 'numberedList', '|', 
+                    'undo', 'redo'
+                ]
+            })
+            .then(editor => {
+                editors[elementId] = editor;
+                
+                // Set nilai awal jika ada
+                let initialValue = document.querySelector(inputId).value;
+                editor.setData(initialValue);
+
+                // Update hidden input saat ada perubahan
+                editor.model.document.on('change:data', () => {
+                    document.querySelector(inputId).value = editor.getData();
+                });
+            })
+            .catch(error => console.error('CKEditor error:', error));
+        }
+
+        // Inisialisasi CKEditor di form tambah
+        if (document.querySelector('#editor-kendala')) {
+            initCKEditor('#editor-kendala', '#kendala-input');
+        }
+
+        // Inisialisasi CKEditor saat modal edit dibuka
+        document.querySelectorAll('[data-modal-target]').forEach(button => {
+            button.addEventListener('click', function() {
+                const modalId = this.getAttribute('data-modal-target');
+                const id = modalId.replace('#editEventModal', '');
+
+                if (document.querySelector(modalId)) {
+                    initCKEditor(`#edit-${id}-kendala`, `#edit-${id}-kendala-input`);
+                }
+            });
+        });
+
+        // Fungsi untuk menutup modal
+        document.querySelectorAll('[data-modal-close]').forEach(button => {
+            button.addEventListener('click', function() {
+                const modal = this.closest('.fixed');
+                modal.classList.add('hidden');
+            });
+        });
+    });
     
 //modal img
 function openModal(imageSrc) {

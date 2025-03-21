@@ -226,7 +226,7 @@
     <canvas id="chart"></canvas>
 </div>
 <div class="mt-6 flex justify-end">
-    <button onclick="exportToPDF()" class="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition duration-300 ease-in-out">
+    <button onclick="exportToPDF()" class="bg-blue-700 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition duration-300 ease-in-out">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
             <mask id="lineMdCloudAltPrintFilledLoop0">
                 <g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
@@ -361,6 +361,7 @@
 
     // Inisialisasi chart menggunakan data yang diberikan (misalnya dari server)
     var chartData = @json($chartData);
+
     var ctx = document.getElementById('chart').getContext('2d');
     var barChart = new Chart(ctx, {
         type: 'bar',

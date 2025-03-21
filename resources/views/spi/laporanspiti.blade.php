@@ -391,15 +391,16 @@ async function exportToPDF() {
         return;
     }
 
-    // Ambil data dari tabel
-    const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
+ // Ambil data dari tabel
+ const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
         const cells = row.querySelectorAll('td');
         return {
-                tanggal: cells[0]?.innerText.trim() || '',
-                aspek: cells[1]?.innerText.trim() || '',
-                masalah: cells[2]?.innerText.trim() || '',
-                solusi: cells[3]?.innerText.trim() || '',
-                implementasi: cells[4]?.innerText.trim() || '',
+            tanggal: cells[0]?.innerText.trim() || '',
+            // Use innerHTML instead of innerText to preserve HTML formatting
+            aspek: cells[1]?.innerHTML.trim() || '',
+            masalah: cells[2]?.innerHTML.trim() || '',
+            solusi: cells[3]?.innerHTML.trim() || '',
+            implementasi: cells[4]?.innerHTML.trim() || '',
         };
     });
 
@@ -407,11 +408,11 @@ async function exportToPDF() {
         .filter(item => item.tanggal && item.aspek && item.masalah && item.solusi && item.implementasi)
         .map(item => `
             <tr>
-                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.tanggal}</td>
-                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.aspek}</td>
-                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.masalah}</td>
-                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.solusi}</td>
-                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.implementasi}</td>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.tanggal}</td>
+                <td style="border: 1px solid #000; padding: 8px;">${item.aspek}</td>
+                <td style="border: 1px solid #000; padding: 8px;">${item.masalah}</td>
+                <td style="border: 1px solid #000; padding: 8px;">${item.solusi}</td>
+                <td style="border: 1px solid #000; padding: 8px;">${item.implementasi}</td>
             </tr>
         `).join('');
 

@@ -13,12 +13,12 @@ class LaporanIjasa extends Model
 
     protected $primaryKey = 'id_ijasa'; // Primary key custom
 
-    protected $fillable = ['date', 'jam', 'permasalahan', 'impact', 'troubleshooting', 'resolve_tanggal', 'resolve_jam'];
+    protected $fillable = ['tanggal', 'jam', 'permasalahan', 'impact', 'troubleshooting', 'resolve_tanggal', 'resolve_jam'];
 
     // Menambahkan accessor untuk date dengan format 'd/m/y'
-    public function getDateFormattedAttribute()
+    public function getTanggalFormattedAttribute()
     {
-        return $this->date ? Carbon::parse($this->date)->format('d F Y') : '-';
+        return $this->tanggal ? Carbon::parse($this->tanggal)->format('d F Y') : '-';
     }
 
     public function getResolveTanggalFormattedAttribute()

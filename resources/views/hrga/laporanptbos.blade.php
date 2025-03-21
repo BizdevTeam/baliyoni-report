@@ -21,6 +21,7 @@
     <!-- overlayScrollbars -->
     <link rel="stylesheet" href="{{ asset('templates/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
     <!-- Custom CSS -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/38.1.0/classic/ckeditor.js"></script>
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
     @vite('resources/css/tailwind.css')
     @vite('resources/css/custom.css')
@@ -118,104 +119,109 @@
         </div>
 
         <div id="formContainer" class="visible">
-            <div class="mx-auto bg-white p-6 rounded-lg shadow">
+            <div class="mx-auto bg-white p-6 rounded-lg shadow ">
 
-        <!-- Event Table -->
-        <div class="overflow-x-auto bg-white shadow-md">
-            <table class="table-auto w-full border-collapse border border-gray-300" id="data-table">
-                <thead class="bg-gray-200">
-                    <tr>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Pekerjaan</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Kondisi Bulan Lalu</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Kondisi Bulan Ini</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Update</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Rencana Implementasi</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($laporanptboss as $laporanptbos)
-                        <tr class="hover:bg-gray-100">
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanptbos->tanggal_formatted }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanptbos->pekerjaan }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanptbos->kondisi_bulanlalu }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanptbos->kondisi_bulanini }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanptbos->update }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanptbos->rencana_implementasi }}</td>
-                            <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanptbos->keterangan }}</td>
-                            <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
-                                <!-- Edit Button -->
-                                <button class="bg-transparent text-red-600 px-3 py-2 rounded" data-modal-target="#editEventModal{{ $laporanptbos->id_ptbos }}">
-                                    <i class="fa fa-pen"></i>
-                                </button>
-                                <!-- Delete Form -->
-                                <form method="POST" action="{{ route('laporanptbos.destroy', $laporanptbos->id_ptbos) }}">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="bg-transparent-600 text-red-600 px-3 py-2 rounded" onclick="return confirm('Are you sure to delete?')">
-                                        <i class="fa fa-trash"></i>
-                                    </button>                               
-                                </form>
-                            </td>
-                        </tr>
+                <div class="overflow-x-auto bg-white shadow-md">
+                    <table class="table-fixed w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full" id="data-table">
+                        <thead class="bg-gray-200">
+                            <tr>
+                                <th class="border border-gray-300 px-4 py-2 text-center w-32">Tanggal</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center w-64">Pekerjaan</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center w-64">Kondisi Bulan Lalu</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center w-64">Kondisi Bulan Ini</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center w-64">Update</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center w-64">Rencana Implementasi</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center w-64">Keterangan</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center w-20">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($laporanptboss as $laporanptbos)
+                                <tr class="hover:bg-gray-100">
+                                    <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanptbos->tanggal_formatted }}</td>
+                                    <td class="border border-gray-300 px-4 py-2 content-html align-center text-justify">{!! $laporanptbos->pekerjaan !!}</td>
+                                    <td class="border border-gray-300 px-4 py-2 content-html align-center text-justify">{!! $laporanptbos->kondisi_bulanlalu !!}</td>
+                                    <td class="border border-gray-300 px-4 py-2 content-html align-center text-justify">{!! $laporanptbos->kondisi_bulanini !!}</td>
+                                    <td class="border border-gray-300 px-4 py-2 content-html align-center text-justify">{!! $laporanptbos->update !!}</td>
+                                    <td class="border border-gray-300 px-4 py-2 content-html align-center text-justify">{!! $laporanptbos->rencana_implementasi !!}</td>
+                                    <td class="border border-gray-300 px-4 py-2 content-html align-center text-justify">{!! $laporanptbos->keterangan !!}</td>
+                                    <td class="border border-gray-300 py-6 text-center ">
+                                        <div class="flex justify-center items-center gap-3">
+                                            <!-- Edit Button -->
+                                            <button class="text-red-600 hover:text-red-800 transition" 
+                                                data-modal-target="#editEventModal{{ $laporanptbos->id_ptbos }}">
+                                                <i class="fa fa-pen text-lg"></i>
+                                            </button>
+                                            <!-- Delete Form -->
+                                            <form method="POST" action="{{ route('laporanptbos.destroy', $laporanptbos->id_ptbos) }}">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="text-red-600 hover:text-red-800 transition" 
+                                                    onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                                    <i class="fa fa-trash text-lg"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>                            
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
                         
-                        <!-- Modal for Edit Event -->
-                        <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="editEventModal{{ $laporanptbos->id_ptbos }}">
-                            <div class="bg-white w-1/2 p-6 rounded shadow-lg">
-                                <h3 class="text-xl font-semibold mb-4">Edit Data</h3>
-                                <form method="POST" action="{{ route('laporanptbos.update', $laporanptbos->id_ptbos) }}" enctype="multipart/form-data">
-                                    @csrf
-                                    @method('PUT')
-                                    <div class="space-y-4">
-                                        <div>
-                                            <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
-                                            <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $laporanptbos->tanggal }}" required>
-                                        </div>
-                                        <div>
-                                            <label for="pekerjaan" class="block text-sm font-medium">Pekerjaan</label>
-                                            <textarea name="pekerjaan" class="w-full p-2 border rounded" rows="1"
-                                                required>{{ $laporanptbos->pekerjaan }}</textarea>
-                                        </div>
-                                        <div>
-                                            <label for="kondisi_bulanlalu" class="block text-sm font-medium">Kondisi Bulan Lalu</label>
-                                            <textarea name="kondisi_bulanlalu" class="w-full p-2 border rounded" rows="1"
-                                                required>{{ $laporanptbos->kondisi_bulanlalu }}</textarea>
-                                        </div>
-                                        <div>
-                                            <label for="kondisi_bulanini" class="block text-sm font-medium">Kondisi Bulan Ini</label>
-                                            <textarea name="kondisi_bulanini" class="w-full p-2 border rounded" rows="1"
-                                                required>{{ $laporanptbos->kondisi_bulanini }}</textarea>
-                                        </div>
-                                        <div>
-                                            <label for="update" class="block text-sm font-medium">Update</label>
-                                            <textarea name="update" class="w-full p-2 border rounded" rows="1"
-                                                required>{{ $laporanptbos->update }}</textarea>
-                                        </div>
-                                        <div>
-                                            <label for="rencana_implementasi"
-                                                class="block text-sm font-medium">Rencana Implementasi</label>
-                                            <textarea name="rencana_implementasi" class="w-full p-2 border rounded" rows="1"
-                                                required>{{ $laporanptbos->rencana_implementasi }}</textarea>
-                                        </div>
-                                        <div>
-                                            <label for="keterangan"
-                                                class="block text-sm font-medium">Rencana Implementasi</label>
-                                            <textarea name="keterangan" class="w-full p-2 border rounded" rows="1"
-                                                required>{{ $laporanptbos->keterangan }}</textarea>
-                                        </div>
-                                    </div>
-                                    <div class="mt-4 flex justify-end gap-2">
-                                        <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
-                                        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Update</button>
-                                    </div>
-                                </form>
+                <!-- Modal for Edit Event -->
+                @foreach ($laporanptboss as $laporanptbos)
+                <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden overflow-y-auto" id="editEventModal{{ $laporanptbos->id_ptbos }}">
+                    <div class="bg-white w-1/2 p-6 rounded shadow-lg">
+                        <h3 class="text-xl font-semibold mb-4">Edit Data</h3>
+                        <form method="POST" action="{{ route('laporanptbos.update', $laporanptbos->id_ptbos) }}" enctype="multipart/form-data">
+                            @csrf
+                            @method('PUT')
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                                    <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $laporanptbos->tanggal }}" required>
+                                </div>
+                                <div>
+                                    <label for="pekerjaan" class="block text-sm font-medium">Pekerjaan</label>
+                                    <input type="hidden" name="pekerjaan" class="w-full p-2 border rounded" id="edit-{{ $laporanptbos->id_ptbos }}-pekerjaan-input" value="{{ $laporanptbos->pekerjaan }}" required></input>
+                                    <div id="edit-{{ $laporanptbos->id_ptbos }}-pekerjaan"></div>
+                                </div>
+                                <div>
+                                    <label for="kondisi_bulanlalu" class="block text-sm font-medium">Kondisi Bulan Lalu</label>
+                                    <input type="hidden" name="kondisi_bulanlalu" class="w-full p-2 border rounded" id="edit-{{ $laporanptbos->id_ptbos }}-kondisi_bulanlalu-input" value="{{ $laporanptbos->kondisi_bulanlalu }}" required></input>
+                                        <div id="edit-{{ $laporanptbos->id_ptbos }}-kondisi_bulanlalu"></div>
+                                </div>
+                                <div>
+                                    <label for="kondisi_bulanini" class="block text-sm font-medium">Kondisi Bulan Ini</label>
+                                    <input type="hidden" name="kondisi_bulanini" class="w-full p-2 border rounded" id="edit-{{ $laporanptbos->id_ptbos }}-kondisi_bulanini-input" value="{{ $laporanptbos->kondisi_bulanini }}" required></input>
+                                        <div id="edit-{{ $laporanptbos->id_ptbos }}-kondisi_bulanini"></div>
+                                </div>
+                                <div>
+                                    <label for="update" class="block text-sm font-medium">Update</label>
+                                    <input type="hidden" name="update" class="w-full p-2 border rounded" id="edit-{{ $laporanptbos->id_ptbos }}-update-input" value="{{ $laporanptbos->update }}" required></input>
+                                        <div id="edit-{{ $laporanptbos->id_ptbos }}-update"></div>
+                                </div>
+                                <div>
+                                    <label for="rencana_implementasi" class="block text-sm font-medium">Rencana Implementasi</label>
+                                    <input type="hidden" name="rencana_implementasi" class="w-full p-2 border rounded" id="edit-{{ $laporanptbos->id_ptbos }}-rencana_implementasi-input" value="{{ $laporanptbos->rencana_implementasi }}" required></input>
+                                        <div id="edit-{{ $laporanptbos->id_ptbos }}-rencana_implementasi"></div>
+                                </div>
+                                <div>
+                                    <label for="keterangan" class="block text-sm font-medium">Rencana Implementasi</label>
+                                    <input type="hidden" name="keterangan" class="w-full p-2 border rounded" id="edit-{{ $laporanptbos->id_ptbos }}-keterangan-input" value="{{ $laporanptbos->keterangan }}" required></input>
+                                        <div id="edit-{{ $laporanptbos->id_ptbos }}-keterangan"></div>
+                                </div>
                             </div>
-                        </div>
-                    @endforeach
-                </tbody>
-            </table>
+                            <div class="mt-4 flex justify-end gap-2">
+                                <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
+                                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Update</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            @endforeach
+
         <!-- Pagination -->
         <div class="flex justify-center items-center mt-2 mb-4 p-4 bg-gray-50 rounded-lg">
             <!-- Dropdown untuk memilih jumlah data per halaman -->
@@ -297,9 +303,9 @@
 
     <!-- Modal untuk Add Event -->
 <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">
-    <div class="bg-white w-1/2 p-6 rounded shadow-lg">
+    <div class="bg-white w-1/2 max-h-[90vh] p-6 rounded shadow-lg flex flex-col">
         <h3 class="text-xl font-semibold mb-4">Add New Data</h3>
-        <form method="POST" action="{{ route('laporanptbos.store') }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('laporanptbos.store') }}" enctype="multipart/form-data" id="addForm" class="flex-grow overflow-y-auto space-y-4 pr-2">
             @csrf
             <div class="space-y-4">
                 <div>
@@ -308,38 +314,66 @@
                 </div>
                 <div>
                     <label for="pekerjaan" class="block text-sm font-medium">Pekerjaan</label>
-                    <input type="text" name="pekerjaan" class="w-full p-2 border rounded">
+                    <input type="hidden" name="pekerjaan" id="pekerjaan-input" class="w-full p-2 border rounded">
+                    <div id="editor-pekerjaan"></div>
+                    <div class="text-red-500 text-sm mt-1 hidden" id="input-pekerjaan">This field is required</div>
                 </div>
                 <div>
                     <label for="kondisi_bulanlalu" class="block text-sm font-medium">Kondisi Bulan Lalu</label>
-                    <input type="text" name="kondisi_bulanlalu" class="w-full p-2 border rounded">
+                    <input type="hidden" name="kondisi_bulanlalu" id="kondisi_bulanlalu-input" class="w-full p-2 border rounded">
+                    <div id="editor-kondisi_bulanlalu"></div>
+                    <div class="text-red-500 text-sm mt-1 hidden" id="input-kondisi_bulanlalu">This field is required</div>
                 </div>
                 <div>
                     <label for="kondisi_bulanini" class="block text-sm font-medium">Kondisi Bulan Ini</label>
-                    <textarea name="kondisi_bulanini" class="w-full p-2 border rounded" rows="1"></textarea>
+                    <input type="hidden" name="kondisi_bulanini" id="kondisi_bulanini-input" class="w-full p-2 border rounded" rows="1"></input>
+                    <div id="editor-kondisi_bulanini"></div>
+                    <div class="text-red-500 text-sm mt-1 hidden" id="input-kondisi_bulanini">This field is required</div>
                 </div>
                 <div>
                     <label for="update" class="block text-sm font-medium">Update</label>
-                    <textarea name="update" class="w-full p-2 border rounded" rows="1" required></textarea>
+                    <input type="hidden" name="update" id="update-input" class="w-full p-2 border rounded" required></input>
+                    <div id="editor-update"></div>
+                    <div class="text-red-500 text-sm mt-1 hidden" id="input-update">This field is required</div>
                 </div>
                 <div>
                     <label for="rencana_implementasi" class="block text-sm font-medium">Rencana Implementasi</label>
-                    <input type="text" name="rencana_implementasi" class="w-full p-2 border rounded">
+                    <input type="hidden" name="rencana_implementasi" id="rencana_implementasi-input" class="w-full p-2 border rounded">
+                    <div id="editor-rencana_implementasi"></div>
+                    <div class="text-red-500 text-sm mt-1 hidden" id="input-rencana_implementasi">This field is required</div>
                 </div>
                 <div>
-                    <label for="keterangan" class="block text-sm font-medium">Rencana Implementasi</label>
-                    <input type="text" name="keterangan" class="w-full p-2 border rounded">
+                    <label for="keterangan" class="block text-sm font-medium">Keterangan</label>
+                    <input type="hidden" name="keterangan" id="keterangan-input" class="w-full p-2 border rounded">
+                    <div id="editor-keterangan"></div>
+                    <div class="text-red-500 text-sm mt-1 hidden" id="input-keterangan">This field is required</div>
                 </div>
             </div>
-            <div class="mt-4 flex justify-end gap-2">
+            <div class="mt-4 flex justify-end gap-2 sticky bottom-0 bg-white py-4">
                 <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
-                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Add</button>
+                <button type="submit" form="addForm" class="bg-red-600 text-white px-4 py-2 rounded">Add</button>
             </div>
         </form>
     </div>
 </div>
 
 </body>
+<style>
+    /* Styling agar numbered list & bullet list tetap tampil di tabel */
+    .content-html ol {
+    list-style-type: decimal;
+    margin-left: 20px;
+    }
+
+    .content-html ul {
+    list-style-type: disc;
+    margin-left: 20px;
+    }
+
+    .content-html li {
+    margin-bottom: 4px;
+    }
+</style>
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <script>
         //toogle form
@@ -371,6 +405,81 @@
         button.addEventListener('click', function() {
             const modal = this.closest('.fixed');
             modal.classList.add('hidden'); // Menyembunyikan modal
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+    let editors = {};
+
+    // Fungsi untuk inisialisasi CKEditor
+    function initCKEditor(elementId, inputId) {
+        ClassicEditor
+            .create(document.querySelector(elementId), {
+                toolbar: [
+                    'bold', 'italic', '|', 
+                    'bulletedList', 'numberedList', '|', 
+                    'undo', 'redo'
+                ]
+            })
+            .then(editor => {
+                editors[elementId] = editor;
+                
+                // Set nilai awal jika ada
+                let initialValue = document.querySelector(inputId).value;
+                editor.setData(initialValue);
+
+                // Update hidden input saat ada perubahan
+                editor.model.document.on('change:data', () => {
+                    document.querySelector(inputId).value = editor.getData();
+                });
+            })
+            .catch(error => console.error('CKEditor error:', error));
+        }
+
+        // Inisialisasi CKEditor di form tambah
+        if (document.querySelector('#editor-pekerjaan')) {
+            initCKEditor('#editor-pekerjaan', '#pekerjaan-input');
+        }
+        if (document.querySelector('#editor-kondisi_bulanlalu')) {
+            initCKEditor('#editor-kondisi_bulanlalu', '#kondisi_bulanlalu-input');
+        }
+        if (document.querySelector('#editor-kondisi_bulanini')) {
+            initCKEditor('#editor-kondisi_bulanini', '#kondisi_bulanini-input');
+        }
+        if (document.querySelector('#editor-update')) {
+            initCKEditor('#editor-update', '#update-input');
+        }
+        if (document.querySelector('#editor-rencana_implementasi')) {
+            initCKEditor('#editor-rencana_implementasi', '#rencana_implementasi-input');
+        }
+        if (document.querySelector('#editor-keterangan')) {
+            initCKEditor('#editor-keterangan', '#keterangan-input');
+        }
+
+        // Inisialisasi CKEditor saat modal edit dibuka
+        document.querySelectorAll('[data-modal-target]').forEach(button => {
+            button.addEventListener('click', function() {
+                const modalId = this.getAttribute('data-modal-target');
+                const id = modalId.replace('#editEventModal', '');
+
+                if (document.querySelector(modalId)) {
+                    initCKEditor(`#edit-${id}-pekerjaan`, `#edit-${id}-pekerjaan-input`);
+                    initCKEditor(`#edit-${id}-kondisi_bulanlalu`, `#edit-${id}-kondisi_bulanlalu-input`);
+                    initCKEditor(`#edit-${id}-kondisi_bulanini`, `#edit-${id}-kondisi_bulanini-input`);
+                    initCKEditor(`#edit-${id}-update`, `#edit-${id}-update-input`);
+                    initCKEditor(`#edit-${id}-rencana_implementasi`, `#edit-${id}-rencana_implementasi-input`);
+                    initCKEditor(`#edit-${id}-keterangan`, `#edit-${id}-keterangan-input`);
+
+                }
+            });
+        });
+
+        // Fungsi untuk menutup modal
+        document.querySelectorAll('[data-modal-close]').forEach(button => {
+            button.addEventListener('click', function() {
+                const modal = this.closest('.fixed');
+                modal.classList.add('hidden');
+            });
         });
     });
 

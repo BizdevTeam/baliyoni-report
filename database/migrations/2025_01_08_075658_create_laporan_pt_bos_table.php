@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('laporan_ptbos', function (Blueprint $table) {
             $table->id('id_ptbos');
-            $table->string('tanggal');
-            $table->string('pekerjaan');
-            $table->string('kondisi_bulanlalu');
-            $table->string('kondisi_bulanini');
-            $table->string('update');
-            $table->string('rencana_implementasi');
-            $table->string('keterangan');
+            $table->date('tanggal');
+            $table->text('pekerjaan');
+            $table->text('kondisi_bulanlalu');
+            $table->text('kondisi_bulanini');
+            $table->text('update');
+            $table->text('rencana_implementasi');
+            $table->text('keterangan');
             $table->timestamps();
         });
     }

@@ -21,33 +21,71 @@
     <div id="gridContainer" class="grid gap-6 grid-cols-1">
         <!-- MARKETING: Tampil untuk Superadmin & Marketing -->
         @if(in_array(Auth::user()->role, ['superadmin', 'marketing']))
+        
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
-            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Rekap Penjualan</h1>
+            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
+            Grafik Laporan Rekap Penjualan
+        </h1>
+
             <div class="bg-white shadow-md rounded-lg p-6">
                 <canvas id="chartp" class="w-full h-96"></canvas>
             </div>
+
             <div class="flex justify-end mt-4">
                 <a href="{{ route("rekappenjualan.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Rekap Penjualan →</a>
             </div>
         </div>
 
-        <!-- Card 2 -->
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
-            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Rekap Penjualan Perusahaan</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
+            <h1 class="text-2xl font-bold text-center text-red-600">
+                Grafik Laporan Rekap Penjualan Perusahaan                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        jualan Perusahaan
+            </h1>
+            
+            <!-- Dropdown untuk memilih chart -->
+            <div class="mb-2 flex justify-end">
+                <select id="chartSelect" class="p-2 border border-gray-300 rounded">
+                    <option value="chartpp">Chart Biasa</option>
+                    <option value="chartpptotal">Chart Total</option>
+                </select>
+            </div>
+            
+            <!-- Container untuk Chart Biasa -->
+            <div id="chartpContainer" class="bg-white shadow-md rounded-lg p-6">
                 <canvas id="chartpp" class="w-full h-96"></canvas>
             </div>
+            
+            <!-- Container untuk Chart PP, disembunyikan secara default -->
+            <div id="chartpptotalContainer" class="bg-white shadow-md rounded-lg p-6 mt-10 hidden">
+                <canvas id="chartpptotal" class="w-full h-96"></canvas>
+            </div>
+            
             <div class="flex justify-end mt-4">
-                <a href="{{ route("rekappenjualanperusahaan.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Rekap Penjualan Perusahaan →</a>
+                <a href="{{ route('rekappenjualanperusahaan.index') }}" class="text-red-600 font-semibold hover:underline">
+                    Laporan Rekap Penjualan Perusahaan →
+                </a>
             </div>
         </div>
 
         <!-- Card 3 -->
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Paket Administrasi</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
+           
+            <!-- Dropdown untuk memilih chart -->
+            <div class="mb-2 flex justify-end">
+                <select id="chartSelect1" class="p-2 border border-gray-300 rounded">
+                    <option value="chartl">Chart Biasa</option>
+                    <option value="chartltotal">Chart Total</option>
+                </select>
+            </div>
+            
+            <div id="chartlContainer" class="bg-white shadow-md rounded-lg p-6">
                 <canvas id="chartl" class="w-full h-96"></canvas>
             </div>
+
+            <div id="chartltotalContainer" class="bg-white shadow-md rounded-lg p-6 hidden">
+                <canvas id="chartltotal" class="w-full h-96"></canvas>
+            </div>
+
             <div class="flex justify-end mt-4">
                 <a href="{{ route("laporanpaketadministrasi.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Paket Administrasi →</a>
             </div>
@@ -125,7 +163,6 @@
             <div class="bg-white shadow-md rounded-lg p-6">
                     <canvas id="chartlrp" class="w-full h-96"></canvas>
                 </div>
-            </div>
             <div class="flex justify-end mt-4">
                 <a href="{{ route("rekappendapatanservisasp.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Rekap Pendapatan Servis ASP →</a>
             </div>
@@ -135,7 +172,6 @@
             <div class="bg-white shadow-md rounded-lg p-6">
                     <canvas id="chartlrps" class="w-full h-96"></canvas>
                 </div>
-            </div>
             <div class="flex justify-end mt-4">
                 <a href="{{ route('rekappiutangservisasp.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Rekap Piutang Servis ASP →</a>
             </div>
@@ -152,7 +188,6 @@
         </div>
         @endif
 
-        <!-- LAPORAN ACCOUNTING -->
          <!-- ACCOUNTING: Tampil untuk Superadmin & Accounting -->
          @if(in_array(Auth::user()->role, ['superadmin', 'accounting']))
          <!-- LAPORAN LABA RUGI -->
@@ -365,31 +400,6 @@
         </div>
 
         <!-- LAPORAN IT -->
-        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
-            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Tabel Laporan Bizdev</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <div class="max-w-[600px] md:max-w-none mx-auto md:mx-0 overflow-x-auto"> <!-- Container pembatas dan scroll -->
-                    <table id="adminbizdev" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
-                        <thead>
-                            <tr>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Aplikasi</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Kondisi Tanggal Lalu</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Kondisi Tanggal Ini</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Update</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Rencana Implementasi</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="flex justify-end mt-4">
-                    <a href="{{ route('laporanbizdev.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Bizdev →</a>
-                </div>
-            </div>
-        </div>
 
         <!-- LAPORAN IT Bizdev Gambar -->
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
@@ -602,14 +612,47 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 <script>
+
+    // fungsi untuk memilih tampilan chart rekap penjualan perusahaan
+    document.addEventListener("DOMContentLoaded", function () {
+        const chartSelect = document.getElementById("chartSelect");
+        const chartpContainer = document.getElementById("chartpContainer");
+        const chartpptotalContainer = document.getElementById("chartpptotalContainer");
+
+        chartSelect.addEventListener("change", function () {
+            const selectedChart = this.value;
+
+            // Tampilkan chart yang dipilih dan sembunyikan yang lainnya
+            chartpContainer.classList.toggle("hidden", selectedChart !== "chartpp");
+            chartpptotalContainer.classList.toggle("hidden", selectedChart !== "chartpptotal");
+        });
+    });
+
+    // fungsi untuk memilih tampilan chart laporan paket administrasi
+    document.addEventListener("DOMContentLoaded", function () {
+        const chartSelect = document.getElementById("chartSelect1");
+        const chartlContainer = document.getElementById("chartlContainer");
+        const chartltotalContainer = document.getElementById("chartltotalContainer");
+
+        chartSelect.addEventListener("change", function () {
+            const selectedChart = this.value;
+
+            // Tampilkan chart yang dipilih dan sembunyikan yang lainnya
+            chartlContainer.classList.toggle("hidden", selectedChart !== "chartl");
+            chartltotalContainer.classList.toggle("hidden", selectedChart !== "chartltotal");
+        });
+    });
+
     // Fungsi untuk memuat data awal grafik saat halaman pertama kali dibuka
     function loadInitialChartData() {
         //laporan MARKETING
         fetchChartDataWRp('{{ route("adminpenjualan.chart.data") }}', 'chartp', 'Tanggal ');
         fetchChartDataWRp('{{ route("adminpp.chart.data") }}', 'chartpp', 'Perusahaan ');
-        fetchChartDataWRp('{{ route("admin.chart.data") }}', 'chartl', 'Nilai Paket ');
-        fetchChartDataNRp('{{ route("adminstatuspaket.chart.data") }}', 'chartsp', 'Nilai Paket ');
-        fetchChartDataNRp('{{ route("adminperinstansi.chart.data") }}', 'chartpi', 'Nilai Paket ');
+        fetchChartDataWRp('{{ route("adminpptotal.chart.data") }}', 'chartpptotal', 'Perusahaan ');
+        fetchChartPaket('{{ route("admin.chart.data") }}', 'chartl', 'Nilai Paket ');
+        fetchChartPaket('{{ route("admintotal.chart.data") }}', 'chartltotal', 'Nilai Paket ');
+        fetchChartPaket('{{ route("adminstatuspaket.chart.data") }}', 'chartsp', 'Nilai Paket ');
+        fetchChartDataWRp('{{ route("adminperinstansi.chart.data") }}', 'chartpi', 'Nilai Paket ');
 
         //laporan PROCUREMENTS
         fetchChartDataWRp('{{ route("adminholding.chart.data") }}', 'chartph', 'Perusahaan');
@@ -623,27 +666,29 @@
         fetchChartDataWRp('{{ route("adminpendapatanpengirimanluarbali.chart.data") }}', 'chartrplb', 'Nilai Pendapatan ');
 
         //laporan HRGA
-        fetchChartDataNRp('{{ route("adminsakit.chart.data") }}', 'charts', 'Nama Karyawan');
-        fetchChartDataNRp('{{ route("adminizin.chart.data") }}', 'chartizin', 'Nama Karyawan');
-        fetchChartDataNRp('{{ route("admincuti.chart.data") }}', 'chartcuti', 'Nama Karyawan');
-        fetchChartDataNRp('{{ route("adminterlambat.chart.data") }}', 'chartterlambat', 'Nama Karyawan');
+        fetchChartHRGA('{{ route("adminsakit.chart.data") }}', 'charts', 'Nama Karyawan');
+        fetchChartHRGA('{{ route("adminizin.chart.data") }}', 'chartizin', 'Nama Karyawan');
+        fetchChartHRGA('{{ route("admincuti.chart.data") }}', 'chartcuti', 'Nama Karyawan');
+        fetchChartHRGA('{{ route("adminterlambat.chart.data") }}', 'chartterlambat', 'Nama Karyawan');
 
         //laporan ACCOUNTING
         fetchChartPieData('{{ route("adminkhps.chart.data") }}', 'chartkhps', 'Nilai Pendapatan ');
         fetchChartPieData('{{ route("adminak.chart.data") }}', 'chartak', 'Nilai Piutang ');
     }
 
-    document.addEventListener("DOMContentLoaded", loadInitialChartData);
+        document.addEventListener("DOMContentLoaded", loadInitialChartData);
 
-    function fetchCharts(queryParams = {}) {
+        function fetchCharts(queryParams = {}) {
         let queryString = new URLSearchParams(queryParams).toString();
         queryString = queryString ? `?${queryString}` : '';
 
         // laporan MARKETING
         fetchChartDataWRp('{{ route("adminpenjualan.chart.data") }}' + queryString, 'chartp');
         fetchChartDataWRp('{{ route("adminpp.chart.data") }}' + queryString, 'chartpp');
-        fetchChartDataWRp('{{ route("admin.chart.data") }}' + queryString, 'chartl');
-        fetchChartDataNRp('{{ route("adminstatuspaket.chart.data") }}' + queryString, 'chartsp');
+        fetchChartDataWRp('{{ route("adminpptotal.chart.data") }}' + queryString, 'chartpptotal');
+        fetchChartPaket('{{ route("admin.chart.data") }}' + queryString, 'chartl');
+        fetchChartPaket('{{ route("admintotal.chart.data") }}' + queryString, 'chartltotal');
+        fetchChartPaket('{{ route("adminstatuspaket.chart.data") }}' + queryString, 'chartsp');
         fetchChartDataNRp('{{ route("adminperinstansi.chart.data") }}' + queryString, 'chartpi');
 
         // laporan PROCUREMENTS
@@ -813,6 +858,128 @@
         })
         .catch(error => console.error('Error fetching chart data:', error));
     }
+    //fetch chart tanpa Rp
+    function fetchChartPaket(url, canvasId, title) {
+    fetch(url)
+        .then(response => response.json())
+        .then(chartData => {
+            let chartCanvas = document.getElementById(canvasId);
+            if (chartCanvas.chart) {
+                chartCanvas.chart.destroy();
+            }
+
+            // Batasi jumlah label dan data
+            chartData.labels = chartData.labels.slice(0, 12);
+            chartData.datasets.forEach(dataset => {
+                dataset.data = dataset.data.slice(0, 12);
+            });
+
+            chartCanvas.chart = new Chart(chartCanvas.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: chartData.labels,
+                    datasets: chartData.datasets
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: title
+                            }
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    animation: {
+                        onComplete: function() {
+                            var ctx = chartCanvas.chart.ctx;
+                            ctx.font = 'bold 15px sans-serif';
+                            ctx.textAlign = 'center';
+                            ctx.fillStyle = 'black';
+                            
+                            chartCanvas.chart.data.datasets.forEach((dataset, i) => {
+                                var meta = chartCanvas.chart.getDatasetMeta(i);
+                                meta.data.forEach((bar, index) => {
+                                    var value = dataset.data[index];
+                                    ctx.fillText(value + ' Paket'.toLocaleString(), bar.x, bar.y - 10);
+                                });
+                            });
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => console.error('Error fetching chart data:', error));
+    }
+    //fetch chart tanpa Rp
+    function fetchChartHRGA(url, canvasId, title) {
+    fetch(url)
+        .then(response => response.json())
+        .then(chartData => {
+            let chartCanvas = document.getElementById(canvasId);
+            if (chartCanvas.chart) {
+                chartCanvas.chart.destroy();
+            }
+
+            // Batasi jumlah label dan data
+            chartData.labels = chartData.labels.slice(0, 12);
+            chartData.datasets.forEach(dataset => {
+                dataset.data = dataset.data.slice(0, 12);
+            });
+
+            chartCanvas.chart = new Chart(chartCanvas.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: chartData.labels,
+                    datasets: chartData.datasets
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: title
+                            }
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    animation: {
+                        onComplete: function() {
+                            var ctx = chartCanvas.chart.ctx;
+                            ctx.font = 'bold 15px sans-serif';
+                            ctx.textAlign = 'center';
+                            ctx.fillStyle = 'black';
+                            
+                            chartCanvas.chart.data.datasets.forEach((dataset, i) => {
+                                var meta = chartCanvas.chart.getDatasetMeta(i);
+                                meta.data.forEach((bar, index) => {
+                                    var value = dataset.data[index];
+                                    ctx.fillText(value + ' Kali'.toLocaleString(), bar.x, bar.y - 10);
+                                });
+                            });
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => console.error('Error fetching chart data:', error));
+    }
 
     function fetchChartPieData(url, canvasId, title) {
         fetch(url)
@@ -862,6 +1029,11 @@
 
     //tabel laporan pt bos
     $(document).ready(function() {
+    function decodeEntities(encodedString) {
+        let textarea = document.createElement("textarea");
+        textarea.innerHTML = encodedString;
+        return textarea.value;
+    }
         function fetchLaporanPTBOS(search = '', start_month = '', end_month = '') {
             $.ajax({
                 url: "{{ route('laporanptbos.index') }}",
@@ -888,19 +1060,31 @@
                             let row = `
                                 <tr>
                                     <td class="border border-gray-300 px-4 py-2 text-center">${formattedTanggal}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.pekerjaan}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.kondisi_bulanlalu}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.kondisi_bulanini}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.update}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.rencana_implementasi}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.keterangan}</td>
+                                    <td class="border border-gray-300 px-4 py-2">
+                                        <div class="ck-content text-justify">${item.pekerjaan}</div>
+                                    </td>
+                                    <td class="border border-gray-300 px-4 py-2">
+                                        <div class="ck-content text-justify">${item.kondisi_bulanlalu}</div>
+                                    </td>
+                                    <td class="border border-gray-300 px-4 py-2">
+                                        <div class="ck-content text-justify">${item.kondisi_bulanini}</div>
+                                    </td>
+                                    <td class="border border-gray-300 px-4 py-2">
+                                        <div class="ck-content text-justify">${item.update}</div>
+                                    </td>
+                                    <td class="border border-gray-300 px-4 py-2">
+                                        <div class="ck-content text-justify">${item.rencana_implementasi}</div>
+                                    </td>
+                                    <td class="border border-gray-300 px-4 py-2">
+                                        <div class="ck-content text-justify">${item.keterangan}</div>
+                                    </td>
                                 </tr>
                             `;
                             tableBody.append(row);
                         });
                     }
-                }
-                , error: function(xhr, status, error) {
+                },
+                error: function(xhr, status, error) {
                     console.error("Error fetching data:", error);
                 }
             });
@@ -919,127 +1103,80 @@
         });
     });
 
-    //tabel laporan iJASA
     $(document).ready(function() {
-        function fetchLaporaniJASA(search = '', start_month = '', end_month = '') {
-            $.ajax({
-                url: "{{ route('laporanijasa.index') }}"
-                , type: "GET"
-                , data: {
-                    search: search, start_month: start_month, end_month: end_month
-                }, // Kirim parameter search ke server
-                dataType: "json"
-                , success: function(response) {
-                    let tableBody = $("#adminijasa tbody");
-                    tableBody.empty(); // Kosongkan tabel sebelum menambahkan data baru
+    function decodeEntities(encodedString) {
+        let textarea = document.createElement("textarea");
+        textarea.innerHTML = encodedString;
+        return textarea.value;
+    }
 
-                    if (response.laporanijasas.data.length === 0) {
-                        tableBody.append(`<tr><td colspan="7" class="text-center p-4">Data tidak ditemukan</td></tr>`);
-                    } else {
-                        response.laporanijasas.data.forEach(function(item) {
-                            // Konversi format Tanggal dari 'YYYY-MM-DD' ke '25 Januari 2024'
-                            const [tahun, bulan, hari] = item.date.split('-');
-                            const namaBulan = [
-                                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-                                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-                            ][parseInt(bulan, 10) - 1]; // Konversi bulan ke indeks array
+    function formatTanggal(dateString) {
+        const [tahun, bulan, hari] = dateString.split('-');
+        const namaBulan = [
+            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        ][parseInt(bulan, 10) - 1]; // Konversi bulan ke indeks array
 
-                            const formattedTanggal = `${parseInt(hari, 10)} ${namaBulan} ${tahun}`; // Gabungkan hari, bulan, dan tahun
-                            let row = `
-                            <tr>
-                                <td class="border border-gray-300 px-4 py-2 text-center">${formattedTanggal}</td>
-                                <td class="border border-gray-300 px-4 py-2 text-center">${item.jam}</td>
-                                <td class="border border-gray-300 px-4 py-2 text-center">${item.permasalahan}</td>
-                                <td class="border border-gray-300 px-4 py-2 text-center">${item.impact}</td>
-                                <td class="border border-gray-300 px-4 py-2 text-center">${item.troubleshooting}</td>
-                                <td class="border border-gray-300 px-4 py-2 text-center">${item.resolve_tanggal}</td>
-                                <td class="border border-gray-300 px-4 py-2 text-center">${item.resolve_jam}</td>
-                            </tr>
+        return `${parseInt(hari, 10)} ${namaBulan} ${tahun}`;
+    }
+
+    function fetchLaporaniJASA(search = '', start_month = '', end_month = '') {
+        $.ajax({
+            url: "{{ route('laporanijasa.index') }}",
+            type: "GET",
+            data: { search: search, start_month: start_month, end_month: end_month },
+            dataType: "json",
+            success: function(response) {
+                let tableBody = $("#adminijasa tbody");
+                tableBody.empty(); // Kosongkan tabel sebelum menambahkan data baru
+
+                if (response.laporanijasas.data.length === 0) {
+                    tableBody.append(`<tr><td colspan="7" class="text-center p-4">Data tidak ditemukan</td></tr>`);
+                } else {
+                    response.laporanijasas.data.forEach(function(item) {
+                        let formattedTanggal = formatTanggal(item.tanggal);
+                        let formattedResolveTanggal = formatTanggal(item.resolve_tanggal);
+
+                        let row = `
+                        <tr>
+                            <td class="border border-gray-300 px-4 py-2 text-center">${formattedTanggal}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">${item.jam}</td>
+                            <td class="border border-gray-300 px-4 py-2">
+                                <div class="ck-content text-justify">${decodeEntities(item.permasalahan)}</div>
+                            </td>
+                            <td class="border border-gray-300 px-4 py-2">
+                                <div class="ck-content text-justify">${decodeEntities(item.impact)}</div>
+                            </td>
+                            <td class="border border-gray-300 px-4 py-2">
+                                <div class="ck-content text-justify">${decodeEntities(item.troubleshooting)}</div>
+                            </td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">${formattedResolveTanggal}</td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">${item.resolve_jam}</td>
+                        </tr>
                         `;
-                            tableBody.append(row);
-                        });
-                    }
+                        tableBody.append(row);
+                    });
                 }
-                , error: function(xhr, status, error) {
-                    console.error("Error fetching data:", error);
-                }
-            });
-        }
-
-        // Jalankan fungsi saat halaman dimuat
-        fetchLaporaniJASA();
-
-        // Event listener untuk form pencarian
-        $("#monthFilterForm").on("submit", function(e) {
-            e.preventDefault(); // Mencegah form melakukan reload halaman
-            let searchValue = $("#searchInput").val().trim();
-            let startMonth = $("#startMonth").val();
-            let endMonth = $("#endMonth").val();
-            fetchLaporaniJASA(searchValue, startMonth, endMonth);
+            },
+            error: function(xhr, status, error) {
+                console.error("Error fetching data:", error);
+            }
         });
+    }
+
+    // Jalankan fungsi saat halaman dimuat
+    fetchLaporaniJASA();
+
+    // Event listener untuk form pencarian
+    $("#monthFilterForm").on("submit", function(e) {
+        e.preventDefault(); // Mencegah form melakukan reload halaman
+        let searchValue = $("#searchInput").val().trim();
+        let startMonth = $("#startMonth").val();
+        let endMonth = $("#endMonth").val();
+        fetchLaporaniJASA(searchValue, startMonth, endMonth);
     });
+});
 
-    //tabel laporan BIZDEV
-    $(document).ready(function() {
-        function fetchLaporanBizdev(search = '', start_month = '', end_month = '') {
-            $.ajax({
-                url: "{{ route('laporanbizdev.index') }}"
-                , type: "GET"
-                , data: {
-                    search: search, start_month: start_month, end_month: end_month
-                }, // Kirim parameter search ke server
-                dataType: "json"
-                , success: function(response) {
-                    let tableBody = $("#adminbizdev tbody");
-                    tableBody.empty(); // Kosongkan tabel sebelum menambahkan data baru
-
-                    if (response.laporanbizdevs.data.length === 0) {
-                        tableBody.append(`<tr><td colspan="7" class="text-center p-4">Data tidak ditemukan</td></tr>`);
-                    } else {
-                        response.laporanbizdevs.data.forEach(function(item) {
-                               // Konversi format Tanggal dari 'YYYY-MM-DD' ke '25 Januari 2024'
-                               const [tahun, bulan, hari] = item.tanggal.split('-');
-                                const namaBulan = [
-                                    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-                                    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-                                ][parseInt(bulan, 10) - 1]; // Konversi bulan ke indeks array
-
-                                const formattedTanggal = `${parseInt(hari, 10)} ${namaBulan} ${tahun}`; // Gabungkan hari, bulan, dan tahun
-
-                            // Buat baris tabel dengan formattedBulan
-                            let row = `
-                                <tr>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${formattedTanggal}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.aplikasi}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.kondisi_bulanlalu}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.kondisi_bulanini}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.update}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.rencana_implementasi}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.keterangan}</td>
-                                </tr>
-                            `;
-                            tableBody.append(row);
-                        });
-                    }
-                }
-                , error: function(xhr, status, error) {
-                    console.error("Error fetching data:", error);
-                }
-            });
-        }
-
-        // Jalankan fungsi saat halaman dimuat
-        fetchLaporanBizdev();
-
-        // Event listener untuk form pencarian
-        $("#monthFilterForm").on("submit", function(e) {
-            e.preventDefault(); // Mencegah form melakukan reload halaman
-            let searchValue = $("#searchInput").val().trim();
-            let startMonth = $("#startMonth").val();
-            let endMonth = $("#endMonth").val();
-            fetchLaporanBizdev(searchValue, startMonth, endMonth);
-        });
-    });
 
     //laporan neraca
     $(document).ready(function() {
@@ -1392,65 +1529,74 @@
         });
     });
 
-    //tabel laporan SPI OPERASIONAL
     $(document).ready(function() {
-        function fetchLaporanSPI(search = '', start_month = '', end_month = '') {
-            $.ajax({
-                url: "{{ route('laporanspi.index') }}"
-                , type: "GET"
-                , data: {
-                    search: search, start_month: start_month, end_month: end_month 
-                }, // Kirim parameter search ke server
-                dataType: "json"
-                , success: function(response) {
-                    let tableBody = $("#adminspi tbody");
-                    tableBody.empty(); // Kosongkan tabel sebelum menambahkan data baru
+    function decodeEntities(encodedString) {
+        let textarea = document.createElement("textarea");
+        textarea.innerHTML = encodedString;
+        return textarea.value;
+    }
 
-                    if (response.laporanspis.data.length === 0) {
-                        tableBody.append(`<tr><td colspan="7" class="text-center p-4">Data tidak ditemukan</td></tr>`);
-                    } else {
-                        response.laporanspis.data.forEach(function(item) {
-                            // Konversi format Tanggal dari 'YYYY-MM-DD' ke '25 Januari 2024'
-                            const [tahun, bulan, hari] = item.tanggal.split('-');
+    function fetchLaporanSPI(search = '', start_month = '', end_month = '') {
+    $.ajax({
+        url: "{{ route('laporanspi.index') }}",
+        type: "GET",
+        data: {
+            search: search, start_month: start_month, end_month: end_month 
+        },
+        dataType: "json",
+        success: function(response) {
+            let tableBody = $("#adminspi tbody");
+            tableBody.empty();
 
-                            const namaBulan = [
-                                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-                                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-                            ][parseInt(bulan, 10) - 1]; // Konversi bulan ke indeks array
+            if (response.laporanspis.data.length === 0) {
+                tableBody.append(`<tr><td colspan="7" class="text-center p-4">Data tidak ditemukan</td></tr>`);
+            } else {
+                response.laporanspis.data.forEach(function(item) {
+                    const [tahun, bulan, hari] = item.tanggal.split('-');
+                    const namaBulan = [
+                        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                    ][parseInt(bulan, 10) - 1];
+                    const formattedTanggal = `${parseInt(hari, 10)} ${namaBulan} ${tahun}`;
 
-                            const formattedTanggal = `${parseInt(hari, 10)} ${namaBulan} ${tahun}`; // Gabungkan hari, bulan, dan tahun
-                            // Buat baris tabel dengan formattedBulan
-                            let row = `
-                                <tr>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${formattedTanggal}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.aspek}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.masalah}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.solusi}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.implementasi}</td>
-                                </tr>
-                            `;
-                            tableBody.append(row);
-                        });
-                    }
-                }
-                , error: function(xhr, status, error) {
-                    console.error("Error fetching data:", error);
-                }
-            });
+                    // Don't use decodeEntities for HTML content
+                    // Use the raw HTML directly with proper styling
+                    let row = `
+                        <tr>
+                            <td class="border border-gray-300 px-4 py-2 text-center">${formattedTanggal}</td>
+                            <td class="border border-gray-300 px-4 py-2">
+                                <div class="ck-content">${item.aspek}</div>
+                            </td>
+                            <td class="border border-gray-300 px-4 py-2">
+                                <div class="ck-content text-justify">${item.masalah}</div>
+                            </td>
+                            <td class="border border-gray-300 px-4 py-2">
+                                <div class="ck-content text-justify">${item.solusi}</div>
+                            </td>
+                            <td class="border border-gray-300 px-4 py-2">
+                                <div class="ck-content text-justify">${item.implementasi}</div>
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.append(row);
+                });
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error fetching data:", error);
         }
-
-        // Jalankan fungsi saat halaman dimuat
-        fetchLaporanSPI();
-
-        // Event listener untuk form pencarian
-        $("#monthFilterForm").on("submit", function(e) {
-            e.preventDefault(); // Mencegah form melakukan reload halaman
-            let searchValue = $("#searchInput").val().trim();
-            let startMonth = $("#startMonth").val();
-            let endMonth = $("#endMonth").val();
-            fetchLaporanSPI(searchValue, startMonth, endMonth);
-        });
     });
+}
+    fetchLaporanSPI();
+
+    $("#monthFilterForm").on("submit", function(e) {
+        e.preventDefault();
+        let searchValue = $("#searchInput").val().trim();
+        let startMonth = $("#startMonth").val();
+        let endMonth = $("#endMonth").val();
+        fetchLaporanSPI(searchValue, startMonth, endMonth);
+    });
+});
 
     //tabel laporan SPI IT
     $(document).ready(function() {
@@ -1484,10 +1630,18 @@
                             let row = `
                                 <tr>
                                     <td class="border border-gray-300 px-4 py-2 text-center">${formattedTanggal}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.aspek}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.masalah}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.solusi}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.implementasi}</td>
+                                    <td class="border border-gray-300 px-4 py-2">
+                                        <div class="ck-content text-justify">${item.aspek}</div>
+                                    </td>
+                                    <td class="border border-gray-300 px-4 py-2">
+                                        <div class="ck-content text-justify">${item.masalah}</div>
+                                    </td>
+                                    <td class="border border-gray-300 px-4 py-2">
+                                        <div class="ck-content text-justify">${item.solusi}</div>
+                                    </td>
+                                    <td class="border border-gray-300 px-4 py-2">
+                                        <div class="ck-content text-justify">${item.implementasi}</div>
+                                    </td>
                                 </tr>
                             `;
                             tableBody.append(row);
@@ -1761,7 +1915,9 @@
                                     <td class="border border-gray-300 px-4 py-2 text-center">
                                         <img src="${item.gambar_url}" alt="Laporan Gambar" class="w-20 h-20 object-cover rounded-lg shadow-md cursor-pointer block mx-auto" data-index="${index}">
                                     </td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${item.keterangan}</td>
+                                    <td class="border border-gray-300 px-4 py-2">
+                                        <div class="ck-content text-justify">${item.kendala}</div>
+                                    </td>                                
                                 </tr>
                             `;
                             tableBody.append(row);
@@ -1800,70 +1956,6 @@
             }
         });
     });
-
-// // Fungsi untuk menampilkan atau menyembunyikan modal
-// function toggleModal() {
-//     document.getElementById('exportModal').classList.toggle('hidden');
-// }
-
-// document.addEventListener('DOMContentLoaded', function() {
-//     const exportFloatingButton = document.getElementById('exportFloatingButton');
-//     const exportModal = document.getElementById('exportModal');
-//     const cancelExportBtn = document.getElementById('cancelExportBtn');
-//     const confirmExportBtn = document.getElementById('confirmExportBtn');
-
-//     // Event listener untuk tombol floating & modal
-//     exportFloatingButton.addEventListener('click', toggleModal);
-//     cancelExportBtn.addEventListener('click', toggleModal);
-    
-//     confirmExportBtn.addEventListener('click', function() {
-//         toggleModal(); // Tutup modal setelah konfirmasi
-//         triggerPDFExport(); // Panggil fungsi ekspor
-//     });
-// });
-
-// // Fungsi untuk melakukan ekspor PDF
-// function triggerPDFExport() {
-//     const routes = [
-//         "/rekappenjualanperusahaan/export-pdf",
-//         "/rekappenjualan/export-pdf",
-//         "/laporanpaketadministrasi/export-pdf",
-//         "/statuspaket/export-pdf",
-//         "/laporanperinstansi/export-pdf"
-//     ];
-
-//     routes.forEach(route => {
-//         fetch(route, {
-//             method: "POST",
-//             headers: {
-//                 "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-//                 "Content-Type": "application/json"
-//             },
-//             body: JSON.stringify({})
-//         })
-//         .then(response => {
-//             if (!response.ok) {
-//                 throw new Error(`HTTP error! Status: ${response.status}`);
-//             }
-//             return response.blob();
-//         })
-//         .then(blob => {
-//             if (blob.size === 0) {
-//                 throw new Error("File PDF kosong! Periksa kembali data yang diekspor.");
-//             }
-
-//             const url = window.URL.createObjectURL(blob);
-//             const a = document.createElement("a");
-//             a.href = url;
-//             a.download = "export.pdf";
-//             document.body.appendChild(a);
-//             a.click();
-//             a.remove();
-//         })
-//         .catch(error => console.error("Error exporting PDF:", error));
-//     });
-// }
-
 
 </script>
 

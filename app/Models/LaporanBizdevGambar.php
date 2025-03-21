@@ -13,7 +13,7 @@ class LaporanBizdevGambar extends Model
 
     protected $primaryKey = 'id_laporan_bizdev_gambar'; // Primary key custom
 
-    protected $fillable = ['tanggal', 'gambar', 'keterangan'];
+    protected $fillable = ['tanggal', 'gambar', 'kendala'];
 
     public function getTanggalFormattedAttribute()
     {

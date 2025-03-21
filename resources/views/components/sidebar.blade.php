@@ -1,5 +1,5 @@
 @if (Auth::check())
-<aside id="sidebar" class="w-64 transition-all duration-300 bg-white border-r border-gray-200 shadow-lg overflow-y-auto h-screen fixed top-0 left-0 z-20 flex flex-col">
+<aside id="sidebar" class="w-64 transition-all duration-300 bg-white border-r border-gray-200 shadow-lg overflow-y-scroll h-screen fixed top-0 left-0 z-20 flex flex-col">
     <!-- Logo Section -->
     <div class="mt-8 mb-8 pb-3 flex justify-center">
         <div id="logo-full" class="logo w-40 h-auto">
@@ -208,12 +208,12 @@
                                 <span class="ml-2">Laporan Multimedia Tiktok</span>
                             </a>
                         </li>
-                        <li>
+                        {{-- <li>
                             <a href="{{ route('laporanbizdev.index') }}" class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                                 <img src="{{ asset("icon/LaporanPaketAdministrasi.svg") }}" class="w-5 h-5">
                                 <span class="ml-2">Laporan Bizdev</span>
                             </a>
-                        </li>
+                        </li> --}}
                         <li>
                             <a href="{{ route('laporanbizdevgambar.index') }}" class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                                 <img src="{{ asset("icon/LaporanPaketAdministrasi.svg") }}" class="w-5 h-5">
@@ -742,8 +742,6 @@
                 </li>
             </ul>
         </nav>
-
-
         @endif
     </div>
 </aside>

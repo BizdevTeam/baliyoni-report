@@ -270,8 +270,10 @@ Route::middleware(['web'])->group(function () {
 
 // Route untuk mengambil data chart
 Route::get('/admin/chart-data', [LaporanPaketAdministrasiController::class, 'showChart'])->name('admin.chart.data');
+Route::get('/admintotal/chart-data', [LaporanPaketAdministrasiController::class, 'chartTotal'])->name('admintotal.chart.data');
 Route::get('/adminpenjualan/chart-data', [RekapPenjualanController::class, 'showChart'])->name('adminpenjualan.chart.data');
 Route::get('/adminpp/chart-data', [RekapPenjualanPerusahaanController::class, 'showChart'])->name('adminpp.chart.data');
+Route::get('/adminpptotal/chart-data', [RekapPenjualanPerusahaanController::class, 'chartTotal'])->name('adminpptotal.chart.data');
 Route::get('/adminstatuspaket/chart-data', [StatusPaketController::class, 'showChart'])->name('adminstatuspaket.chart.data');
 Route::get('/adminperinstansi/chart-data', [LaporanPerInstansiController::class, 'showChart'])->name('adminperinstansi.chart.data');
 Route::get('/adminholding/chart-data', [LaporanHoldingController::class, 'showChart'])->name('adminholding.chart.data');

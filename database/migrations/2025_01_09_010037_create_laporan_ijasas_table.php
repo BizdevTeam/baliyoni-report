@@ -13,7 +13,7 @@
         {
             Schema::create('laporan_ijasas', function (Blueprint $table) {
                 $table->id('id_ijasa');
-                $table->date('date');
+                $table->date('tanggal');
                 $table->time('jam');
                 $table->string('permasalahan');
                 $table->string('impact');
