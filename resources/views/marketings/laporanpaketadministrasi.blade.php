@@ -361,6 +361,7 @@
 
     // Inisialisasi chart menggunakan data yang diberikan (misalnya dari server)
     var chartData = @json($chartData);
+
     var ctx = document.getElementById('chart').getContext('2d');
     var barChart = new Chart(ctx, {
         type: 'bar',

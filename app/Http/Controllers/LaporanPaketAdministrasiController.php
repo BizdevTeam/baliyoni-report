@@ -49,15 +49,17 @@ class LaporanPaketAdministrasiController extends Controller
         $backgroundColors = array_map(fn() => getRandomRGBA(), $data);
         
         $chartData = [
+            'labels' => $labels, // Labels untuk chart
             'datasets' => [
                 [
+                    'label' => 'Grafik Laporan Paket Administrasi', // Nama dataset
                     'text' => 'Total Paket', // Nama dataset
                     'data' => $data, // Data untuk chart
                     'backgroundColor' => $backgroundColors, // Warna batang random
                 ],
             ],
         ];
-        
+
         return view('marketings.laporanpaketadministrasi',  compact('laporanpaketadministrasis', 'chartData'));    
     }
 
@@ -84,7 +86,7 @@ class LaporanPaketAdministrasiController extends Controller
                 return redirect()->back()->with('error', $errorMessage);
             }
 
-            // Cek kombinasi unik date dan perusahaan
+            // Cek kombinasi unik date dan website
             $exists = LaporanPaketAdministrasi::where('tanggal', $validatedData['tanggal'])
             ->where('website', $validatedData['website'])->exists();
             
@@ -97,7 +99,7 @@ class LaporanPaketAdministrasiController extends Controller
 
         } catch (\Exception $e) {
             Log::error('Error Storing Rekap Penjualan Data: ' . $e->getMessage());
-            Log::info('Perusahaan input:', [$request->input('website')]);
+            Log::info('website input:', [$request->input('website')]);
             return redirect()->route('laporanpaketadministrasi.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
     }
@@ -124,7 +126,7 @@ class LaporanPaketAdministrasiController extends Controller
             if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
-            // Cek kombinasi unik date dan perusahaan
+            // Cek kombinasi unik date dan website
             $exists = LaporanPaketAdministrasi::where('tanggal', $validatedData['tanggal'])
             ->where('website', $validatedData['website'])
             ->where('id_laporanpaket', '!=', $laporanpaketadministrasi->id_laporanpaket)->exists();
@@ -299,8 +301,66 @@ class LaporanPaketAdministrasiController extends Controller
     // Kembalikan data dalam format JSON
     return response()->json($chartData);
 }
-
 private function getRandomRGBAA($opacity = 0.7)
+{
+    return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
+}
+
+public function chartTotal(Request $request)
+    {
+    $search = $request->input('search');
+    $startMonth = $request->input('start_month');
+    $endMonth = $request->input('end_month');
+
+    // Ambil data dari database
+    $query = LaporanPaketAdministrasi::query();
+    
+    // Filter berdasarkan tanggal jika ada
+    if ($search) {
+        $query->where('tanggal', 'LIKE', "%$search%");
+    }
+    
+    // Filter berdasarkan range bulan-tahun jika keduanya diisi
+    if ($startMonth && $endMonth) {
+        $startDate = \Carbon\Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+        $endDate = \Carbon\Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+        
+        $query->whereBetween('tanggal', [$startDate, $endDate]);
+    }
+    
+    $laporanpaketadministrasis = $query->get();
+
+    // Akumulasi total penjualan berdasarkan nama website
+    $akumulasiData = [];
+    foreach ($laporanpaketadministrasis as $item) {
+        $namaWebsite = $item->website;
+        if (!isset($akumulasiData[$namaWebsite])) {
+            $akumulasiData[$namaWebsite] = 0;
+        }
+        $akumulasiData[$namaWebsite] += $item->total_paket;
+    }
+
+    // Siapkan data untuk chart
+    $labels = array_keys($akumulasiData);
+    $data = array_values($akumulasiData);
+    $backgroundColors = array_map(fn() => $this->getRandomRGBAA1(), $data);
+
+    $chartData = [
+        'labels' => $labels,
+        'datasets' => [
+            [
+                'label' => 'Total Paket',
+                'data' => $data,
+                'backgroundColor' => $backgroundColors,
+            ],
+        ],
+    ];
+
+    // Kembalikan data dalam format JSON
+    return response()->json($chartData);
+}
+
+private function getRandomRGBAA1($opacity = 0.7)
 {
     return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
 }

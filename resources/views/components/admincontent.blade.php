@@ -21,33 +21,71 @@
     <div id="gridContainer" class="grid gap-6 grid-cols-1">
         <!-- MARKETING: Tampil untuk Superadmin & Marketing -->
         @if(in_array(Auth::user()->role, ['superadmin', 'marketing']))
+        
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
-            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Rekap Penjualan</h1>
+            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
+            Grafik Laporan Rekap Penjualan
+        </h1>
+
             <div class="bg-white shadow-md rounded-lg p-6">
                 <canvas id="chartp" class="w-full h-96"></canvas>
             </div>
+
             <div class="flex justify-end mt-4">
                 <a href="{{ route("rekappenjualan.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Rekap Penjualan →</a>
             </div>
         </div>
 
-        <!-- Card 2 -->
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
-            <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Rekap Penjualan Perusahaan</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
+            <h1 class="text-2xl font-bold text-center text-red-600">
+                Grafik Laporan Rekap Penjualan Perusahaan                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        jualan Perusahaan
+            </h1>
+            
+            <!-- Dropdown untuk memilih chart -->
+            <div class="mb-2 flex justify-end">
+                <select id="chartSelect" class="p-2 border border-gray-300 rounded">
+                    <option value="chartpp">Chart Biasa</option>
+                    <option value="chartpptotal">Chart Total</option>
+                </select>
+            </div>
+            
+            <!-- Container untuk Chart Biasa -->
+            <div id="chartpContainer" class="bg-white shadow-md rounded-lg p-6">
                 <canvas id="chartpp" class="w-full h-96"></canvas>
             </div>
+            
+            <!-- Container untuk Chart PP, disembunyikan secara default -->
+            <div id="chartpptotalContainer" class="bg-white shadow-md rounded-lg p-6 mt-10 hidden">
+                <canvas id="chartpptotal" class="w-full h-96"></canvas>
+            </div>
+            
             <div class="flex justify-end mt-4">
-                <a href="{{ route("rekappenjualanperusahaan.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Rekap Penjualan Perusahaan →</a>
+                <a href="{{ route('rekappenjualanperusahaan.index') }}" class="text-red-600 font-semibold hover:underline">
+                    Laporan Rekap Penjualan Perusahaan →
+                </a>
             </div>
         </div>
 
         <!-- Card 3 -->
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Paket Administrasi</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
+           
+            <!-- Dropdown untuk memilih chart -->
+            <div class="mb-2 flex justify-end">
+                <select id="chartSelect1" class="p-2 border border-gray-300 rounded">
+                    <option value="chartl">Chart Biasa</option>
+                    <option value="chartltotal">Chart Total</option>
+                </select>
+            </div>
+            
+            <div id="chartlContainer" class="bg-white shadow-md rounded-lg p-6">
                 <canvas id="chartl" class="w-full h-96"></canvas>
             </div>
+
+            <div id="chartltotalContainer" class="bg-white shadow-md rounded-lg p-6 hidden">
+                <canvas id="chartltotal" class="w-full h-96"></canvas>
+            </div>
+
             <div class="flex justify-end mt-4">
                 <a href="{{ route("laporanpaketadministrasi.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Paket Administrasi →</a>
             </div>
@@ -574,12 +612,45 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 <script>
+
+    // fungsi untuk memilih tampilan chart rekap penjualan perusahaan
+    document.addEventListener("DOMContentLoaded", function () {
+        const chartSelect = document.getElementById("chartSelect");
+        const chartpContainer = document.getElementById("chartpContainer");
+        const chartpptotalContainer = document.getElementById("chartpptotalContainer");
+
+        chartSelect.addEventListener("change", function () {
+            const selectedChart = this.value;
+
+            // Tampilkan chart yang dipilih dan sembunyikan yang lainnya
+            chartpContainer.classList.toggle("hidden", selectedChart !== "chartpp");
+            chartpptotalContainer.classList.toggle("hidden", selectedChart !== "chartpptotal");
+        });
+    });
+
+    // fungsi untuk memilih tampilan chart laporan paket administrasi
+    document.addEventListener("DOMContentLoaded", function () {
+        const chartSelect = document.getElementById("chartSelect1");
+        const chartlContainer = document.getElementById("chartlContainer");
+        const chartltotalContainer = document.getElementById("chartltotalContainer");
+
+        chartSelect.addEventListener("change", function () {
+            const selectedChart = this.value;
+
+            // Tampilkan chart yang dipilih dan sembunyikan yang lainnya
+            chartlContainer.classList.toggle("hidden", selectedChart !== "chartl");
+            chartltotalContainer.classList.toggle("hidden", selectedChart !== "chartltotal");
+        });
+    });
+
     // Fungsi untuk memuat data awal grafik saat halaman pertama kali dibuka
     function loadInitialChartData() {
         //laporan MARKETING
         fetchChartDataWRp('{{ route("adminpenjualan.chart.data") }}', 'chartp', 'Tanggal ');
         fetchChartDataWRp('{{ route("adminpp.chart.data") }}', 'chartpp', 'Perusahaan ');
+        fetchChartDataWRp('{{ route("adminpptotal.chart.data") }}', 'chartpptotal', 'Perusahaan ');
         fetchChartPaket('{{ route("admin.chart.data") }}', 'chartl', 'Nilai Paket ');
+        fetchChartPaket('{{ route("admintotal.chart.data") }}', 'chartltotal', 'Nilai Paket ');
         fetchChartPaket('{{ route("adminstatuspaket.chart.data") }}', 'chartsp', 'Nilai Paket ');
         fetchChartDataWRp('{{ route("adminperinstansi.chart.data") }}', 'chartpi', 'Nilai Paket ');
 
@@ -605,16 +676,18 @@
         fetchChartPieData('{{ route("adminak.chart.data") }}', 'chartak', 'Nilai Piutang ');
     }
 
-    document.addEventListener("DOMContentLoaded", loadInitialChartData);
+        document.addEventListener("DOMContentLoaded", loadInitialChartData);
 
-    function fetchCharts(queryParams = {}) {
+        function fetchCharts(queryParams = {}) {
         let queryString = new URLSearchParams(queryParams).toString();
         queryString = queryString ? `?${queryString}` : '';
 
         // laporan MARKETING
         fetchChartDataWRp('{{ route("adminpenjualan.chart.data") }}' + queryString, 'chartp');
         fetchChartDataWRp('{{ route("adminpp.chart.data") }}' + queryString, 'chartpp');
+        fetchChartDataWRp('{{ route("adminpptotal.chart.data") }}' + queryString, 'chartpptotal');
         fetchChartPaket('{{ route("admin.chart.data") }}' + queryString, 'chartl');
+        fetchChartPaket('{{ route("admintotal.chart.data") }}' + queryString, 'chartltotal');
         fetchChartPaket('{{ route("adminstatuspaket.chart.data") }}' + queryString, 'chartsp');
         fetchChartDataNRp('{{ route("adminperinstansi.chart.data") }}' + queryString, 'chartpi');
 
