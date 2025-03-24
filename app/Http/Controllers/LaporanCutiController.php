@@ -299,5 +299,64 @@ class LaporanCutiController extends Controller
         return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
     }
 
+    public function chartTotal(Request $request)
+    {
+    $search = $request->input('search');
+    $startMonth = $request->input('start_month');
+    $endMonth = $request->input('end_month');
+
+    // Ambil data dari database
+    $query = LaporanCuti::query();
+    
+    // Filter berdasarkan tanggal jika ada
+    if ($search) {
+        $query->where('tanggal', 'LIKE', "%$search%");
+    }
+    
+    // Filter berdasarkan range bulan-tahun jika keduanya diisi
+    if ($startMonth && $endMonth) {
+        $startDate = \Carbon\Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+        $endDate = \Carbon\Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+        
+        $query->whereBetween('tanggal', [$startDate, $endDate]);
+    }
+    
+    $laporancutis = $query->get();
+
+    // Akumulasi total penjualan berdasarkan nama website
+    $akumulasiData = [];
+    foreach ($laporancutis as $item) {
+        $namaNama = $item->nama;
+        if (!isset($akumulasiData[$namaNama])) {
+            $akumulasiData[$namaNama] = 0;
+        } 
+        $akumulasiData[$namaNama] += $item->total_cuti;
+    }
+
+    // Siapkan data untuk chart
+    $labels = array_keys($akumulasiData);
+    $data = array_values($akumulasiData);
+    $backgroundColors = array_map(fn() => $this->getRandomRGBAA1(), $data);
+
+    $chartData = [
+        'labels' => $labels,
+        'datasets' => [
+            [
+                'label' => 'Total Paket',
+                'data' => $data,
+                'backgroundColor' => $backgroundColors,
+            ],
+        ],
+    ];
+
+    // Kembalikan data dalam format JSON
+    return response()->json($chartData);
+}
+
+private function getRandomRGBAA1($opacity = 0.7)
+{
+    return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
+}
+
 }
 

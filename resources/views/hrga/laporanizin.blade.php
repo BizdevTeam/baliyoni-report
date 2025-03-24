@@ -217,10 +217,10 @@
 <div class="flex flex-col mx-auto bg-white p-6 mt-4 rounded-lg shadow-xl border border-grey-500">
 <h1 class="text-4xl font-bold text-red-600 mb-4 font-montserrat text-start">Diagram</h1>
 
-<div class="mt-6 self-center w-full h-[750px] flex justify-center">
+<div class="mt-6 self-center w-full h-full flex justify-center">
     <canvas id="chart"></canvas>
 </div>
-<div class="mt-6 flex justify-end">
+<div class="flex justify-end">
     <button onclick="exportToPDF()" class="bg-red-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-red-600 transition duration-300 ease-in-out">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
             <mask id="lineMdCloudAltPrintFilledLoop0">
