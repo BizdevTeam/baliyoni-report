@@ -328,6 +328,59 @@ class RekapPiutangServisAspController extends Controller
         // Kembalikan data dalam format JSON
         return response()->json($chartData);
     }
+
+    public function chartTotal(Request $request)
+{
+    $search = $request->input('search');
+    $startMonth = $request->input('start_month');
+    $endMonth = $request->input('end_month');
+
+    // Ambil data dari database dengan filter yang diperlukan
+    $query = RekapPiutangServisAsp::query();
+
+    if ($search) {
+        $query->where('tanggal', 'LIKE', "%$search%");
+    }
+
+    if ($startMonth && $endMonth) {
+        $startDate = \Carbon\Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+        $endDate = \Carbon\Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+        $query->whereBetween('tanggal', [$startDate, $endDate]);
+    }
+
+    // Ambil data yang sudah difilter
+    $rekappiutangservisasps = $query->get();
+
+    // Akumulasi total piutang berdasarkan pelaksana
+    $akumulasiData = $rekappiutangservisasps->groupBy('pelaksana')->map(fn($items) => $items->sum('nilai_piutang'));
+
+    // Warna berdasarkan nama pelaksana
+    $pelaksanaColors = [
+        'CV. ARI DISTRIBUTION CENTER' => 'rgba(255, 99, 132, 0.7)',
+        'CV. BALIYONI COMPUTER' => 'rgba(54, 162, 235, 0.7)',
+        'PT. NABA TECHNOLOGY SOLUTIONS' => 'rgba(255, 206, 86, 0.7)',
+        'CV. ELKA MANDIRI (50%)-SAMITRA' => 'rgba(75, 192, 192, 0.7)',
+        'CV. ELKA MANDIRI (50%)-DETRAN' => 'rgba(153, 102, 255, 0.7)'
+    ];
+
+    // Siapkan data untuk chart
+    $labels = $akumulasiData->keys()->toArray();
+    $data = $akumulasiData->values()->toArray();
+    $backgroundColors = array_map(fn($label) => $pelaksanaColors[$label] ?? 'rgba(0, 0, 0, 0.7)', $labels);
+
+    $chartData = [
+        'labels' => $labels,
+        'datasets' => [
+            [
+                'label' => 'Total Piutang',
+                'data' => $data,
+                'backgroundColor' => $backgroundColors,
+            ],
+        ],
+    ];
+
+    return response()->json($chartData);
+}
     
 }
 

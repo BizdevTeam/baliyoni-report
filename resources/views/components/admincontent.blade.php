@@ -94,8 +94,20 @@
         <!-- Card 4 -->
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Status Paket</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
+            <!-- Dropdown untuk memilih chart -->
+            <div class="mb-2 flex justify-end">
+                <select id="chartSelect2" class="p-2 border border-gray-300 rounded">
+                    <option value="chartsp">Chart Biasa</option>
+                    <option value="chartsptotal">Chart Total</option>
+                </select>
+            </div>
+            
+            <div id="chartspContainer" class="bg-white shadow-md rounded-lg p-6">
                 <canvas id="chartsp" class="w-full h-96"></canvas>
+            </div>
+
+            <div id="chartsptotalContainer" class="bg-white shadow-md rounded-lg p-6 hidden">
+                <canvas id="chartsptotal" class="w-full h-96"></canvas>
             </div>
             <div class="flex justify-end mt-4">
                 <a href="{{ route("statuspaket.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Status Paket →</a>
@@ -105,8 +117,20 @@
         <!-- Card 5 -->
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Per Instansi</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
+            <!-- Dropdown untuk memilih chart -->
+            <div class="mb-2 flex justify-end">
+                <select id="chartSelect3" class="p-2 border border-gray-300 rounded">
+                    <option value="chartpi">Chart Biasa</option>
+                    <option value="chartpitotal">Chart Total</option>
+                </select>
+            </div>
+            
+            <div id="chartpiContainer" class="bg-white shadow-md rounded-lg p-6">
                 <canvas id="chartpi" class="w-full h-96"></canvas>
+            </div>
+
+            <div id="chartpitotalContainer" class="bg-white shadow-md rounded-lg p-6 hidden">
+                <canvas id="chartpitotal" class="w-full h-96"></canvas>
             </div>
             <div class="flex justify-end mt-4">
                 <a href="{{ route("laporanperinstansi.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Per Instansi →</a>
@@ -118,8 +142,20 @@
         @if(in_array(Auth::user()->role, ['superadmin', 'procurement']))
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Pembelian (HOLDING)</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
+            <!-- Dropdown untuk memilih chart -->
+            <div class="mb-2 flex justify-end">
+                <select id="chartSelect4" class="p-2 border border-gray-300 rounded">
+                    <option value="chartph">Chart Biasa</option>
+                    <option value="chartphtotal">Chart Total</option>
+                </select>
+            </div>
+            
+            <div id="chartphContainer" class="bg-white shadow-md rounded-lg p-6">
                 <canvas id="chartph" class="w-full h-96"></canvas>
+            </div>
+
+            <div id="chartphtotalContainer" class="bg-white shadow-md rounded-lg p-6 hidden">
+                <canvas id="chartphtotal" class="w-full h-96"></canvas>
             </div>
             <div class="flex justify-end mt-4">
                 <a href="{{ route("laporanholding.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Pembelian (HOLDING) →</a>
@@ -160,18 +196,43 @@
         @if(in_array(Auth::user()->role, ['superadmin', 'support']))
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Rekap Pendapatan Servis ASP</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
-                    <canvas id="chartlrp" class="w-full h-96"></canvas>
-                </div>
+            <!-- Dropdown untuk memilih chart -->
+            <div class="mb-2 flex justify-end">
+                <select id="chartSelect5" class="p-2 border border-gray-300 rounded">
+                    <option value="chartlrp">Chart Biasa</option>
+                    <option value="chartlrptotal">Chart Total</option>
+                </select>
+            </div>
+            
+            <div id="chartlrpContainer" class="bg-white shadow-md rounded-lg p-6">
+                <canvas id="chartlrp" class="w-full h-96"></canvas>
+            </div>
+
+            <div id="chartlrptotalContainer" class="bg-white shadow-md rounded-lg p-6 hidden">
+                <canvas id="chartlrptotal" class="w-full h-96"></canvas>
+            </div>
             <div class="flex justify-end mt-4">
                 <a href="{{ route("rekappendapatanservisasp.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Rekap Pendapatan Servis ASP →</a>
             </div>
         </div>
+
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Rekap Piutang Servis ASP</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
-                    <canvas id="chartlrps" class="w-full h-96"></canvas>
-                </div>
+            <!-- Dropdown untuk memilih chart -->
+            <div class="mb-2 flex justify-end">
+                <select id="chartSelect6" class="p-2 border border-gray-300 rounded">
+                    <option value="chartlrps">Chart Biasa</option>
+                    <option value="chartlrpstotal">Chart Total</option>
+                </select>
+            </div>
+            
+            <div id="chartlrpsContainer" class="bg-white shadow-md rounded-lg p-6">
+                <canvas id="chartlrps" class="w-full h-96"></canvas>
+            </div>
+
+            <div id="chartlrpstotalContainer" class="bg-white shadow-md rounded-lg p-6 hidden">
+                <canvas id="chartlrpstotal" class="w-full h-96"></canvas>
+            </div>
             <div class="flex justify-end mt-4">
                 <a href="{{ route('rekappiutangservisasp.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Rekap Piutang Servis ASP →</a>
             </div>
@@ -504,8 +565,20 @@
 
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Sakit</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
+            <!-- Dropdown untuk memilih chart -->
+            <div class="mb-2 flex justify-end">
+                <select id="chartSelect7" class="p-2 border border-gray-300 rounded">
+                    <option value="charts">Chart Biasa</option>
+                    <option value="chartstotal">Chart Total</option>
+                </select>
+            </div>
+            
+            <div id="chartsContainer" class="bg-white shadow-md rounded-lg p-6">
                 <canvas id="charts" class="w-full h-96"></canvas>
+            </div>
+
+            <div id="chartstotalContainer" class="bg-white shadow-md rounded-lg p-6 hidden">
+                <canvas id="chartstotal" class="w-full h-96"></canvas>
             </div>
             <div class="flex justify-end mt-4">
                 <a href="{{ route("laporansakit.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Sakit →</a>
@@ -513,8 +586,20 @@
         </div>
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Izin</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
+            <!-- Dropdown untuk memilih chart -->
+            <div class="mb-2 flex justify-end">
+                <select id="chartSelect8" class="p-2 border border-gray-300 rounded">
+                    <option value="chartizin">Chart Biasa</option>
+                    <option value="chartizintotal">Chart Total</option>
+                </select>
+            </div>
+            
+            <div id="chartizinContainer" class="bg-white shadow-md rounded-lg p-6">
                 <canvas id="chartizin" class="w-full h-96"></canvas>
+            </div>
+
+            <div id="chartizintotalContainer" class="bg-white shadow-md rounded-lg p-6 hidden">
+                <canvas id="chartizintotal" class="w-full h-96"></canvas>
             </div>
             <div class="flex justify-end mt-4">
                 <a href="{{ route("laporanizin.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Izin →</a>
@@ -522,8 +607,20 @@
         </div>
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Cuti</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
+      <!-- Dropdown untuk memilih chart -->
+            <div class="mb-2 flex justify-end">
+                <select id="chartSelect9" class="p-2 border border-gray-300 rounded">
+                    <option value="chartcuti">Chart Biasa</option>
+                    <option value="chartcutitotal">Chart Total</option>
+                </select>
+            </div>
+            
+            <div id="chartcutiContainer" class="bg-white shadow-md rounded-lg p-6">
                 <canvas id="chartcuti" class="w-full h-96"></canvas>
+            </div>
+
+            <div id="chartcutitotalContainer" class="bg-white shadow-md rounded-lg p-6 hidden">
+                <canvas id="chartcutitotal" class="w-full h-96"></canvas>
             </div>
             <div class="flex justify-end mt-4">
                 <a href="{{ route("laporancuti.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Cuti →</a>
@@ -531,8 +628,20 @@
         </div>
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Grafik Laporan Terlambat</h1>
-            <div class="bg-white shadow-md rounded-lg p-6">
+            <!-- Dropdown untuk memilih chart -->
+            <div class="mb-2 flex justify-end">
+            <select id="chartSelect10" class="p-2 border border-gray-300 rounded">
+                <option value="chartterlambat">Chart Biasa</option>
+                <option value="chartterlambattotal">Chart Total</option>
+            </select>
+            </div>
+            
+            <div id="chartterlambatContainer" class="bg-white shadow-md rounded-lg p-6">
                 <canvas id="chartterlambat" class="w-full h-96"></canvas>
+            </div>
+
+            <div id="chartterlambattotalContainer" class="bg-white shadow-md rounded-lg p-6 hidden">
+                <canvas id="chartterlambattotal" class="w-full h-96"></canvas>
             </div>
             <div class="flex justify-end mt-4">
                 <a href="{{ route("laporanterlambat.index") }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Terlambat →</a>
@@ -613,6 +722,7 @@
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 <script>
 
+    //Marketing
     // fungsi untuk memilih tampilan chart rekap penjualan perusahaan
     document.addEventListener("DOMContentLoaded", function () {
         const chartSelect = document.getElementById("chartSelect");
@@ -642,6 +752,142 @@
             chartltotalContainer.classList.toggle("hidden", selectedChart !== "chartltotal");
         });
     });
+    // fungsi untuk memilih tampilan chart laporan status paket
+    document.addEventListener("DOMContentLoaded", function () {
+        const chartSelect = document.getElementById("chartSelect2");
+        const chartlContainer = document.getElementById("chartspContainer");
+        const chartltotalContainer = document.getElementById("chartsptotalContainer");
+
+        chartSelect.addEventListener("change", function () {
+            const selectedChart = this.value;
+
+            // Tampilkan chart yang dipilih dan sembunyikan yang lainnya
+            chartlContainer.classList.toggle("hidden", selectedChart !== "chartsp");
+            chartltotalContainer.classList.toggle("hidden", selectedChart !== "chartsptotal");
+        });
+    });
+    // fungsi untuk memilih tampilan chart laporan per instansi
+    document.addEventListener("DOMContentLoaded", function () {
+        const chartSelect = document.getElementById("chartSelect3");
+        const chartlContainer = document.getElementById("chartpiContainer");
+        const chartltotalContainer = document.getElementById("chartpitotalContainer");
+
+        chartSelect.addEventListener("change", function () {
+            const selectedChart = this.value;
+
+            // Tampilkan chart yang dipilih dan sembunyikan yang lainnya
+            chartlContainer.classList.toggle("hidden", selectedChart !== "chartpi");
+            chartltotalContainer.classList.toggle("hidden", selectedChart !== "chartpitotal");
+        });
+    });
+
+    //procurements
+    // fungsi untuk memilih tampilan chart laporan holding
+    document.addEventListener("DOMContentLoaded", function () {
+        const chartSelect = document.getElementById("chartSelect4");
+        const chartlContainer = document.getElementById("chartphContainer");
+        const chartltotalContainer = document.getElementById("chartphtotalContainer");
+
+        chartSelect.addEventListener("change", function () {
+            const selectedChart = this.value;
+
+            // Tampilkan chart yang dipilih dan sembunyikan yang lainnya
+            chartlContainer.classList.toggle("hidden", selectedChart !== "chartph");
+            chartltotalContainer.classList.toggle("hidden", selectedChart !== "chartphtotal");
+        });
+    });
+
+    //supports
+    // fungsi untuk memilih tampilan chart laporan pendapatan servis asp
+    document.addEventListener("DOMContentLoaded", function () {
+        const chartSelect = document.getElementById("chartSelect5");
+        const chartlContainer = document.getElementById("chartlrpContainer");
+        const chartltotalContainer = document.getElementById("chartlrptotalContainer");
+
+        chartSelect.addEventListener("change", function () {
+            const selectedChart = this.value;
+
+            // Tampilkan chart yang dipilih dan sembunyikan yang lainnya
+            chartlContainer.classList.toggle("hidden", selectedChart !== "chartlrp");
+            chartltotalContainer.classList.toggle("hidden", selectedChart !== "chartlrptotal");
+        });
+    });
+
+    // fungsi untuk memilih tampilan chart laporan piutang servis asp
+    document.addEventListener("DOMContentLoaded", function () {
+        const chartSelect = document.getElementById("chartSelect6");
+        const chartlContainer = document.getElementById("chartlrpsContainer");
+        const chartltotalContainer = document.getElementById("chartlrpstotalContainer");
+
+        chartSelect.addEventListener("change", function () {
+            const selectedChart = this.value;
+
+            // Tampilkan chart yang dipilih dan sembunyikan yang lainnya
+            chartlContainer.classList.toggle("hidden", selectedChart !== "chartlrps");
+            chartltotalContainer.classList.toggle("hidden", selectedChart !== "chartlrpstotal");
+        });
+    });
+
+    //HRGA
+    // fungsi untuk memilih tampilan chart laporan sakit
+    document.addEventListener("DOMContentLoaded", function () {
+        const chartSelect = document.getElementById("chartSelect7");    
+        const chartlContainer = document.getElementById("chartsContainer");
+        const chartltotalContainer = document.getElementById("chartstotalContainer");
+
+        chartSelect.addEventListener("change", function () {
+            const selectedChart = this.value;
+
+            // Tampilkan chart yang dipilih dan sembunyikan yang lainnya
+            chartlContainer.classList.toggle("hidden", selectedChart !== "charts");
+            chartltotalContainer.classList.toggle("hidden", selectedChart !== "chartstotal");
+        });
+    });
+
+    // fungsi untuk memilih tampilan chart laporan izin
+    document.addEventListener("DOMContentLoaded", function () {
+        const chartSelect = document.getElementById("chartSelect8");    
+        const chartlContainer = document.getElementById("chartizinContainer");
+        const chartltotalContainer = document.getElementById("chartizintotalContainer");
+
+        chartSelect.addEventListener("change", function () {
+            const selectedChart = this.value;
+
+            // Tampilkan chart yang dipilih dan sembunyikan yang lainnya
+            chartlContainer.classList.toggle("hidden", selectedChart !== "chartizin");
+            chartltotalContainer.classList.toggle("hidden", selectedChart !== "chartizintotal");
+        });
+    });
+
+    // fungsi untuk memilih tampilan chart laporan cuti
+    document.addEventListener("DOMContentLoaded", function () {
+        const chartSelect = document.getElementById("chartSelect9");    
+        const chartlContainer = document.getElementById("chartcutiContainer");
+        const chartltotalContainer = document.getElementById("chartcutitotalContainer");
+
+        chartSelect.addEventListener("change", function () {
+            const selectedChart = this.value;
+
+            // Tampilkan chart yang dipilih dan sembunyikan yang lainnya
+            chartlContainer.classList.toggle("hidden", selectedChart !== "chartcuti");
+            chartltotalContainer.classList.toggle("hidden", selectedChart !== "chartcutitotal");
+        });
+    });
+
+    // fungsi untuk memilih tampilan chart laporan cuti
+    document.addEventListener("DOMContentLoaded", function () {
+        const chartSelect = document.getElementById("chartSelect10");    
+        const chartlContainer = document.getElementById("chartterlambatContainer");
+        const chartltotalContainer = document.getElementById("chartterlambattotalContainer");
+
+        chartSelect.addEventListener("change", function () {
+            const selectedChart = this.value;
+
+            // Tampilkan chart yang dipilih dan sembunyikan yang lainnya
+            chartlContainer.classList.toggle("hidden", selectedChart !== "chartterlambat");
+            chartltotalContainer.classList.toggle("hidden", selectedChart !== "chartterlambattotal");
+        });
+    });
 
     // Fungsi untuk memuat data awal grafik saat halaman pertama kali dibuka
     function loadInitialChartData() {
@@ -652,24 +898,33 @@
         fetchChartPaket('{{ route("admin.chart.data") }}', 'chartl', 'Nilai Paket ');
         fetchChartPaket('{{ route("admintotal.chart.data") }}', 'chartltotal', 'Nilai Paket ');
         fetchChartPaket('{{ route("adminstatuspaket.chart.data") }}', 'chartsp', 'Nilai Paket ');
+        fetchChartPaket('{{ route("adminstatuspakettotal.chart.data") }}', 'chartsptotal', 'Nilai Paket ');
         fetchChartDataWRp('{{ route("adminperinstansi.chart.data") }}', 'chartpi', 'Nilai Paket ');
+        fetchChartDataWRp('{{ route("adminperinstansitotal.chart.data") }}', 'chartpitotal', 'Nilai Paket ');
 
         //laporan PROCUREMENTS
         fetchChartDataWRp('{{ route("adminholding.chart.data") }}', 'chartph', 'Perusahaan');
+        fetchChartDataWRp('{{ route("adminholdingtotal.chart.data") }}', 'chartphtotal', 'Perusahaan');
         fetchChartDataWRp('{{ route("adminstok.chart.data") }}', 'chartls', 'Tanggal ');
         fetchChartDataWRp('{{ route("adminoutlet.chart.data") }}', 'chartpo', 'Nilai Pembelian ');
         fetchChartDataWRp('{{ route("adminnegosiasi.chart.data") }}', 'chartln', 'Nilai Negosiasi ');
 
         //laporan SUPPORTS
         fetchChartDataWRp('{{ route("adminpendapatanservisasp.chart.data") }}', 'chartlrp', 'Nilai Pendapatan ');
+        fetchChartDataWRp('{{ route("adminpendapatanservisasptotal.chart.data") }}', 'chartlrptotal', 'Nilai Pendapatan ');
         fetchChartDataWRp('{{ route("adminpiutangservisasp.chart.data") }}', 'chartlrps', 'Nilai Piutang ');
+        fetchChartDataWRp('{{ route("adminpiutangservisasptotal.chart.data") }}', 'chartlrpstotal', 'Nilai Piutang ');
         fetchChartDataWRp('{{ route("adminpendapatanpengirimanluarbali.chart.data") }}', 'chartrplb', 'Nilai Pendapatan ');
 
         //laporan HRGA
         fetchChartHRGA('{{ route("adminsakit.chart.data") }}', 'charts', 'Nama Karyawan');
+        fetchChartHRGA('{{ route("adminsakittotal.chart.data") }}', 'chartstotal', 'Nama Karyawan');
         fetchChartHRGA('{{ route("adminizin.chart.data") }}', 'chartizin', 'Nama Karyawan');
+        fetchChartHRGA('{{ route("adminizintotal.chart.data") }}', 'chartizintotal', 'Nama Karyawan');
         fetchChartHRGA('{{ route("admincuti.chart.data") }}', 'chartcuti', 'Nama Karyawan');
+        fetchChartHRGA('{{ route("admincutitotal.chart.data") }}', 'chartcutitotal', 'Nama Karyawan');
         fetchChartHRGA('{{ route("adminterlambat.chart.data") }}', 'chartterlambat', 'Nama Karyawan');
+        fetchChartHRGA('{{ route("adminterlambattotal.chart.data") }}', 'chartterlambattotal', 'Nama Karyawan');
 
         //laporan ACCOUNTING
         fetchChartPieData('{{ route("adminkhps.chart.data") }}', 'chartkhps', 'Nilai Pendapatan ');
@@ -689,24 +944,33 @@
         fetchChartPaket('{{ route("admin.chart.data") }}' + queryString, 'chartl');
         fetchChartPaket('{{ route("admintotal.chart.data") }}' + queryString, 'chartltotal');
         fetchChartPaket('{{ route("adminstatuspaket.chart.data") }}' + queryString, 'chartsp');
+        fetchChartPaket('{{ route("adminstatuspakettotal.chart.data") }}' + queryString, 'chartsptotal');
         fetchChartDataNRp('{{ route("adminperinstansi.chart.data") }}' + queryString, 'chartpi');
+        fetchChartDataNRp('{{ route("adminperinstansitotal.chart.data") }}' + queryString, 'chartpitotal');
 
         // laporan PROCUREMENTS
         fetchChartDataWRp('{{ route("adminholding.chart.data") }}' + queryString, 'chartph');
+        fetchChartDataWRp('{{ route("adminholdingtotal.chart.data") }}' + queryString, 'chartphtotal');
         fetchChartDataWRp('{{ route("adminstok.chart.data") }}' + queryString, 'chartls');
         fetchChartDataWRp('{{ route("adminoutlet.chart.data") }}' + queryString, 'chartpo');
         fetchChartDataWRp('{{ route("adminnegosiasi.chart.data") }}' + queryString, 'chartln');
 
         // laporan SUPPORTS
         fetchChartDataWRp('{{ route("adminpendapatanservisasp.chart.data") }}' + queryString, 'chartlrp');
+        fetchChartDataWRp('{{ route("adminpendapatanservisasptotal.chart.data") }}' + queryString, 'chartlrptotal');
         fetchChartDataWRp('{{ route("adminpiutangservisasp.chart.data") }}' + queryString, 'chartlrps');
+        fetchChartDataWRp('{{ route("adminpiutangservisasptotal.chart.data") }}' + queryString, 'chartlrpstotal');
         fetchChartDataWRp('{{ route("adminpendapatanpengirimanluarbali.chart.data") }}' + queryString, 'chartrplb');
 
         // laporan HRGA
         fetchChartDataNRp('{{ route("adminsakit.chart.data") }}' + queryString, 'charts');
+        fetchChartDataNRp('{{ route("adminsakittotal.chart.data") }}' + queryString, 'chartstotal');
         fetchChartDataNRp('{{ route("adminizin.chart.data") }}' + queryString, 'chartizin');
+        fetchChartDataNRp('{{ route("adminizintotal.chart.data") }}' + queryString, 'chartizintotal');
         fetchChartDataNRp('{{ route("admincuti.chart.data") }}' + queryString, 'chartcuti');
+        fetchChartDataNRp('{{ route("admincutitotal.chart.data") }}' + queryString, 'chartcutitotal');
         fetchChartDataNRp('{{ route("adminterlambat.chart.data") }}' + queryString, 'chartterlambat');
+        fetchChartDataNRp('{{ route("adminterlambattotal.chart.data") }}' + queryString, 'chartterlambattotal');
 
         // laporan ACCOUNTING
         fetchChartPieData('{{ route("adminkhps.chart.data") }}' + queryString, 'chartkhps');

@@ -275,8 +275,12 @@ Route::get('/adminpenjualan/chart-data', [RekapPenjualanController::class, 'show
 Route::get('/adminpp/chart-data', [RekapPenjualanPerusahaanController::class, 'showChart'])->name('adminpp.chart.data');
 Route::get('/adminpptotal/chart-data', [RekapPenjualanPerusahaanController::class, 'chartTotal'])->name('adminpptotal.chart.data');
 Route::get('/adminstatuspaket/chart-data', [StatusPaketController::class, 'showChart'])->name('adminstatuspaket.chart.data');
+Route::get('/adminstatuspakettotal/chart-data', [StatusPaketController::class, 'chartTotal'])->name('adminstatuspakettotal.chart.data');
 Route::get('/adminperinstansi/chart-data', [LaporanPerInstansiController::class, 'showChart'])->name('adminperinstansi.chart.data');
+Route::get('/adminperinstansitotal/chart-data', [LaporanPerInstansiController::class, 'chartTotal'])->name('adminperinstansitotal.chart.data');
+
 Route::get('/adminholding/chart-data', [LaporanHoldingController::class, 'showChart'])->name('adminholding.chart.data');
+Route::get('/adminholdingtotal/chart-data', [LaporanHoldingController::class, 'chartTotal'])->name('adminholdingtotal.chart.data');
 Route::get('/adminstok/chart-data', [LaporanStokController::class, 'showChart'])->name('adminstok.chart.data');
 Route::get('/adminoutlet/chart-data', [LaporanOutletController::class, 'showChart'])->name('adminoutlet.chart.data');
 Route::get('/adminnegosiasi/chart-data', [LaporanNegosiasiController::class, 'showChart'])->name('adminnegosiasi.chart.data');
@@ -284,12 +288,18 @@ Route::get('/adminnegosiasi/chart-data', [LaporanNegosiasiController::class, 'sh
 Route::get( '/adminpendapatanpengirimanbali/chart-data', [LaporanSamitraController::class, 'showChart'])->name('adminpendapatanpengirimanbali.chart.data');
 Route::get( '/adminpendapatanpengirimanluarbali/chart-data', [LaporanDetransController::class, 'showChart'])->name('adminpendapatanpengirimanluarbali.chart.data');
 Route::get( '/adminpendapatanservisasp/chart-data', [RekapPendapatanServisAspController::class, 'showChart'])->name('adminpendapatanservisasp.chart.data');
+Route::get( '/adminpendapatanservisasptotal/chart-data', [RekapPendapatanServisAspController::class, 'chartTotal'])->name('adminpendapatanservisasptotal.chart.data');
 Route::get( '/adminpiutangservisasp/chart-data', [RekapPiutangServisAspController::class, 'showChart'])->name('adminpiutangservisasp.chart.data');
+Route::get( '/adminpiutangservisasptotal/chart-data', [RekapPiutangServisAspController::class, 'chartTotal'])->name('adminpiutangservisasptotal.chart.data');
 
 Route::get('/adminsakit/chart-data', [LaporanSakitController::class, 'showChart'])->name('adminsakit.chart.data');
+Route::get('/adminsakittotal/chart-data', [LaporanSakitController::class, 'chartTotal'])->name('adminsakittotal.chart.data');
 Route::get('/adminizin/chart-data', [LaporanIzinController::class, 'showChart'])->name('adminizin.chart.data');
+Route::get('/adminizintotal/chart-data', [LaporanIzinController::class, 'chartTotal'])->name('adminizintotal.chart.data');
 Route::get('/admincuti/chart-data', [LaporanCutiController::class, 'showChart'])->name('admincuti.chart.data');
+Route::get('/admincutitotal/chart-data', [LaporanCutiController::class, 'chartTotal'])->name('admincutitotal.chart.data');
 Route::get('adminterlambat/chart-data', [LaporanTerlambatController::class, 'showChart'])->name('adminterlambat.chart.data');
+Route::get('adminterlambattotal/chart-data', [LaporanTerlambatController::class, 'chartTotal'])->name('adminterlambattotal.chart.data');
 
 Route::get('/adminkhps/chart-data', [KHPSController::class, 'showChart'])->name('adminkhps.chart.data');
 Route::get('/adminlabarugi/gambar', [LaporanLabaRugiController::class, 'getGambar'])->name('adminlabarugi.gambar');
