@@ -205,7 +205,7 @@
                 <label for="perPage" class="mr-2 text-sm text-gray-600">Tampilkan</label>
                 <select 
                     id="perPage" 
-                    class="p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    class="p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-red-500 focus:border-red-500"
                     onchange="changePerPage(this.value)">
                     <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
                     <option value="12" {{ request('per_page') == 12 || !request('per_page') ? 'selected' : '' }}>12</option>
@@ -224,11 +224,11 @@
 <div class="flex flex-col mx-auto bg-white p-6 mt-4 rounded-lg shadow-xl border border-grey-500">
 <h1 class="text-4xl font-bold text-red-600 mb-4 font-montserrat text-start">Diagram</h1>
 
-<div class="mt-6 self-center w-full h-[750px] flex justify-center">
+<div class="mt-6 self-center w-full h-auto flex justify-center">
     <canvas id="chart"></canvas>
 </div>
 <div class="mt-6 flex justify-end">
-    <button onclick="exportToPDF()" class="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition duration-300 ease-in-out">
+    <button onclick="exportToPDF()" class="bg-red-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-red-600 transition duration-300 ease-in-out">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
             <mask id="lineMdCloudAltPrintFilledLoop0">
                 <g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
@@ -383,7 +383,7 @@
                     callbacks: {
                         label: function(tooltipItem) {
                             let value = tooltipItem.raw; // Ambil data nilai
-                            return tooltipItem.dataset.label + ' : ' + 'Rp ' + value.toLocaleString(); // Format angka
+                            return tooltipItem.dataset.text + ' : ' + 'Rp ' + value.toLocaleString(); // Format angka
                         },
                     },
                 },
@@ -406,6 +406,11 @@
                     },
                 },
             },
+            layout: {
+                padding: {
+                    top: 50 // Tambahkan padding atas agar angka tidak terpotong
+                },
+            },
         },
         plugins: [{
             afterDatasetsDraw: function(chart) {
@@ -414,10 +419,12 @@
                     var meta = chart.getDatasetMeta(i);
                     meta.data.forEach((bar, index) => {
                         var value = dataset.data[index];
+                        var textY = bar.y - 10; // Beri jarak lebih jauh agar angka tidak terpotong
+                        if (textY < 20) textY = 20; // Pastikan angka tidak keluar area chart
                         ctx.fillStyle = 'black'; // Warna teks
                         ctx.font = 'bold 15px sans-serif'; // Ukuran teks
                         ctx.textAlign = 'center';
-                        ctx.fillText('Rp ' + value.toLocaleString(), bar.x, bar.y - 10); // Tampilkan di atas bar
+                        ctx.fillText('Rp ' + value.toLocaleString(), bar.x, textY); // Tampilkan di atas bar
                     });
                 });
             }

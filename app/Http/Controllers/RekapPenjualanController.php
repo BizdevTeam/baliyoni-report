@@ -68,7 +68,6 @@ class RekapPenjualanController extends Controller
         return view('marketings.rekappenjualan', compact('rekappenjualans', 'chartData'));
     }
 
-
     public function store(Request $request)
     {
         try {
@@ -296,7 +295,7 @@ class RekapPenjualanController extends Controller
             ],
         ],
     ]);
-    }
+}
 
     private function getRandomRGBAA($opacity = 0.7)
     {

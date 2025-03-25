@@ -301,62 +301,62 @@ class LaporanCutiController extends Controller
 
     public function chartTotal(Request $request)
     {
-    $search = $request->input('search');
-    $startMonth = $request->input('start_month');
-    $endMonth = $request->input('end_month');
-
-    // Ambil data dari database
-    $query = LaporanCuti::query();
+        $search = $request->input('search');
+        $startMonth = $request->input('start_month');
+        $endMonth = $request->input('end_month');
     
-    // Filter berdasarkan tanggal jika ada
-    if ($search) {
-        $query->where('tanggal', 'LIKE', "%$search%");
-    }
-    
-    // Filter berdasarkan range bulan-tahun jika keduanya diisi
-    if ($startMonth && $endMonth) {
-        $startDate = \Carbon\Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
-        $endDate = \Carbon\Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+        // Ambil data dari database
+        $query = LaporanCuti::query();
         
-        $query->whereBetween('tanggal', [$startDate, $endDate]);
+        // Filter berdasarkan tanggal jika ada
+        if ($search) {
+            $query->where('tanggal', 'LIKE', "%$search%");
+        }
+        
+        // Filter berdasarkan range bulan-tahun jika keduanya diisi
+        if ($startMonth && $endMonth) {
+            $startDate = \Carbon\Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+            $endDate = \Carbon\Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+            
+            $query->whereBetween('tanggal', [$startDate, $endDate]);
+        }
+        
+        $laporancutis = $query->get();
+    
+        // Akumulasi total_sakit berdasarkan bulan
+        $akumulasiData = [];
+        foreach ($laporancutis as $item) {
+            $bulan = \Carbon\Carbon::parse($item->tanggal)->format('F Y');
+            if (!isset($akumulasiData[$bulan])) {
+                $akumulasiData[$bulan] = 0;
+            } 
+            $akumulasiData[$bulan] += $item->total_cuti;
+        }
+    
+        // Siapkan data untuk chart
+        $labels = array_keys($akumulasiData);
+        $data = array_values($akumulasiData);
+        $backgroundColors = array_map(fn() => $this->getRandomRGBAA1(), $data);
+    
+        $chartData = [
+            'labels' => $labels,
+            'datasets' => [
+                [
+                    'label' => 'Total Cuti per Bulan',
+                    'data' => $data,
+                    'backgroundColor' => $backgroundColors,
+                ],
+            ],
+        ];
+    
+        // Kembalikan data dalam format JSON
+        return response()->json($chartData);
     }
     
-    $laporancutis = $query->get();
-
-    // Akumulasi total penjualan berdasarkan nama website
-    $akumulasiData = [];
-    foreach ($laporancutis as $item) {
-        $namaNama = $item->nama;
-        if (!isset($akumulasiData[$namaNama])) {
-            $akumulasiData[$namaNama] = 0;
-        } 
-        $akumulasiData[$namaNama] += $item->total_cuti;
+    private function getRandomRGBAA1($opacity = 0.7)
+    {
+        return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
     }
-
-    // Siapkan data untuk chart
-    $labels = array_keys($akumulasiData);
-    $data = array_values($akumulasiData);
-    $backgroundColors = array_map(fn() => $this->getRandomRGBAA1(), $data);
-
-    $chartData = [
-        'labels' => $labels,
-        'datasets' => [
-            [
-                'label' => 'Total Paket',
-                'data' => $data,
-                'backgroundColor' => $backgroundColors,
-            ],
-        ],
-    ];
-
-    // Kembalikan data dalam format JSON
-    return response()->json($chartData);
-}
-
-private function getRandomRGBAA1($opacity = 0.7)
-{
-    return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
-}
 
 }
 

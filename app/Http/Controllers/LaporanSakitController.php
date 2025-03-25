@@ -293,7 +293,7 @@ class LaporanSakitController extends Controller
     }
 
     public function chartTotal(Request $request)
-    {
+{
     $search = $request->input('search');
     $startMonth = $request->input('start_month');
     $endMonth = $request->input('end_month');
@@ -316,14 +316,14 @@ class LaporanSakitController extends Controller
     
     $laporansakits = $query->get();
 
-    // Akumulasi total penjualan berdasarkan nama website
+    // Akumulasi total_sakit berdasarkan bulan
     $akumulasiData = [];
     foreach ($laporansakits as $item) {
-        $namaNama = $item->nama;
-        if (!isset($akumulasiData[$namaNama])) {
-            $akumulasiData[$namaNama] = 0;
+        $bulan = \Carbon\Carbon::parse($item->tanggal)->format('F Y');
+        if (!isset($akumulasiData[$bulan])) {
+            $akumulasiData[$bulan] = 0;
         } 
-        $akumulasiData[$namaNama] += $item->total_sakit;
+        $akumulasiData[$bulan] += $item->total_sakit;
     }
 
     // Siapkan data untuk chart
@@ -335,7 +335,7 @@ class LaporanSakitController extends Controller
         'labels' => $labels,
         'datasets' => [
             [
-                'label' => 'Total Paket',
+                'label' => 'Total Sakit per Bulan',
                 'data' => $data,
                 'backgroundColor' => $backgroundColors,
             ],
@@ -350,6 +350,7 @@ private function getRandomRGBAA1($opacity = 0.7)
 {
     return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
 }
+
  
 }
 

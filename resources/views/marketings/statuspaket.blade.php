@@ -360,64 +360,72 @@
 
     var chartData = @json($chartData);
 
-var ctx = document.getElementById('chart').getContext('2d');
+    var ctx = document.getElementById('chart').getContext('2d');
 
-var barChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: chartData.labels, // Label tanggal
-        datasets: chartData.datasets, // Data total penjualan
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: {
-                display: false, // Sembunyikan legenda
-            },
-            tooltip: {
-                callbacks: {
-                    label: function(tooltipItem) {
-                        let value = tooltipItem.raw; // Ambil data nilai
-                        return tooltipItem.dataset.label + ' : ' + value.toLocaleString(); // Format angka
+    var barChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: chartData.labels, // Label tanggal
+            datasets: chartData.datasets, // Data total penjualan
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false, // Sembunyikan legenda
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            let value = tooltipItem.raw; // Ambil data nilai
+                            return tooltipItem.dataset.text + ' : ' + value + ' Paket'.toLocaleString(); // Format angka
+                        },
                     },
                 },
             },
-        },
-        scales: {
-            x: {
-                title: {
-                    display: false, // Sembunyikan label sumbu X
+            scales: {
+                x: {
+                    title: {
+                        display: false, // Sembunyikan label sumbu X
+                    },
                 },
-            },
-            y: {
-                beginAtZero: true,
-                title: {
-                    display: false, // Sembunyikan label sumbu Y
-                },
-                ticks: {
-                    callback: function(value) {
-                        return value.toLocaleString(); // Format angka
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: false, // Sembunyikan label sumbu Y
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return value + ' Paket'.toLocaleString(); // Format angka
+                        },
                     },
                 },
             },
+            layout: {
+                padding: {
+                    top: 50 // Tambahkan padding atas agar angka tidak terpotong
+                },
+            },
         },
-    },
-    plugins: [{
-        afterDatasetsDraw: function(chart) {
-            var ctx = chart.ctx;
-            chart.data.datasets.forEach((dataset, i) => {
-                var meta = chart.getDatasetMeta(i);
-                meta.data.forEach((bar, index) => {
-                    var value = dataset.data[index];
-                    ctx.fillStyle = 'black'; // Warna teks
-                    ctx.font = 'bold 15px sans-serif'; // Ukuran teks
-                    ctx.textAlign = 'center';
-                    ctx.fillText(value.toLocaleString(), bar.x, bar.y - 10); // Tampilkan di atas bar
+        plugins: [{
+            afterDatasetsDraw: function(chart) {
+                var ctx = chart.ctx;
+                chart.data.datasets.forEach((dataset, i) => {
+                    var meta = chart.getDatasetMeta(i);
+                    meta.data.forEach((bar, index) => {
+                        var value = dataset.data[index];
+                        var textY = bar.y - 10; // Beri jarak lebih jauh agar angka tidak terpotong
+                        if (textY < 20) textY = 20; // Pastikan angka tidak keluar area chart
+                        ctx.fillStyle = 'black'; // Warna teks
+                        ctx.font = 'bold 15px sans-serif'; // Ukuran teks
+                        ctx.textAlign = 'center';
+                        ctx.fillText(value + ' Paket'.toLocaleString(), bar.x, textY); // Tampilkan di atas bar
+                    });
                 });
-            });
-        }
-    }]
-});
+            }
+        }]
+    });
+
 
     async function exportToPDF() {
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
