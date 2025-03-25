@@ -116,14 +116,14 @@ class RekapPenjualanPerusahaanController extends Controller
                 return redirect()->back()->with('error', $errorMessage);
             }
 
-            // Cek kombinasi unik date dan perusahaan_id
-            $exists = RekapPenjualanPerusahaan::where('tanggal', $validatedData['tanggal'])
-                ->where('perusahaan_id', $validatedData['perusahaan_id'])
-                ->exists();
+            // // Cek kombinasi unik date dan perusahaan_id
+            // $exists = RekapPenjualanPerusahaan::where('tanggal', $validatedData['tanggal'])
+            //     ->where('perusahaan_id', $validatedData['perusahaan_id'])
+            //     ->exists();
 
-            if ($exists) {
-                return redirect()->back()->with('error', 'TIdak dapat diubah, data sudah ada.');
-            }
+            // if ($exists) {
+            //     return redirect()->back()->with('error', 'TIdak dapat diubah, data sudah ada.');
+            // }
 
             // Update data
             $rekappenjualanperusahaan->update($validatedData);

@@ -203,7 +203,7 @@
                 <label for="perPage" class="mr-2 text-sm text-gray-600">Tampilkan</label>
                 <select 
                     id="perPage" 
-                    class="p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    class="p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-red-500 focus:border-red-500"
                     onchange="changePerPage(this.value)">
                     <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
                     <option value="12" {{ request('per_page') == 12 || !request('per_page') ? 'selected' : '' }}>12</option>
@@ -222,11 +222,11 @@
 <div class="flex flex-col mx-auto bg-white p-6 mt-4 rounded-lg shadow-xl border border-grey-500">
 <h1 class="text-4xl font-bold text-red-600 mb-4 font-montserrat text-start">Diagram</h1>
 
-<div class="mt-6 self-center w-full h-[750px] flex justify-center">
+<div class="mt-6 self-center w-full h-auto flex justify-center">
     <canvas id="chart"></canvas>
 </div>
 <div class="mt-6 flex justify-end">
-    <button onclick="exportToPDF()" class="bg-blue-700 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition duration-300 ease-in-out">
+    <button onclick="exportToPDF()" class="bg-red-700 text-white px-6 py-3 rounded-lg shadow-md hover:bg-red-600 transition duration-300 ease-in-out">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
             <mask id="lineMdCloudAltPrintFilledLoop0">
                 <g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
@@ -359,43 +359,52 @@
         });
     });
 
-    // Inisialisasi chart menggunakan data yang diberikan (misalnya dari server)
     var chartData = @json($chartData);
 
     var ctx = document.getElementById('chart').getContext('2d');
+
     var barChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: chartData.labels,
-            datasets: chartData.datasets,
+            labels: chartData.labels, // Label tanggal
+            datasets: chartData.datasets, // Data total penjualan
         },
         options: {
             responsive: true,
             plugins: {
                 legend: {
-                    display: false,
+                    display: false, // Sembunyikan legenda
                 },
                 tooltip: {
                     callbacks: {
                         label: function(tooltipItem) {
-                            let value = tooltipItem.raw;
-                            return tooltipItem.dataset.label + ' : ' + value.toLocaleString();
+                            let value = tooltipItem.raw; // Ambil data nilai
+                            return tooltipItem.dataset.text + ' : ' + value + ' Paket'.toLocaleString(); // Format angka
                         },
                     },
                 },
             },
             scales: {
                 x: {
-                    title: { display: false },
+                    title: {
+                        display: false, // Sembunyikan label sumbu X
+                    },
                 },
                 y: {
                     beginAtZero: true,
-                    title: { display: false },
+                    title: {
+                        display: false, // Sembunyikan label sumbu Y
+                    },
                     ticks: {
                         callback: function(value) {
-                            return value.toLocaleString();
+                            return value + ' Paket'.toLocaleString(); // Format angka
                         },
                     },
+                },
+            },
+            layout: {
+                padding: {
+                    top: 50 // Tambahkan padding atas agar angka tidak terpotong
                 },
             },
         },
@@ -406,10 +415,12 @@
                     var meta = chart.getDatasetMeta(i);
                     meta.data.forEach((bar, index) => {
                         var value = dataset.data[index];
-                        ctx.fillStyle = 'black';
-                        ctx.font = 'bold 15px sans-serif';
+                        var textY = bar.y - 10; // Beri jarak lebih jauh agar angka tidak terpotong
+                        if (textY < 20) textY = 20; // Pastikan angka tidak keluar area chart
+                        ctx.fillStyle = 'black'; // Warna teks
+                        ctx.font = 'bold 15px sans-serif'; // Ukuran teks
                         ctx.textAlign = 'center';
-                        ctx.fillText(value.toLocaleString(), bar.x, bar.y - 10);
+                        ctx.fillText(value + ' Paket'.toLocaleString(), bar.x, textY); // Tampilkan di atas bar
                     });
                 });
             }

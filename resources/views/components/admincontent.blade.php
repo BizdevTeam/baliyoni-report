@@ -963,14 +963,14 @@
         fetchChartDataWRp('{{ route("adminpendapatanpengirimanluarbali.chart.data") }}' + queryString, 'chartrplb');
 
         // laporan HRGA
-        fetchChartDataNRp('{{ route("adminsakit.chart.data") }}' + queryString, 'charts');
-        fetchChartDataNRp('{{ route("adminsakittotal.chart.data") }}' + queryString, 'chartstotal');
-        fetchChartDataNRp('{{ route("adminizin.chart.data") }}' + queryString, 'chartizin');
-        fetchChartDataNRp('{{ route("adminizintotal.chart.data") }}' + queryString, 'chartizintotal');
-        fetchChartDataNRp('{{ route("admincuti.chart.data") }}' + queryString, 'chartcuti');
-        fetchChartDataNRp('{{ route("admincutitotal.chart.data") }}' + queryString, 'chartcutitotal');
-        fetchChartDataNRp('{{ route("adminterlambat.chart.data") }}' + queryString, 'chartterlambat');
-        fetchChartDataNRp('{{ route("adminterlambattotal.chart.data") }}' + queryString, 'chartterlambattotal');
+        fetchChartHRGA('{{ route("adminsakit.chart.data") }}' + queryString, 'charts');
+        fetchChartHRGA('{{ route("adminsakittotal.chart.data") }}' + queryString, 'chartstotal');
+        fetchChartHRGA('{{ route("adminizin.chart.data") }}' + queryString, 'chartizin');
+        fetchChartHRGA('{{ route("adminizintotal.chart.data") }}' + queryString, 'chartizintotal');
+        fetchChartHRGA('{{ route("admincuti.chart.data") }}' + queryString, 'chartcuti');
+        fetchChartHRGA('{{ route("admincutitotal.chart.data") }}' + queryString, 'chartcutitotal');
+        fetchChartHRGA('{{ route("adminterlambat.chart.data") }}' + queryString, 'chartterlambat');
+        fetchChartHRGA('{{ route("adminterlambattotal.chart.data") }}' + queryString, 'chartterlambattotal');
 
         // laporan ACCOUNTING
         fetchChartPieData('{{ route("adminkhps.chart.data") }}' + queryString, 'chartkhps');
@@ -1000,7 +1000,7 @@
     });
 
     //fetch menggunakan Rp
-    function fetchChartDataWRp(url, canvasId, title) {
+function fetchChartDataWRp(url, canvasId, title) {
     fetch(url)
         .then(response => response.json())
         .then(chartData => {
@@ -1036,7 +1036,17 @@
                             }
                         },
                         y: {
-                            beginAtZero: true
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'Rp ' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    layout: {
+                        padding: {
+                            top: 50 // Tambahkan padding di atas agar angka tidak terpotong
                         }
                     },
                     animation: {
@@ -1050,7 +1060,12 @@
                                 var meta = chartCanvas.chart.getDatasetMeta(i);
                                 meta.data.forEach((bar, index) => {
                                     var value = dataset.data[index];
-                                    ctx.fillText('Rp ' +  value.toLocaleString(), bar.x, bar.y - 10);
+                                    var textY = bar.y - 10; // Beri jarak lebih jauh agar angka tidak terpotong
+                                    if (textY < 20) textY = 20; // Pastikan angka tidak keluar area chart
+                                    ctx.fillStyle = 'black'; // Warna teks
+                                    ctx.font = 'bold 15px sans-serif'; // Ukuran teks
+                                    ctx.textAlign = 'center';
+                                    ctx.fillText('Rp ' + value.toLocaleString(), bar.x, textY); // Tampilkan di atas bar
                                 });
                             });
                         }
@@ -1059,7 +1074,8 @@
             });
         })
         .catch(error => console.error('Error fetching chart data:', error));
-    }
+}
+
 
     //fetch chart tanpa Rp
     function fetchChartDataNRp(url, canvasId, title) {
@@ -1101,6 +1117,11 @@
                             beginAtZero: true
                         }
                     },
+                    layout: {
+                        padding: {
+                            top: 50 // Tambahkan padding di atas agar angka tidak terpotong
+                        }
+                    },
                     animation: {
                         onComplete: function() {
                             var ctx = chartCanvas.chart.ctx;
@@ -1112,7 +1133,12 @@
                                 var meta = chartCanvas.chart.getDatasetMeta(i);
                                 meta.data.forEach((bar, index) => {
                                     var value = dataset.data[index];
-                                    ctx.fillText(value.toLocaleString(), bar.x, bar.y - 10);
+                                    var textY = bar.y - 10; // Beri jarak lebih jauh agar angka tidak terpotong
+                                    if (textY < 20) textY = 20; // Pastikan angka tidak keluar area chart
+                                    ctx.fillStyle = 'black'; // Warna teks
+                                    ctx.font = 'bold 15px sans-serif'; // Ukuran teks
+                                    ctx.textAlign = 'center';
+                                    ctx.fillText(value.toLocaleString(), bar.x, textY);
                                 });
                             });
                         }
@@ -1162,6 +1188,11 @@
                             beginAtZero: true
                         }
                     },
+                    layout: {
+                        padding: {
+                            top: 50 // Tambahkan padding di atas agar angka tidak terpotong
+                        }
+                    },
                     animation: {
                         onComplete: function() {
                             var ctx = chartCanvas.chart.ctx;
@@ -1173,7 +1204,12 @@
                                 var meta = chartCanvas.chart.getDatasetMeta(i);
                                 meta.data.forEach((bar, index) => {
                                     var value = dataset.data[index];
-                                    ctx.fillText(value + ' Paket'.toLocaleString(), bar.x, bar.y - 10);
+                                    var textY = bar.y - 10; // Beri jarak lebih jauh agar angka tidak terpotong
+                                    if (textY < 20) textY = 20; // Pastikan angka tidak keluar area chart
+                                    ctx.fillStyle = 'black'; // Warna teks
+                                    ctx.font = 'bold 15px sans-serif'; // Ukuran teks
+                                    ctx.textAlign = 'center';
+                                    ctx.fillText(value + ' Paket'.toLocaleString(), bar.x, textY);
                                 });
                             });
                         }
@@ -1223,6 +1259,11 @@
                             beginAtZero: true
                         }
                     },
+                    layout: {
+                        padding: {
+                            top: 50 // Tambahkan padding di atas agar angka tidak terpotong
+                        }
+                    },
                     animation: {
                         onComplete: function() {
                             var ctx = chartCanvas.chart.ctx;
@@ -1234,7 +1275,12 @@
                                 var meta = chartCanvas.chart.getDatasetMeta(i);
                                 meta.data.forEach((bar, index) => {
                                     var value = dataset.data[index];
-                                    ctx.fillText(value + ' Kali'.toLocaleString(), bar.x, bar.y - 10);
+                                    var textY = bar.y - 10; // Beri jarak lebih jauh agar angka tidak terpotong
+                                    if (textY < 20) textY = 20; // Pastikan angka tidak keluar area chart
+                                    ctx.fillStyle = 'black'; // Warna teks
+                                    ctx.font = 'bold 15px sans-serif'; // Ukuran teks
+                                    ctx.textAlign = 'center';
+                                    ctx.fillText(value + ' Kali'.toLocaleString(), bar.x, textY);
                                 });
                             });
                         }

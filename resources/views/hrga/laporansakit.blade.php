@@ -215,7 +215,7 @@
 <div class="flex flex-col mx-auto bg-white p-6 mt-4 rounded-lg shadow-xl border border-grey-500">
 <h1 class="text-4xl font-bold text-red-600 mb-4 font-montserrat text-start">Diagram</h1>
 
-<div class="mt-6 self-center w-full h-[750px] flex justify-center">
+<div class="mt-6 self-center w-full h-auto flex justify-center">
     <canvas id="chart"></canvas>
 </div>
 <div class="mt-6 flex justify-end">
@@ -346,7 +346,6 @@
         });
     });
 
-    
     var chartData = @json($chartData);
 
     var ctx = document.getElementById('chart').getContext('2d');
@@ -367,7 +366,7 @@
                     callbacks: {
                         label: function(tooltipItem) {
                             let value = tooltipItem.raw; // Ambil data nilai
-                            return tooltipItem.dataset.text + ' : ' + value.toLocaleString(); // Format angka
+                            return tooltipItem.dataset.text + ' : ' + value + ' Kali'.toLocaleString(); // Format angka
                         },
                     },
                 },
@@ -385,9 +384,14 @@
                     },
                     ticks: {
                         callback: function(value) {
-                            return value.toLocaleString(); // Format angka
+                            return value + ' Kali'.toLocaleString(); // Format angka
                         },
                     },
+                },
+            },
+            layout: {
+                padding: {
+                    top: 50 // Tambahkan padding atas agar angka tidak terpotong
                 },
             },
         },
@@ -398,10 +402,12 @@
                     var meta = chart.getDatasetMeta(i);
                     meta.data.forEach((bar, index) => {
                         var value = dataset.data[index];
+                        var textY = bar.y - 10; // Beri jarak lebih jauh agar angka tidak terpotong
+                        if (textY < 20) textY = 20; // Pastikan angka tidak keluar area chart
                         ctx.fillStyle = 'black'; // Warna teks
                         ctx.font = 'bold 15px sans-serif'; // Ukuran teks
                         ctx.textAlign = 'center';
-                        ctx.fillText(value.toLocaleString(), bar.x, bar.y - 10); // Tampilkan di atas bar
+                        ctx.fillText(value + ' Kali'.toLocaleString(), bar.x, textY); // Tampilkan di atas bar
                     });
                 });
             }
