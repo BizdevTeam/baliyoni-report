@@ -38,59 +38,59 @@
             <!-- Navbar -->
             <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
 
- <!-- Wrapper Alert -->
- @if (session('success') || session('error'))
- <div x-data="{ 
-         showSuccess: {{ session('success') ? 'true' : 'false' }},
-         showError: {{ session('error') ? 'true' : 'false' }}
-     }"
-     x-init="setTimeout(() => showSuccess = false, 3000); setTimeout(() => showError = false, 3000);"
-     class="fixed top-5 right-5 z-50 flex flex-col gap-3">
+            <!-- Wrapper Alert -->
+            @if (session('success') || session('error'))
+            <div x-data="{ 
+                    showSuccess: {{ session('success') ? 'true' : 'false' }},
+                    showError: {{ session('error') ? 'true' : 'false' }}
+                }"
+                x-init="setTimeout(() => showSuccess = false, 3000); setTimeout(() => showError = false, 3000);"
+                class="fixed top-5 right-5 z-50 flex flex-col gap-3">
 
-     <!-- Success Alert -->
-     @if (session('success'))
-     <div x-show="showSuccess" x-transition.opacity.scale.90
-         class="bg-green-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
-         
-         <!-- Icon -->
-         <span class="text-2xl">✅</span>
+                <!-- Success Alert -->
+                @if (session('success'))
+                <div x-show="showSuccess" x-transition.opacity.scale.90
+                    class="bg-green-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
+                    
+                    <!-- Icon -->
+                    <span class="text-2xl">✅</span>
 
-         <!-- Message -->
-         <div>
-             <h3 class="font-bold">Success!</h3>
-             <p class="text-sm">{{ session('success') }}</p>
-         </div>
+                    <!-- Message -->
+                    <div>
+                        <h3 class="font-bold">Success!</h3>
+                        <p class="text-sm">{{ session('success') }}</p>
+                    </div>
 
-         <!-- Close Button -->
-         <button @click="showSuccess = false" class="ml-auto text-white text-lg font-bold">
-             &times;
-         </button>
-     </div>
-     @endif
+                    <!-- Close Button -->
+                    <button @click="showSuccess = false" class="ml-auto text-white text-lg font-bold">
+                        &times;
+                    </button>
+                </div>
+                @endif
 
-     <!-- Error Alert -->
-     @if (session('error'))
-     <div x-show="showError" x-transition.opacity.scale.90
-         class="bg-red-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
-         
-         <!-- Icon -->
-         <span class="text-2xl">⚠️</span>
+                <!-- Error Alert -->
+                @if (session('error'))
+                <div x-show="showError" x-transition.opacity.scale.90
+                    class="bg-red-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
+                    
+                    <!-- Icon -->
+                    <span class="text-2xl">⚠️</span>
 
-         <!-- Message -->
-         <div>
-             <h3 class="font-bold">Error!</h3>
-             <p class="text-sm">{{ session('error') }}</p>
-         </div>
+                    <!-- Message -->
+                    <div>
+                        <h3 class="font-bold">Error!</h3>
+                        <p class="text-sm">{{ session('error') }}</p>
+                    </div>
 
-         <!-- Close Button -->
-         <button @click="showError = false" class="ml-auto text-white text-lg font-bold">
-             &times;
-         </button>
-     </div>
-     @endif
+                    <!-- Close Button -->
+                    <button @click="showError = false" class="ml-auto text-white text-lg font-bold">
+                        &times;
+                    </button>
+                </div>
+                @endif
 
- </div>
- @endif
+            </div>
+            @endif
 
             <!-- Main Content -->
         <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
@@ -149,7 +149,8 @@
                                 </div>
                                 </td>
                                 <td class="border border-gray-300 px-4 py-2 content-html align-center text-justify">{!! $laporanbizdevgambar->kendala !!}</td>
-                                <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
+                                <td class="border border-gray-300 py-4 text-center">
+                                    <div class="flex justify-center items-center gap-3">
                                     <!-- Edit Button -->
                                     <button class="bg-transparent text-red-600 px-3 py-2 rounded" data-modal-target="#editEventModal{{ $laporanbizdevgambar->id_laporan_bizdev_gambar }}">
                                         <i class="fa fa-pen"></i>
@@ -162,8 +163,9 @@
                                             <i class="fa fa-trash"></i>
                                         </button>
                                     </form>
-                                </td>
-                            </tr>
+                                </div>
+                            </td>
+                        </tr>
 
                             <!-- Modal for Edit Event -->
                             <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="editEventModal{{ $laporanbizdevgambar->id_laporan_bizdev_gambar }}">
@@ -172,18 +174,45 @@
                                     <form method="POST" action="{{ route('laporanbizdevgambar.update', $laporanbizdevgambar->id_laporan_bizdev_gambar) }}" enctype="multipart/form-data">
                                         @csrf
                                         @method('PUT')
-                                        <div class="space-y-4">
+                                        <div class="space-y-4 max-h-[60vh] overflow-y-auto">
                                             <div>
                                                 <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
                                                 <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $laporanbizdevgambar->tanggal }}" required>
                                             </div>
+
+                                            <!-- Input Gambar dengan Drag & Drop -->
                                             <div>
-                                                <label for="gambar" class="block text-sm font-medium">Gambar</label>
-                                                <input type="file" name="gambar" class="w-full p-2 border rounded">
-                                                <div class="mt-2">
-                                                    <img src="{{ asset('images/it/laporanbizdevgambar/' . $laporanbizdevgambar->gambar) }}" alt="Event Image" class="h-16">
+                                                <label class="block text-sm font-medium">Gambar</label>
+                                                <div id="dropzoneEdit{{ $laporanbizdevgambar->id_laporan_bizdev_gambar }}" class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
+                                                    <div class="flex flex-col items-center justify-center pt-5 pb-6 text-center">
+                                                        <svg class="w-10 h-10 text-gray-400" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h16M3 12h16m-4-4l4 4m-4-4l4 4"></path>
+                                                        </svg>
+                                                        <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Klik untuk upload</span> atau seret file ke sini</p>
+                                                        <p class="text-xs text-gray-500">PNG, JPG, JPEG (Maks 2MB)</p>
+                                                    </div>
+                                                    <input id="gambarEdit{{ $laporanbizdevgambar->id_laporan_bizdev_gambar }}" type="file" name="gambar" class="hidden" accept="image/png, image/jpeg">
                                                 </div>
+
+                                                <!-- Preview gambar yang telah dipilih -->
+                                                <div id="filePreviewEdit{{ $laporanbizdevgambar->id_laporan_bizdev_gambar }}" class="mt-3">
+                                                    <p class="text-sm font-medium">File yang dipilih:</p>
+                                                    <div class="flex items-center gap-2 mt-2">
+                                                        <!-- Gambar lama tetap ada jika belum diubah -->
+                                                        <img id="previewImageEdit{{ $laporanbizdevgambar->id_laporan_bizdev_gambar }}" 
+                                                            src="{{ asset('images/it/laporanbizdevgambar/' . $laporanbizdevgambar->gambar) }}" 
+                                                            alt="Preview" 
+                                                            class="w-20 h-20 object-cover rounded-lg">
+                                                        <span id="fileNameEdit{{ $laporanbizdevgambar->id_laporan_bizdev_gambar }}" class="text-gray-600 text-sm">
+                                                            {{ $laporanbizdevgambar->gambar }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Simpan nama file lama untuk backend jika user tidak mengganti file -->
+                                                <input type="hidden" name="gambar_lama" value="{{ $laporanbizdevgambar->gambar }}">
                                             </div>
+
                                             <div>
                                                 <label for="kendala" class="block text-sm font-medium">kendala</label>
                                                 <input type="hidden" name="kendala" class="w-full p-2 border rounded" id="edit-{{ $laporanbizdevgambar->id_laporan_bizdev_gambar }}-kendala-input" value="{{ $laporanbizdevgambar->kendala }}" required></input>
@@ -197,6 +226,7 @@
                                     </form>
                                 </div>
                             </div>
+
                         @endforeach
                     </tbody>
                 </table>
@@ -270,10 +300,31 @@
                         <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
                         <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
                     </div>
+
+                    <!-- Input Gambar dengan Drag & Drop -->
                     <div>
-                        <label for="gambar" class="block text-sm font-medium">Gambar</label>
-                        <input type="file" name="gambar" class="w-full p-2 border rounded">
+                        <label class="block text-sm font-medium">Gambar</label>
+                        <div id="dropzone" class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6 text-center">
+                                <svg class="w-10 h-10 text-gray-400" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h16M3 12h16m-4-4l4 4m-4-4l4 4"></path>
+                                </svg>
+                                <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Klik untuk upload</span> atau seret file ke sini</p>
+                                <p class="text-xs text-gray-500">PNG, JPG, JPEG (Maks 2MB)</p>
+                            </div>
+                            <input id="gambar" type="file" name="gambar" class="hidden" accept="image/png, image/jpeg">
+                        </div>
+
+                        <!-- Preview file yang telah dipilih -->
+                        <div id="filePreview" class="mt-3 hidden">
+                            <p class="text-sm font-medium">File yang dipilih:</p>
+                            <div class="flex items-center gap-2 mt-2">
+                                <img id="previewImage" src="" alt="Preview" class="w-20 h-20 object-cover rounded-lg hidden">
+                                <span id="fileName" class="text-gray-600 text-sm"></span>
+                            </div>
+                        </div>
                     </div>
+
                     <div>
                         <label for="kendala" class="block text-sm font-medium">kendala</label>
                         <input type="hidden" name="kendala" id="kendala-input" class="w-full p-2 border rounded">
@@ -289,13 +340,13 @@
         </div>
     </div>
 
-              <!-- modal for image -->
-              <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-70 hidden justify-center items-center z-50">
-                <div class="relative">
-                    <img id="modalImage" src="" alt="Full Image" class=" max-w-full max-h-[90vh] rounded-md shadow-lg">
-                    <button onclick="closeModal()" class="absolute top-2 right-2 bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white p-3 rounded-full shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm">✖</button>
-                </div>
-            </div>
+    <!-- modal for image -->
+    <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-70 hidden justify-center items-center z-50">
+    <div class="relative">
+        <img id="modalImage" src="" alt="Full Image" class=" max-w-full max-h-[90vh] rounded-md shadow-lg">
+        <button onclick="closeModal()" class="absolute top-2 right-2 bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white p-3 rounded-full shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm">✖</button>
+    </div>
+</div>
 
 </body>
 <style>
@@ -434,6 +485,115 @@ function changePerPage(value) {
     
     window.location.href = url.pathname + '?' + searchParams.toString();
 }
+
+//dropzone for file
+document.addEventListener("DOMContentLoaded", function () {
+        const dropzone = document.getElementById("dropzone");
+        const fileInput = document.getElementById("gambar");
+        const filePreview = document.getElementById("filePreview");
+        const previewImage = document.getElementById("previewImage");
+        const fileName = document.getElementById("fileName");
+
+        // Fungsi untuk menampilkan preview file
+        function showPreview(file) {
+            filePreview.classList.remove("hidden");
+            fileName.textContent = file.name;
+
+            // Jika file adalah gambar, tampilkan preview
+            if (file.type.startsWith("image/")) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewImage.src = e.target.result;
+                    previewImage.classList.remove("hidden");
+                };
+                reader.readAsDataURL(file);
+            } else {
+                previewImage.classList.add("hidden");
+            }
+        }
+
+        // Ketika input file berubah (file dipilih dari explorer)
+        fileInput.addEventListener("change", function () {
+            if (fileInput.files.length > 0) {
+                showPreview(fileInput.files[0]);
+            }
+        });
+
+        // Drag & Drop Event
+        dropzone.addEventListener("dragover", function (e) {
+            e.preventDefault();
+            dropzone.classList.add("border-blue-500");
+        });
+
+        dropzone.addEventListener("dragleave", function () {
+            dropzone.classList.remove("border-blue-500");
+        });
+
+        dropzone.addEventListener("drop", function (e) {
+            e.preventDefault();
+            dropzone.classList.remove("border-blue-500");
+
+            if (e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+                showPreview(fileInput.files[0]);
+            }
+        });
+
+        // Klik area dropzone untuk memilih file
+        dropzone.addEventListener("click", function () {
+            fileInput.click();
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll("[id^='editEventModal']").forEach(modal => {
+        const id = modal.id.replace("editEventModal", "");
+        
+        const imageInput = document.getElementById(`gambarEdit${id}`);
+        const imagePreview = document.getElementById(`previewImageEdit${id}`);
+        const dropzoneImage = document.getElementById(`dropzoneEdit${id}`);
+
+        function showImagePreview(file) {
+            if (file && file.type.startsWith("image/")) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.classList.remove("hidden");
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        imageInput.addEventListener("change", function () {
+            if (imageInput.files.length > 0) {
+                showImagePreview(imageInput.files[0]);
+            }
+        });
+
+        dropzoneImage.addEventListener("dragover", function (e) {
+            e.preventDefault();
+            dropzoneImage.classList.add("border-blue-500");
+        });
+
+        dropzoneImage.addEventListener("dragleave", function () {
+            dropzoneImage.classList.remove("border-blue-500");
+        });
+
+        dropzoneImage.addEventListener("drop", function (e) {
+            e.preventDefault();
+            dropzoneImage.classList.remove("border-blue-500");
+
+            if (e.dataTransfer.files.length > 0) {
+                imageInput.files = e.dataTransfer.files;
+                showImagePreview(imageInput.files[0]);
+            }
+        });
+        dropzoneImage.addEventListener("click", function () {
+            imageInput.click();
+        });
+        
+    });
+}); 
 
 </script>
 </html>

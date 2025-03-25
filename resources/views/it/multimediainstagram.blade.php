@@ -16,11 +16,11 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
     <!-- Tempusdominus Bootstrap 4 -->
-    <link rel="stylesheet"
-        href="{{ asset('templates/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('templates/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
     <!-- Theme style -->
     <!-- overlayScrollbars -->
     <link rel="stylesheet" href="{{ asset('templates/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.3/flowbite.min.css" />
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
     @vite('resources/css/tailwind.css')
@@ -148,51 +148,80 @@
                                     </div>
                                 </td>
                                 <td class="border border-gray-300 px-4 py-2 text-center">{{ $itmultimediainstagram->keterangan }}</td>
-                                <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
+                                <td class="border border-gray-300 py-4 text-center">
+                                    <div class="flex justify-center items-center gap-3">
                                     <!-- Edit Button -->
-                                    <button class="bg-red-600 text-white px-3 py-2 rounded" data-modal-target="#editEventModal{{ $itmultimediainstagram->id_instagram }}">
+                                    <button class="bg-transparent text-red-600 px-3 py-2 rounded" data-modal-target="#editEventModal{{ $itmultimediainstagram->id_instagram }}">
                                         <i class="fa fa-pen"></i>
-                                        Edit
                                     </button>
                                     <!-- Delete Form -->
                                     <form method="POST" action="{{ route('multimediainstagram.destroy', $itmultimediainstagram->id_instagram) }}">
                                         @csrf
                                         @method('DELETE')
-                                        <button class="bg-red-600 text-white px-3 py-2 rounded hover:bg-red-600" onclick="return confirm('Are you sure to delete?')">
+                                        <button class="bg-transparent text-red-600 px-3 py-2 rounded" onclick="return confirm('Are you sure to delete?')">
                                             <i class="fa fa-trash"></i>
-                                            Delete
                                         </button>
                                     </form>
-                                </td>
-                            </tr>
+                                </div>
+                            </td>
+                        </tr>
 
                             <!-- Modal for Edit Event -->
                             <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="editEventModal{{ $itmultimediainstagram->id_instagram }}">
-                                <div class="bg-white w-1/2 p-6 rounded shadow-lg">
+                                <div class="bg-white w-1/2 p-6 rounded-lg shadow-lg">
                                     <h3 class="text-xl font-semibold mb-4">Edit Data</h3>
                                     <form method="POST" action="{{ route('multimediainstagram.update', $itmultimediainstagram->id_instagram) }}" enctype="multipart/form-data">
                                         @csrf
                                         @method('PUT')
-                                        <div class="space-y-4">
+                                        <div class="space-y-4 max-h-[70vh] overflow-y-auto"> <!-- Scroll jika konten panjang -->
                                             <div>
                                                 <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
-                                                <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $itmultimediainstagram->tanggal }}" required>
+                                                <input type="date" name="tanggal" class="w-full p-2 border rounded focus:ring focus:ring-blue-300" value="{{ $itmultimediainstagram->tanggal }}" required>
                                             </div>
+
+                                            <!-- Input Gambar dengan Drag & Drop -->
                                             <div>
-                                                <label for="gambar" class="block text-sm font-medium">Gambar</label>
-                                                <input type="file" name="gambar" class="w-full p-2 border rounded">
-                                                <div class="mt-2">
-                                                    <img src="{{ asset('images/it/multimediainstagram/' . $itmultimediainstagram->gambar) }}" alt="Event Image" class="h-16">
+                                                <label class="block text-sm font-medium">Gambar</label>
+                                                <div id="dropzoneEdit{{ $itmultimediainstagram->id_instagram }}" class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
+                                                    <div class="flex flex-col items-center justify-center pt-5 pb-6 text-center">
+                                                        <svg class="w-10 h-10 text-gray-400" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h16M3 12h16m-4-4l4 4m-4-4l4 4"></path>
+                                                        </svg>
+                                                        <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Klik untuk upload</span> atau seret file ke sini</p>
+                                                        <p class="text-xs text-gray-500">PNG, JPG, JPEG (Maks 2MB)</p>
+                                                    </div>
+                                                    <input id="gambarEdit{{ $itmultimediainstagram->id_instagram }}" type="file" name="gambar" class="hidden" accept="image/png, image/jpeg">
                                                 </div>
+
+                                                <!-- Preview gambar yang telah dipilih -->
+                                                <div id="filePreviewEdit{{ $itmultimediainstagram->id_instagram }}" class="mt-3">
+                                                    <p class="text-sm font-medium">File yang dipilih:</p>
+                                                    <div class="flex items-center gap-2 mt-2">
+                                                        <!-- Gambar lama tetap ada jika belum diubah -->
+                                                        <img id="previewImageEdit{{ $itmultimediainstagram->id_instagram }}" 
+                                                            src="{{ asset('images/it/multimediainstagram/' . $itmultimediainstagram->gambar) }}" 
+                                                            alt="Preview" 
+                                                            class="w-20 h-20 object-cover rounded-lg">
+                                                        <span id="fileNameEdit{{ $itmultimediainstagram->id_instagram }}" class="text-gray-600 text-sm">
+                                                            {{ $itmultimediainstagram->gambar }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Simpan nama file lama untuk backend jika user tidak mengganti file -->
+                                                <input type="hidden" name="gambar_lama" value="{{ $itmultimediainstagram->gambar }}">
                                             </div>
+
                                             <div>
                                                 <label for="keterangan" class="block text-sm font-medium">Keterangan</label>
-                                                <textarea name="keterangan" class="w-full p-2 border rounded" rows="3" required>{{ $itmultimediainstagram->keterangan }}</textarea>
+                                                <textarea name="keterangan" class="w-full p-2 border rounded focus:ring focus:ring-blue-300" rows="3" required>{{ $itmultimediainstagram->keterangan }}</textarea>
                                             </div>
                                         </div>
+
+                                        <!-- Tombol -->
                                         <div class="mt-4 flex justify-end gap-2">
-                                            <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
-                                            <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Update</button>
+                                            <button type="button" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700" data-modal-close>Close</button>
+                                            <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Update</button>
                                         </div>
                                     </form>
                                 </div>
@@ -258,26 +287,50 @@
         </div>
         </div>
     </div>
-    <!-- Modal untuk Add Event -->
+
+  <!-- Modal untuk Add Event -->
     <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">
-        <div class="bg-white w-1/2 p-6 rounded shadow-lg">
+        <div class="bg-white w-1/2 p-6 rounded-lg shadow-lg">
             <h3 class="text-xl font-semibold mb-4">Add New Data</h3>
             <form method="POST" action="{{ route('multimediainstagram.store') }}" enctype="multipart/form-data">
                 @csrf
-                <div class="space-y-4">
+                <div class="space-y-4 max-h-[70vh] overflow-y-auto"> <!-- Tambahkan max height & scrollbar -->
                     <div>
                         <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
-                        <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
+                        <input type="date" name="tanggal" class="w-full p-2 border rounded focus:ring focus:ring-blue-300" required>
                     </div>
+
+                    <!-- Input Gambar dengan Drag & Drop -->
                     <div>
-                        <label for="gambar" class="block text-sm font-medium">Gambar</label>
-                        <input type="file" name="gambar" class="w-full p-2 border rounded">
+                        <label class="block text-sm font-medium">Gambar</label>
+                        <div id="dropzone" class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6 text-center">
+                                <svg class="w-10 h-10 text-gray-400" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h16M3 12h16m-4-4l4 4m-4-4l4 4"></path>
+                                </svg>
+                                <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Klik untuk upload</span> atau seret file ke sini</p>
+                                <p class="text-xs text-gray-500">PNG, JPG, JPEG (Maks 2MB)</p>
+                            </div>
+                            <input id="gambar" type="file" name="gambar" class="hidden" accept="image/png, image/jpeg">
+                        </div>
+
+                        <!-- Preview file yang telah dipilih -->
+                        <div id="filePreview" class="mt-3 hidden">
+                            <p class="text-sm font-medium">File yang dipilih:</p>
+                            <div class="flex items-center gap-2 mt-2">
+                                <img id="previewImage" src="" alt="Preview" class="w-20 h-20 object-cover rounded-lg hidden">
+                                <span id="fileName" class="text-gray-600 text-sm"></span>
+                            </div>
+                        </div>
                     </div>
+
                     <div>
                         <label for="keterangan" class="block text-sm font-medium">Keterangan</label>
-                        <textarea name="keterangan" class="w-full p-2 border rounded" rows="3" required></textarea>
+                        <textarea name="keterangan" class="w-full p-2 border rounded focus:ring focus:ring-blue-300" rows="3" required></textarea>
                     </div>
                 </div>
+
+                <!-- Tombol -->
                 <div class="mt-4 flex justify-end gap-2">
                     <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
                     <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Add</button>
@@ -285,6 +338,7 @@
             </form>
         </div>
     </div>
+
     <!-- modal for image -->
     <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-70 hidden justify-center items-center z-50">
         <div class="relative">
@@ -328,37 +382,146 @@
         });
     });
 
-//modal img
-function openModal(imageSrc) {
-        const modal = document.getElementById('imageModal');
-        const modalImage = document.getElementById('modalImage');
-        modalImage.src = imageSrc;
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
+    //modal img
+    function openModal(imageSrc) {
+            const modal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            modalImage.src = imageSrc;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+        
+    function changePerPage(value) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('per_page', value);
+        window.location.href = url.toString();
     }
 
-    function closeModal() {
-        const modal = document.getElementById('imageModal');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
+    function changePerPage(value) {
+        const url = new URL(window.location.href);
+        const searchParams = new URLSearchParams(url.search);
+        
+        searchParams.set('per_page', value);
+        if (!searchParams.has('page')) {
+            searchParams.set('page', 1);
+        }
+        
+        window.location.href = url.pathname + '?' + searchParams.toString();
     }
-    
-function changePerPage(value) {
-    const url = new URL(window.location.href);
-    url.searchParams.set('per_page', value);
-    window.location.href = url.toString();
-}
 
-function changePerPage(value) {
-    const url = new URL(window.location.href);
-    const searchParams = new URLSearchParams(url.search);
-    
-    searchParams.set('per_page', value);
-    if (!searchParams.has('page')) {
-        searchParams.set('page', 1);
-    }
-    
-    window.location.href = url.pathname + '?' + searchParams.toString();
-}
+    //dropzone for file
+document.addEventListener("DOMContentLoaded", function () {
+        const dropzone = document.getElementById("dropzone");
+        const fileInput = document.getElementById("gambar");
+        const filePreview = document.getElementById("filePreview");
+        const previewImage = document.getElementById("previewImage");
+        const fileName = document.getElementById("fileName");
+
+        // Fungsi untuk menampilkan preview file
+        function showPreview(file) {
+            filePreview.classList.remove("hidden");
+            fileName.textContent = file.name;
+
+            // Jika file adalah gambar, tampilkan preview
+            if (file.type.startsWith("image/")) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewImage.src = e.target.result;
+                    previewImage.classList.remove("hidden");
+                };
+                reader.readAsDataURL(file);
+            } else {
+                previewImage.classList.add("hidden");
+            }
+        }
+
+        // Ketika input file berubah (file dipilih dari explorer)
+        fileInput.addEventListener("change", function () {
+            if (fileInput.files.length > 0) {
+                showPreview(fileInput.files[0]);
+            }
+        });
+
+        // Drag & Drop Event
+        dropzone.addEventListener("dragover", function (e) {
+            e.preventDefault();
+            dropzone.classList.add("border-blue-500");
+        });
+
+        dropzone.addEventListener("dragleave", function () {
+            dropzone.classList.remove("border-blue-500");
+        });
+
+        dropzone.addEventListener("drop", function (e) {
+            e.preventDefault();
+            dropzone.classList.remove("border-blue-500");
+
+            if (e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+                showPreview(fileInput.files[0]);
+            }
+        });
+
+        // Klik area dropzone untuk memilih file
+        dropzone.addEventListener("click", function () {
+            fileInput.click();
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll("[id^='editEventModal']").forEach(modal => {
+        const id = modal.id.replace("editEventModal", "");
+        
+        const imageInput = document.getElementById(`gambarEdit${id}`);
+        const imagePreview = document.getElementById(`previewImageEdit${id}`);
+        const dropzoneImage = document.getElementById(`dropzoneEdit${id}`);
+
+        function showImagePreview(file) {
+            if (file && file.type.startsWith("image/")) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.classList.remove("hidden");
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        imageInput.addEventListener("change", function () {
+            if (imageInput.files.length > 0) {
+                showImagePreview(imageInput.files[0]);
+            }
+        });
+
+        dropzoneImage.addEventListener("dragover", function (e) {
+            e.preventDefault();
+            dropzoneImage.classList.add("border-blue-500");
+        });
+
+        dropzoneImage.addEventListener("dragleave", function () {
+            dropzoneImage.classList.remove("border-blue-500");
+        });
+
+        dropzoneImage.addEventListener("drop", function (e) {
+            e.preventDefault();
+            dropzoneImage.classList.remove("border-blue-500");
+
+            if (e.dataTransfer.files.length > 0) {
+                imageInput.files = e.dataTransfer.files;
+                showImagePreview(imageInput.files[0]);
+            }
+        });
+        dropzoneImage.addEventListener("click", function () {
+            imageInput.click();
+        });
+        
+    });
+}); 
 </script>
 </html>
