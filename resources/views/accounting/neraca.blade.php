@@ -125,22 +125,22 @@
 
                 <!-- Event Table -->
                 <div class="overflow-x-auto border-l-4 border-red-600 shadow-md rounded-sm">
-                    <table class="table-auto w-full border-collapse text-gray-700 text-sm">
-                        <thead class="bg-gradient-to-r from-gray-200 to-gray-300 text-gray-900 font-semibold">
+                    <table class="table-auto w-full border-collapse text-gray-700 text-sm border border-gray-300">
+                        <thead class="bg-gradient-to-r from-gray-200 to-gray-300 text-gray-900 font-semibold ">
                             <tr class="font-sans">
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right"
+                                <th class="px-6 py-3 text-center border border-gray-300 " data-aos="fade-right"
                                     data-aos-duration="400"
                                     data-aos-easing="ease-out-sine">Tanggal</th>
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right"
+                                <th class="px-6 py-3 text-center border border-gray-300 " data-aos="fade-right"
                                     data-aos-duration="400"
                                     data-aos-easing="ease-out-sine">Thumbnail</th>
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right"
+                                <th class="px-6 py-3 text-center border border-gray-300" data-aos="fade-right"
                                     data-aos-duration="400"
                                     data-aos-easing="ease-out-sine">File Excel</th>
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right"
+                                <th class="px-6 py-3 text-center border border-gray-300 " data-aos="fade-right"
                                     data-aos-duration="400"
                                     data-aos-easing="ease-out-sine">Keterangan</th>
-                                <th class="px-6 py-3 text-center border-b " data-aos="fade-right"
+                                <th class="px-6 py-3 text-center border border-gray-300" data-aos="fade-right"
                                     data-aos-duration="400"
                                     data-aos-easing="ease-out-sine">Action</th>
                             </tr>
@@ -148,10 +148,10 @@
                         <tbody>
                             @foreach ($laporanneracas as $laporanneraca)
                             <tr class="even:bg-gray-50 odd:bg-white hover:bg-gray-100 transition duration-300">
-                                <td class="px-6 py-4 text-center text-pretty border-b" data-aos="fade-right"
+                                <td class="px-6 py-4 text-center text-pretty border-b border border-gray-300" data-aos="fade-right"
                                     data-aos-duration="400"
                                     data-aos-easing="ease-out-sine">{{ $laporanneraca->tanggal_formatted }}</td>
-                                <td class="px-6 py-4 text-center text-pretty border-b overflow-hidden " data-aos="fade-right"
+                                <td class="px-6 py-4 text-center text-pretty border-b overflow-hidden border border-gray-300" data-aos="fade-right"
                                     data-aos-duration="400"
                                     data-aos-easing="ease-out-sine">
                                     <div class="relative hover:scale-[1.5] transition-transform duration-300">
@@ -162,7 +162,7 @@
                                         @endif
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 text-center text-pretty border-b" data-aos="fade-right"
+                                <td class="px-6 py-4 text-center text-pretty border-b border border-gray-300" data-aos="fade-right"
                                     data-aos-duration="400"
                                     data-aos-easing="ease-out-sine">
                                     @if ($laporanneraca->file_excel)
@@ -173,7 +173,7 @@
                                     </a>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 text-center text-pretty border-b" data-aos="fade-right"
+                                <td class="px-6 py-4 text-center text-pretty border-b border border-gray-300" data-aos="fade-right"
                                     data-aos-duration="400"
                                     data-aos-easing="ease-out-sine">{{ $laporanneraca->keterangan }}</td>
                                     <td class="px-6 py-8 text-center flex justify-center gap-2">
@@ -191,74 +191,101 @@
                                             </button>
                                         </form>
                                     </td>
-                            </tr>
+                                </tr>
 
-                            <!-- Modal for Edit Event -->
-                            <div class="fixed z-50 overflow-y-auto inset-0 backdrop-blur-sm bg-black bg-opacity-70 w-full flex items-center justify-center hidden" id="editEventModal{{ $laporanneraca->id_neraca }}">
-                                <div class="bg-white w-[30%] h-[90%] p-6 rounded shadow-lg animate-slide-down transform transition-transform duration-500 ease-out">
-                                    <h3 class="text-lg font-semibold mb-3">Edit Data</h3>
-                                    <form method="POST" action="{{ route('neraca.update', $laporanneraca->id_neraca) }}" enctype="multipart/form-data">
-                                        @csrf
-                                        @method('PUT')
-                                        <div class="space-y-3">
-                                            <div>
-                                                <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
-                                                <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $laporanneraca->tanggal }}" required>
-                                            </div>
-                                            <div>
-                                                <label for="gambar" class="block text-sm font-medium">Thumbnail</label>
-                                                <input type="file" name="gambar" class="w-full p-2 border rounded">
-                                                <div class="mt-2">
-                                                    <img src="images/accounting/neraca/{{ $laporanneraca->gambar }}" alt="Event Image" class="h-16">
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <label for="file_excel" class="block text-sm font-medium">File Excel</label>
-                                                <input type="file" name="file_excel" class="w-full p-2 border rounded">
-                                                <div class="mt-2">
-                                                    <a href="{{ asset('files/accounting/neraca/' . $laporanneraca->file_excel) }}"
-                                                        class="text-blue-600 underline hover:text-blue-800">
-                                                        Unduh File Excel
-                                                    </a>
+                                <!-- Modal Edit Event -->
+                                <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="editEventModal{{ $laporanneraca->id_neraca }}">
+                                    <div class="bg-white w-1/2 p-6 rounded-lg shadow-lg">
+                                        <h3 class="text-lg font-semibold mb-3">Edit Data</h3>
+                                            <form method="POST" action="{{ route('neraca.update', $laporanneraca->id_neraca) }}" enctype="multipart/form-data">
+                                            @csrf
+                                            @method('PUT')
+                                            <div class="space-y-4 max-h-[60vh] overflow-y-auto">
+                                                <div>
+                                                    <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                                                    <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $laporanneraca->tanggal }}" required>
+                                                </div>
+                                                
+                                                <!-- Input Gambar dengan Preview -->
+                                                <div>
+                                                    <label class="block text-sm font-medium">Gambar</label>
+                                                    <div id="dropzoneEdit{{ $laporanneraca->id_neraca }}" class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
+                                                        <div class="flex flex-col items-center justify-center pt-5 pb-6 text-center">
+                                                            <svg class="w-10 h-10 text-gray-400" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h16M3 12h16m-4-4l4 4m-4-4l4 4"></path>
+                                                            </svg>
+                                                            <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Klik untuk upload</span> atau seret file ke sini</p>
+                                                            <p class="text-xs text-gray-500">PNG, JPG, JPEG (Maks 2MB)</p>
+                                                        </div>
+                                                        <input id="gambarEdit{{ $laporanneraca->id_neraca }}" type="file" name="gambar" class="hidden" accept="image/png, image/jpeg">
+                                                    </div>
+                                                    <!-- Preview Gambar -->
+                                                    <div id="filePreviewEdit{{ $laporanneraca->id_neraca }}" class="mt-3">
+                                                        <p class="text-sm font-medium">Gambar Saat Ini:</p>
+                                                        <div class="flex items-center gap-2 mt-2">
+                                                            <img id="previewImageEdit{{ $laporanneraca->id_neraca }}" src="{{ asset('images/accounting/neraca/' . $laporanneraca->gambar) }}" alt="Preview" class="w-20 h-20 object-cover rounded-lg">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Input File Excel -->
+                                                <div>
+                                                    <label class="block text-sm font-medium">File Excel</label>
+                                                    <div id="dropzoneExcelEdit{{ $laporanneraca->id_neraca }}" class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
+                                                        <div class="flex flex-col items-center justify-center pt-5 pb-6 text-center">
+                                                            <svg class="w-10 h-10 text-gray-400" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h16M3 12h16m-4-4l4 4m-4-4l4 4"></path>
+                                                            </svg>
+                                                            <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Klik untuk upload</span> atau seret file ke sini</p>
+                                                            <p class="text-xs text-gray-500">Hanya file .xlsx, .xls (Maks 5MB)</p>
+                                                        </div>
+                                                        <input id="fileExcelEdit{{ $laporanneraca->id_neraca }}" type="file" name="file_excel" class="hidden" accept=".xlsx, .xls">
+                                                    </div>
+                                                    <!-- Preview File Excel -->
+                                                    <div class="mt-3">
+                                                        <p class="text-sm font-medium">File Saat Ini:</p>
+                                                        <a href="{{ asset('files/accounting/neraca/' . $laporanneraca->file_excel) }}" id="fileNameExcelEdit{{ $laporanneraca->id_neraca }}" class="text-blue-600 underline hover:text-blue-800">
+                                                            {{ basename($laporanneraca->file_excel) }}
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <label for="keterangan" class="block text-sm font-medium">Keterangan</label>
+                                                    <textarea name="keterangan" class="w-full p-2 border rounded" rows="3" required>{{ $laporanneraca->keterangan }}</textarea>
                                                 </div>
                                             </div>
-                                            <div>
-                                                <label for="keterangan" class="block text-sm font-medium">Keterangan</label>
-                                                <textarea name="keterangan" class="w-full p-2 border rounded" rows="3" required>{{ $laporanneraca->keterangan }}</textarea>
+                                            <div class="mt-2 flex justify-end gap-2">
+                                                <button type="button" class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-1.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm" data-modal-close>Close</button>
+                                                <button type="submit" class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-1.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm">Update</button>
                                             </div>
-                                        </div>
-                                        <div class="mt-2 flex justify-end gap-2">
-                                            <button type="button" class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-1.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm" data-modal-close>Close</button>
-                                            <button type="submit" class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-1.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm">Uptanggal</button>
-                                        </div>
-                                    </form>
+                                        </form>
+                                    </div>
                                 </div>
-                            </div>
-                            @endforeach
-                        </tbody>
-                    </table>
-                              <!-- Pagination -->
-                              <div class="flex justify-center items-center mt-2 mb-4 p-4 bg-gray-50 rounded-lg">
-                                <!-- Dropdown untuk memilih jumlah data per halaman -->
-                                <div class="flex items-center">
-                                    <label for="perPage" class="mr-2 text-sm text-gray-600">Tampilkan</label>
-                                    <select 
-                                        id="perPage" 
-                                        class="p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                        onchange="changePerPage(this.value)">
-                                        <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
-                                        <option value="12" {{ request('per_page') == 12 || !request('per_page') ? 'selected' : '' }}>12</option>
-                                        <option value="24" {{ request('per_page') == 24 ? 'selected' : '' }}>24</option>
-                                    </select>
-                                    <span class="ml-2 text-sm text-gray-600">data per halaman</span>
-                                </div>
-                            </div>
-        
-                            <div class="m-4">
-                                {{ $laporanneracas->links('pagination::tailwind') }}
-                            </div>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        <!-- Pagination -->
+                        <div class="flex justify-center items-center mt-2 mb-4 p-4 bg-gray-50 rounded-lg">
+                        <!-- Dropdown untuk memilih jumlah data per halaman -->
+                        <div class="flex items-center">
+                            <label for="perPage" class="mr-2 text-sm text-gray-600">Tampilkan</label>
+                            <select 
+                                id="perPage" 
+                                class="p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                onchange="changePerPage(this.value)">
+                                <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
+                                <option value="12" {{ request('per_page') == 12 || !request('per_page') ? 'selected' : '' }}>12</option>
+                                <option value="24" {{ request('per_page') == 24 ? 'selected' : '' }}>24</option>
+                            </select>
+                            <span class="ml-2 text-sm text-gray-600">data per halaman</span>
                         </div>
+                    </div>
+
+                    <div class="m-4">
+                        {{ $laporanneracas->links('pagination::tailwind') }}
+                    </div>
                 </div>
+             </div>
                 <div x-data="{ open: false }" class="flex justify-end max-w-md ml-auto p-4">
                     <!-- Tombol untuk membuka modal -->
                     <button @click="open = true"
@@ -297,23 +324,58 @@
             </div>
             
             <!-- Modal untuk Add Event -->
-            <div class="fixed z-50 overflow-y-auto inset-0 backdrop-blur-sm bg-black bg-opacity-70 w-full flex items-center justify-center hidden" id="addEventModal">
-                <div class="bg-white w-[30%] h-[80%] p-6 rounded shadow-lg animate-slide-down transform transition-transform duration-500 ease-out">
+            <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">
+                <div class="bg-white w-1/2 p-6 rounded-lg shadow-lg">
                     <h3 class="text-lg font-semibold mb-3">Add New Data</h3>
                     <form method="POST" action="{{ route('neraca.store') }}" enctype="multipart/form-data">
                         @csrf
-                        <div class="space-y-3">
+                        <div class="space-y-4 max-h-[60vh] overflow-y-auto">
                             <div>
                                 <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
                                 <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
                             </div>
+
+                            <!-- Input Gambar dengan Drag & Drop -->
                             <div>
-                                <label for="gambar" class="block text-sm font-medium">Gambar</label>
-                                <input type="file" name="gambar" class="w-full p-2 border rounded">
+                                <label class="block text-sm font-medium">Gambar</label>
+                                <div id="dropzone" class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
+                                    <div class="flex flex-col items-center justify-center pt-5 pb-6 text-center">
+                                        <svg class="w-10 h-10 text-gray-400" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h16M3 12h16m-4-4l4 4m-4-4l4 4"></path>
+                                        </svg>
+                                        <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Klik untuk upload</span> atau seret file ke sini</p>
+                                        <p class="text-xs text-gray-500">PNG, JPG, JPEG (Maks 2MB)</p>
+                                    </div>
+                                    <input id="gambar" type="file" name="gambar" class="hidden" accept="image/png, image/jpeg">
+                                </div>
+                                <!-- Preview -->
+                                <div id="filePreview" class="mt-3 hidden">
+                                    <p class="text-sm font-medium">File yang dipilih:</p>
+                                    <div class="flex items-center gap-2 mt-2">
+                                        <img id="previewImage" src="" alt="Preview" class="w-20 h-20 object-cover rounded-lg hidden">
+                                        <span id="fileName" class="text-gray-600 text-sm"></span>
+                                    </div>
+                                </div>
                             </div>
+
+                            <!-- Input File Excel dengan Drag & Drop -->
                             <div>
-                                <label for="file_excel" class="block text-sm font-medium">File Excel</label>
-                                <input type="file" name="file_excel" class="w-full p-2 border rounded">
+                                <label class="block text-sm font-medium">File Excel</label>
+                                <div id="dropzoneExcel" class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
+                                    <div class="flex flex-col items-center justify-center pt-5 pb-6 text-center">
+                                        <svg class="w-10 h-10 text-gray-400" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h16M3 12h16m-4-4l4 4m-4-4l4 4"></path>
+                                        </svg>
+                                        <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Klik untuk upload</span> atau seret file ke sini</p>
+                                        <p class="text-xs text-gray-500">Hanya file .xlsx, .xls (Maks 5MB)</p>
+                                    </div>
+                                    <input id="fileExcel" type="file" name="file_excel" class="hidden" accept=".xlsx, .xls">
+                                </div>
+                                <!-- Preview -->
+                                <div id="filePreviewExcel" class="mt-3 hidden">
+                                    <p class="text-sm font-medium">File yang dipilih:</p>
+                                    <span id="fileNameExcel" class="text-gray-600 text-sm"></span>
+                                </div>
                             </div>
                             <div>
                                 <label for="keterangan" class="block text-sm font-medium">Keterangan</label>
@@ -392,6 +454,201 @@ function openModal(imageSrc) {
         modal.classList.add('hidden');
         modal.classList.remove('flex');
     }
+
+    //dropzone for file
+    document.addEventListener("DOMContentLoaded", function () {
+        const dropzone = document.getElementById("dropzone");
+        const fileInput = document.getElementById("gambar");
+        const filePreview = document.getElementById("filePreview");
+        const previewImage = document.getElementById("previewImage");
+        const fileName = document.getElementById("fileName");
+
+        // Fungsi untuk menampilkan preview file
+        function showPreview(file) {
+            filePreview.classList.remove("hidden");
+            fileName.textContent = file.name;
+
+            // Jika file adalah gambar, tampilkan preview
+            if (file.type.startsWith("image/")) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewImage.src = e.target.result;
+                    previewImage.classList.remove("hidden");
+                };
+                reader.readAsDataURL(file);
+            } else {
+                previewImage.classList.add("hidden");
+            }
+        }
+
+        // Ketika input file berubah (file dipilih dari explorer)
+        fileInput.addEventListener("change", function () {
+            if (fileInput.files.length > 0) {
+                showPreview(fileInput.files[0]);
+            }
+        });
+
+        // Drag & Drop Event
+        dropzone.addEventListener("dragover", function (e) {
+            e.preventDefault();
+            dropzone.classList.add("border-blue-500");
+        });
+
+        dropzone.addEventListener("dragleave", function () {
+            dropzone.classList.remove("border-blue-500");
+        });
+
+        dropzone.addEventListener("drop", function (e) {
+            e.preventDefault();
+            dropzone.classList.remove("border-blue-500");
+
+            if (e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+                showPreview(fileInput.files[0]);
+            }
+        });
+
+        // Klik area dropzone untuk memilih file
+        dropzone.addEventListener("click", function () {
+            fileInput.click();
+        });
+    });
+
+    //dropzone for file excel
+    document.addEventListener("DOMContentLoaded", function () {
+    const dropzone = document.getElementById("dropzoneExcel");
+    const fileInput = document.getElementById("fileExcel");
+    const filePreview = document.getElementById("filePreviewExcel");
+    const fileName = document.getElementById("fileNameExcel");
+
+    if (!dropzone || !fileInput || !filePreview || !fileName) {
+        console.error("Elemen dropzone atau input file tidak ditemukan.");
+        return;
+    }
+
+    function showPreview(file) {
+        filePreview.classList.remove("hidden");
+        fileName.textContent = file.name;
+    }
+
+    fileInput.addEventListener("change", function () {
+        if (fileInput.files.length > 0) {
+            showPreview(fileInput.files[0]);
+        }
+    });
+
+    dropzone.addEventListener("dragover", function (e) {
+        e.preventDefault();
+        dropzone.classList.add("border-blue-500");
+    });
+
+    dropzone.addEventListener("dragleave", function () {
+        dropzone.classList.remove("border-blue-500");
+    });
+
+    dropzone.addEventListener("drop", function (e) {
+        e.preventDefault();
+        dropzone.classList.remove("border-blue-500");
+
+        if (e.dataTransfer.files.length > 0) {
+            fileInput.files = e.dataTransfer.files;
+            showPreview(fileInput.files[0]);
+        }
+    });
+
+    dropzone.addEventListener("click", function () {
+        fileInput.click();
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll("[id^='editEventModal']").forEach(modal => {
+        const id = modal.id.replace("editEventModal", "");
+        
+        const imageInput = document.getElementById(`gambarEdit${id}`);
+        const imagePreview = document.getElementById(`previewImageEdit${id}`);
+        const fileExcelInput = document.getElementById(`fileExcelEdit${id}`);
+        const fileExcelName = document.getElementById(`fileNameExcelEdit${id}`);
+        const dropzoneImage = document.getElementById(`dropzoneEdit${id}`);
+        const dropzoneExcel = document.getElementById(`dropzoneExcelEdit${id}`);
+
+        function showImagePreview(file) {
+            if (file && file.type.startsWith("image/")) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.classList.remove("hidden");
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function showFileName(file) {
+            if (file) {
+                fileExcelName.textContent = file.name;
+                fileExcelName.href = "#";
+            }
+        }
+
+        imageInput.addEventListener("change", function () {
+            if (imageInput.files.length > 0) {
+                showImagePreview(imageInput.files[0]);
+            }
+        });
+
+        fileExcelInput.addEventListener("change", function () {
+            if (fileExcelInput.files.length > 0) {
+                showFileName(fileExcelInput.files[0]);
+            }
+        });
+
+        dropzoneImage.addEventListener("dragover", function (e) {
+            e.preventDefault();
+            dropzoneImage.classList.add("border-blue-500");
+        });
+
+        dropzoneImage.addEventListener("dragleave", function () {
+            dropzoneImage.classList.remove("border-blue-500");
+        });
+
+        dropzoneImage.addEventListener("drop", function (e) {
+            e.preventDefault();
+            dropzoneImage.classList.remove("border-blue-500");
+
+            if (e.dataTransfer.files.length > 0) {
+                imageInput.files = e.dataTransfer.files;
+                showImagePreview(imageInput.files[0]);
+            }
+        });
+
+        dropzoneExcel.addEventListener("dragover", function (e) {
+            e.preventDefault();
+            dropzoneExcel.classList.add("border-blue-500");
+        });
+
+        dropzoneExcel.addEventListener("dragleave", function () {
+            dropzoneExcel.classList.remove("border-blue-500");
+        });
+
+        dropzoneExcel.addEventListener("drop", function (e) {
+            e.preventDefault();
+            dropzoneExcel.classList.remove("border-blue-500");
+
+            if (e.dataTransfer.files.length > 0) {
+                fileExcelInput.files = e.dataTransfer.files;
+                showFileName(fileExcelInput.files[0]);
+            }
+        });
+
+        dropzoneImage.addEventListener("click", function () {
+            imageInput.click();
+        });
+
+        dropzoneExcel.addEventListener("click", function () {
+            fileExcelInput.click();
+        });
+    });
+});
 </script>
 
 </html>

@@ -196,18 +196,34 @@
                                         <form method="POST" action="{{ route('ijasagambar.update', $ijasagambar->id_ijasa_gambar) }}" enctype="multipart/form-data">
                                             @csrf
                                             @method('PUT')
-                                            <div class="space-y-4">
+                                            <div class="space-y-4 max-h-[60vh] overflow-y-auto">
                                                 <div>
                                                     <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
                                                     <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $ijasagambar->tanggal }}" required>
                                                 </div>
+
+                                                <!-- Input Gambar dengan Preview -->
                                                 <div>
-                                                    <label for="gambar" class="block text-sm font-medium">Gambar</label>
-                                                    <input type="file" name="gambar" class="w-full p-2 border rounded">
-                                                    <div class="mt-2">
-                                                        <img src="{{ asset('images/hrga/ijasagambar/' . $ijasagambar->gambar) }}" alt="Event Image" class="h-16">
+                                                    <label class="block text-sm font-medium">Gambar</label>
+                                                    <div id="dropzoneEdit{{ $ijasagambar->id_ijasa_gambar }}" class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
+                                                        <div class="flex flex-col items-center justify-center pt-5 pb-6 text-center">
+                                                            <svg class="w-10 h-10 text-gray-400" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h16M3 12h16m-4-4l4 4m-4-4l4 4"></path>
+                                                            </svg>
+                                                            <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Klik untuk upload</span> atau seret file ke sini</p>
+                                                            <p class="text-xs text-gray-500">PNG, JPG, JPEG (Maks 2MB)</p>
+                                                        </div>
+                                                        <input id="gambarEdit{{ $ijasagambar->id_ijasa_gambar }}" type="file" name="gambar" class="hidden" accept="image/png, image/jpeg">
+                                                    </div>
+                                                    <!-- Preview Gambar -->
+                                                    <div id="filePreviewEdit{{ $ijasagambar->id_ijasa_gambar }}" class="mt-3">
+                                                        <p class="text-sm font-medium">Gambar Saat Ini:</p>
+                                                        <div class="flex items-center gap-2 mt-2">
+                                                            <img id="previewImageEdit{{ $ijasagambar->id_ijasa_gambar }}" src="{{ asset('images/hrga/ijasagambar/' . $ijasagambar->gambar) }}" alt="Preview" class="w-20 h-20 object-cover rounded-lg">
+                                                        </div>
                                                     </div>
                                                 </div>
+
                                                 <div>
                                                     <label for="keterangan" class="block text-sm font-medium">Keterangan</label>
                                                     <textarea name="keterangan" class="w-full p-2 border rounded" rows="3" required>{{ $ijasagambar->keterangan }}</textarea>
@@ -326,21 +342,41 @@
             </div>
         </div>
     </div>
+
     <!-- Modal untuk Add Event -->
-    <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">
-        <div class="bg-white w-1/2 p-6 rounded shadow-lg">
-            <h3 class="text-xl font-semibold mb-4">Add New Data</h3>
+        <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">
+            <div class="bg-white w-1/2 p-6 rounded-lg shadow-lg">            <h3 class="text-xl font-semibold mb-4">Add New Data</h3>
             <form method="POST" action="{{ route('ijasagambar.store') }}" enctype="multipart/form-data">
                 @csrf
-                <div class="space-y-4">
+                <div class="space-y-4 max-h-[60vh] overflow-y-auto">
                     <div>
                         <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
                         <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
                     </div>
+
+                    <!-- Input Gambar dengan Drag & Drop -->
                     <div>
-                        <label for="gambar" class="block text-sm font-medium">Gambar</label>
-                        <input type="file" name="gambar" class="w-full p-2 border rounded">
+                        <label class="block text-sm font-medium">Gambar</label>
+                        <div id="dropzone" class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6 text-center">
+                                <svg class="w-10 h-10 text-gray-400" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h16M3 12h16m-4-4l4 4m-4-4l4 4"></path>
+                                </svg>
+                                <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Klik untuk upload</span> atau seret file ke sini</p>
+                                <p class="text-xs text-gray-500">PNG, JPG, JPEG (Maks 2MB)</p>
+                            </div>
+                            <input id="gambar" type="file" name="gambar" class="hidden" accept="image/png, image/jpeg">
+                        </div>
+                        <!-- Preview -->
+                        <div id="filePreview" class="mt-3 hidden">
+                            <p class="text-sm font-medium">File yang dipilih:</p>
+                            <div class="flex items-center gap-2 mt-2">
+                                <img id="previewImage" src="" alt="Preview" class="w-20 h-20 object-cover rounded-lg hidden">
+                                <span id="fileName" class="text-gray-600 text-sm"></span>
+                            </div>
+                        </div>
                     </div>
+
                     <div>
                         <label for="keterangan" class="block text-sm font-medium">Keterangan</label>
                         <textarea name="keterangan" class="w-full p-2 border rounded" rows="3" required></textarea>
@@ -365,13 +401,13 @@
 </body>
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <script>
-        //toogle form
-        const toggleFormButton = document.getElementById('toggleFormButton');
-        const formContainer = document.getElementById('formContainer');
+    //toogle form
+    const toggleFormButton = document.getElementById('toggleFormButton');
+    const formContainer = document.getElementById('formContainer');
 
-        toggleFormButton.addEventListener('click', () => {
-            formContainer.classList.toggle('hidden');
-        });
+    toggleFormButton.addEventListener('click', () => {
+        formContainer.classList.toggle('hidden');
+    });
 
     // Mengatur tombol untuk membuka modal add
     document.querySelector('[data-modal-target="#addEventModal"]').addEventListener('click', function() {
@@ -430,6 +466,115 @@ function changePerPage(value) {
     
     window.location.href = url.pathname + '?' + searchParams.toString();
 }
+
+//dropzone for file
+document.addEventListener("DOMContentLoaded", function () {
+        const dropzone = document.getElementById("dropzone");
+        const fileInput = document.getElementById("gambar");
+        const filePreview = document.getElementById("filePreview");
+        const previewImage = document.getElementById("previewImage");
+        const fileName = document.getElementById("fileName");
+
+        // Fungsi untuk menampilkan preview file
+        function showPreview(file) {
+            filePreview.classList.remove("hidden");
+            fileName.textContent = file.name;
+
+            // Jika file adalah gambar, tampilkan preview
+            if (file.type.startsWith("image/")) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewImage.src = e.target.result;
+                    previewImage.classList.remove("hidden");
+                };
+                reader.readAsDataURL(file);
+            } else {
+                previewImage.classList.add("hidden");
+            }
+        }
+
+        // Ketika input file berubah (file dipilih dari explorer)
+        fileInput.addEventListener("change", function () {
+            if (fileInput.files.length > 0) {
+                showPreview(fileInput.files[0]);
+            }
+        });
+
+        // Drag & Drop Event
+        dropzone.addEventListener("dragover", function (e) {
+            e.preventDefault();
+            dropzone.classList.add("border-blue-500");
+        });
+
+        dropzone.addEventListener("dragleave", function () {
+            dropzone.classList.remove("border-blue-500");
+        });
+
+        dropzone.addEventListener("drop", function (e) {
+            e.preventDefault();
+            dropzone.classList.remove("border-blue-500");
+
+            if (e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+                showPreview(fileInput.files[0]);
+            }
+        });
+
+        // Klik area dropzone untuk memilih file
+        dropzone.addEventListener("click", function () {
+            fileInput.click();
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll("[id^='editEventModal']").forEach(modal => {
+        const id = modal.id.replace("editEventModal", "");
+        
+        const imageInput = document.getElementById(`gambarEdit${id}`);
+        const imagePreview = document.getElementById(`previewImageEdit${id}`);
+        const dropzoneImage = document.getElementById(`dropzoneEdit${id}`);
+
+        function showImagePreview(file) {
+            if (file && file.type.startsWith("image/")) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.classList.remove("hidden");
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        imageInput.addEventListener("change", function () {
+            if (imageInput.files.length > 0) {
+                showImagePreview(imageInput.files[0]);
+            }
+        });
+
+        dropzoneImage.addEventListener("dragover", function (e) {
+            e.preventDefault();
+            dropzoneImage.classList.add("border-blue-500");
+        });
+
+        dropzoneImage.addEventListener("dragleave", function () {
+            dropzoneImage.classList.remove("border-blue-500");
+        });
+
+        dropzoneImage.addEventListener("drop", function (e) {
+            e.preventDefault();
+            dropzoneImage.classList.remove("border-blue-500");
+
+            if (e.dataTransfer.files.length > 0) {
+                imageInput.files = e.dataTransfer.files;
+                showImagePreview(imageInput.files[0]);
+            }
+        });
+        dropzoneImage.addEventListener("click", function () {
+            imageInput.click();
+        });
+        
+    });
+}); 
 
 </script>
 </html>
