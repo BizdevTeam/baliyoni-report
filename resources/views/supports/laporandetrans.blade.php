@@ -144,17 +144,15 @@
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporandetran->total_pengiriman_formatted }}</td>
                             <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
                                 <!-- Edit Button -->
-                                <button class="bg-red-600 text-white px-3 py-2 rounded" data-modal-target="#editEventModal{{ $laporandetran->id_detrans }}">
+                                <button class="text-red-600 bg-transparent px-3 py-2 rounded" data-modal-target="#editEventModal{{ $laporandetran->id_detrans }}">
                                     <i class="fa fa-pen"></i>
-                                    Edit
                                 </button>
                                 <!-- Delete Form -->
                                 <form method="POST" action="{{ route('laporandetrans.destroy', $laporandetran->id_detrans) }}">
                                     @csrf
                                     @method('DELETE')
-                                    <button class="bg-red-600 text-white px-3 py-2 rounded" onclick="return confirm('Are you sure to delete?')">
+                                    <button class="text-red-600 bg-transparent px-3 py-2 rounded" onclick="return confirm('Are you sure to delete?')">
                                         <i class="fa fa-trash"></i>
-                                        Delete
                                     </button>
                                 </form>
                             </td>

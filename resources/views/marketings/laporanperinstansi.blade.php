@@ -186,17 +186,15 @@
                                     <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanperinstansi->nilai_formatted }}</td>
                                     <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
                                         <!-- Edit Button -->
-                                        <button class="bg-red-600 text-white px-3 py-2 rounded" data-modal-target="#editEventModal{{ $laporanperinstansi->id_perinstansi }}">
+                                        <button class="text-red-600 bg-transparent px-3 py-2 rounded" data-modal-target="#editEventModal{{ $laporanperinstansi->id_perinstansi }}">
                                             <i class="fa fa-pen"></i>
-                                            Edit
                                         </button>
                                         <!-- Delete Form -->
                                         <form method="POST" action="{{ route('laporanperinstansi.destroy', $laporanperinstansi->id_perinstansi) }}">
                                             @csrf
                                             @method('DELETE')
-                                            <button class="bg-red-600 text-white px-3 py-2 rounded" onclick="return confirm('Are you sure to delete?')">
+                                            <button class="text-red-600 bg-transparent px-3 py-2 rounded" onclick="return confirm('Are you sure to delete?')">
                                                 <i class="fa fa-trash"></i>
-                                                Delete
                                             </button>
                                         </form>
                                     </td>

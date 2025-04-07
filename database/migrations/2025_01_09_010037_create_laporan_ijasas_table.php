@@ -15,9 +15,9 @@
                 $table->id('id_ijasa');
                 $table->date('tanggal');
                 $table->time('jam');
-                $table->string('permasalahan');
-                $table->string('impact');
-                $table->string('troubleshooting');
+                $table->text('permasalahan');
+                $table->text('impact');
+                $table->text('troubleshooting');
                 $table->date('resolve_tanggal');
                 $table->time('resolve_jam');
                 $table->timestamps();
