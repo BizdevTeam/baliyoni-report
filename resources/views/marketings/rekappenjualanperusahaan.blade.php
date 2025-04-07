@@ -225,6 +225,7 @@
 <div class="mt-6 self-center w-full h-auto flex justify-center">
     <canvas id="chart"></canvas>
 </div>
+
 <div class="mt-6 flex justify-end">
     <button onclick="exportToPDF()" class="bg-red-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-red-600 transition duration-300 ease-in-out">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">

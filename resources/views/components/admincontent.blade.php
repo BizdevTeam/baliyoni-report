@@ -890,7 +890,7 @@
     });
 
     // Fungsi untuk memuat data awal grafik saat halaman pertama kali dibuka
-    function loadInitialChartData() {
+        function loadInitialChartData() {
         //laporan MARKETING
         fetchChartDataWRp('{{ route("adminpenjualan.chart.data") }}', 'chartp', 'Tanggal ');
         fetchChartDataWRp('{{ route("adminpp.chart.data") }}', 'chartpp', 'Perusahaan ');
