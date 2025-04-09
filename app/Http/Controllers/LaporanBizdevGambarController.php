@@ -63,7 +63,7 @@ class LaporanBizdevGambarController extends Controller
         try {
             $validatedData = $request->validate([
                 'tanggal' => 'required|date',
-                'kendala' => 'required|string|max:255',
+                'kendala' => 'required|string',
                 'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550'
             ]);
 
@@ -92,7 +92,7 @@ class LaporanBizdevGambarController extends Controller
         try {
             $validatedData = $request->validate([
                 'tanggal' => 'required|date',
-                'kendala' => 'required|string|max:255',
+                'kendala' => 'required|string',
                 'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550'
             ]);
 

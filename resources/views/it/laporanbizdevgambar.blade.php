@@ -291,9 +291,9 @@
     </div>
         <!-- Modal untuk Add Event -->
     <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">
-        <div class="bg-white w-1/2 p-6 rounded shadow-lg">
+        <div class="bg-white w-1/2 max-h-[90vh] p-6 rounded shadow-lg flex flex-col">
             <h3 class="text-xl font-semibold mb-4">Add New Data</h3>
-            <form method="POST" action="{{ route('laporanbizdevgambar.store') }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('laporanbizdevgambar.store') }}" enctype="multipart/form-data" class="flex-grow overflow-y-auto space-y-4 pr-2">
                 @csrf
                 <div class="space-y-4">
                     <div>
