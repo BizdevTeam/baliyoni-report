@@ -171,13 +171,13 @@
                         
                 <!-- Modal for Edit Event -->
                 @foreach ($laporanptboss as $laporanptbos)
-                <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden overflow-y-auto" id="editEventModal{{ $laporanptbos->id_ptbos }}">
+                <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden " id="editEventModal{{ $laporanptbos->id_ptbos }}">
                     <div class="bg-white w-1/2 p-6 rounded shadow-lg">
                         <h3 class="text-xl font-semibold mb-4">Edit Data</h3>
-                        <form method="POST" action="{{ route('laporanptbos.update', $laporanptbos->id_ptbos) }}" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('laporanptbos.update', $laporanptbos->id_ptbos) }}" enctype="multipart/form-data" class="flex-grow overflow-y-auto space-y-4 pr-2">
                             @csrf
                             @method('PUT')
-                            <div class="space-y-4">
+                            <div class="space-y-4 max-h-[60vh] overflow-y-auto">
                                 <div>
                                     <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
                                     <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $laporanptbos->tanggal }}" required>
