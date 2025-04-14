@@ -300,7 +300,7 @@ class RekapPenjualanPerusahaanController extends Controller
     
     // Filter berdasarkan tanggal jika ada
     if ($search) {
-        $query->where('tanggal', 'LIKE', "%$search%");
+        $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
     }
     
     // Filter berdasarkan range bulan-tahun jika keduanya diisi
@@ -346,6 +346,52 @@ class RekapPenjualanPerusahaanController extends Controller
 private function getRandomRGBAA1($opacity = 0.7)
 {
     return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
+}
+public function exportView(Request $request)
+{
+    $perPage = $request->input('per_page', 100); // Bisa set jumlah besar untuk ekspor
+    $search = $request->input('search');
+
+    $rekappenjualanperusahaans = RekapPenjualanPerusahaan::query()
+        ->when($search, function ($query, $search) {
+            return $query->where('tanggal', 'LIKE', "%$search%");
+        })
+        ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
+        ->paginate($perPage)
+        ->withQueryString();
+
+    // Format tambahan untuk tampilan
+    $rekappenjualanperusahaans->map(function ($item) {
+        $item->total_penjualan_formatted = 'Rp ' . number_format($item->total_penjualan, 0, ',', '.');
+        return $item;
+    });
+
+    // Data chart
+    function getRandomRGBA2($opacity = 0.7)
+    {
+        return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
+    }
+
+    $labels = $rekappenjualanperusahaans->map(function($item) {
+        $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
+        return $item->perusahaan->nama_perusahaan.' - ' . $formattedDate;
+    })->toArray();
+    $data = $rekappenjualanperusahaans->pluck('total_penjualan')->toArray();
+$backgroundColors = array_map(fn() => getRandomRGBA2(), $data);
+
+    $chartData = [
+        'labels' => $labels,
+        'datasets' => [
+            [
+                'text' => 'Total Penjualan',
+                'data' => $data,
+                'backgroundColor' => $backgroundColors,
+            ],
+        ],
+    ];
+
+    // Ganti return view-nya dengan exports.rekap-penjualan
+    return view('exports.rekap-penjualan-perusahaan', compact('rekappenjualanperusahaans', 'chartData'));
 }
 
 }

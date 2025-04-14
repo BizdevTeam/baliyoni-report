@@ -269,7 +269,7 @@ class LaporanPerInstansiController extends Controller
         
         // Filter berdasarkan tanggal jika ada
         if ($search) {
-            $query->where('tanggal', 'LIKE', "%$search%");
+            $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
         }
         
         // Filter berdasarkan range bulan-tahun jika keduanya diisi
