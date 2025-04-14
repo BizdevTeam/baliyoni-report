@@ -368,7 +368,7 @@
                     callbacks: {
                         label: function(tooltipItem) {
                             let value = tooltipItem.raw; // Ambil data nilai
-                            return tooltipItem.dataset.text + ' : ' + value + ' Kali'.toLocaleString(); // Format angka
+                            return tooltipItem.dataset.text + ' : ' + value + ' Hari'.toLocaleString(); // Format angka
                         },
                     },
                 },
@@ -386,7 +386,7 @@
                     },
                     ticks: {
                         callback: function(value) {
-                            return value + ' Kali'.toLocaleString(); // Format angka
+                            return value + ' Hari'.toLocaleString(); // Format angka
                         },
                     },
                 },
@@ -409,7 +409,7 @@
                         ctx.fillStyle = 'black'; // Warna teks
                         ctx.font = 'bold 15px sans-serif'; // Ukuran teks
                         ctx.textAlign = 'center';
-                        ctx.fillText(value + ' Kali'.toLocaleString(), bar.x, textY); // Tampilkan di atas bar
+                        ctx.fillText(value + ' Hari'.toLocaleString(), bar.x, textY); // Tampilkan di atas bar
                     });
                 });
             }
