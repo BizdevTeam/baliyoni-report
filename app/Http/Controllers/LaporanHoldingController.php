@@ -188,7 +188,8 @@ class LaporanHoldingController extends Controller
 
             $htmlContent = "
             <div style='display: flex; gap: 20px; width: 100%;'>
-                <div style='width: 30%;'>
+                <div style='gap: 100px; width: 100%;'>
+                <div style='width: 30%; float: left; padding-right: 20px;'>
                     <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Tabel Data</h2>
                     <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                         <thead>
