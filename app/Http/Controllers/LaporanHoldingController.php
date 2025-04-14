@@ -203,7 +203,7 @@ class LaporanHoldingController extends Controller
                         </tbody>
                     </table>
                 </div>
-                <div style='width: 65%; text-align:center; margin-left: 20px;'>
+                <div style='width: 50%; text-align:center; margin-left: 20px;'>
                     <h2 style='font-size: 14px; margin-bottom: 10px;'>Grafik Laporan Penjualan Perusahaan</h2>
                     <img src='{$chartBase64}' style='width: 100%; height: auto;' alt='Grafik Laporan' />
                 </div>
