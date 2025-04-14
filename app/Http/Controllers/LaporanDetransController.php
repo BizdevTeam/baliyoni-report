@@ -22,7 +22,8 @@ class LaporanDetransController extends Controller
     
         $laporandetrans = LaporanDetrans::query()
             ->when($search, function ($query, $search) {
-                return $query->where('tanggal', 'LIKE', "%$search%");
+                return $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+
             })
             ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
             ->paginate($perPage);
