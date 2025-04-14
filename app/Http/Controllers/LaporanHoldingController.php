@@ -25,8 +25,8 @@ class LaporanHoldingController extends Controller
         // Retrieve LaporanHolding records along with the related Perusahaan
         $laporanholdings = LaporanHolding::with('perusahaan')
             ->when($search, function ($query, $search) {
-                return $query->where('tanggal', 'LIKE', "%$search%")
-                             ->orWhereHas('perusahaan', function ($q) use ($search) {
+                return $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"])
+                ->orWhereHas('perusahaan', function ($q) use ($search) {
                                  $q->where('nama_perusahaan', 'LIKE', "%$search%");
                              });
             })
