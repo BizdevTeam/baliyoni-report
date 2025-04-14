@@ -917,14 +917,14 @@
         fetchChartDataWRp('{{ route("adminpendapatanpengirimanluarbali.chart.data") }}', 'chartrplb', 'Nilai Pendapatan ');
 
         //laporan HRGA
-        fetchChartHRGA('{{ route("adminsakit.chart.data") }}', 'charts', 'Nama Karyawan');
-        fetchChartHRGA('{{ route("adminsakittotal.chart.data") }}', 'chartstotal', 'Nama Karyawan');
-        fetchChartHRGA('{{ route("adminizin.chart.data") }}', 'chartizin', 'Nama Karyawan');
-        fetchChartHRGA('{{ route("adminizintotal.chart.data") }}', 'chartizintotal', 'Nama Karyawan');
-        fetchChartHRGA('{{ route("admincuti.chart.data") }}', 'chartcuti', 'Nama Karyawan');
-        fetchChartHRGA('{{ route("admincutitotal.chart.data") }}', 'chartcutitotal', 'Nama Karyawan');
+        fetchChartHRGA1('{{ route("adminsakit.chart.data") }}', 'charts', 'Nama Karyawan');
+        fetchChartHRGA1('{{ route("adminsakittotal.chart.data") }}', 'chartstotal', 'Nama Karyawan');
+        fetchChartHRGA1('{{ route("adminizin.chart.data") }}', 'chartizin', 'Nama Karyawan');
+        fetchChartHRGA1('{{ route("adminizintotal.chart.data") }}', 'chartizintotal', 'Nama Karyawan');
+        fetchChartHRGA1('{{ route("admincuti.chart.data") }}', 'chartcuti', 'Nama Karyawan');
+        fetchChartHRGA1('{{ route("admincutitotal.chart.data") }}', 'chartcutitotal', 'Nama Karyawan');
         fetchChartHRGA1('{{ route("adminterlambat.chart.data") }}', 'chartterlambat', 'Nama Karyawan');
-        fetchChartHRGA('{{ route("adminterlambattotal.chart.data") }}', 'chartterlambattotal', 'Nama Karyawan');
+        fetchChartHRGA1('{{ route("adminterlambattotal.chart.data") }}', 'chartterlambattotal', 'Nama Karyawan');
 
         //laporan ACCOUNTING
         fetchChartPieData('{{ route("adminkhps.chart.data") }}', 'chartkhps', 'Nilai Pendapatan ');
@@ -963,14 +963,14 @@
         fetchChartDataWRp('{{ route("adminpendapatanpengirimanluarbali.chart.data") }}' + queryString, 'chartrplb');
 
         // laporan HRGA
-        fetchChartHRGA('{{ route("adminsakit.chart.data") }}' + queryString, 'charts');
-        fetchChartHRGA('{{ route("adminsakittotal.chart.data") }}' + queryString, 'chartstotal');
-        fetchChartHRGA('{{ route("adminizin.chart.data") }}' + queryString, 'chartizin');
-        fetchChartHRGA('{{ route("adminizintotal.chart.data") }}' + queryString, 'chartizintotal');
-        fetchChartHRGA('{{ route("admincuti.chart.data") }}' + queryString, 'chartcuti');
-        fetchChartHRGA('{{ route("admincutitotal.chart.data") }}' + queryString, 'chartcutitotal');
+        fetchChartHRGA1('{{ route("adminsakit.chart.data") }}' + queryString, 'charts');
+        fetchChartHRGA1('{{ route("adminsakittotal.chart.data") }}' + queryString, 'chartstotal');
+        fetchChartHRGA1('{{ route("adminizin.chart.data") }}' + queryString, 'chartizin');
+        fetchChartHRGA1('{{ route("adminizintotal.chart.data") }}' + queryString, 'chartizintotal');
+        fetchChartHRGA1('{{ route("admincuti.chart.data") }}' + queryString, 'chartcuti');
+        fetchChartHRGA1('{{ route("admincutitotal.chart.data") }}' + queryString, 'chartcutitotal');
         fetchChartHRGA1('{{ route("adminterlambat.chart.data") }}' + queryString, 'chartterlambat');
-        fetchChartHRGA('{{ route("adminterlambattotal.chart.data") }}' + queryString, 'chartterlambattotal');
+        fetchChartHRGA1('{{ route("adminterlambattotal.chart.data") }}' + queryString, 'chartterlambattotal');
 
         // laporan ACCOUNTING
         fetchChartPieData('{{ route("adminkhps.chart.data") }}' + queryString, 'chartkhps');
@@ -1221,7 +1221,7 @@ function fetchChartDataWRp(url, canvasId, title) {
     }
     
     //fetch chart tanpa Rp
-    function fetchChartHRGA(url, canvasId, title) {
+    function fetchChartHRGA1(url, canvasId, title) {
     fetch(url)
         .then(response => response.json())
         .then(chartData => {
