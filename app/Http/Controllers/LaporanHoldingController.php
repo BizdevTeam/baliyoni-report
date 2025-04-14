@@ -187,8 +187,7 @@ class LaporanHoldingController extends Controller
             $mpdf->SetFooter('{DATE j-m-Y}|Laporan Procurements - Laporan Pembelian (Holding)|');
 
             $htmlContent = "
-            <div style='display: flex; gap: 20px; width: 100%;'>
-                <div style='gap: 100px; width: 100%;'>
+            <div style='gap: 100px; width: 100%;'>
                 <div style='width: 30%; float: left; padding-right: 20px;'>
                     <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Tabel Data</h2>
                     <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
@@ -204,7 +203,7 @@ class LaporanHoldingController extends Controller
                         </tbody>
                     </table>
                 </div>
-                <div style='width: 50%; text-align:center; margin-left: 20px;'>
+                <div style='width: 60%; text-align:center; margin-left: 20px;'>
                     <h2 style='font-size: 14px; margin-bottom: 10px;'>Grafik Laporan Penjualan Perusahaan</h2>
                     <img src='{$chartBase64}' style='width: 100%; height: auto;' alt='Grafik Laporan' />
                 </div>
