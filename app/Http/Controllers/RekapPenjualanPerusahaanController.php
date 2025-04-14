@@ -33,7 +33,7 @@ class RekapPenjualanPerusahaanController extends Controller
             })
             ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
-
+            
         // Hitung total untuk masing-masing kategori
         $totalPenjualan = $rekappenjualanperusahaans->sum('total_penjualan');
 
