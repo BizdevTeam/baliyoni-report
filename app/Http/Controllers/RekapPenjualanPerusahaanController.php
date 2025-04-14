@@ -26,9 +26,9 @@ class RekapPenjualanPerusahaanController extends Controller
         // Query untuk mencari berdasarkan tahun dan date
         $rekappenjualanperusahaans = RekapPenjualanPerusahaan::with('perusahaan')
         ->when($search, function ($query, $search) {
-            return $query->where('tanggal', 'LIKE', "%$search%")
+            return $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"])
                          ->orWhereHas('perusahaan', function ($q) use ($search) {
-                             $q->where('nama_perusahaan', 'LIKE', "%$search%");
+                        $q->where('nama_perusahaan', 'LIKE', "%$search%");
                          });
             })
             ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
