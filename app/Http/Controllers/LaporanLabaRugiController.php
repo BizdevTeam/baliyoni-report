@@ -41,7 +41,7 @@ class LaporanLabaRugiController extends Controller
             }
         }
         // Ambil data dengan pagination
-        $laporanlabarugis = $query->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
+        $laporanlabarugis = $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"])
                                   ->paginate($perPage);
     
         // Ubah path gambar agar dapat diakses dari frontend
@@ -247,7 +247,6 @@ class LaporanLabaRugiController extends Controller
             if ($search) {
                 $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
             }
-    
             // Filter berdasarkan range bulan-tahun jika keduanya diisi
             if ($startMonth && $endMonth) {
                 $startDate = \Carbon\Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();

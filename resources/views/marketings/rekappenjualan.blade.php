@@ -318,18 +318,18 @@
 <script>
         //toogle form
         const toggleFormButton = document.getElementById('toggleFormButton');
-            const formContainer = document.getElementById('formContainer');
+        const formContainer = document.getElementById('formContainer');
 
-            toggleFormButton.addEventListener('click', () => {
-                formContainer.classList.toggle('hidden');
-            });
+        toggleFormButton.addEventListener('click', () => {
+        formContainer.classList.toggle('hidden');
+        });
 
         const toggleChartButton = document.getElementById('toggleChartButton');
-            const formChart = document.getElementById('formChart');
+        const formChart = document.getElementById('formChart');
 
-            toggleChartButton.addEventListener('click', () => {
-                formChart.classList.toggle('hidden');
-            });
+        toggleChartButton.addEventListener('click', () => {
+        formChart.classList.toggle('hidden');
+        });
 
     //chart
     const chartCanvas = document.getElementById('chart');

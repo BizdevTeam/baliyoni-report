@@ -253,10 +253,10 @@ class RekapPenjualanController extends Controller
         
         $query = RekapPenjualan::query();
             // Filter berdasarkan tanggal jika ada
-    if ($search) {
-        $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-    }
-        
+        if ($search) {
+            $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+        }
+            
         // Filter berdasarkan range bulan-tahun jika keduanya diisi
         if ($startMonth && $endMonth) {
             $startDate = \Carbon\Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
@@ -301,9 +301,10 @@ class RekapPenjualanController extends Controller
     {
         return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
     }
+    
 
     public function exportView(Request $request)
-{
+    {
     $perPage = $request->input('per_page', 100); // Bisa set jumlah besar untuk ekspor
     $search = $request->input('search');
 

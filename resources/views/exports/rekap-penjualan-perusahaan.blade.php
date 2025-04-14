@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Export Rekap Penjualan</title>
+    <title>Export Rekap Penjualan Perusahaan</title>
     <style>
         body { font-family: Arial, sans-serif; }
         table { border-collapse: collapse; width: 100%; }
@@ -19,13 +19,15 @@
             <thead>
                 <tr>
                     <th>Tanggal</th>
+                    <th>Perusahaan</th>
                     <th>Total Penjualan (Rp)</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($rekappenjualans as $rekap)
+                @foreach($rekappenjualanperusahaans as $rekap)
                 <tr>
                     <td>{{ \Carbon\Carbon::parse($rekap->tanggal)->format('F Y') }}</td>
+                    <td>{{ $rekap->perusahaan->nama_perusahaan }}</td>
                     <td>{{ 'Rp ' . number_format($rekap->total_penjualan, 0, ',', '.') }}</td>
                 </tr>
                 @endforeach
@@ -33,8 +35,8 @@
         </table>
 
         <!-- Grafik untuk ekspor PDF -->
-        <div id="chartContainer" style="margin-top: 20px; height: 300px;">
-            <canvas id="rekapChart"></canvas>
+        <div id="rekapChart" style="margin-top: 20px; height: 300px;">
+            <canvas id="chart"></canvas>
         </div>
     </div>
 
@@ -45,13 +47,13 @@
             const chartData = @json($chartData);
             
             // Inisialisasi grafik untuk ekspor PDF
-            const rekapChart = document.getElementById('rekapChart').getContext('2d');
-            const exportChart = new Chart(rekapChart, {
+            const chart = document.getElementById('chart').getContext('2d');
+            const exportChart = new Chart(chart, {
                 type: 'bar',
                 data: {
                     labels: chartData.labels,
                     datasets: [{
-                        label: 'Total Penjualan',
+                        label: 'Total Penjualan Perusahaan',
                         data: chartData.datasets[0].data,
                         backgroundColor: chartData.datasets[0].backgroundColor,
                         borderColor: chartData.datasets[0].backgroundColor.map(color => color.replace('0.7', '1')),
@@ -69,12 +71,18 @@
                                     return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
                                 }
                             }
+                        },
+                        x: {
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
                         }
                     },
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Grafik Rekap Penjualan'
+                            text: 'Grafik Rekap Penjualan Perusahaan'
                         }
                     }
                 }
