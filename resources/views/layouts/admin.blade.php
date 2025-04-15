@@ -33,6 +33,10 @@
     <script src="{{ asset('/templates/plugins/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('/templates/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('/templates/dist/js/adminlte.js') }}"></script>
+    
+    <!-- Tambahkan ini di dalam <head> atau sebelum script export -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
     @vite('resources/js/app.js')
 </head>

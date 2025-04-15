@@ -25,8 +25,8 @@ class LaporanHoldingController extends Controller
         // Retrieve LaporanHolding records along with the related Perusahaan
         $laporanholdings = LaporanHolding::with('perusahaan')
             ->when($search, function ($query, $search) {
-                return $query->where('tanggal', 'LIKE', "%$search%")
-                             ->orWhereHas('perusahaan', function ($q) use ($search) {
+                return $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"])
+                ->orWhereHas('perusahaan', function ($q) use ($search) {
                                  $q->where('nama_perusahaan', 'LIKE', "%$search%");
                              });
             })
@@ -240,9 +240,10 @@ class LaporanHoldingController extends Controller
         $endMonth = $request->input('end_month');
 
         $query = LaporanHolding::query();
+        
         // Filter berdasarkan tanggal jika ada
         if ($search) {
-            $query->where('tanggal', 'LIKE', "%$search%");
+            $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
         }
         
         // Filter berdasarkan range bulan-tahun jika keduanya diisi

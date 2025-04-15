@@ -6,7 +6,6 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ArusKasController;
 use App\Http\Controllers\EvaluasiController;
 use App\Http\Controllers\ExportAllController;
-use App\Http\Controllers\ExportPdfAllController;
 use App\Http\Controllers\LaporanPpnController;
 use App\Http\Controllers\LaporanCutiController;
 use App\Http\Controllers\LaporanIzinController;
@@ -41,7 +40,7 @@ use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\LaporanBizdevGambarController;
 use App\Http\Controllers\IjasaGambarController;
 use App\Http\Controllers\PerusahaanController;
-
+use App\Models\RekapPenjualan;
 
 Route::middleware(['web'])->group(function () {
     // Accounting
@@ -258,12 +257,7 @@ Route::middleware(['web'])->group(function () {
     Route::get('/rekap-penjualan', [PerusahaanController::class, 'penjualanPerusahaan'])->name('rekap.penjualan');
     Route::get('/laporan-holding', [PerusahaanController::class, 'laporanHolding'])->name('laporan.holding');
     
-    Route::post('/exportall', [ExportPdfAllController::class, 'exportall'])->name('exportall');
-
 });
-
-
-
 
 
 // Route untuk menampilkan view
@@ -308,6 +302,34 @@ Route::get('/adminak/chart-data', [ArusKasController::class, 'showChart'])->name
 Route::get('/adminptbos', [LaporanPtBosController::class, 'adminView'])->name('adminptbos.admin');
 Route::get('/adminijasa', [LaporanIjasaController::class, 'adminView'])->name('adminijasa.admin');
 Route::get('/adminbizdev', [LaporanBizdevController::class, 'adminView'])->name('adminbizdev.admin');
+
+// routes/web.php or routes/admin.php
+
+// // Routes for PDF export
+// Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
+//     // Existing routes...
+    
+//     // PDF Export Routes
+// });
+
+// Route::post('/export-rekap-penjualan-pdf', [ExportAllController::class, 'exportRekapPenjualanPDF'])
+// ->name('export-rekap-penjualan-pdf');
+// Route::post('/export-rekap-penjualan-perusahaan-pdf', [ExportAllController::class, 'exportRekapPenjualanPerusahaanPDF'])
+// ->name('export-rekap-penjualan-perusahaan-pdf');
+
+
+Route::prefix('exports')->group(function () {
+    Route::get('rekap-penjualan', [RekapPenjualanController::class,'exportView']);
+    Route::get('rekap-penjualan-pdf', [RekapPenjualanController::class,'exportPDF'])->name('exports.rekap-penjualan.pdf');
+});
+
+// Route::get('/exports/rekap-penjualan', [ExportAllController::class, 'exportView'])->name('exports.rekap-penjualan');
+// Route::get('/exports/rekap-penjualan-perusahaan', [RekapPenjualanPerusahaanController::class, 'exportView'])->name('exports.rekap-penjualan-perusahaan');
+
+
+// //route nge export
+// Route::get('/exports/rekap-penjualan', [ExportAllController::class, 'exportRekapPenjualanServerSide'])->name('exports.rekap-penjualan');
+// Route::get('/exports/rekap-penjualan/pdf', [ExportAllController::class, 'exportRekapPenjualanPDF'])->name('exports.rekap-penjualan.pdf');
 
 Route::middleware(['guest'])->group(function () {
     // Guest routes for login

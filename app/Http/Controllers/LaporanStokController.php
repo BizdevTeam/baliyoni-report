@@ -24,7 +24,7 @@ class LaporanStokController extends Controller
         // Query untuk mencari berdasarkan tahun dan date
         $laporanstoks = LaporanStok::query()
             ->when($search, function ($query, $search) {
-                return $query->where('tanggal', 'LIKE', "%$search%");
+                return $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
             })
             ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
@@ -234,9 +234,9 @@ class LaporanStokController extends Controller
         
         $query = LaporanStok::query();
             // Filter berdasarkan tanggal jika ada
-        if ($search) {
-            $query->where('tanggal', 'LIKE', "%$search%");
-        }
+            if ($search) {
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
         
         // Filter berdasarkan range bulan-tahun jika keduanya diisi
         if ($startMonth && $endMonth) {

@@ -23,7 +23,7 @@ class RekapPendapatanServisAspController extends Controller
         // Query untuk mencari berdasarkan tahun dan date
         $rekappendapatanservisasps = RekapPendapatanServisAsp::query()
             ->when($search, function ($query, $search) {
-                return $query->where('tanggal', 'LIKE', "%$search%")
+                return $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"])
                             ->orWhere('pelaksana', 'like', "%$search%");
             })
             ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
@@ -275,10 +275,9 @@ class RekapPendapatanServisAspController extends Controller
     
     $query = RekapPendapatanServisAsp::query();
         // Filter berdasarkan tanggal jika ada
-    if ($search) {
-        $query->where('tanggal', 'LIKE', "%$search%");
-    }
-    
+        if ($search) {
+            $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+        }
     // Filter berdasarkan range bulan-tahun jika keduanya diisi
     if ($startMonth && $endMonth) {
         $startDate = \Carbon\Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();

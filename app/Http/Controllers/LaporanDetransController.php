@@ -22,7 +22,8 @@ class LaporanDetransController extends Controller
     
         $laporandetrans = LaporanDetrans::query()
             ->when($search, function ($query, $search) {
-                return $query->where('tanggal', 'LIKE', "%$search%");
+                return $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+
             })
             ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
             ->paginate($perPage);
@@ -264,9 +265,9 @@ class LaporanDetransController extends Controller
         
         $query = LaporanDetrans::query();
             // Filter berdasarkan tanggal jika ada
-        if ($search) {
-            $query->where('tanggal', 'LIKE', "%$search%");
-        }
+            if ($search) {
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
         
         // Filter berdasarkan range bulan-tahun jika keduanya diisi
         if ($startMonth && $endMonth) {

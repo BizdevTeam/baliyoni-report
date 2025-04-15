@@ -23,8 +23,8 @@ class LaporanRasioController extends Controller
         $query = LaporanRasio::query();
     
         // Filter berdasarkan tanggal jika ada
-        if (!empty($search)) {
-            $query->where('tanggal', 'LIKE', "%$search%");
+        if ($search) {
+            $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
         }
     
         // Filter berdasarkan range bulan-tahun jika keduanya diisi

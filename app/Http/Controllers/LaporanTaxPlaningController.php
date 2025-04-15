@@ -39,7 +39,7 @@ class LaporanTaxPlaningController extends Controller
             }
         }
         // Ambil data dengan pagination
-        $laporantaxplanings = $query->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
+        $laporantaxplanings = $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"])
                                   ->paginate($perPage);
     
 

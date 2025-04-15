@@ -27,7 +27,8 @@ class RekapPenjualanController extends Controller
         // Query untuk mencari berdasarkan tahun dan date
         $rekappenjualans = RekapPenjualan::query()
             ->when($search, function ($query, $search) {
-                return $query->where('tanggal', 'LIKE', "%$search%");
+                return $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+
             })
             ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage)
@@ -254,9 +255,9 @@ class RekapPenjualanController extends Controller
         $query = RekapPenjualan::query();
             // Filter berdasarkan tanggal jika ada
         if ($search) {
-            $query->where('tanggal', 'LIKE', "%$search%");
+            $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
         }
-        
+            
         // Filter berdasarkan range bulan-tahun jika keduanya diisi
         if ($startMonth && $endMonth) {
             $startDate = \Carbon\Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
@@ -301,4 +302,53 @@ class RekapPenjualanController extends Controller
     {
         return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
     }
+    
+
+    public function exportView(Request $request)
+    {
+    $perPage = $request->input('per_page', 100); // Bisa set jumlah besar untuk ekspor
+    $search = $request->input('search');
+
+    $rekappenjualans = RekapPenjualan::query()
+        ->when($search, function ($query, $search) {
+            return $query->where('tanggal', 'LIKE', "%$search%");
+        })
+        ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
+        ->paginate($perPage)
+        ->withQueryString();
+
+    // Format tambahan untuk tampilan
+    $rekappenjualans->map(function ($item) {
+        $item->total_penjualan_formatted = 'Rp ' . number_format($item->total_penjualan, 0, ',', '.');
+        return $item;
+    });
+
+    // Data chart
+    function getRandomRGBA2($opacity = 0.7)
+    {
+        return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
+    }
+
+    $labels = $rekappenjualans->map(function ($item) {
+        return \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
+    })->toArray();
+
+    $data = $rekappenjualans->pluck('total_penjualan')->toArray();
+    $backgroundColors = array_map(fn() => getRandomRGBA2(), $data);
+
+    $chartData = [
+        'labels' => $labels,
+        'datasets' => [
+            [
+                'text' => 'Total Penjualan',
+                'data' => $data,
+                'backgroundColor' => $backgroundColors,
+            ],
+        ],
+    ];
+
+    // Ganti return view-nya dengan exports.rekap-penjualan
+    return view('exports.rekap-penjualan', compact('rekappenjualans', 'chartData'));
+}
+
 }

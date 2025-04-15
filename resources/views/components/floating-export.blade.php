@@ -1,4 +1,4 @@
-<button id="exportFloatingButton" class="fixed bottom-72 right-6 w-20 h-20 justify-center rounded-full bg-red-600 font-medium text-white px-4 py-3 hover:shadow-xl transition duration-300 ease-in-out transform hover:scale-105 flex items-center gap-2">
+<button id="exportFloatingButton" class="fixed bottom-80 right-6 w-20 h-20 justify-center rounded-full bg-red-600 font-medium text-white px-4 py-3 hover:shadow-xl transition duration-300 ease-in-out transform hover:scale-105 flex items-center gap-2">
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
         <mask id="lineMdCloudAltPrintFilledLoop0">
             <g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">

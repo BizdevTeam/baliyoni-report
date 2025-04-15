@@ -99,7 +99,7 @@
                 <!-- Search -->
                 <form method="GET" action="{{ route('rekappenjualan.index') }}" class="flex items-center gap-2">
                     <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
-                        <input type="date" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}"
+                        <input type="month" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}"
                             class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
                     </div>
 
@@ -318,18 +318,18 @@
 <script>
         //toogle form
         const toggleFormButton = document.getElementById('toggleFormButton');
-            const formContainer = document.getElementById('formContainer');
+        const formContainer = document.getElementById('formContainer');
 
-            toggleFormButton.addEventListener('click', () => {
-                formContainer.classList.toggle('hidden');
-            });
+        toggleFormButton.addEventListener('click', () => {
+        formContainer.classList.toggle('hidden');
+        });
 
         const toggleChartButton = document.getElementById('toggleChartButton');
-            const formChart = document.getElementById('formChart');
+        const formChart = document.getElementById('formChart');
 
-            toggleChartButton.addEventListener('click', () => {
-                formChart.classList.toggle('hidden');
-            });
+        toggleChartButton.addEventListener('click', () => {
+        formChart.classList.toggle('hidden');
+        });
 
     //chart
     const chartCanvas = document.getElementById('chart');

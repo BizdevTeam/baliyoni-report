@@ -22,9 +22,8 @@ class RekapPiutangServisAspController extends Controller
 
         $rekappiutangservisasps = RekapPiutangServisAsp::query()
             ->when($search, function ($query, $search) {
-                return $query->where('tanggal', 'LIKE', "%$search%")
-                             ->orWhere('pelaksana', 'like', "%$search%");
-                return $query->where('tanggal', 'like', "%$search%");
+                return $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"])
+                            ->orWhere('pelaksana', 'like', "%$search%");
             })
             ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
             ->paginate($perPage);
@@ -281,9 +280,9 @@ class RekapPiutangServisAspController extends Controller
         
         $query = RekapPiutangServisAsp::query();
             // Filter berdasarkan tanggal jika ada
-        if ($search) {
-            $query->where('tanggal', 'LIKE', "%$search%");
-        }
+            if ($search) {
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
         
         // Filter berdasarkan range bulan-tahun jika keduanya diisi
         if ($startMonth && $endMonth) {
