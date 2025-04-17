@@ -78,7 +78,7 @@
                     <tbody>
                         @foreach($dataExportLaporanPenjualan['rekap'] as $LaporanPenjualan)
                         <tr>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{  $LaporanPenjualan['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanPenjualan['Tanggal'] }}</td>
                             <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanPenjualan['Total Penjualan'] }}</td>
                         </tr>
                         @endforeach
@@ -102,7 +102,7 @@
         <div class="page-break"></div>
 
         
-        <!-- Export Page 2 -->
+        {{-- <!-- Export Page 2 -->
         <!-- === Page 2 === -->
         <div class="page">
 
@@ -144,7 +144,7 @@
         <!-- footer -->
         <div>
             <p class="text-center text-sm mt-24 ">Laporan Marketing - Laporan Penjualan</p>
-        </div>
+        </div> --}}
 
         <!-- === Page Break 3 === -->
         <div class="page-break"></div>

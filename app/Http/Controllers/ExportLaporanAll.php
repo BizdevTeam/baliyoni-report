@@ -21,12 +21,6 @@ class ExportLaporanAll extends Controller
         $this->year = Carbon::createFromFormat('F Y', $data)->year;
     }
 
-    // Fungsi generate warna random
-    public function getRandomRGBA($opacity = 0.7)
-    {
-        return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
-    }
-
     public function exportAll() {
         try {
             // kirim month dan year ke exportRekapPenjualan
@@ -45,8 +39,7 @@ class ExportLaporanAll extends Controller
             return back()->withErrors($th->getMessage());
         }
     }
-    
-    // Fungsi untuk mengekspor rekap penjualan
+
     public function exportRekapPenjualan($month, $year) {
         try {
             $rekapPenjualan = RekapPenjualan::whereMonth('tanggal', $month)
@@ -57,12 +50,18 @@ class ExportLaporanAll extends Controller
                 return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
             }
 
-            $formattedData = $rekapPenjualan->map(function ($item) {
+            $formattedData =  $rekapPenjualan->map(function ($item) {
                 return [
                     'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
                     'Total Penjualan' => 'Rp ' . number_format($item->total_penjualan, 0, ',', '.'),
                 ];
             });
+
+            // Fungsi generate warna random
+            function getRandomRGBA($opacity = 0.7)
+            {
+                return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
+            }
 
             // Siapkan data untuk chart
             $labels = $rekapPenjualan->map(function ($item) {
@@ -94,7 +93,6 @@ class ExportLaporanAll extends Controller
         }
     }
 
-    // Fungsi untuk mengekspor rekap penjualan perusahaan
     public function exportRekapPenjualanPerusahaan($month, $year) {
         try {
             $rekapPenjualanPerusahaan = RekapPenjualanPerusahaan::whereMonth('tanggal', $month)
@@ -113,37 +111,11 @@ class ExportLaporanAll extends Controller
                 ];
             });
 
-            // Siapkan data untuk chart
-            $labels = $rekapPenjualanPerusahaan->map(function($item) {
-                $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
-                return $item->perusahaan->nama_perusahaan.' - ' . $formattedDate;
-            })->toArray();
-            $data = $rekapPenjualanPerusahaan->pluck('total_penjualan')->toArray();
-            $backgroundColors = array_map(fn() => getRandomRGBA(), $data);
-
-            $chartData = [
-                'labels' => $labels,
-                'datasets' => [
-                    [
-                        'label' => 'Total Penjualan',
-                        'data' => $data,
-                        'backgroundColor' => $backgroundColors,
-                    ],
-                ],
-            ];
-
-            return [
-                'rekappenjualan' => $formattedData,
-                'chart' => $chartData,
-            ];
-
         } catch (\Throwable $th) {
             Log::error('Error exporting  (exp new): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
-
-    // Fungsi untuk mengekspor laporan paket administrasi
     public function exportLaporanPaketAdministrasi($month, $year) {
         try {
             $rekapLaporanPaketAdministrasi = LaporanPaketAdministrasi::whereMonth('tanggal', $month)
@@ -156,9 +128,9 @@ class ExportLaporanAll extends Controller
 
             return $rekapLaporanPaketAdministrasi->map(function ($item) {
                 return [
-                    'tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
-                    'website' => $item->website,
-                    'total_paket' => 'Rp ' . number_format($item->total_paket, 0, ',', '.'),
+                    'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
+                    'Website' => $item->website,
+                    'Total Paket' => 'Rp ' . number_format($item->total_paket, 0, ',', '.'),
                 ];
             });
 
