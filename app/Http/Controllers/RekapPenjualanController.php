@@ -21,13 +21,16 @@ class RekapPenjualanController extends Controller
     {
         $perPage = $request->input('per_page', 12);
         $search = $request->input('search');
+        $month = $request->input('month');
+        $year = $request->input('year');
 
         #$query = KasHutangPiutang::query();
 
         // Query untuk mencari berdasarkan tahun dan date
         $rekappenjualans = RekapPenjualan::query()
-            ->when($search, function ($query, $search) {
-                return $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            ->when($search, function ($query, $month, $year) {
+                return $query->whereMonth('tanggal', $month)
+                ->whereYear('tanggal', $year);
 
             })
             ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)

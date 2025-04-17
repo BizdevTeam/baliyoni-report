@@ -18,7 +18,7 @@
 <div id="popover-company-profile" class="absolute z-10 hidden opacity-0 transition-opacity duration-300">
     <div class="p-2 space-y-2 bg-transparent">
         <div class="flex flex-col items-end gap-2">
-            {{-- <x-floating-export class="!bg-transparent !shadow-none hover:!bg-gray-100 dark:hover:!bg-gray-700" /> --}}
+            <x-floating-export class="!bg-transparent !shadow-none hover:!bg-gray-100 dark:hover:!bg-gray-700" />
             <x-floating-button class="!bg-transparent !shadow-none hover:!bg-gray-100 dark:hover:!bg-gray-700" />
             <x-floating-ask class="!bg-transparent !shadow-none hover:!bg-gray-100 dark:hover:!bg-gray-700" />
         </div>

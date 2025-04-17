@@ -97,18 +97,53 @@
 
             <div class="flex items-center justify-end transition-all duration-500 mt-8 mb-4 p-4">
                 <!-- Search -->
-                <form method="GET" action="{{ route('rekappenjualan.index') }}" class="flex items-center gap-2">
-                    <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
-                        <input type="month" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}"
-                            class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
+                <for
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                m method="GET" action="{{ route('rekappenjualan.index') }}" class="flex items-center gap-2">
+                    <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md gap-2">
+                        {{-- Dropdown Bulan --}}
+                        <select name="month" class="border-none focus:outline-none text-gray-700 bg-transparent">
+                            <option value="">Bulan</option>
+                            @foreach(range(1, 12) as $m)
+                                <option value="{{ str_pad($m, 2, '0', STR_PAD_LEFT) }}"
+                                    {{ request('month') == str_pad($m, 2, '0', STR_PAD_LEFT) ? 'selected' : '' }}>
+                                    {{ DateTime::createFromFormat('!m', $m)->format('F') }}
+                                </option>
+                            @endforeach
+                        </select>
+                
+                        {{-- Dropdown Tahun --}}
+                        <select name="year" class="border-none focus:outline-none text-gray-700 bg-transparent">
+                            <option value="">Tahun</option>
+                            @for($y = now()->year; $y >= 2020; $y--)
+                                <option value="{{ $y }}" {{ request('year') == $y ? 'selected' : '' }}>{{ $y }}</option>
+                            @endfor
+                        </select>
                     </div>
-
+                
                     <button type="submit"
-                        class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm mr-2"
+                        class="bg-gradient-to-r font-medium from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm mr-2"
                         aria-label="Search">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="40" stroke-dashoffset="40" d="M10.76 13.24c-2.34 -2.34 -2.34 -6.14 0 -8.49c2.34 -2.34 6.14 -2.34 8.49 0c2.34 2.34 2.34 6.14 0 8.49c-2.34 2.34 -6.14 2.34 -8.49 0Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.5s" values="40;0"/></path><path stroke-dasharray="12" stroke-dashoffset="12" d="M10.5 13.5l-7.5 7.5"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.5s" dur="0.2s" values="12;0"/></path></g></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                <path stroke-dasharray="40" stroke-dashoffset="40" d="M10.76 13.24c-2.34 -2.34 -2.34 -6.14 0 -8.49c2.34 -2.34 6.14 -2.34 8.49 0c2.34 2.34 2.34 6.14 0 8.49c-2.34 2.34 -6.14 2.34 -8.49 0Z">
+                                    <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.5s" values="40;0"/>
+                                </path>
+                                <path stroke-dasharray="12" stroke-dashoffset="12" d="M10.5 13.5l-7.5 7.5">
+                                    <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.5s" dur="0.2s" values="12;0"/>
+                                </path>
+                            </g>
+                        </svg>
                     </button>
-                </form>
+                </form>                
                 <button
                     class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm mr-2"
                     data-modal-target="#addEventModal">

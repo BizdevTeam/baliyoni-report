@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ArusKasController;
 use App\Http\Controllers\EvaluasiController;
 use App\Http\Controllers\ExportAllController;
+use App\Http\Controllers\ExportLaporanAll;
 use App\Http\Controllers\LaporanPpnController;
 use App\Http\Controllers\LaporanCutiController;
 use App\Http\Controllers\LaporanIzinController;
@@ -352,3 +353,4 @@ Route::middleware(['auth'])->group(function () {
 
 });
 
+Route::get('/export-laporan-all', [ExportLaporanAll::class, 'exportAll'])->name('export-laporan-all-new'); 
