@@ -97,17 +97,7 @@
 
             <div class="flex items-center justify-end transition-all duration-500 mt-8 mb-4 p-4">
                 <!-- Search -->
-                <for
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                m method="GET" action="{{ route('rekappenjualan.index') }}" class="flex items-center gap-2">
+                <for method="GET" action="{{ route('rekappenjualan.index') }}" class="flex items-center gap-2">
                     <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md gap-2">
                         {{-- Dropdown Bulan --}}
                         <select name="month" class="border-none focus:outline-none text-gray-700 bg-transparent">

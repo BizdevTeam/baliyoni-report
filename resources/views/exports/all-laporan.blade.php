@@ -38,12 +38,73 @@
         th {
             background-color: #f2f2f2;
         }
-
     </style>
-</head>
+
+    <style>
+        @media print {
+        .page-break {
+            page-break-before: always;
+        }
+        .page {
+            page-break-inside: avoid;
+        }
+        }
+    </style>
+    
+    </head>
 <body onload="window.print()">
 
     <div id="exportContent">
+
+        <div class="page">
+        <!-- Export Page 1 -->
+    
+        <!-- buat header disini  -->
+        <div>
+            <img src={{ "images/HEADER.png" }} alt="">
+        </div>
+
+        <div class="flex justify-between p-6">
+            <!-- Tabel Data untuk ekspor PDF -->
+            <div class="width-1/2">
+                <h2 class="text-center font-serif">Tabel Data</h2>
+                <table id="rekapTable" class="dataTable">
+                    <thead>
+                        <tr>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Total Penjualan (Rp)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($dataExportLaporanPenjualan['rekap'] as $LaporanPenjualan)
+                        <tr>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{  $LaporanPenjualan['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanPenjualan['Total Penjualan'] }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <!-- Grafik untuk ekspor PDF -->
+            <div id="chartContainer">
+                <h2 class="text-center font-serif">Grafik Laporan</h2>
+                <canvas class="w-[600px] max-h-[300px]" id="rekapChart"></canvas>
+            </div>
+        </div>
+
+        <!-- footer -->
+        <div class="mt-64 border-t pt-8">
+            <p class="text-center text-sm font-serif">Laporan Marketing - Laporan Penjualan</p>
+          </div>
+        </div>
+
+        <!-- === Page Break 2 === -->
+        <div class="page-break"></div>
+
+        
+        <!-- Export Page 2 -->
+        <!-- === Page 2 === -->
+        <div class="page">
 
         <!-- buat header disini  -->
         <div>
@@ -53,57 +114,66 @@
         <div class="flex justify-between p-6">
             <!-- Tabel Data untuk ekspor PDF -->
             <div class="width-1/2">
-                <h2>Tabel Data</h2>
+                <h2 class="text-center font-serif">Tabel Data</h2>
                 <table id="rekapTable" class="dataTable">
                     <thead>
                         <tr>
-                            <th class="border border-black p-1 text-center text-sm">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-sm font-sans">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-sm font-sans">Perusahaan</th>
                             <th class="border border-black p-1 text-center text-sm">Total Penjualan (Rp)</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($dataExportLaporanPenjualan['rekap'] as $LaporanPenjualan)
+                        @foreach($dataExportLaporanPenjualanPerusahaan['rekap'] as $LaporanPenjualanPerusahaan)
                         <tr>
-                            <td class="border border-black p-1 text-center text-sm">{{ $LaporanPenjualan['Tanggal'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm">{{ $LaporanPenjualan['Total Penjualan'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm">{{ $LaporanPenjualanPerusahaan['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm">{{ $LaporanPenjualanPerusahaan['Perusahaan'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm">{{ $LaporanPenjualanPerusahaan['Total Penjualan'] }}</td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
             <!-- Grafik untuk ekspor PDF -->
-            <div id="chartContainer" style="margin-top: 20px; height: 300px;">
-                <h2>Grafik Laporan</h2>
-                <canvas class="w-[600px]" id="rekapChart"></canvas>
+            <div id="chartContainer">
+                <h2 class="text-center mb-2">Grafik Laporan</h2>
+                <canvas class="w-[650px] max-h-[300px]" id="rekapChart"></canvas>
             </div>
-        </div>
+        </div>  
 
         <!-- footer -->
         <div>
-            <p class="text-center text-sm mt-4">Laporan Marketing - Laporan Penjualan</p>
+            <p class="text-center text-sm mt-24 ">Laporan Marketing - Laporan Penjualan</p>
         </div>
+
+        <!-- === Page Break 3 === -->
+        <div class="page-break"></div>
+        
+        <!-- Export Page 3 -->
+        <!-- === Page 3 === -->
+        <div class="page">
 
         <!-- Tabel Data untuk ekspor PDF -->
         <div>
-        <table id="rekapTable" class="dataTable">
-            <thead>
-                <tr>
-                    <th>Tanggal</th>
-                    <th>Perusahaan</th>
-                    <th>Total Penjualan (Rp)</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($dataExportLaporanPenjualanPerusahaan as $LaporanPenjualanPerusahaan)
-                <tr>
-                    <td>{{ $LaporanPenjualanPerusahaan['Tanggal'] }}</td>
-                    <td>{{ $LaporanPenjualanPerusahaan['Perusahaan'] }}</td>
-                    <td>{{ $LaporanPenjualanPerusahaan['Total Penjualan'] }}</td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
+            <table id="rekapTable" class="dataTable">
+                <thead>
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Perusahaan</th>
+                        <th>Total Penjualan (Rp)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($dataExportLaporanPenjualanPerusahaan as $LaporanPenjualanPerusahaan)
+                    <tr>
+                        <td>{{ $LaporanPenjualanPerusahaan['Tanggal'] }}</td>
+                        <td>{{ $LaporanPenjualanPerusahaan['Perusahaan'] }}</td>
+                        <td>{{ $LaporanPenjualanPerusahaan['Total Penjualan'] }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
 
         <table id="rekapTable" class="dataTable">
             <thead>
@@ -127,62 +197,97 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Data chart dari controller
-            const chartData = @json($dataExportLaporanPenjualan['chart']);
+        document.addEventListener('DOMContentLoaded', function () {
+    const chartData = @json($dataExportLaporanPenjualan['chart']);
+    const rekapChart = document.getElementById('rekapChart').getContext('2d');
 
-            // Ambil elemen canvas
-            const rekapChart = document.getElementById('rekapChart').getContext('2d');
-
-            // Buat chart
-            const exportChart = new Chart(rekapChart, {
-                type: 'bar'
-                , data: {
-                    labels: chartData.labels
-                    , datasets: chartData.datasets.map(dataset => ({
-                        ...dataset
-                        , borderColor: dataset.backgroundColor.map(color => color.replace('0.7', '1'))
-                        , borderWidth: 1
-                    }))
+    const exportChart = new Chart(rekapChart, {
+        type: 'bar',
+        data: {
+            labels: chartData.labels,
+            datasets: chartData.datasets.map((dataset) => ({
+                ...dataset,
+                borderColor: dataset.backgroundColor.map((color) =>
+                    color.replace('0.7', '1')
+                ),
+                borderWidth: 1,
+            })),
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false, // 🔥 Disable animation
+            transitions: {
+                active: {
+                    animation: {
+                        duration: 0 // 🔥 Remove transition animation
+                    }
                 }
-                , options: {
-                    responsive: true
-                    , maintainAspectRatio: false
-                    , plugins: {
-                        legend: {
-                            display: false, // Sembunyikan legenda
-                        }
-                    , }
-                    , scales: {
-                        x: {
-                            title: {
-                                display: false, // Sembunyikan label sumbu X
-                            }
-                        , }
-                        , y: {
-                            beginAtZero: true
-                            , 
-                            title: {
-                        display: false, // Sembunyikan label sumbu Y
+            },
+            layout: {
+                padding: {
+                    top: 50,
+                },
+            },
+            plugins: {
+                legend: {
+                    display: false,
+                },
+                title: {
+                    display: false,
+                    text: 'Grafik Rekap Penjualan',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function (tooltipItem) {
+                            const value = tooltipItem.raw;
+                            return tooltipItem.dataset.label + ' : Rp ' + new Intl.NumberFormat('id-ID').format(value);
+                        },
                     },
-                            ticks: {
-                                callback: function(value) {
-                                    return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
-                                }
-                            }
-                        }
-                    }
-                    , plugins: {
-                        title: {
-                            display: true
-                            , text: 'Grafik Rekap Penjualan'
-                        }
-                    }
-                }
-            });
-        });
+                },
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: false,
+                    },
+                },
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: false,
+                    },
+                    ticks: {
+                        callback: function (value) {
+                            return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
+                        },
+                    },
+                },
+            },
+        },
+        plugins: [
+            {
+                afterDatasetsDraw: function (chart) {
+                    const ctx = chart.ctx;
+                    chart.data.datasets.forEach((dataset, i) => {
+                        const meta = chart.getDatasetMeta(i);
+                        meta.data.forEach((bar, index) => {
+                            const value = dataset.data[index];
+                            let textY = bar.y - 10;
+                            if (textY < 20) textY = 20;
+                            ctx.fillStyle = 'black';
+                            ctx.font = 'bold 14px sans-serif';
+                            ctx.textAlign = 'center';
+                            ctx.fillText('Rp ' + new Intl.NumberFormat('id-ID').format(value), bar.x, textY);
+                        });
+                    });
+                },
+            },
+        ],
+    });
+});
 
-    </script>
+</script>
 </body>
 </html>
 
