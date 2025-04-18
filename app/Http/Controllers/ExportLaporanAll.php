@@ -20,6 +20,13 @@ class ExportLaporanAll extends Controller
         $this->month = Carbon::createFromFormat('F Y', $data)->month;
         $this->year = Carbon::createFromFormat('F Y', $data)->year;
     }
+       
+    // Fungsi generate warna random
+    public function getRandomRGBA()
+    {
+        $opacity = 0.7; // Opacity value between 0 and 1
+        return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
+    }
 
     public function exportAll() {
         try {
@@ -30,7 +37,7 @@ class ExportLaporanAll extends Controller
             $dataExportStatusPaket = $this->exportStatusPaket($this->month, $this->year);
             $dataExportLaporanPerInstansi = $this->exportLaporanPerInstansi($this->month, $this->year);
 
-            //dd($dataExportLaporanPenjualan, $dataExportLaporanPenjualanPerusahaan, $dataExportLaporanPaketAdministrasi, $dataExportStatusPaket, $dataExportLaporanPerInstansi);
+            // dd($dataExportLaporanPenjualan, $dataExportLaporanPenjualanPerusahaan, $dataExportLaporanPaketAdministrasi, $dataExportStatusPaket, $dataExportLaporanPerInstansi);
 
             return view('exports.all-laporan', compact('dataExportLaporanPenjualan', 'dataExportLaporanPenjualanPerusahaan', 'dataExportLaporanPaketAdministrasi', 'dataExportStatusPaket', 'dataExportLaporanPerInstansi'));
 
@@ -57,19 +64,13 @@ class ExportLaporanAll extends Controller
                 ];
             });
 
-            // Fungsi generate warna random
-            function getRandomRGBA($opacity = 0.7)
-            {
-                return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
-            }
-
             // Siapkan data untuk chart
             $labels = $rekapPenjualan->map(function ($item) {
                 return \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
             })->toArray();
 
             $data = $rekapPenjualan->pluck('total_penjualan')->toArray();
-            $backgroundColors = array_map(fn() => getRandomRGBA(), $data);
+            $backgroundColors = array_map(fn() => $this->getRandomRGBA(), $data);
 
             $chartData = [
                 'labels' => $labels,
@@ -103,13 +104,37 @@ class ExportLaporanAll extends Controller
                 return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
             }
 
-            return $rekapPenjualanPerusahaan->map(function ($item) {
+           $formattedData = $rekapPenjualanPerusahaan->map(function ($item) {
                 return [
                     'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
                     'Perusahaan' => $item->perusahaan->nama_perusahaan,
                     'Total Penjualan' => 'Rp ' . number_format($item->total_penjualan, 0, ',', '.'),
                 ];
             });
+
+            // Siapkan data untuk chart
+            $labels = $rekapPenjualanPerusahaan->map(function ($item) {
+                return \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
+            })->toArray();
+
+            $data = $rekapPenjualanPerusahaan->pluck('total_penjualan')->toArray();
+            $backgroundColors = array_map(fn() => $this->getRandomRGBA(), $data);
+
+            $chartData = [
+                'labels' => $labels,
+                'datasets' => [
+                    [
+                        'label' => 'Total Penjualan',
+                        'data' => $data,
+                        'backgroundColor' => $backgroundColors,
+                    ],
+                ],
+            ];
+
+            return [
+                'rekap' => $formattedData,
+                'chart' => $chartData,
+            ];
 
         } catch (\Throwable $th) {
             Log::error('Error exporting  (exp new): ' . $th->getMessage());
