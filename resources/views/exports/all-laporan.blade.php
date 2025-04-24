@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="{{ asset('templates/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    <script src="https://cdn.ckeditor.com/ckeditor5/38.1.0/classic/ckeditor.js"></script>
     @vite('resources/css/tailwind.css')
     @vite('resources/css/custom.css')
     @vite('resources/js/app.js')
@@ -57,6 +58,23 @@
             margin: 0;
             padding: 0;
         }
+    }
+    </style>
+
+<style>
+    /* Styling agar numbered list & bullet list tetap tampil di tabel */
+    .content-html ol {
+    list-style-type: decimal;
+    margin-left: 20px;
+    }
+
+    .content-html ul {
+    list-style-type: disc;
+    margin-left: 20px;
+    }
+
+    .content-html li {
+    margin-bottom: 4px;
     }
     </style>
     
@@ -484,8 +502,536 @@
         </div>
         </div>
 
+        <!-- === Export PDF Supports === -->
+        <!-- === Page Break 10 === -->
+        <div class="page-break"></div>
+        <!-- Export Page 10 -->
+        <!-- === Page 10 === -->
+        <div class="page">
+        <!-- buat header disini  -->
+        <div>
+            <img src={{ "images/HEADER.png" }} alt="">
+        </div>
+
+        <div class="flex justify-between p-6">
+            <!-- Tabel Data untuk ekspor PDF -->
+            <div class="width-1/2 pr-10">
+                <h2 class="text-center font-serif">Tabel Data</h2>
+                <table id="rekapTable" class="dataTable">
+                    <thead>
+                        <tr>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Pelaksana</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Nilai Pendapatan (Rp)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (empty($dataExportRekapPendapatanASP['rekap']) || count($dataExportRekapPendapatanASP['rekap']) === 0)
+                        <tr>
+                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                        </tr>
+                        @else
+                        @foreach($dataExportRekapPendapatanASP['rekap'] as $rekapPendapatanServisASP)
+                        <tr>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapPendapatanServisASP['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapPendapatanServisASP['Pelaksana'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapPendapatanServisASP['Nilai'] }}</td>
+                        </tr>
+                        @endforeach
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+            <!-- Grafik untuk ekspor PDF -->
+            <div id="chartContainer">
+                <h2 class="text-center font-serif">Grafik Laporan</h2>
+                <canvas class="chart-export w-[700px] max-h-[500px]" id="rekapChart" data-chart='@json($dataExportRekapPendapatanASP["chart"])'></canvas>
+            </div>
+        </div>  
+
+        <!-- footer -->
+        <div class="mt-28 border-t items-center align-middle text-center">
+            <p class="text-center text-sm font-serif mt-6">Laporan Supports - Laporan Rekap Pendapatan Servis ASP</p>
+        </div>
+        </div>
+
+        <!-- === Page Break 11 === -->
+        <div class="page-break"></div>
+        <!-- Export Page 11 -->
+        <!-- === Page 11 === -->
+        <div class="page">
+        <!-- buat header disini  -->
+        <div>
+            <img src={{ "images/HEADER.png" }} alt="">
+        </div>
+
+        <div class="flex justify-between p-6">
+            <!-- Tabel Data untuk ekspor PDF -->
+            <div class="width-1/2 pr-10">
+                <h2 class="text-center font-serif">Tabel Data</h2>
+                <table id="rekapTable" class="dataTable">
+                    <thead>
+                        <tr>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Pelaksana</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Nilai Piutang (Rp)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (empty($dataExportRekapPiutangASP['rekap']) || count($dataExportRekapPiutangASP['rekap']) === 0)
+                        <tr>
+                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                        </tr>
+                        @else
+                        @foreach($dataExportRekapPiutangASP['rekap'] as $rekapPiutangServisASP)
+                        <tr>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapPiutangServisASP['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapPiutangServisASP['Pelaksana'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapPiutangServisASP['Nilai'] }}</td>
+                        </tr>
+                        @endforeach
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+            <!-- Grafik untuk ekspor PDF -->
+            <div id="chartContainer">
+                <h2 class="text-center font-serif">Grafik Laporan</h2>
+                <canvas class="chart-export w-[700px] max-h-[500px]" id="rekapChart" data-chart='@json($dataExportRekapPiutangASP["chart"])'></canvas>
+            </div>
+        </div>  
+
+        <!-- footer -->
+        <div class="mt-28 border-t items-center align-middle text-center">
+            <p class="text-center text-sm font-serif mt-6">Laporan Supports - Laporan Rekap Piutang Servis ASP</p>
+        </div>
+        </div>
+
+        <!-- === Page Break 12 === -->
+        <div class="page-break"></div>
+        <!-- Export Page 12 -->
+        <!-- === Page 12 === -->
+        <div class="page">
+        <!-- buat header disini  -->
+        <div>
+            <img src={{ "images/HEADER.png" }} alt="">
+        </div>
+
+        <div class="flex justify-between p-6">
+            <!-- Tabel Data untuk ekspor PDF -->
+            <div class="width-1/2 pr-10">
+                <h2 class="text-center font-serif">Tabel Data</h2>
+                <table id="rekapTable" class="dataTable">
+                    <thead>
+                        <tr>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Pelaksana</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Total Pengiriman (Rp)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (empty($dataLaporanPengiriman['rekap']) || count($dataLaporanPengiriman['rekap']) === 0)
+                        <tr>
+                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                        </tr>
+                        @else
+                        @foreach($dataLaporanPengiriman['rekap'] as $rekapLaporanPengiriman)
+                        <tr>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapLaporanPengiriman['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapLaporanPengiriman['Pelaksana'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapLaporanPengiriman['Total'] }}</td>
+                        </tr>
+                        @endforeach
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+            <!-- Grafik untuk ekspor PDF -->
+            <div id="chartContainer">
+                <h2 class="text-center font-serif">Grafik Laporan</h2>
+                <canvas class="chart-export w-[700px] max-h-[500px]" id="rekapChart" data-chart='@json($dataLaporanPengiriman["chart"])'></canvas>
+            </div>
+        </div>  
+
+        <!-- footer -->
+        <div class="mt-28 border-t items-center align-middle text-center">
+            <p class="text-center text-sm font-serif mt-6">Laporan Supports - Laporan Rekap Piutang Servis ASP</p>
+        </div>
+        </div>
+
+        <!-- === Export PDF HRGA === -->
+        <!-- === Page Break 13 === -->
+        <div class="page-break"></div>
+        <!-- Export Page 13 -->
+        <!-- === Page 13 === -->
+        <div class="page">
+        <!-- buat header disini  -->
+        <div>
+            <img src={{ "images/HEADER.png" }} alt="">
+        </div>
+
+        <div class="flex justify-between p-6">
+            <!-- Tabel Data untuk ekspor PDF -->
+            <div class="width-1/2 pr-10">
+                <h2 class="text-center font-serif">Tabel Data</h2>
+                <table id="rekapTable" class="dataTable">
+                    <thead>
+                        <tr>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Pelaksana</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Total Sakit (Hari)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (empty($dataLaporanSakit['rekap']) || count($dataLaporanSakit['rekap']) === 0)
+                        <tr>
+                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                        </tr>
+                        @else
+                        @foreach($dataLaporanSakit['rekap'] as $rekapSakit)
+                        <tr>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapSakit['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapSakit['Nama'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapSakit['Total'] }}</td>
+                        </tr>
+                        @endforeach
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+            <!-- Grafik untuk ekspor PDF -->
+            <div id="chartContainer">
+                <h2 class="text-center font-serif">Grafik Laporan</h2>
+                <canvas class="chart-export-hrga w-[700px] max-h-[500px]" id="rekapChart" data-chart='@json($dataLaporanSakit["chart"])'></canvas>
+            </div>
+        </div>  
+
+        <!-- footer -->
+        <div class="mt-28 border-t items-center align-middle text-center">
+            <p class="text-center text-sm font-serif mt-6">Laporan HRGA - Laporan Sakit</p>
+        </div>
+        </div>
+
+        <!-- === Page Break 14 === -->
+        <div class="page-break"></div>
+        <!-- Export Page 14 -->
+        <!-- === Page 14 === -->
+        <div class="page">
+        <!-- buat header disini  -->
+        <div>
+            <img src={{ "images/HEADER.png" }} alt="">
+        </div>
+
+        <div class="flex justify-between p-6">
+            <!-- Tabel Data untuk ekspor PDF -->
+            <div class="width-1/2 pr-10">
+                <h2 class="text-center font-serif">Tabel Data</h2>
+                <table id="rekapTable" class="dataTable">
+                    <thead>
+                        <tr>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Pelaksana</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Total Cuti (Hari)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (empty($dataLaporanCuti['rekap']) || count($dataLaporanCuti['rekap']) === 0)
+                        <tr>
+                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                        </tr>
+                        @else
+                        @foreach($dataLaporanCuti['rekap'] as $rekapCuti)
+                        <tr>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapCuti['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapCuti['Nama'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapCuti['Total'] }}</td>
+                        </tr>
+                        @endforeach
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+            <!-- Grafik untuk ekspor PDF -->
+            <div id="chartContainer">
+                <h2 class="text-center font-serif">Grafik Laporan</h2>
+                <canvas class="chart-export-hrga w-[700px] max-h-[500px]" id="rekapChart" data-chart='@json($dataLaporanCuti["chart"])'></canvas>
+            </div>
+        </div>  
+
+        <!-- footer -->
+        <div class="mt-28 border-t items-center align-middle text-center">
+            <p class="text-center text-sm font-serif mt-6">Laporan HRGA - Laporan Cuti</p>
+        </div>
+        </div>
+
+        <!-- === Page Break 15 === -->
+        <div class="page-break"></div>
+        <!-- Export Page 15 -->
+        <!-- === Page 15 === -->
+        <div class="page">
+        <!-- buat header disini  -->
+        <div>
+            <img src={{ "images/HEADER.png" }} alt="">
+        </div>
+
+        <div class="flex justify-between p-6">
+            <!-- Tabel Data untuk ekspor PDF -->
+            <div class="width-1/2 pr-10">
+                <h2 class="text-center font-serif">Tabel Data</h2>
+                <table id="rekapTable" class="dataTable">
+                    <thead>
+                        <tr>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Pelaksana</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Total Izin (Hari)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (empty($dataLaporanIzin['rekap']) || count($dataLaporanIzin['rekap']) === 0)
+                        <tr>
+                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                        </tr>
+                        @else
+                        @foreach($dataLaporanIzin['rekap'] as $rekapIzin)
+                        <tr>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapIzin['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapIzin['Nama'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapIzin['Total'] }}</td>
+                        </tr>
+                        @endforeach
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+            <!-- Grafik untuk ekspor PDF -->
+            <div id="chartContainer">
+                <h2 class="text-center font-serif">Grafik Laporan</h2>
+                <canvas class="chart-export-hrga w-[700px] max-h-[500px]" id="rekapChart" data-chart='@json($dataLaporanIzin["chart"])'></canvas>
+            </div>
+        </div>  
+
+        <!-- footer -->
+        <div class="mt-28 border-t items-center align-middle text-center">
+            <p class="text-center text-sm font-serif mt-6">Laporan HRGA - Laporan Izin</p>
+        </div>
+        </div>
+
+        <!-- === Page Break 15 === -->
+        <div class="page-break"></div>
+        <!-- Export Page 15 -->
+        <!-- === Page 15 === -->
+        <div class="page">
+        <!-- buat header disini  -->
+        <div>
+            <img src={{ "images/HEADER.png" }} alt="">
+        </div>
+
+        <div class="flex justify-between p-6">
+            <!-- Tabel Data untuk ekspor PDF -->
+            <div class="width-1/2 pr-10">
+                <h2 class="text-center font-serif">Tabel Data</h2>
+                <table id="rekapTable" class="dataTable">
+                    <thead>
+                        <tr>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Pelaksana</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Total Terlambat (Hari)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (empty($dataLaporanTerlambat['rekap']) || count($dataLaporanTerlambat['rekap']) === 0)
+                        <tr>
+                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                        </tr>
+                        @else
+                        @foreach($dataLaporanTerlambat['rekap'] as $rekapTerlambat)
+                        <tr>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapTerlambat['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapTerlambat['Nama'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapTerlambat['Total'] }}</td>
+                        </tr>
+                        @endforeach
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+            <!-- Grafik untuk ekspor PDF -->
+            <div id="chartContainer">
+                <h2 class="text-center font-serif">Grafik Laporan</h2>
+                <canvas class="chart-export-hrga w-[700px] max-h-[500px]" id="rekapChart" data-chart='@json($dataLaporanTerlambat["chart"])'></canvas>
+            </div>
+        </div>  
+
+        <!-- footer -->
+        <div class="mt-28 border-t items-center align-middle text-center">
+            <p class="text-center text-sm font-serif mt-6">Laporan HRGA - Laporan Terlambat</p>
+        </div>
+        </div>
+
+        <!-- === DIVISI ACCOUNTING === -->
+        <!-- === Page Break 16 === -->
+        <div class="page-break"></div>
+        <!-- Export Page 16 -->
+        <!-- === Page 16 === -->
+        <div class="page">
+        <!-- buat header disini  -->
+        <div>
+            <img src={{ "images/HEADER.png" }} alt="">
+        </div>
+
+        <div class="flex justify-between p-6">
+            <!-- Tabel Data untuk ekspor PDF -->
+            <div class="width-1/2 pr-10">
+                <h2 class="text-center font-serif">Tabel Data</h2>
+                <table id="rekapTable" class="dataTable">
+                    <thead>
+                        <tr>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Kas</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Hutang</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Piutang</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Stok</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (empty($dataKHPS['rekap']) || count($dataKHPS['rekap']) === 0)
+                        <tr>
+                            <td colspan="5" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                        </tr>
+                        @else
+                        @foreach($dataKHPS['rekap'] as $KHPS)
+                        <tr>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $KHPS['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $KHPS['Kas'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $KHPS['Hutang'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $KHPS['Piutang'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $KHPS['Stok'] }}</td>
+                        </tr>
+                        @endforeach
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+            <!-- Grafik untuk ekspor PDF -->
+            <div id="chartContainer">
+                <h2 class="text-center font-serif">Grafik Laporan</h2>
+                <canvas class="chart-export-pie w-[500px]" id="rekapChart" data-chart='@json($dataKHPS["chart"])'></canvas>
+            </div>
+        </div>  
+
+        <!-- footer -->
+        <div class="mt-14 border-t items-center align-middle text-center">
+            <p class="text-center text-sm font-serif mt-6">Laporan Accounting - Laporan Kas Hutang Piutang Stok</p>
+        </div>
+    </div>
+
+        <!-- === Page Break 17 === -->
+        <div class="page-break"></div>
+        <!-- Export Page 17 -->
+        <!-- === Page 17 === -->
+        <div class="page">
+        <!-- buat header disini  -->
+        <div>
+            <img src={{ "images/HEADER.png" }} alt="">
+        </div>
+
+        <div class="flex justify-between p-6">
+            <!-- Tabel Data untuk ekspor PDF -->
+            <div class="width-1/2 pr-10">
+                <h2 class="text-center font-serif">Tabel Data</h2>
+                <table id="rekapTable" class="dataTable">
+                    <thead>
+                        <tr>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Kas Masuk</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Kas Keluar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (empty($dataArusKas['rekap']) || count($dataArusKas['rekap']) === 0)
+                        <tr>
+                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                        </tr>
+                        @else
+                        @foreach($dataArusKas['rekap'] as $ArusKas)
+                        <tr>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $ArusKas['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $ArusKas['Masuk'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $ArusKas['Keluar'] }}</td>
+                        </tr>
+                        @endforeach
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+            <!-- Grafik untuk ekspor PDF -->
+            <div id="chartContainer">
+                <h2 class="text-center font-serif">Grafik Laporan</h2>
+                <canvas class="chart-export-pie w-[500px]" id="rekapChart" data-chart='@json($dataArusKas["chart"])'></canvas>
+            </div>
+        </div>  
+
+        <!-- footer -->
+        <div class="mt-14 border-t items-center align-middle text-center">
+            <p class="text-center text-sm font-serif mt-6">Laporan Accounting - Laporan Arus Kas</p>
+        </div>
+    </div>
+
+        <!-- === Page Break 17 === -->
+        <div class="page-break"></div>
+        <!-- Export Page 17 -->
+        <!-- === Page 17 === -->
+        <div class="page">
+        <!-- buat header disini  -->
+        <div>
+            <img src={{ "images/HEADER.png" }} alt="">
+        </div>
+
+        <div class="flex justify-between p-6">
+            <!-- Tabel Data untuk ekspor PDF -->
+            <div class="width-1/2 pr-10">
+                <h2 class="text-center font-serif">Tabel Data</h2>
+                <table id="rekapTable" class="dataTable">
+                    <thead>
+                        <tr>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Aspek</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Masalah</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Solusi</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Implementasi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (empty($dataLaporanSPI['rekap']) || count($dataLaporanSPI['rekap']) === 0)
+                        <tr>
+                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                        </tr>
+                        @else
+                        @foreach($dataLaporanSPI['rekap'] as $SPI)
+                        <tr>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $SPI['Tanggal'] }}</td>
+                            <td class="border border-black p-1 content-html text-sm text-justify font-serif">{!! $SPI['Aspek'] !!}</td>
+                            <td class="border border-black p-1 content-html text-sm text-justify font-serif">{!! $SPI['Masalah'] !!}</td>
+                            <td class="border border-black p-1 content-html text-sm text-justify font-serif">{!! $SPI['Solusi'] !!}</td>
+                            <td class="border border-black p-1 content-html text-sm text-justify font-serif">{!! $SPI['Implementasi'] !!}</td>
+                        </tr>
+                        @endforeach
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+        </div>  
+
+            <!-- footer -->
+            <div class="mt-32 border-t items-center align-middle text-center">
+                <p class="text-center text-sm font-serif mt-6">Laporan SPI - Laporan SPI Operasional</p>
+            </div>
+        </div>
+
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+
 
     //function chart berisikan Rp
     document.addEventListener('DOMContentLoaded', function () {
@@ -500,11 +1046,7 @@
             data: {
                 labels: chartData.labels,
                 datasets: chartData.datasets.map((dataset) => ({
-                    ...dataset,
-                    borderColor: dataset.backgroundColor.map((color) =>
-                        color.replace('0.7', '1')
-                    ),
-                    borderWidth: 1,
+                    ...dataset
                 })),
             },
             options: {
@@ -674,7 +1216,137 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
-</script>
+
+//function chart untuk HRGA
+document.addEventListener('DOMContentLoaded', function () {
+    const chartCanvases = document.querySelectorAll('.chart-export-hrga');
+
+    chartCanvases.forEach((canvas) => {
+        const chartData = JSON.parse(canvas.dataset.chart);
+        const ctx = canvas.getContext('2d');
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: chartData.labels,
+                datasets: chartData.datasets.map((dataset) => ({
+                    ...dataset,
+                    borderColor: dataset.backgroundColor.map((color) =>
+                        color.replace('0.7', '1')
+                    ),
+                    borderWidth: 1,
+                })),
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: false,
+                transitions: {
+                    active: {
+                        animation: {
+                            duration: 0
+                        }
+                    }
+                },
+                layout: {
+                    padding: {
+                        top: 50,
+                    },
+                },
+                plugins: {
+                    legend: {
+                        display: false,
+                    },
+                    title: {
+                        display: false,
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (tooltipItem) {
+                                const value = tooltipItem.raw;
+                                return tooltipItem.dataset.label + ' : Hari ' + new Intl.NumberFormat('id-ID').format(value);
+                            },
+                        },
+                    },
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: false,
+                        },
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: false,
+                        },
+                        ticks: {
+                            callback: function (value) {
+                                return 'Hari ' + new Intl.NumberFormat('id-ID').format(value);
+                            },
+                        },
+                    },
+                },
+            },
+            plugins: [
+                {
+                    afterDatasetsDraw: function (chart) {
+                        const ctx = chart.ctx;
+                        chart.data.datasets.forEach((dataset, i) => {
+                            const meta = chart.getDatasetMeta(i);
+                            meta.data.forEach((bar, index) => {
+                                const value = dataset.data[index];
+                                let textY = bar.y - 10;
+                                if (textY < 20) textY = 20;
+                                ctx.fillStyle = 'black';
+                                ctx.font = 'bold 14px sans-serif';
+                                ctx.textAlign = 'center';
+                                ctx.fillText( new Intl.NumberFormat('id-ID').format(value) + ' Hari ', bar.x, textY);
+                            });
+                        });
+                    },
+                },
+            ],
+        });
+    });
+});
+//function chart untuk HRGA
+document.addEventListener('DOMContentLoaded', function () {
+    const chartCanvases = document.querySelectorAll('.chart-export-pie');
+
+    chartCanvases.forEach((canvas) => {
+        const chartData = JSON.parse(canvas.dataset.chart);
+        const ctx = canvas.getContext('2d');
+
+        new Chart(ctx, {
+            type: 'pie', 
+            data: chartData, 
+            options: {
+                responsive: true,
+                animation: false,
+                transitions: {
+                    active: {
+                        animation: {
+                            duration: 0
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return tooltipItem.label + ': ' + tooltipItem.raw.toLocaleString(); // Menampilkan data dengan format angka
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+});
 
 
 </script>
