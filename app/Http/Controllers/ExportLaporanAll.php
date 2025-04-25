@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ArusKas;
+use App\Models\IjasaGambar;
 use App\Models\ItMultimediaInstagram;
 use App\Models\ItMultimediaTiktok;
 use App\Models\KasHutangPiutang;
@@ -10,6 +11,7 @@ use App\Models\LaporanBizdevGambar;
 use App\Models\LaporanCuti;
 use App\Models\LaporanDetrans;
 use App\Models\LaporanHolding;
+use App\Models\LaporanIjasa;
 use App\Models\LaporanIzin;
 use App\Models\LaporanLabaRugi;
 use App\Models\LaporanNegosiasi;
@@ -111,6 +113,9 @@ class ExportLaporanAll extends Controller
             $dataLaporanPengiriman = $this->safeExport(fn() => $this->exportLaporanPengiriman($this->month, $this->year));
 
             // === Untuk divisi HRGA ===
+            $dataPTBOS = $this->safeExport(fn() => $this->exportPTBOS($this->month, $this->year));
+            $dataIJASA = $this->safeExport(fn() => $this->exportIJASA($this->month, $this->year));
+            $dataIJASAGambar = $this->safeExport(fn() => $this->exportIJASAGambar($this->month, $this->year));
             $dataLaporanSakit = $this->safeExport(fn() => $this->exportSakit($this->month, $this->year));
             $dataLaporanCuti = $this->safeExport(fn() => $this->exportCuti($this->month, $this->year));
             $dataLaporanIzin = $this->safeExport(fn() => $this->exportIzin($this->month, $this->year));
@@ -165,6 +170,9 @@ class ExportLaporanAll extends Controller
                 'dataTiktok',
                 'dataInstagram',
                 'dataBizdev',
+                'dataPTBOS',
+                'dataIJASA',
+                'dataIJASAGambar',
                 
             ))
             ->with('month', $this->month)
@@ -825,6 +833,71 @@ class ExportLaporanAll extends Controller
         return 'Error: ' . $th->getMessage();
     }
 }
+    // Export untuk divisi HRGA
+    public function exportIJASA($month, $year) {
+    try {
+        $rekapIJASA = LaporanIjasa::whereMonth('tanggal', $month)
+            ->whereYear('tanggal', $year)
+            ->get();
+
+        if ($rekapIJASA->isEmpty()) {
+            return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+        }
+
+        $formattedData =  $rekapIJASA->map(function ($item) {
+            return [
+                'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y'),
+                'Jam' => \Carbon\Carbon::parse($item->jam)->translatedFormat('H:i'),
+                'Permasalahan' => $item->permasalahan,
+                'Impact' => $item->impact,
+                'Troubleshooting' => $item->troubleshooting,
+                'Resolve Tanggal' => \Carbon\Carbon::parse($item->resolve_tanggal)->translatedFormat('d F Y'),
+                'Resolve Jam' => \Carbon\Carbon::parse($item->resolve_jam)->translatedFormat('H:i'),
+            ];
+        });
+
+        return [
+            'rekap' => $formattedData,
+        ];
+
+    } catch (\Throwable $th) {
+        Log::error('Error exporting  (exp new): ' . $th->getMessage());
+        return 'Error: ' . $th->getMessage();
+    }
+}
+
+// Export untuk divisi tiktok
+public function exportIJASAGambar($month, $year)
+{
+    try {
+        $ijasaGambar = IjasaGambar::whereMonth('tanggal', $month)
+            ->whereYear('tanggal', $year)
+            ->get();
+
+        if ($ijasaGambar->isEmpty()) {
+            return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+        }
+
+        // Format data dengan path gambar
+        $formattedData = $ijasaGambar->map(function ($item) {
+        $imagePath = public_path('images/hrga/ijasagambar/' . $item->gambar);
+            return [
+                'Gambar' => (!empty($item->gambar) && file_exists($imagePath))
+                    ? asset('images/hrga/ijasagambar/' . $item->gambar)
+                    : asset('images/no-image.png'),
+            ];
+        });
+
+        return [
+            'rekap' => $formattedData,
+        ];
+
+    } catch (\Throwable $th) {
+        Log::error('Error exporting (exp HRGA): ' . $th->getMessage());
+        return 'Error: ' . $th->getMessage();
+    }
+}
+
     // Export untuk divisi HRGA
     public function exportSakit($month, $year) {
     try {

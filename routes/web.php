@@ -338,6 +338,9 @@ Route::middleware(['guest'])->group(function () {
     Route::post('/', [SessionController::class, 'login']);
 });
 
+
+
+
 // Authenticated routes
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin', [AdminController::class, 'index'])->name('layouts.admin')->middleware('UserAccess:superadmin');
