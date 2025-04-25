@@ -121,11 +121,10 @@
             </div>
         </div>
 
-        <!-- footer -->
-        <div class="mt-28 border-t items-center align-middle text-center">
-            <p class="text-center text-sm font-serif mt-6">Laporan Marketing - Laporan Penjualan</p>
-          </div>
-
+        <!-- Sticky Footer -->
+        <div class="border-t text-center pt-4 z-50 bg-white">
+            <p class="text-sm font-serif mt-2">Laporan Marketing - Laporan Rekap Penjualan</p>
+        </div>
         </div>
 
         <!-- === Page Break 2 === -->
@@ -171,10 +170,10 @@
             </div>
         </div>
 
-        <!-- footer -->
-        <div class="mt-28 border-t items-center align-middle text-center">
-            <p class="text-center text-sm font-serif mt-6 ">Laporan Marketing - Laporan Penjualan Perusahaan</p>
-          </div>
+        <!-- Sticky Footer -->
+        <div class="border-t text-center pt-4 z-50 bg-white">
+            <p class="text-sm font-serif mt-2">Laporan Marketing - Laporan Rekap Penjualan Perusahaan</p>
+        </div>
         </div>
 
         <!-- === Page Break 3 === -->
@@ -219,11 +218,11 @@
                 </div>
             </div>  
     
-            <!-- footer -->
-            <div class="mt-28 border-t items-center align-middle text-center">
-                <p class="text-center text-sm font-serif mt-6">Laporan Marketing - Laporan Paket Administrasi</p>
-              </div>
-            </div>
+        <!-- Sticky Footer -->
+        <div class="border-t text-center pt-4 z-50 bg-white">
+            <p class="text-sm font-serif mt-2">Laporan Marketing - Laporan Paket Administrasi</p>
+        </div>
+        </div>
 
 
         <!-- === Page Break 4 === -->
@@ -266,11 +265,12 @@
             </div>
         </div>  
 
-        <!-- footer -->
-        <div class="mt-28 border-t items-center align-middle text-center">
-            <p class="text-center text-sm font-serif mt-6">Laporan Marketing - Laporan Status Paket</p>
+        <!-- Sticky Footer -->
+        <div class="border-t text-center pt-4 z-50 bg-white">
+            <p class="text-sm font-serif mt-2">Laporan Marketing - Laporan Status Paket</p>
         </div>
         </div>
+
         <!-- === DIVISI PROCUREMENTS === -->
         <!-- === Page Break 6 === -->
         <div class="page-break"></div>
@@ -312,9 +312,9 @@
             </div>
         </div>  
 
-        <!-- footer -->
-        <div class="mt-28 border-t items-center align-middle text-center">
-            <p class="text-center text-sm font-serif mt-6">Laporan Marketing - Laporan Per Instansi</p>
+        <!-- Sticky Footer -->
+        <div class="border-t text-center pt-4 z-50 bg-white">
+            <p class="text-sm font-serif mt-2">Laporan Marketing - Laporan Per Instansi</p>
         </div>
         </div>
 
@@ -354,14 +354,14 @@
             <!-- Grafik untuk ekspor PDF -->
             <div id="chartContainer">
                 <h2 class="text-center font-serif">Grafik Laporan</h2>
-                <canvas class="chart-export w-[650px] max-h-[500px]" id="rekapChart" data-chart='@json($dataExportLaporanHolding["chart"])'></canvas>
+                <canvas class="chart-export w-[700px] max-h-[500px]" id="rekapChart" data-chart='@json($dataExportLaporanHolding["chart"])'></canvas>
             </div>
         </div>  
 
-        <!-- footer -->
-        <div class="mt-28 border-t items-center align-middle text-center">
-            <p class="text-center text-sm font-serif mt-6">Laporan Procurements - Laporan Holding</p>
-        </div>
+            <!-- Sticky Footer -->
+            <div class="border-t text-center pt-4 z-50 bg-white">
+                <p class="text-sm font-serif mt-2">Laporan Procurements - Laporan Holding</p>
+            </div>
         </div>
 
         <!-- === Page Break 7 === -->
@@ -402,10 +402,10 @@
             </div>
         </div>  
 
-        <!-- footer -->
-        <div class="mt-28 border-t items-center align-middle text-center">
-            <p class="text-center text-sm font-serif mt-6">Laporan Procurements - Laporan Stok</p>
-        </div>
+            <!-- Sticky Footer -->
+            <div class="border-t text-center pt-4 z-50 bg-white">
+                <p class="text-sm font-serif mt-2">Laporan Procurements - Laporan Stok</p>
+            </div>
         </div>
 
         <!-- === Page Break 8 === -->
@@ -446,10 +446,10 @@
             </div>
         </div>  
 
-        <!-- footer -->
-        <div class="mt-28 border-t items-center align-middle text-center">
-            <p class="text-center text-sm font-serif mt-6">Laporan Procurements - Laporan Pembelian Outlet</p>
-        </div>
+            <!-- Sticky Footer -->
+            <div class="border-t text-center pt-4 z-50 bg-white">
+                <p class="text-sm font-serif mt-2">Laporan Procurements - Laporan Pembelian Outlet</p>
+            </div>
         </div>
 
         <!-- === Page Break 9 === -->
@@ -496,10 +496,10 @@
             </div>
         </div>  
 
-        <!-- footer -->
-        <div class="mt-28 border-t items-center align-middle text-center">
-            <p class="text-center text-sm font-serif mt-6">Laporan Procurements - Laporan Negosiasi</p>
-        </div>
+            <!-- Sticky Footer -->
+            <div class="border-t text-center pt-4 z-50 bg-white">
+                <p class="text-sm font-serif mt-2">Laporan Procurements - Laporan Negosiasi</p>
+            </div>
         </div>
 
         <!-- === Export PDF Supports === -->
@@ -549,9 +549,9 @@
             </div>
         </div>  
 
-        <!-- footer -->
-        <div class="mt-28 border-t items-center align-middle text-center">
-            <p class="text-center text-sm font-serif mt-6">Laporan Supports - Laporan Rekap Pendapatan Servis ASP</p>
+        <!-- Sticky Footer -->
+        <div class="border-t text-center pt-4 z-50 bg-white">
+            <p class="text-sm font-serif mt-2">Laporan Supports - Laporan Rekap Pendapatan Servis ASP</p>
         </div>
         </div>
 
@@ -601,10 +601,11 @@
             </div>
         </div>  
 
-        <!-- footer -->
-        <div class="mt-28 border-t items-center align-middle text-center">
-            <p class="text-center text-sm font-serif mt-6">Laporan Supports - Laporan Rekap Piutang Servis ASP</p>
+        <!-- Sticky Footer -->
+        <div class="border-t text-center pt-4 z-50 bg-white">
+            <p class="text-sm font-serif mt-2">Laporan Supports - Laporan Rekap Piutang Servis ASP</p>
         </div>
+
         </div>
 
         <!-- === Page Break 12 === -->
@@ -653,222 +654,98 @@
             </div>
         </div>  
 
-        <!-- footer -->
-        <div class="mt-28 border-t items-center align-middle text-center">
-            <p class="text-center text-sm font-serif mt-6">Laporan Supports - Laporan Rekap Piutang Servis ASP</p>
-        </div>
-        </div>
-
-        <!-- === Export PDF HRGA === -->
-        <!-- === Page Break 13 === -->
-        <div class="page-break"></div>
-        <!-- Export Page 13 -->
-        <!-- === Page 13 === -->
-        <div class="page">
-        <!-- buat header disini  -->
-        <div>
-            <img src={{ "images/HEADER.png" }} alt="">
-        </div>
-
-        <div class="flex justify-between p-6">
-            <!-- Tabel Data untuk ekspor PDF -->
-            <div class="width-1/2 pr-10">
-                <h2 class="text-center font-serif">Tabel Data</h2>
-                <table id="rekapTable" class="dataTable">
-                    <thead>
-                        <tr>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Pelaksana</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Total Sakit (Hari)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (empty($dataLaporanSakit['rekap']) || count($dataLaporanSakit['rekap']) === 0)
-                        <tr>
-                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
-                        </tr>
-                        @else
-                        @foreach($dataLaporanSakit['rekap'] as $rekapSakit)
-                        <tr>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapSakit['Tanggal'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapSakit['Nama'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapSakit['Total'] }}</td>
-                        </tr>
-                        @endforeach
-                        @endif
-                    </tbody>
-                </table>
+        <!-- Sticky Footer -->
+            <div class="border-t text-center pt-4 z-50 bg-white">
+                <p class="text-sm font-serif mt-2">Laporan Supports - Laporan Pengiriman</p>
             </div>
-            <!-- Grafik untuk ekspor PDF -->
-            <div id="chartContainer">
-                <h2 class="text-center font-serif">Grafik Laporan</h2>
-                <canvas class="chart-export-hrga w-[700px] max-h-[500px]" id="rekapChart" data-chart='@json($dataLaporanSakit["chart"])'></canvas>
-            </div>
-        </div>  
-
-        <!-- footer -->
-        <div class="mt-28 border-t items-center align-middle text-center">
-            <p class="text-center text-sm font-serif mt-6">Laporan HRGA - Laporan Sakit</p>
-        </div>
-        </div>
-
-        <!-- === Page Break 14 === -->
-        <div class="page-break"></div>
-        <!-- Export Page 14 -->
-        <!-- === Page 14 === -->
-        <div class="page">
-        <!-- buat header disini  -->
-        <div>
-            <img src={{ "images/HEADER.png" }} alt="">
-        </div>
-
-        <div class="flex justify-between p-6">
-            <!-- Tabel Data untuk ekspor PDF -->
-            <div class="width-1/2 pr-10">
-                <h2 class="text-center font-serif">Tabel Data</h2>
-                <table id="rekapTable" class="dataTable">
-                    <thead>
-                        <tr>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Pelaksana</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Total Cuti (Hari)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (empty($dataLaporanCuti['rekap']) || count($dataLaporanCuti['rekap']) === 0)
-                        <tr>
-                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
-                        </tr>
-                        @else
-                        @foreach($dataLaporanCuti['rekap'] as $rekapCuti)
-                        <tr>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapCuti['Tanggal'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapCuti['Nama'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapCuti['Total'] }}</td>
-                        </tr>
-                        @endforeach
-                        @endif
-                    </tbody>
-                </table>
-            </div>
-            <!-- Grafik untuk ekspor PDF -->
-            <div id="chartContainer">
-                <h2 class="text-center font-serif">Grafik Laporan</h2>
-                <canvas class="chart-export-hrga w-[700px] max-h-[500px]" id="rekapChart" data-chart='@json($dataLaporanCuti["chart"])'></canvas>
-            </div>
-        </div>  
-
-        <!-- footer -->
-        <div class="mt-28 border-t items-center align-middle text-center">
-            <p class="text-center text-sm font-serif mt-6">Laporan HRGA - Laporan Cuti</p>
-        </div>
-        </div>
-
-        <!-- === Page Break 15 === -->
-        <div class="page-break"></div>
-        <!-- Export Page 15 -->
-        <!-- === Page 15 === -->
-        <div class="page">
-        <!-- buat header disini  -->
-        <div>
-            <img src={{ "images/HEADER.png" }} alt="">
-        </div>
-
-        <div class="flex justify-between p-6">
-            <!-- Tabel Data untuk ekspor PDF -->
-            <div class="width-1/2 pr-10">
-                <h2 class="text-center font-serif">Tabel Data</h2>
-                <table id="rekapTable" class="dataTable">
-                    <thead>
-                        <tr>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Pelaksana</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Total Izin (Hari)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (empty($dataLaporanIzin['rekap']) || count($dataLaporanIzin['rekap']) === 0)
-                        <tr>
-                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
-                        </tr>
-                        @else
-                        @foreach($dataLaporanIzin['rekap'] as $rekapIzin)
-                        <tr>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapIzin['Tanggal'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapIzin['Nama'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapIzin['Total'] }}</td>
-                        </tr>
-                        @endforeach
-                        @endif
-                    </tbody>
-                </table>
-            </div>
-            <!-- Grafik untuk ekspor PDF -->
-            <div id="chartContainer">
-                <h2 class="text-center font-serif">Grafik Laporan</h2>
-                <canvas class="chart-export-hrga w-[700px] max-h-[500px]" id="rekapChart" data-chart='@json($dataLaporanIzin["chart"])'></canvas>
-            </div>
-        </div>  
-
-        <!-- footer -->
-        <div class="mt-28 border-t items-center align-middle text-center">
-            <p class="text-center text-sm font-serif mt-6">Laporan HRGA - Laporan Izin</p>
-        </div>
-        </div>
-
-        <!-- === Page Break 15 === -->
-        <div class="page-break"></div>
-        <!-- Export Page 15 -->
-        <!-- === Page 15 === -->
-        <div class="page">
-        <!-- buat header disini  -->
-        <div>
-            <img src={{ "images/HEADER.png" }} alt="">
-        </div>
-
-        <div class="flex justify-between p-6">
-            <!-- Tabel Data untuk ekspor PDF -->
-            <div class="width-1/2 pr-10">
-                <h2 class="text-center font-serif">Tabel Data</h2>
-                <table id="rekapTable" class="dataTable">
-                    <thead>
-                        <tr>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Pelaksana</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Total Terlambat (Hari)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (empty($dataLaporanTerlambat['rekap']) || count($dataLaporanTerlambat['rekap']) === 0)
-                        <tr>
-                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
-                        </tr>
-                        @else
-                        @foreach($dataLaporanTerlambat['rekap'] as $rekapTerlambat)
-                        <tr>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapTerlambat['Tanggal'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapTerlambat['Nama'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapTerlambat['Total'] }}</td>
-                        </tr>
-                        @endforeach
-                        @endif
-                    </tbody>
-                </table>
-            </div>
-            <!-- Grafik untuk ekspor PDF -->
-            <div id="chartContainer">
-                <h2 class="text-center font-serif">Grafik Laporan</h2>
-                <canvas class="chart-export-hrga w-[700px] max-h-[500px]" id="rekapChart" data-chart='@json($dataLaporanTerlambat["chart"])'></canvas>
-            </div>
-        </div>  
-
-        <!-- footer -->
-        <div class="mt-28 border-t items-center align-middle text-center">
-            <p class="text-center text-sm font-serif mt-6">Laporan HRGA - Laporan Terlambat</p>
-        </div>
         </div>
 
         <!-- === DIVISI ACCOUNTING === -->
+
+        @foreach ($dataLabaRugi['rekap'] as $item)
+        <!-- === Page Break === -->
+        <div class="page-break"></div>
+
+        <!-- === Page === -->
+        <!--Laba Rugi-->
+        <div class="page">
+            <!-- Header -->
+            <div>
+                <img src="{{ asset('images/HEADER.png') }}" alt="">
+            </div>
+
+            <!-- Content -->
+            <div class="flex justify-center p-6">
+                <div class="text-center">
+                    <h2 class="text-center font-serif mb-4">Laporan</h2>
+                    <img src="{{ $item['Gambar'] }}" alt="Laba Rugi Image"
+                        class="h-[500px] w-auto  mx-auto object-contain border border-gray-300">
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="border-t text-center pt-4 z-50 bg-white">
+                <p class="text-sm font-serif mt-2">Laporan Accounting - Laporan Laba Rugi</p>
+            </div>
+        </div>
+        @endforeach
+
+        <!--Neraca-->
+        @foreach ($dataNeraca['rekap'] as $item)
+        <!-- === Page Break === -->
+        <div class="page-break"></div>
+
+        <!-- === Page === -->
+        <div class="page">
+            <!-- Header -->
+            <div>
+                <img src="{{ asset('images/HEADER.png') }}" alt="">
+            </div>
+
+            <!-- Content -->
+            <div class="flex justify-center p-6">
+                <div class="text-center">
+                    <h2 class="text-center font-serif mb-4">Laporan</h2>
+                    <img src="{{ $item['Gambar'] }}" alt="Neraca Image"
+                        class="h-[500px] w-auto  mx-auto object-contain border border-gray-300">
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="border-t text-center pt-4 z-50 bg-white">
+                <p class="text-sm font-serif mt-2">Laporan Accounting - Laporan Neraca</p>
+            </div>
+        </div>
+        @endforeach
+
+        <!--Rasio-->
+        @foreach ($dataRasio['rekap'] as $item)
+        <!-- === Page Break === -->
+        <div class="page-break"></div>
+
+        <!-- === Page === -->
+        <div class="page">
+            <!-- Header -->
+            <div>
+                <img src="{{ asset('images/HEADER.png') }}" alt="">
+            </div>
+
+            <!-- Content -->
+            <div class="flex justify-center p-6">
+                <div class="text-center">
+                    <h2 class="text-center font-serif mb-4">Laporan</h2>
+                    <img src="{{ $item['Gambar'] }}" alt="Rasio Image"
+                        class="h-[500px] w-auto  mx-auto object-contain border border-gray-300">
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="border-t text-center pt-4 z-50 bg-white">
+                <p class="text-sm font-serif mt-2">Laporan Accounting - Laporan Rasio</p>
+            </div>
+        </div>
+        @endforeach
+
         <!-- === Page Break 16 === -->
         <div class="page-break"></div>
         <!-- Export Page 16 -->
@@ -919,9 +796,9 @@
             </div>
         </div>  
 
-        <!-- footer -->
-        <div class="mt-14 border-t items-center align-middle text-center">
-            <p class="text-center text-sm font-serif mt-6">Laporan Accounting - Laporan Kas Hutang Piutang Stok</p>
+        <!-- Sticky Footer -->
+        <div class="border-t text-center pt-4 z-50 bg-white">
+            <p class="text-sm font-serif mt-2">Laporan Accounting - Laporan Kas Hutang Piutang Stok</p>
         </div>
     </div>
 
@@ -971,16 +848,122 @@
             </div>
         </div>  
 
-        <!-- footer -->
-        <div class="mt-14 border-t items-center align-middle text-center">
-            <p class="text-center text-sm font-serif mt-6">Laporan Accounting - Laporan Arus Kas</p>
+            <!-- Sticky Footer -->
+            <div class="border-t text-center pt-4 z-50 bg-white">
+            <p class="text-sm font-serif mt-2">Laporan Accounting - Laporan Arus Kas</p>
         </div>
     </div>
 
-        <!-- === Page Break 17 === -->
+    <!--PPN-->
+    @foreach ($dataPPn['rekap'] as $item)
+    <!-- === Page Break === -->
+    <div class="page-break"></div>
+
+    <!-- === Page === -->
+    <div class="page">
+        <!-- Header -->
+        <div>
+            <img src="{{ asset('images/HEADER.png') }}" alt="">
+        </div>
+
+        <!-- Content -->
+        <div class="flex justify-center p-6">
+            <div class="text-center">
+                <h2 class="text-center font-serif mb-4">Laporan</h2>
+                <img src="{{ $item['Gambar'] }}" alt="PPN Image"
+                    class="h-[500px] w-auto  mx-auto object-contain border border-gray-300">
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="border-t text-center pt-4 z-50 bg-white">
+            <p class="text-sm font-serif mt-2">Laporan Accounting - Laporan PPn</p>
+        </div>
+    </div>
+    @endforeach
+
+    <!--TaxPlanning-->
+    @foreach ($dataTaxPlanning['rekap'] as $item)
+    <!-- === Page Break === -->
+    <div class="page-break"></div>
+
+    <!-- === Page === -->
+    <div class="page">
+        <!-- Header -->
+        <div>
+            <img src="{{ asset('images/HEADER.png') }}" alt="">
+        </div>
+
+        <!-- Content -->
+        <div class="flex justify-center p-6">
+            <div class="text-center">
+                <h2 class="text-center font-serif mb-4">Laporan</h2>
+                <img src="{{ $item['Gambar'] }}" alt="Rasio Image"
+                    class="h-[500px] w-auto  mx-auto object-contain border border-gray-300">
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="border-t text-center pt-4 z-50 bg-white">
+            <p class="text-sm font-serif mt-2">Laporan Accounting - Laporan Tax Planning</p>
+        </div>
+    </div>
+    @endforeach
+
+    <!-- === Export PDF HRGA === -->
+    <!-- === Page Break 17 === -->
+    <div class="page-break"></div>
+    <!-- Export Page 17 -->
+    <!-- === Page 17 === -->
+    <div class="page">
+    <!-- buat header disini  -->
+    <div>
+       <img src={{ "images/HEADER.png" }} alt="">
+   </div>
+
+   <div class="flex justify-center items-center p-6">
+       <!-- Tabel Data untuk ekspor PDF -->
+       <div class="">
+           <h2 class="text-center font-serif items-center">Tabel Data</h2>
+           <table id="rekapTable" class="dataTable">
+               <thead>
+                   <tr>
+                       <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
+                       <th class="border border-black p-1 text-center text-sm font-serif">Aspek</th>
+                       <th class="border border-black p-1 text-center text-sm font-serif">Masalah</th>
+                       <th class="border border-black p-1 text-center text-sm font-serif">Solusi</th>
+                       <th class="border border-black p-1 text-center text-sm font-serif">Implementasi</th>
+                   </tr>
+               </thead>
+               <tbody>
+                   @if (empty($dataLaporanSPI['rekap']) || count($dataLaporanSPI['rekap']) === 0)
+                   <tr>
+                       <td colspan="5" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                   </tr>
+                   @else
+                   @foreach($dataLaporanSPI['rekap'] as $SPI)
+                   <tr>
+                       <td class="border border-black p-1 text-center text-[12px] font-serif">{{ $SPI['Tanggal'] }}</td>
+                       <td class="border border-black p-1 content-html text-[12px] align-top text-justify font-serif">{!! $SPI['Aspek'] !!}</td>
+                       <td class="border border-black p-1 content-html text-[12px] align-top text-justify font-serif">{!! $SPI['Masalah'] !!}</td>
+                       <td class="border border-black p-1 content-html text-[12px] align-top text-justify font-serif">{!! $SPI['Solusi'] !!}</td>
+                       <td class="border border-black p-1 content-html text-[12px] align-top text-justify font-serif">{!! $SPI['Implementasi'] !!}</td>
+                  </tr>
+                   @endforeach
+                   @endif
+               </tbody>
+           </table>
+       </div>
+   </div>  
+         <!-- Sticky Footer -->
+         <div class="border-t text-center pt-4 z-50 bg-white">
+           <p class="text-sm font-serif mt-2">Laporan SPI - Laporan SPI Operasional</p>
+       </div>
+   </div>
+        <!-- === Page Break 13 === -->
         <div class="page-break"></div>
-        <!-- Export Page 17 -->
-        <!-- === Page 17 === -->
+        <!-- Export Page 13 -->
+        <!-- === Page 13 === -->
         <div class="page">
         <!-- buat header disini  -->
         <div>
@@ -995,6 +978,297 @@
                     <thead>
                         <tr>
                             <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Pelaksana</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Total Sakit (Hari)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (empty($dataLaporanSakit['rekap']) || count($dataLaporanSakit['rekap']) === 0)
+                        <tr>
+                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                        </tr>
+                        @else
+                        @foreach($dataLaporanSakit['rekap'] as $rekapSakit)
+                        <tr>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapSakit['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapSakit['Nama'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapSakit['Total'] }}</td>
+                        </tr>
+                        @endforeach
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+            <!-- Grafik untuk ekspor PDF -->
+            <div id="chartContainer">
+                <h2 class="text-center font-serif">Grafik Laporan</h2>
+                <canvas class="chart-export-hrga w-[700px] max-h-[500px]" id="rekapChart" data-chart='@json($dataLaporanSakit["chart"])'></canvas>
+            </div>
+        </div>  
+
+        <!-- Sticky Footer -->
+        <div class="border-t text-center pt-4 z-50 bg-white">
+            <p class="text-sm font-serif mt-2">Laporan HRGA - Laporan Sakit</p>
+        </div>
+        </div>
+
+        <!-- === Page Break 14 === -->
+        <div class="page-break"></div>
+        <!-- Export Page 14 -->
+        <!-- === Page 14 === -->
+        <div class="page">
+        <!-- buat header disini  -->
+        <div>
+            <img src={{ "images/HEADER.png" }} alt="">
+        </div>
+
+        <div class="flex justify-between p-6">
+            <!-- Tabel Data untuk ekspor PDF -->
+            <div class="width-1/2 pr-10">
+                <h2 class="text-center font-serif">Tabel Data</h2>
+                <table id="rekapTable" class="dataTable">
+                    <thead>
+                        <tr>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Pelaksana</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Total Cuti (Hari)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (empty($dataLaporanCuti['rekap']) || count($dataLaporanCuti['rekap']) === 0)
+                        <tr>
+                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                        </tr>
+                        @else
+                        @foreach($dataLaporanCuti['rekap'] as $rekapCuti)
+                        <tr>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapCuti['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapCuti['Nama'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapCuti['Total'] }}</td>
+                        </tr>
+                        @endforeach
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+            <!-- Grafik untuk ekspor PDF -->
+            <div id="chartContainer">
+                <h2 class="text-center font-serif">Grafik Laporan</h2>
+                <canvas class="chart-export-hrga w-[700px] max-h-[500px]" id="rekapChart" data-chart='@json($dataLaporanCuti["chart"])'></canvas>
+            </div>
+        </div>  
+
+        <!-- Sticky Footer -->
+        <div class="border-t text-center pt-4 z-50 bg-white">
+            <p class="text-sm font-serif mt-2">Laporan HRGA - Laporan Cuti</p>
+        </div>
+        </div>
+
+        <!-- === Page Break 15 === -->
+        <div class="page-break"></div>
+        <!-- Export Page 15 -->
+        <!-- === Page 15 === -->
+        <div class="page">
+        <!-- buat header disini  -->
+        <div>
+            <img src={{ "images/HEADER.png" }} alt="">
+        </div>
+
+        <div class="flex justify-between p-6">
+            <!-- Tabel Data untuk ekspor PDF -->
+            <div class="width-1/2 pr-10">
+                <h2 class="text-center font-serif">Tabel Data</h2>
+                <table id="rekapTable" class="dataTable">
+                    <thead>
+                        <tr>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Pelaksana</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Total Izin (Hari)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (empty($dataLaporanIzin['rekap']) || count($dataLaporanIzin['rekap']) === 0)
+                        <tr>
+                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                        </tr>
+                        @else
+                        @foreach($dataLaporanIzin['rekap'] as $rekapIzin)
+                        <tr>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapIzin['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapIzin['Nama'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapIzin['Total'] }}</td>
+                        </tr>
+                        @endforeach
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+            <!-- Grafik untuk ekspor PDF -->
+            <div id="chartContainer">
+                <h2 class="text-center font-serif">Grafik Laporan</h2>
+                <canvas class="chart-export-hrga w-[700px] max-h-[500px]" id="rekapChart" data-chart='@json($dataLaporanIzin["chart"])'></canvas>
+            </div>
+        </div>  
+
+        <!-- Sticky Footer -->
+        <div class="border-t text-center pt-4 z-50 bg-white">
+            <p class="text-sm font-serif mt-2">Laporan HRGA - Laporan Izin</p>
+        </div>
+        </div>
+
+        <!-- === Page Break 15 === -->
+        <div class="page-break"></div>
+        <!-- Export Page 15 -->
+        <!-- === Page 15 === -->
+        <div class="page">
+        <!-- buat header disini  -->
+        <div>
+            <img src={{ "images/HEADER.png" }} alt="">
+        </div>
+
+        <div class="flex justify-between p-6">
+            <!-- Tabel Data untuk ekspor PDF -->
+            <div class="width-1/2 pr-10">
+                <h2 class="text-center font-serif">Tabel Data</h2>
+                <table id="rekapTable" class="dataTable">
+                    <thead>
+                        <tr>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Pelaksana</th>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Total Terlambat (Hari)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (empty($dataLaporanTerlambat['rekap']) || count($dataLaporanTerlambat['rekap']) === 0)
+                        <tr>
+                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                        </tr>
+                        @else
+                        @foreach($dataLaporanTerlambat['rekap'] as $rekapTerlambat)
+                        <tr>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapTerlambat['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapTerlambat['Nama'] }}</td>
+                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapTerlambat['Total'] }}</td>
+                        </tr>
+                        @endforeach
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+            <!-- Grafik untuk ekspor PDF -->
+            <div id="chartContainer">
+                <h2 class="text-center font-serif">Grafik Laporan</h2>
+                <canvas class="chart-export-hrga w-[700px] max-h-[500px]" id="rekapChart" data-chart='@json($dataLaporanTerlambat["chart"])'></canvas>
+            </div>
+        </div>  
+
+        <!-- Sticky Footer -->
+        <div class="border-t text-center pt-4 z-50 bg-white">
+            <p class="text-sm font-serif mt-2">Laporan HRGA - Laporan Terlambat</p>
+        </div>
+        </div>
+
+        <!-- === LAPORAN IT === -->
+        @foreach ($dataInstagram['rekap'] as $item)
+        <!-- === Page Break === -->
+        <div class="page-break"></div>
+
+        <!-- === Page === -->
+        <div class="page">
+            <!-- Header -->
+            <div>
+                <img src="{{ asset('images/HEADER.png') }}" alt="">
+            </div>
+
+            <!-- Content -->
+            <div class="flex justify-center p-6">
+                <div class="text-center">
+                    <h2 class="text-center font-serif mb-4">Laporan</h2>
+                    <img src="{{ $item['Gambar'] }}" alt="Rasio Image"
+                        class="h-[500px] w-auto  mx-auto object-contain border border-gray-300">
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="border-t text-center pt-4 z-50 bg-white">
+                <p class="text-sm font-serif mt-2">Laporan IT - Laporan Instagram</p>
+            </div>
+        </div>
+        @endforeach
+
+        @foreach ($dataTiktok['rekap'] as $item)
+        <!-- === Page Break === -->
+        <div class="page-break"></div>
+
+        <!-- === Page === -->
+        <div class="page">
+            <!-- Header -->
+            <div>
+                <img src="{{ asset('images/HEADER.png') }}" alt="">
+            </div>
+
+            <!-- Content -->
+            <div class="flex justify-center p-6">
+                <div class="text-center">
+                    <h2 class="text-center font-serif mb-4">Laporan</h2>
+                    <img src="{{ $item['Gambar'] }}" alt="Rasio Image"
+                        class="h-[500px] w-auto  mx-auto object-contain border border-gray-300">
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="border-t text-center pt-4 z-50 bg-white">
+                <p class="text-sm font-serif mt-2">Laporan IT - Laporan Tiktok</p>
+            </div>
+        </div>
+        @endforeach
+
+        @foreach ($dataBizdev['rekap'] as $item)
+        <!-- === Page Break === -->
+        <div class="page-break"></div>
+
+        <!-- === Page === -->
+        <div class="page">
+            <!-- Header -->
+            <div>
+                <img src="{{ asset('images/HEADER.png') }}" alt="">
+            </div>
+
+            <!-- Content -->
+            <div class="flex justify-center p-6">
+                <div class="text-center">
+                    <h2 class="text-center font-serif mb-4">Laporan</h2>
+                    <img src="{{ $item['Gambar'] }}" alt="Rasio Image"
+                        class="h-[500px] w-auto  mx-auto object-contain border border-gray-300">
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="border-t text-center pt-4 z-50 bg-white">
+                <p class="text-sm font-serif mt-2">Laporan IT - Laporan Bizdev</p>
+            </div>
+        </div>
+        @endforeach
+
+         <!-- === LAPORAN SPI === -->
+         <!-- === Page Break 17 === -->
+         <div class="page-break"></div>
+         <!-- Export Page 17 -->
+         <!-- === Page 17 === -->
+         <div class="page">
+         <!-- buat header disini  -->
+         <div>
+            <img src={{ "images/HEADER.png" }} alt="">
+        </div>
+
+        <div class="flex justify-center items-center p-6">
+            <!-- Tabel Data untuk ekspor PDF -->
+            <div class="">
+                <h2 class="text-center font-serif items-center">Tabel Data</h2>
+                <table id="rekapTable" class="dataTable">
+                    <thead>
+                        <tr>
+                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
                             <th class="border border-black p-1 text-center text-sm font-serif">Aspek</th>
                             <th class="border border-black p-1 text-center text-sm font-serif">Masalah</th>
                             <th class="border border-black p-1 text-center text-sm font-serif">Solusi</th>
@@ -1004,29 +1278,79 @@
                     <tbody>
                         @if (empty($dataLaporanSPI['rekap']) || count($dataLaporanSPI['rekap']) === 0)
                         <tr>
-                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                            <td colspan="5" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
                         </tr>
                         @else
                         @foreach($dataLaporanSPI['rekap'] as $SPI)
                         <tr>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $SPI['Tanggal'] }}</td>
-                            <td class="border border-black p-1 content-html text-sm text-justify font-serif">{!! $SPI['Aspek'] !!}</td>
-                            <td class="border border-black p-1 content-html text-sm text-justify font-serif">{!! $SPI['Masalah'] !!}</td>
-                            <td class="border border-black p-1 content-html text-sm text-justify font-serif">{!! $SPI['Solusi'] !!}</td>
-                            <td class="border border-black p-1 content-html text-sm text-justify font-serif">{!! $SPI['Implementasi'] !!}</td>
-                        </tr>
+                            <td class="border border-black p-1 text-center text-[12px] font-serif">{{ $SPI['Tanggal'] }}</td>
+                            <td class="border border-black p-1 content-html text-[12px] align-top text-justify font-serif">{!! $SPI['Aspek'] !!}</td>
+                            <td class="border border-black p-1 content-html text-[12px] align-top text-justify font-serif">{!! $SPI['Masalah'] !!}</td>
+                            <td class="border border-black p-1 content-html text-[12px] align-top text-justify font-serif">{!! $SPI['Solusi'] !!}</td>
+                            <td class="border border-black p-1 content-html text-[12px] align-top text-justify font-serif">{!! $SPI['Implementasi'] !!}</td>
+                       </tr>
                         @endforeach
                         @endif
                     </tbody>
                 </table>
             </div>
         </div>  
-
-            <!-- footer -->
-            <div class="mt-32 border-t items-center align-middle text-center">
-                <p class="text-center text-sm font-serif mt-6">Laporan SPI - Laporan SPI Operasional</p>
+              <!-- Sticky Footer -->
+              <div class="border-t text-center pt-4 z-50 bg-white">
+                <p class="text-sm font-serif mt-2">Laporan SPI - Laporan SPI Operasional</p>
             </div>
         </div>
+
+         <!-- === Page Break 18 === -->
+         <div class="page-break"></div>
+         <!-- Export Page 18 -->
+         <!-- === Page 18 === -->
+         <div class="page">
+         <!-- buat header disini  -->
+         <div>
+            <img src={{ "images/HEADER.png" }} alt="">
+        </div>
+ 
+         <div class="flex justify-top p-6">
+             <!-- Tabel Data untuk ekspor PDF -->
+             <div style="width: 100%;">
+                 <h2 class="text-center font-serif items-center">Tabel Data</h2>
+                 <table id="rekapTable" class="dataTable" style="'border-collapse: collapse; width: 100%; font-size: 2px;' border='1'">                     
+                    <thead>
+                         <tr>
+                             <th class="border border-black p-1 text-center font-serif">Tanggal</th>
+                             <th class="border border-black p-1 text-center font-serif">Aspek</th>
+                             <th class="border border-black p-1 text-center font-serif">Masalah</th>
+                             <th class="border border-black p-1 text-center font-serif">Solusi</th>
+                             <th class="border border-black p-1 text-center font-serif">Implementasi</th>
+                         </tr>
+                     </thead>
+                     <tbody>
+                         @if (empty($dataLaporanSPIIT['rekap']) || count($dataLaporanSPIIT['rekap']) === 0)
+                         <tr>
+                             <td colspan="5" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                         </tr>
+                         @else
+                         @foreach($dataLaporanSPIIT['rekap'] as $SPIIT)
+                         <tr>
+                             <td class="border border-black p-1 text-center text-[12px] font-serif">{{ $SPIIT['Tanggal'] }}</td>
+                             <td class="border border-black p-1 content-html text-[12px] align-top text-justify font-serif">{!! $SPIIT['Aspek'] !!}</td>
+                             <td class="border border-black p-1 content-html text-[12px] align-top text-justify font-serif">{!! $SPIIT['Masalah'] !!}</td>
+                             <td class="border border-black p-1 content-html text-[12px] align-top text-justify font-serif">{!! $SPIIT['Solusi'] !!}</td>
+                             <td class="border border-black p-1 content-html text-[12px] align-top text-justify font-serif">{!! $SPIIT['Implementasi'] !!}</td>
+                         </tr>
+                         @endforeach
+                         @endif
+                     </tbody>
+                 </table>
+             </div>
+         </div>  
+ 
+              <!-- Sticky Footer -->
+            <div class="border-t text-center pt-4 z-50 bg-white">
+                <p class="text-sm font-serif mt-2">Laporan SPI - Laporan SPI IT</p>
+            </div>
+         </div>
 
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

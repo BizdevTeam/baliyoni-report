@@ -3,18 +3,28 @@
 namespace App\Http\Controllers;
 
 use App\Models\ArusKas;
+use App\Models\ItMultimediaInstagram;
+use App\Models\ItMultimediaTiktok;
 use App\Models\KasHutangPiutang;
+use App\Models\LaporanBizdevGambar;
 use App\Models\LaporanCuti;
 use App\Models\LaporanDetrans;
 use App\Models\LaporanHolding;
 use App\Models\LaporanIzin;
+use App\Models\LaporanLabaRugi;
 use App\Models\LaporanNegosiasi;
+use App\Models\LaporanNeraca;
 use App\Models\LaporanOutlet;
 use App\Models\LaporanPaketAdministrasi;
 use App\Models\LaporanPerInstansi;
+use App\Models\LaporanPpn;
+use App\Models\LaporanPtBos;
+use App\Models\LaporanRasio;
 use App\Models\LaporanSakit;
 use App\Models\LaporanSPI;
+use App\Models\LaporanSPITI;
 use App\Models\LaporanStok;
+use App\Models\LaporanTaxPlaning;
 use App\Models\LaporanTerlambat;
 use App\Models\RekapPendapatanServisASP;
 use App\Models\RekapPenjualan;
@@ -90,36 +100,40 @@ class ExportLaporanAll extends Controller
     
             // === Untuk divisi Procurement ===
             $dataExportLaporanHolding = $this->safeExport(fn() => $this->exportLaporanHolding($this->month, $this->year)); 
-
             $dataExportLaporanStok = $this->safeExport(fn() => $this->exportLaporanStok($this->month, $this->year)); 
-
             $dataExportLaporanPembelianOutlet = 
             $this->safeExport(fn() => $this->exportLaporanPembelianOutlet($this->month, $this->year)); 
-
             $dataExportLaporanNegosiasi = $this->safeExport(fn() => $this->exportLaporanNegosiasi($this->month, $this->year));
 
             // === Untuk divisi Supports ===
             $dataExportRekapPendapatanASP = $this->safeExport(fn() => $this->exportRekapPendapatanASP($this->month, $this->year));
-
             $dataExportRekapPiutangASP = $this->safeExport(fn() => $this->exportRekapPiutangASP($this->month, $this->year));
-
             $dataLaporanPengiriman = $this->safeExport(fn() => $this->exportLaporanPengiriman($this->month, $this->year));
 
             // === Untuk divisi HRGA ===
             $dataLaporanSakit = $this->safeExport(fn() => $this->exportSakit($this->month, $this->year));
-
             $dataLaporanCuti = $this->safeExport(fn() => $this->exportCuti($this->month, $this->year));
-
             $dataLaporanIzin = $this->safeExport(fn() => $this->exportIzin($this->month, $this->year));
-
             $dataLaporanTerlambat = $this->safeExport(fn() => $this->exportTerlambat($this->month, $this->year));
 
             // === Untuk divisi Accounting ===
             $dataKHPS = $this->safeExport(fn() => $this->exportKHPS($this->month, $this->year));
+            $dataLabaRugi = $this->safeExport(fn() => $this->exportLabaRugi($this->month, $this->year));
+            $dataNeraca = $this ->safeExport(fn() => $this->exportNeraca($this->month, $this->year));
+            $dataRasio = $this->safeExport(fn() => $this->exportRasio($this->month, $this->year));
+            $dataPPn = $this->safeExport(fn() => $this->exportPPn($this->month, $this->year));
             $dataArusKas = $this->safeExport(fn() => $this->exportArusKas($this->month, $this->year));
+            $dataTaxPlanning = $this->safeExport(fn() => $this->exportTaxPlanning($this->month, $this->year));
 
             // === Untuk divisi SPI ===
             $dataLaporanSPI = $this->safeExport(fn() => $this->exportLaporanSPI($this->month, $this->year));
+            $dataLaporanSPIIT = $this->safeExport(fn() => $this->exportLaporanSPIIT($this->month, $this->year));
+
+            // IT
+            $dataTiktok = $this->safeExport(fn() => $this->exportTiktok($this->month, $this->year));
+            $dataInstagram = $this->safeExport(fn() => $this->exportInstagram($this->month, $this->year));
+            $dataBizdev = $this->safeExport(fn() => $this->exportBizdev($this->month, $this->year));
+
     
             return view('exports.all-laporan', compact(
                 'dataExportLaporanPenjualan',
@@ -141,6 +155,16 @@ class ExportLaporanAll extends Controller
                 'dataKHPS',
                 'dataArusKas',
                 'dataLaporanSPI',
+                'dataLaporanSPIIT',
+                'dataArusKas',
+                'dataLabaRugi',
+                'dataNeraca',
+                'dataRasio',
+                'dataPPn',
+                'dataTaxPlanning',
+                'dataTiktok',
+                'dataInstagram',
+                'dataBizdev',
                 
             ))
             ->with('month', $this->month)
@@ -770,6 +794,38 @@ class ExportLaporanAll extends Controller
 }
 
     // Export untuk divisi HRGA
+    public function exportPTBOS($month, $year) {
+    try {
+        $rekapPTBOS = LaporanPtBos::whereMonth('tanggal', $month)
+            ->whereYear('tanggal', $year)
+            ->get();
+
+        if ($rekapPTBOS->isEmpty()) {
+            return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+        }
+
+        $formattedData =  $rekapPTBOS->map(function ($item) {
+            return [
+                'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
+                'Pekerjaan' => $item->pekerjaan,
+                'Kondisi Bulan Lalu' => $item->kondisi_bulanlalu,
+                'Kondisi Bulan Ini' => $item->kondisi_bulanini,
+                'Update' => $item->update,
+                'Rencana Implementasi' => $item->rencana_implementasi,
+                'Keterangan' => $item->keterangan
+            ];
+        });
+
+        return [
+            'rekap' => $formattedData,
+        ];
+
+    } catch (\Throwable $th) {
+        Log::error('Error exporting  (exp new): ' . $th->getMessage());
+        return 'Error: ' . $th->getMessage();
+    }
+}
+    // Export untuk divisi HRGA
     public function exportSakit($month, $year) {
     try {
         $rekapSakit = LaporanSakit::whereMonth('tanggal', $month)
@@ -963,7 +1019,260 @@ class ExportLaporanAll extends Controller
     }
 }
 
-    //Export Accounting
+    // Export untuk divisi laba rugi
+    public function exportLabaRugi($month, $year)
+    {
+        try {
+            $rekapLabaRugi = LaporanLabaRugi::whereMonth('tanggal', $month)
+                ->whereYear('tanggal', $year)
+                ->get();
+
+            if ($rekapLabaRugi->isEmpty()) {
+                return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+            }
+
+            // Format data dengan path gambar
+            $formattedData = $rekapLabaRugi->map(function ($item) {
+            $imagePath = public_path('images/accounting/labarugi/' . $item->gambar);
+                return [
+                    'Gambar' => (!empty($item->gambar) && file_exists($imagePath))
+                        ? asset('images/accounting/labarugi/' . $item->gambar)
+                        : asset('images/no-image.png'),
+                ];
+            });
+
+            return [
+                'rekap' => $formattedData,
+            ];
+
+        } catch (\Throwable $th) {
+            Log::error('Error exporting (exp HRGA): ' . $th->getMessage());
+            return 'Error: ' . $th->getMessage();
+        }
+    }
+
+    // Export untuk divisi laba rugi
+    public function exportNeraca($month, $year)
+    {
+        try {
+            $rekapNeraca = LaporanNeraca::whereMonth('tanggal', $month)
+                ->whereYear('tanggal', $year)
+                ->get();
+
+            if ($rekapNeraca->isEmpty()) {
+                return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+            }
+
+            // Format data dengan path gambar
+            $formattedData = $rekapNeraca->map(function ($item) {
+            $imagePath = public_path('images/accounting/neraca/' . $item->gambar);
+                return [
+                    'Gambar' => (!empty($item->gambar) && file_exists($imagePath))
+                        ? asset('images/accounting/neraca/' . $item->gambar)
+                        : asset('images/no-image.png'),
+                ];
+            });
+
+            return [
+                'rekap' => $formattedData,
+            ];
+
+        } catch (\Throwable $th) {
+            Log::error('Error exporting (exp HRGA): ' . $th->getMessage());
+            return 'Error: ' . $th->getMessage();
+        }
+    }
+
+    // Export untuk divisi laba rugi
+    public function exportRasio($month, $year)
+    {
+        try {
+            $rekapRasio = LaporanRasio::whereMonth('tanggal', $month)
+                ->whereYear('tanggal', $year)
+                ->get();
+
+            if ($rekapRasio->isEmpty()) {
+                return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+            }
+
+            // Format data dengan path gambar
+            $formattedData = $rekapRasio->map(function ($item) {
+            $imagePath = public_path('images/accounting/rasio/' . $item->gambar);
+                return [
+                    'Gambar' => (!empty($item->gambar) && file_exists($imagePath))
+                        ? asset('images/accounting/rasio/' . $item->gambar)
+                        : asset('images/no-image.png'),
+                ];
+            });
+
+            return [
+                'rekap' => $formattedData,
+            ];
+
+        } catch (\Throwable $th) {
+            Log::error('Error exporting (exp HRGA): ' . $th->getMessage());
+            return 'Error: ' . $th->getMessage();
+        }
+    }
+
+    // Export untuk divisi laba rugi
+    public function exportPPn($month, $year)
+    {
+        try {
+            $rekapPPn = LaporanPpn::whereMonth('tanggal', $month)
+                ->whereYear('tanggal', $year)
+                ->get();
+
+            if ($rekapPPn->isEmpty()) {
+                return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+            }
+
+            // Format data dengan path gambar
+            $formattedData = $rekapPPn->map(function ($item) {
+            $imagePath = public_path('images/accounting/ppn/' . $item->thumbnail);
+                return [
+                    'Gambar' => (!empty($item->thumbnail) && file_exists($imagePath))
+                        ? asset('images/accounting/ppn/' . $item->thumbnail)
+                        : asset('images/no-image.png'),
+                ];
+            });
+
+            return [
+                'rekap' => $formattedData,
+            ];
+
+        } catch (\Throwable $th) {
+            Log::error('Error exporting (exp HRGA): ' . $th->getMessage());
+            return 'Error: ' . $th->getMessage();
+        }
+    }
+
+    // Export untuk divisi taxplanning
+    public function exportTaxPlanning($month, $year)
+    {
+        try {
+            $rekapTaxPlanning = LaporanTaxPlaning::whereMonth('tanggal', $month)
+                ->whereYear('tanggal', $year)
+                ->get();
+
+            if ($rekapTaxPlanning->isEmpty()) {
+                return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+            }
+
+            // Format data dengan path gambar
+            $formattedData = $rekapTaxPlanning->map(function ($item) {
+            $imagePath = public_path('images/accounting/taxplaning/' . $item->gambar);
+                return [
+                    'Gambar' => (!empty($item->gambar) && file_exists($imagePath))
+                        ? asset('images/accounting/taxplaning/' . $item->gambar)
+                        : asset('images/no-image.png'),
+                ];
+            });
+
+            return [
+                'rekap' => $formattedData,
+            ];
+
+        } catch (\Throwable $th) {
+            Log::error('Error exporting (exp HRGA): ' . $th->getMessage());
+            return 'Error: ' . $th->getMessage();
+        }
+    }
+
+    // Export untuk divisi tiktok
+    public function exportTiktok($month, $year)
+    {
+        try {
+            $rekapTiktok = ItMultimediaTiktok::whereMonth('tanggal', $month)
+                ->whereYear('tanggal', $year)
+                ->get();
+
+            if ($rekapTiktok->isEmpty()) {
+                return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+            }
+
+            // Format data dengan path gambar
+            $formattedData = $rekapTiktok->map(function ($item) {
+            $imagePath = public_path('images/it/multimediatiktok/' . $item->gambar);
+                return [
+                    'Gambar' => (!empty($item->gambar) && file_exists($imagePath))
+                        ? asset('images/it/multimediatiktok/' . $item->gambar)
+                        : asset('images/no-image.png'),
+                ];
+            });
+
+            return [
+                'rekap' => $formattedData,
+            ];
+
+        } catch (\Throwable $th) {
+            Log::error('Error exporting (exp HRGA): ' . $th->getMessage());
+            return 'Error: ' . $th->getMessage();
+        }
+    }
+    // Export untuk divisi instagram
+    public function exportInstagram($month, $year)
+    {
+        try {
+            $rekapInstagram = ItMultimediaInstagram::whereMonth('tanggal', $month)
+                ->whereYear('tanggal', $year)
+                ->get();
+
+            if ($rekapInstagram->isEmpty()) {
+                return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+            }
+
+            // Format data dengan path gambar
+            $formattedData = $rekapInstagram->map(function ($item) {
+            $imagePath = public_path('images/it/multimediainstagram/' . $item->gambar);
+                return [
+                    'Gambar' => (!empty($item->gambar) && file_exists($imagePath))
+                        ? asset('images/it/multimediainstagram/' . $item->gambar)
+                        : asset('images/no-image.png'),
+                ];
+            });
+
+            return [
+                'rekap' => $formattedData,
+            ];
+
+        } catch (\Throwable $th) {
+            Log::error('Error exporting (exp HRGA): ' . $th->getMessage());
+            return 'Error: ' . $th->getMessage();
+        }
+    }
+    // Export untuk divisi instagram
+    public function exportBizdev($month, $year)
+    {
+        try {
+            $rekapBizdev = LaporanBizdevGambar::whereMonth('tanggal', $month)
+                ->whereYear('tanggal', $year)
+                ->get();
+
+            if ($rekapBizdev->isEmpty()) {
+                return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+            }
+
+            // Format data dengan path gambar
+            $formattedData = $rekapBizdev->map(function ($item) {
+            $imagePath = public_path('images/it/laporanbizdevgambar/' . $item->gambar);
+                return [
+                    'Gambar' => (!empty($item->gambar) && file_exists($imagePath))
+                        ? asset('images/it/laporanbizdevgambar/' . $item->gambar)
+                        : asset('images/no-image.png'),
+                ];
+            });
+
+            return [
+                'rekap' => $formattedData,
+            ];
+
+        } catch (\Throwable $th) {
+            Log::error('Error exporting (exp HRGA): ' . $th->getMessage());
+            return 'Error: ' . $th->getMessage();
+        }
+    }
+
     public function exportKHPS($month, $year) {
     try {
         $rekapKHPS = KasHutangPiutang::whereMonth('tanggal', $month)
@@ -1083,6 +1392,36 @@ class ExportLaporanAll extends Controller
             }
     
             $formattedData =  $laporanSPI->map(function ($item) {
+                return [
+                    'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
+                    'Aspek' => $item->aspek,
+                    'Masalah' => $item->masalah,
+                    'Solusi' => $item->solusi,
+                    'Implementasi' => $item->implementasi,
+                ];
+            });
+    
+            return [
+                'rekap' => $formattedData,
+            ];
+    
+        } catch (\Throwable $th) {
+            Log::error('Error exporting  (exp new): ' . $th->getMessage());
+            return 'Error: ' . $th->getMessage();
+        }
+    }
+    // Export untuk divisi HRGA
+    public function exportLaporanSPIIT($month, $year) {
+        try {
+            $laporanSPIIT = LaporanSPITI::whereMonth('tanggal', $month)
+                ->whereYear('tanggal', $year)
+                ->get();
+    
+            if ($laporanSPIIT->isEmpty()) {
+                return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+            }
+    
+            $formattedData =  $laporanSPIIT->map(function ($item) {
                 return [
                     'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
                     'Aspek' => $item->aspek,
