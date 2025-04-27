@@ -2671,52 +2671,52 @@ function fetchChartDataWRp(url, canvasId, title) {
 // });
 
 
-// document.addEventListener('DOMContentLoaded', function () {
-//     const exportButton = document.getElementById('exportFloatingButton');
+document.addEventListener('DOMContentLoaded', function () {
+    const exportButton = document.getElementById('exportFloatingButton');
 
-//     if (exportButton) {
-//         exportButton.addEventListener('click', function () {
-//             const tableBody = document.querySelector('#rekapTable tbody');
-//             const tableHTML = tableBody ? tableBody.innerHTML.trim() : '';
+    if (exportButton) {
+        exportButton.addEventListener('click', function () {
+            const tableBody = document.querySelector('#rekapTable tbody');
+            const tableHTML = tableBody ? tableBody.innerHTML.trim() : '';
 
-//             const chartCanvas = document.getElementById('rekapChart');
-//             const chartBase64 = chartCanvas ? chartCanvas.toDataURL('image/png') : '';
+            const chartCanvas = document.getElementById('rekapChart');
+            const chartBase64 = chartCanvas ? chartCanvas.toDataURL('image/png') : '';
 
-//             if (!tableHTML || !chartBase64) {
-//                 alert('Data tabel atau grafik tidak tersedia.');
-//                 return;
-//             }
+            if (!tableHTML || !chartBase64) {
+                alert('Data tabel atau grafik tidak tersedia.');
+                return;
+            }
 
-//             fetch('/exports/rekap-penjualan.pdf', {
-//                 method: 'POST',
-//                 headers: {
-//                     'Content-Type': 'application/json',
-//                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-//                 },
-//                 body: JSON.stringify({
-//                     table: tableHTML,
-//                     chart: chartBase64
-//                 })
-//             })
-//                 .then(response => {
-//                     if (!response.ok) throw new Error("Gagal mengekspor PDF");
-//                     return response.blob();
-//                 })
-//                 .then(blob => {
-//                     const url = window.URL.createObjectURL(blob);
-//                     const link = document.createElement('a');
-//                     link.href = url;
-//                     link.download = 'laporan_rekap_penjualan.pdf';
-//                     link.click();
-//                     window.URL.revokeObjectURL(url);
-//                 })
-//                 .catch(error => {
-//                     console.error('Export error:', error);
-//                     alert('Gagal mengekspor PDF.');
-//                 });
-//         });
-//     }
-// });
+            fetch('/exports/rekap-penjualan.pdf', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    table: tableHTML,
+                    chart: chartBase64
+                })
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error("Gagal mengekspor PDF");
+                    return response.blob();
+                })
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = 'laporan_rekap_penjualan.pdf';
+                    link.click();
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch(error => {
+                    console.error('Export error:', error);
+                    alert('Gagal mengekspor PDF.');
+                });
+        });
+    }
+});
 
 
 </script>

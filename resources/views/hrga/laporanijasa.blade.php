@@ -138,92 +138,98 @@
                         <tr class="hover:bg-gray-100">
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanijasa->tanggal_formatted }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ \Carbon\Carbon::parse($laporanijasa->jam)->format('H:i') }}</td>
-                            <td class="border border-gray-300 px-4 py-2 content-html align-center text-justify">{!!$laporanijasa->permasalahan !!}</td>
-                            <td class="border border-gray-300 px-4 py-2 content-html align-center text-justify">{!! $laporanijasa->impact !!}</td>
-                            <td class="border border-gray-300 px-4 py-2 content-html align-center text-justify">{!! $laporanijasa->troubleshooting !!}</td>
+                            <td class="border border-gray-300 px-4 py-2 content-html align-top text-justify">{!!$laporanijasa->permasalahan !!}</td>
+                            <td class="border border-gray-300 px-4 py-2 content-html align-top text-justify">{!! $laporanijasa->impact !!}</td>
+                            <td class="border border-gray-300 px-4 py-2 content-html align-top text-justify">{!! $laporanijasa->troubleshooting !!}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanijasa->resolve_tanggal_formatted }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-center">{{ \Carbon\Carbon::parse($laporanijasa->resolve_jam)->format('H:i') }}</td>                       
-                            <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
-                                <!-- Edit Button -->
-                                <button class="bg-red-600 text-white px-3 py-2 rounded" data-modal-target="#editEventModal{{ $laporanijasa->id_ijasa }}">
-                                    <i class="fa fa-pen"></i>
-                                    Edit
-                                </button>
-                                <!-- Delete Form -->
-                                <form method="POST" action="{{ route('laporanijasa.destroy', $laporanijasa->id_ijasa) }}">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="bg-red-600 text-white px-3 py-2 rounded" onclick="return confirm('Are you sure to delete?')">
-                                        <i class="fa fa-trash"></i>
-                                        Delete
+                            <td class="border border-gray-300 py-4 text-center">
+                                <div class="flex justify-center items-center gap-3">
+                                    <!-- Edit Button -->
+                                    <button class="text-red-600 hover:text-red-800 transition" 
+                                        data-modal-target="#editEventModal{{ $laporanijasa->id_ijasa }}">
+                                        <i class="fa fa-pen text-lg"></i>
                                     </button>
-                                </form>
+                                    <!-- Delete Form -->
+                                    <form method="POST" action="{{ route('laporanijasa.destroy', $laporanijasa->id_ijasa) }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="text-red-600 hover:text-red-800 transition" 
+                                            onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                            <i class="fa fa-trash text-lg"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
-                        </tr>   
-                        <!-- Modal for Edit Event -->
-                        <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden overflow-y-auto" id="editEventModal{{ $laporanijasa->id_ijasa }}">
-                            <div class="bg-white w-1/2 p-6 rounded shadow-lg ">
-                                <h3 class="text-xl font-semibold mb-4">Edit Data</h3>
-                                <form method="POST" action="{{ route('laporanijasa.update', $laporanijasa->id_ijasa) }}" enctype="multipart/form-data">
-                                    @csrf
-                                    @method('PUT')
-                                    <div class="space-y-4">
-                                        <div>
-                                            <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
-                                            <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $laporanijasa->tanggal }}" required>
-                                        </div>
-                                        <div>
-                                            <label for="jam" class="block text-sm font-medium">Jam</label>
-                                            <div class="relative">
-                                                <div class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
-                                                    <svg class="w-4 h-4 text-gray-50 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                                                        <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z" clip-rule="evenodd"/>
-                                                    </svg>
-                                                </div>
-                                                <input type="time" name="jam" id="jam" class="bg-gray-50 border leading-none border-gray-600 text-black text-sm rounded-lg block w-full p-2.5" value="{{ \Carbon\Carbon::parse($laporanijasa->jam)->format('H:i') }}"  required />
-                                            </div> 
-                                        </div>
-                                        <div>
-                                            <label for="permasalahan" class="block text-sm font-medium">Permasalahan</label>
-                                            <input type="hidden" name="permasalahan" class="w-full p-2 border rounded" id="edit-{{ $laporanijasa->id_ijasa }}-permasalahan-input" value="{{ $laporanijasa->permasalahan }}" required>
-                                            <div id="edit-{{ $laporanijasa->id_ijasa }}-permasalahan"></div>
-                                        </div>
-                                        <div>
-                                            <label for="impact" class="block text-sm font-medium">Impact</label>
-                                            <input type="hidden" name="impact" class="w-full p-2 border rounded" id="edit-{{ $laporanijasa->id_ijasa }}-impact-input" value="{{ $laporanijasa->impact }}" required>
-                                            <div id="edit-{{ $laporanijasa->id_ijasa }}-impact"></div>
-                                        </div>
-                                        <div>
-                                            <label for="troubleshooting" class="block text-sm font-medium">Troubleshooting</label>
-                                            <input type="hidden" name="troubleshooting" class="w-full p-2 border rounded" id="edit-{{ $laporanijasa->id_ijasa }}-troubleshooting-input" value="{{ $laporanijasa->troubleshooting }}" required>
-                                            <div id="edit-{{ $laporanijasa->id_ijasa }}-troubleshooting"></div>
-                                        </div>
-                                        <div>
-                                            <label for="resolve_tanggal" class="block text-sm font-medium">Resolve Tanggal</label>
-                                            <input type="date" name="resolve_tanggal" class="w-full p-2 border rounded" value="{{ $laporanijasa->resolve_tanggal }}" required>
-                                        </div>
-                                        <div>
-                                            <label for="resolve_jam" class="block text-sm font-medium">Resolve Jam</label>
-                                            <div class="relative">
-                                                <div class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
-                                                    <svg class="w-4 h-4 text-gray-50 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                                                        <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z" clip-rule="evenodd"/>
-                                                    </svg>
-                                                </div>
-                                                <input type="time" name="resolve_jam" id="resolve_jam" class="mb-4 bg-gray-50 border leading-none border-gray-600 text-black text-sm rounded-lg block w-full p-2.5" value="{{ \Carbon\Carbon::parse($laporanijasa->resolve_jam)->format('H:i') }}"  required />
-                                            </div> 
-                                        </div>
+                        </tr>  
+                        @endforeach
+                    </tbody>
+                </table>
+            </div> 
+            <!-- Modal for Edit Event -->
+            @foreach ($laporanijasas as $laporanijasa)
+            <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="editEventModal{{ $laporanijasa->id_ijasa }}">
+                <div class="bg-white w-2/3 p-6 rounded shadow-lg max-h-[80vh] overflow-y-auto">
+                    <h3 class="text-xl font-semibold mb-4">Edit Data</h3>
+                    <form method="POST" action="{{ route('laporanijasa.update', $laporanijasa->id_ijasa) }}" enctype="multipart/form-data" id="editForm{{ $laporanijasa->id_ijasa }}">
+                        @csrf
+                        @method('PUT')
+                        <div class="space-y-4">
+                            <div>
+                                <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                                <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $laporanijasa->tanggal }}" required>
+                            </div>
+                            <div>
+                                <label for="jam" class="block text-sm font-medium">Jam</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
+                                        <svg class="w-4 h-4 text-gray-50 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                            <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z" clip-rule="evenodd"/>
+                                        </svg>
                                     </div>
-                                    <div class="mt-4 flex justify-end gap-2">
-                                        <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
-                                        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Update</button>
+                                    <input type="time" name="jam" id="jam" class="bg-gray-50 border leading-none border-gray-600 text-black text-sm rounded-lg block w-full p-2.5" value="{{ \Carbon\Carbon::parse($laporanijasa->jam)->format('H:i') }}"  required />
+                                </div> 
+                            </div>
+                            <div>
+                                <label for="permasalahan" class="block text-sm font-medium">Permasalahan</label>
+                                <input type="hidden" name="permasalahan" class="w-full p-2 border rounded" id="edit-{{ $laporanijasa->id_ijasa }}-permasalahan-input" value="{{ $laporanijasa->permasalahan }}" required>
+                                <div id="edit-{{ $laporanijasa->id_ijasa }}-permasalahan"></div>
+                            </div>
+                            <div>
+                                <label for="impact" class="block text-sm font-medium">Impact</label>
+                                <input type="hidden" name="impact" class="w-full p-2 border rounded" id="edit-{{ $laporanijasa->id_ijasa }}-impact-input" value="{{ $laporanijasa->impact }}" required>
+                                <div id="edit-{{ $laporanijasa->id_ijasa }}-impact"></div>
+                            </div>
+                            <div>
+                                <label for="troubleshooting" class="block text-sm font-medium">Troubleshooting</label>
+                                <input type="hidden" name="troubleshooting" class="w-full p-2 border rounded" id="edit-{{ $laporanijasa->id_ijasa }}-troubleshooting-input" value="{{ $laporanijasa->troubleshooting }}" required>
+                                <div id="edit-{{ $laporanijasa->id_ijasa }}-troubleshooting"></div>
+                            </div>
+                            <div>
+                                <label for="resolve_tanggal" class="block text-sm font-medium">Resolve Tanggal</label>
+                                <input type="date" name="resolve_tanggal" class="w-full p-2 border rounded" value="{{ $laporanijasa->resolve_tanggal }}" required>
+                            </div>
+                            <div>
+                                <label for="resolve_jam" class="block text-sm font-medium">Resolve Jam</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
+                                        <svg class="w-4 h-4 text-gray-50 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                            <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z" clip-rule="evenodd"/>
+                                        </svg>
                                     </div>
-                                </form>
+                                    <input type="time" name="resolve_jam" id="resolve_jam" class="mb-4 bg-gray-50 border leading-none border-gray-600 text-black text-sm rounded-lg block w-full p-2.5" value="{{ \Carbon\Carbon::parse($laporanijasa->resolve_jam)->format('H:i') }}"  required />
+                                </div> 
                             </div>
                         </div>
-                    @endforeach
-                </tbody>
-            </table>
+                        <div class="mt-4 flex justify-end gap-2">
+                            <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
+                            <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        @endforeach
+
          <!-- Pagination -->
          <div class="flex justify-center items-center mt-2 mb-4 p-4 bg-gray-50 rounded-lg">
             <!-- Dropdown untuk memilih jumlah data per halaman -->
@@ -305,12 +311,12 @@
     
 <!-- Modal untuk Add Event -->
 <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">
-    <div class="bg-white w-1/2 max-h-[90vh] p-6 rounded shadow-lg flex flex-col">
+    <div class="bg-white w-2/3 max-h-[90vh] p-6 rounded shadow-lg flex flex-col">
         <h3 class="text-xl font-semibold mb-4">Add New Data</h3>
+
         <form method="POST" action="{{ route('laporanijasa.store') }}" enctype="multipart/form-data" id="addForm" class="flex-grow overflow-y-auto space-y-4 pr-2">
             @csrf
-            <div class="space-y-4">
-                <div>
+=                <div>
                     <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
                     <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
                 </div>
@@ -358,13 +364,16 @@
                         <input type="time" name="resolve_jam" id="resolve_jam" class="mb-4 bg-gray-50 border leading-none border-gray-600 text-black text-sm rounded-lg block w-full p-2.5" required />
                     </div>             
                 </div>
-            </div>
-            <div class="mt-4 flex justify-end gap-2 sticky bottom-0 bg-white py-4">
-                <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
-                <button type="submit" form="addForm" class="bg-red-600 text-white px-4 py-2 rounded">Add</button>
-            </div>
+
         </form>
+        
+        <!-- Tombol di Bawah yang Tetap Terlihat -->
+        <div class="mt-4 flex justify-end gap-2 sticky bottom-0 bg-white py-4">
+            <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
+            <button type="submit" form="addForm" class="bg-red-600 text-white px-4 py-2 rounded">Add</button>
+        </div>
     </div>
+</div>
 </div>
 
 </body>

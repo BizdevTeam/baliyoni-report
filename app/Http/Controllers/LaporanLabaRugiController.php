@@ -215,7 +215,6 @@ class LaporanLabaRugiController extends Controller
                     <h3 style='margin: 0; padding: 0;'>Keterangan : {$laporan->keterangan}</h3>
                     <h3 style='margin: 0; padding: 0;'>Laporan : {$laporan->tanggal_formatted}</h3>
             </div>
-
                 ";
     
                 // Tambahkan ke PDF
@@ -257,7 +256,7 @@ class LaporanLabaRugiController extends Controller
     
             // Ambil gambar yang valid atau gambar default
             $images = $query->select('gambar')->get()->map(function ($item) {
-                $imagePath = public_path('images/accounting/labarugi/' . $item->gambar);
+            $imagePath = public_path('images/accounting/labarugi/' . $item->gambar);
     
                 return [
                     'gambar' => (!empty($item->gambar) && file_exists($imagePath))

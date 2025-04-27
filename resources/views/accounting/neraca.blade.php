@@ -99,7 +99,7 @@
                 <!-- Search -->
                 <form method="GET" action="{{ route('neraca.index') }}" class="flex items-center gap-2">
                     <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
-                        <input type="date" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}"
+                        <input type="month" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}"
                             class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
                     </div>
 
