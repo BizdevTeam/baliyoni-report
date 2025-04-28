@@ -1,6 +1,7 @@
-<form action="{{ route('export-laporan-all-new') }}" method="get">
-    <button id="" type="submit" class="fixed bottom-80 right-6 w-20 h-20 justify-center rounded-full bg-red-600 font-medium text-white px-4 py-3 hover:shadow-xl transition duration-300 ease-in-out transform hover:scale-105 flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+<form id="exportForm" action="{{ route('export-laporan-all-new') }}" method="get">
+    <input type="hidden" name="start_month" id="startMonthInput">
+    <input type="hidden" name="end_month" id="endMonthInput">
+    <button id="openExportModalBtn" type="button" class="fixed bottom-80 right-6 w-20 h-20 justify-center rounded-full bg-red-600 font-medium text-white px-4 py-3 hover:shadow-xl transition duration-300 ease-in-out transform hover:scale-105 flex items-center gap-2">        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
             <mask id="lineMdCloudAltPrintFilledLoop0">
                 <g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
                     <path stroke-dasharray="64" stroke-dashoffset="64" d="M7 19h11c2.21 0 4 -1.79 4 -4c0 -2.21 -1.79 -4 -4 -4h-1v-1c0 -2.76 -2.24 -5 -5 -5c-2.42 0 -4.44 1.72 -4.9 4h-0.1c-2.76 0 -5 2.24 -5 5c0 2.76 2.24 5 5 5Z">
@@ -53,13 +54,48 @@
     </button>
 </form>
 
+<!-- Modal -->
 <div id="exportModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-50">
     <div class="bg-white rounded-lg p-6 shadow-lg w-96">
         <h2 class="text-xl font-bold mb-4">Export PDF</h2>
-        <p class="mb-4">Apakah Anda ingin mengekspor laporan penjualan ke PDF?</p>
+        <div class="mb-4">
+            <label class="block text-sm font-medium mb-1">Start Month (Opsional)</label>
+            <input type="month" id="startMonthModal" class="w-full border-gray-300 rounded p-2" />
+        </div>
+        <div class="mb-4">
+            <label class="block text-sm font-medium mb-1">End Month (Opsional)</label>
+            <input type="month" id="endMonthModal" class="w-full border-gray-300 rounded p-2" />
+        </div>
         <div class="flex justify-end space-x-2">
-            <button id="cancelExportBtn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">Batal</button>
-            <button id="confirmExportBtn" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Ekspor PDF</button>
+            <button id="cancelExportBtn" type="button" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">Batal</button>
+            <button id="confirmExportBtn" type="button" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Ekspor PDF</button>
         </div>
     </div>
 </div>
+
+<script>
+    const exportModal = document.getElementById('exportModal');
+    const openExportModalBtn = document.getElementById('openExportModalBtn');
+    const cancelExportBtn = document.getElementById('cancelExportBtn');
+    const confirmExportBtn = document.getElementById('confirmExportBtn');
+
+    openExportModalBtn.addEventListener('click', () => {
+        exportModal.classList.remove('hidden');
+    });
+
+    cancelExportBtn.addEventListener('click', () => {
+        exportModal.classList.add('hidden');
+    });
+
+    confirmExportBtn.addEventListener('click', () => {
+        const startMonth = document.getElementById('startMonthModal').value;
+        const endMonth = document.getElementById('endMonthModal').value;
+
+        // Isi input hidden di form
+        document.getElementById('startMonthInput').value = startMonth;
+        document.getElementById('endMonthInput').value = endMonth;
+
+        // Submit form
+        document.getElementById('exportForm').submit();
+    });
+</script>

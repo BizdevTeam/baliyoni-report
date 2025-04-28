@@ -42,11 +42,31 @@ class ExportLaporanAll extends Controller
     private $month;
     private $year;
 
-    public function __construct($data = 'March 2025') {
-        $this->month = Carbon::createFromFormat('F Y', $data)->month;
-        $this->year = Carbon::createFromFormat('F Y', $data)->year;
-    }
+    // public function __construct($data = 'March 2025') {
+    //     $this->month = Carbon::createFromFormat('F Y', $data)->month;
+    //     $this->year = Carbon::createFromFormat('F Y', $data)->year;
+    // }
        
+    public function __construct($startMonth = null, $endMonth = null)
+{
+    if ($startMonth && $endMonth) {
+        $startDate = \Carbon\Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+        $this->month = $startDate->month;
+        $this->year = $startDate->year;
+    } elseif ($startMonth) {
+        $date = \Carbon\Carbon::createFromFormat('Y-m', $startMonth);
+        $this->month = $date->month;
+        $this->year = $date->year;
+    } elseif ($endMonth) {
+        $date = \Carbon\Carbon::createFromFormat('Y-m', $endMonth);
+        $this->month = $date->month;
+        $this->year = $date->year;
+    } else {
+        $date = \Carbon\Carbon::now();
+        $this->month = $date->month;
+        $this->year = $date->year;
+    }
+}
     // Fungsi generate warna random
     public function getRandomRGBA()
     {
@@ -90,54 +110,54 @@ class ExportLaporanAll extends Controller
             ];
     
             // === Untuk divisi Marketing ===
-            $dataExportLaporanPenjualan = $this->safeExport(fn() => $this->exportRekapPenjualan($this->month, $this->year));
+            $dataExportLaporanPenjualan = $this->safeExport(fn() => $this->exportRekapPenjualan(request()));
 
-            $dataExportLaporanPenjualanPerusahaan = $this->safeExport(fn() => $this->exportRekapPenjualanPerusahaan($this->month, $this->year));
+            $dataExportLaporanPenjualanPerusahaan = $this->safeExport(fn() => $this->exportRekapPenjualanPerusahaan(request()));
 
-            $dataExportLaporanPaketAdministrasi = $this->safeExport(fn() => $this->exportLaporanPaketAdministrasi($this->month, $this->year));
+            $dataExportLaporanPaketAdministrasi = $this->safeExport(fn() => $this->exportLaporanPaketAdministrasi(request()));
 
-            $dataExportStatusPaket = $this->safeExport(fn() => $this->exportStatusPaket($this->month, $this->year));
+            $dataExportStatusPaket = $this->safeExport(fn() => $this->exportStatusPaket(request()));
 
-            $dataExportLaporanPerInstansi = $this->safeExport(fn() => $this->exportLaporanPerInstansi($this->month, $this->year));
+            $dataExportLaporanPerInstansi = $this->safeExport(fn() => $this->exportLaporanPerInstansi(request()));
     
             // === Untuk divisi Procurement ===
-            $dataExportLaporanHolding = $this->safeExport(fn() => $this->exportLaporanHolding($this->month, $this->year)); 
-            $dataExportLaporanStok = $this->safeExport(fn() => $this->exportLaporanStok($this->month, $this->year)); 
+            $dataExportLaporanHolding = $this->safeExport(fn() => $this->exportLaporanHolding(request())); 
+            $dataExportLaporanStok = $this->safeExport(fn() => $this->exportLaporanStok(request())); 
             $dataExportLaporanPembelianOutlet = 
-            $this->safeExport(fn() => $this->exportLaporanPembelianOutlet($this->month, $this->year)); 
-            $dataExportLaporanNegosiasi = $this->safeExport(fn() => $this->exportLaporanNegosiasi($this->month, $this->year));
+            $this->safeExport(fn() => $this->exportLaporanPembelianOutlet(request())); 
+            $dataExportLaporanNegosiasi = $this->safeExport(fn() => $this->exportLaporanNegosiasi(request()));
 
             // === Untuk divisi Supports ===
-            $dataExportRekapPendapatanASP = $this->safeExport(fn() => $this->exportRekapPendapatanASP($this->month, $this->year));
-            $dataExportRekapPiutangASP = $this->safeExport(fn() => $this->exportRekapPiutangASP($this->month, $this->year));
-            $dataLaporanPengiriman = $this->safeExport(fn() => $this->exportLaporanPengiriman($this->month, $this->year));
+            $dataExportRekapPendapatanASP = $this->safeExport(fn() => $this->exportRekapPendapatanASP(request()));
+            $dataExportRekapPiutangASP = $this->safeExport(fn() => $this->exportRekapPiutangASP(request()));
+            $dataLaporanPengiriman = $this->safeExport(fn() => $this->exportLaporanPengiriman(request()));
 
             // === Untuk divisi HRGA ===
-            $dataPTBOS = $this->safeExport(fn() => $this->exportPTBOS($this->month, $this->year));
-            $dataIJASA = $this->safeExport(fn() => $this->exportIJASA($this->month, $this->year));
-            $dataIJASAGambar = $this->safeExport(fn() => $this->exportIJASAGambar($this->month, $this->year));
-            $dataLaporanSakit = $this->safeExport(fn() => $this->exportSakit($this->month, $this->year));
-            $dataLaporanCuti = $this->safeExport(fn() => $this->exportCuti($this->month, $this->year));
-            $dataLaporanIzin = $this->safeExport(fn() => $this->exportIzin($this->month, $this->year));
-            $dataLaporanTerlambat = $this->safeExport(fn() => $this->exportTerlambat($this->month, $this->year));
+            $dataPTBOS = $this->safeExport(fn() => $this->exportPTBOS(request()));
+            $dataIJASA = $this->safeExport(fn() => $this->exportIJASA(request()));
+            $dataIJASAGambar = $this->safeExport(fn() => $this->exportIJASAGambar(request()));
+            $dataLaporanSakit = $this->safeExport(fn() => $this->exportSakit(request()));
+            $dataLaporanCuti = $this->safeExport(fn() => $this->exportCuti(request()));
+            $dataLaporanIzin = $this->safeExport(fn() => $this->exportIzin(request()));
+            $dataLaporanTerlambat = $this->safeExport(fn() => $this->exportTerlambat(request()));
 
             // === Untuk divisi Accounting ===
-            $dataKHPS = $this->safeExport(fn() => $this->exportKHPS($this->month, $this->year));
-            $dataLabaRugi = $this->safeExport(fn() => $this->exportLabaRugi($this->month, $this->year));
-            $dataNeraca = $this ->safeExport(fn() => $this->exportNeraca($this->month, $this->year));
-            $dataRasio = $this->safeExport(fn() => $this->exportRasio($this->month, $this->year));
-            $dataPPn = $this->safeExport(fn() => $this->exportPPn($this->month, $this->year));
-            $dataArusKas = $this->safeExport(fn() => $this->exportArusKas($this->month, $this->year));
-            $dataTaxPlanning = $this->safeExport(fn() => $this->exportTaxPlanning($this->month, $this->year));
+            $dataKHPS = $this->safeExport(fn() => $this->exportKHPS(request()));
+            $dataLabaRugi = $this->safeExport(fn() => $this->exportLabaRugi(request()));
+            $dataNeraca = $this ->safeExport(fn() => $this->exportNeraca(request()));
+            $dataRasio = $this->safeExport(fn() => $this->exportRasio(request()));
+            $dataPPn = $this->safeExport(fn() => $this->exportPPn(request()));
+            $dataArusKas = $this->safeExport(fn() => $this->exportArusKas(request()));
+            $dataTaxPlanning = $this->safeExport(fn() => $this->exportTaxPlanning(request()));
 
             // === Untuk divisi SPI ===
-            $dataLaporanSPI = $this->safeExport(fn() => $this->exportLaporanSPI($this->month, $this->year));
-            $dataLaporanSPIIT = $this->safeExport(fn() => $this->exportLaporanSPIIT($this->month, $this->year));
+            $dataLaporanSPI = $this->safeExport(fn() => $this->exportLaporanSPI(request()));
+            $dataLaporanSPIIT = $this->safeExport(fn() => $this->exportLaporanSPIIT(request()));
 
             // IT
-            $dataTiktok = $this->safeExport(fn() => $this->exportTiktok($this->month, $this->year));
-            $dataInstagram = $this->safeExport(fn() => $this->exportInstagram($this->month, $this->year));
-            $dataBizdev = $this->safeExport(fn() => $this->exportBizdev($this->month, $this->year));
+            $dataTiktok = $this->safeExport(fn() => $this->exportTiktok(request()));
+            $dataInstagram = $this->safeExport(fn() => $this->exportInstagram(request()));
+            $dataBizdev = $this->safeExport(fn() => $this->exportBizdev(request()));
 
     
             return view('exports.all-laporan', compact(
@@ -184,14 +204,19 @@ class ExportLaporanAll extends Controller
         }
     }    
 
-    public function exportRekapPenjualan($month, $year) {
+    public function exportRekapPenjualan(Request $request) {
         try {
-            $rekapPenjualan = RekapPenjualan::whereMonth('tanggal', $month)
-                ->whereYear('tanggal', $year)
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+            $rekapPenjualan = RekapPenjualan::whereMonth('tanggal', $this->month)
+                ->whereYear('tanggal', $this->year)
                 ->get();
 
             if ($rekapPenjualan->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
             }
 
             $formattedData =  $rekapPenjualan->map(function ($item) {
@@ -231,14 +256,19 @@ class ExportLaporanAll extends Controller
         }
     }
 
-    public function exportRekapPenjualanPerusahaan($month, $year) {
+    public function exportRekapPenjualanPerusahaan(Request $request) {
         try {
-            $rekapPenjualanPerusahaan = RekapPenjualanPerusahaan::whereMonth('tanggal', $month)
-                ->whereYear('tanggal', $year)
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+            $rekapPenjualanPerusahaan = RekapPenjualanPerusahaan::whereMonth('tanggal', $this->month)
+                ->whereYear('tanggal', $this->year)
                 ->get();
 
             if ($rekapPenjualanPerusahaan->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
             }
 
            $formattedData = $rekapPenjualanPerusahaan->map(function ($item) {
@@ -280,14 +310,19 @@ class ExportLaporanAll extends Controller
         }
     }
      
-    public function exportLaporanPaketAdministrasi($month, $year) {
+    public function exportLaporanPaketAdministrasi(Request $request) {
         try {
-            $rekapLaporanPaketAdministrasi = LaporanPaketAdministrasi::whereMonth('tanggal', $month)
-                ->whereYear('tanggal', $year)
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+            $rekapLaporanPaketAdministrasi = LaporanPaketAdministrasi::whereMonth('tanggal', $this->month)
+                ->whereYear('tanggal', $this->year)
                 ->get();
 
             if ($rekapLaporanPaketAdministrasi->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
             }
 
             $formattedData = $rekapLaporanPaketAdministrasi->map(function ($item) {
@@ -328,14 +363,19 @@ class ExportLaporanAll extends Controller
             return 'Error: ' . $th->getMessage();
         }
     }
-    public function exportStatusPaket($month, $year) {
+    public function exportStatusPaket(Request $request) {
         try {
-            $rekapStatusPaket = StatusPaket::whereMonth('tanggal', $month)
-                ->whereYear('tanggal', $year)
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+            $rekapStatusPaket = StatusPaket::whereMonth('tanggal', $this->month)
+                ->whereYear('tanggal', $this->year)
                 ->get();
 
             if ($rekapStatusPaket->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
             }
 
             $formattedData = $rekapStatusPaket->map(function ($item) {
@@ -375,14 +415,19 @@ class ExportLaporanAll extends Controller
             return 'Error: ' . $th->getMessage();
         }
     }
-    public function exportLaporanPerInstansi($month, $year) {
+    public function exportLaporanPerInstansi(Request $request) {
         try {
-            $rekapLaporanPerInstansi = LaporanPerInstansi::whereMonth('tanggal', $month)
-                ->whereYear('tanggal', $year)
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+            $rekapLaporanPerInstansi = LaporanPerInstansi::whereMonth('tanggal', $this->month)
+                ->whereYear('tanggal', $this->year)
                 ->get();
 
             if ($rekapLaporanPerInstansi->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
             }
 
             $formattedData = $rekapLaporanPerInstansi->map(function ($item) {
@@ -424,14 +469,19 @@ class ExportLaporanAll extends Controller
     }
 
     // Export untuk divisi Procurement
-    public function exportLaporanHolding($month, $year) {
+    public function exportLaporanHolding(Request $request) {
         try {
-            $rekapLaporanHolding = LaporanHolding::whereMonth('tanggal', $month)
-                ->whereYear('tanggal', $year)
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+            $rekapLaporanHolding = LaporanHolding::whereMonth('tanggal', $this->month)
+                ->whereYear('tanggal', $this->year)
                 ->get();
 
             if ($rekapLaporanHolding->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
             }
 
             $formattedData = $rekapLaporanHolding->map(function ($item) {
@@ -473,14 +523,19 @@ class ExportLaporanAll extends Controller
         }
     }
 
-    public function exportLaporanStok($month, $year) {
+    public function exportLaporanStok(Request $request) {
         try {
-            $rekapLaporanStok = LaporanStok::whereMonth('tanggal', $month)
-                ->whereYear('tanggal', $year)
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+            $rekapLaporanStok = LaporanStok::whereMonth('tanggal', $this->month)
+                ->whereYear('tanggal', $this->year)
                 ->get();
 
             if ($rekapLaporanStok->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
             }
 
             $formattedData = $rekapLaporanStok->map(function ($item) {
@@ -521,14 +576,19 @@ class ExportLaporanAll extends Controller
         }
     }
 
-    public function exportLaporanPembelianOutlet($month, $year) {
+    public function exportLaporanPembelianOutlet(Request $request) {
         try {
-            $rekapLaporanPembelianOutlet = LaporanOutlet::whereMonth('tanggal', $month)
-                ->whereYear('tanggal', $year)
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+            $rekapLaporanPembelianOutlet = LaporanOutlet::whereMonth('tanggal', $this->month)
+                ->whereYear('tanggal', $this->year)
                 ->get();
 
             if ($rekapLaporanPembelianOutlet->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
             }
 
             $formattedData = $rekapLaporanPembelianOutlet->map(function ($item) {
@@ -569,14 +629,19 @@ class ExportLaporanAll extends Controller
         }
     }
 
-    public function exportLaporanNegosiasi($month, $year) {
+    public function exportLaporanNegosiasi(Request $request) {
         try {
-            $rekapLaporanNegosiasi = LaporanNegosiasi::whereMonth('tanggal', $month)
-                ->whereYear('tanggal', $year)
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+            $rekapLaporanNegosiasi = LaporanNegosiasi::whereMonth('tanggal', $this->month)
+                ->whereYear('tanggal', $this->year)
                 ->get();
 
             if ($rekapLaporanNegosiasi->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
             }
 
             $formattedData = $rekapLaporanNegosiasi->map(function ($item) {
@@ -618,14 +683,19 @@ class ExportLaporanAll extends Controller
     }
 
     // Export untuk divisi Supports
-    public function exportRekapPendapatanASP($month, $year) {
+    public function exportRekapPendapatanASP(Request $request) {
         try {
-            $rekapPendapatanASP = RekapPendapatanServisASP::whereMonth('tanggal', $month)
-                ->whereYear('tanggal', $year)
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+            $rekapPendapatanASP = RekapPendapatanServisASP::whereMonth('tanggal', $this->month)
+                ->whereYear('tanggal', $this->year)
                 ->get();
 
             if ($rekapPendapatanASP->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
             }
 
             $pelaksanaColors = [
@@ -674,14 +744,19 @@ class ExportLaporanAll extends Controller
         }
     }
 
-    public function exportRekapPiutangASP($month, $year) {
+    public function exportRekapPiutangASP(Request $request) {
         try {
-            $rekapPiutangServisASP = RekapPiutangServisASP::whereMonth('tanggal', $month)
-                ->whereYear('tanggal', $year)
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+            $rekapPiutangServisASP = RekapPiutangServisASP::whereMonth('tanggal', $this->month)
+                ->whereYear('tanggal', $this->year)
                 ->get();
 
             if ($rekapPiutangServisASP->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
             }
 
             $pelaksanaColors = [
@@ -730,15 +805,20 @@ class ExportLaporanAll extends Controller
         }
     }
 
-    public function exportLaporanPengiriman($month, $year)
+    public function exportLaporanPengiriman(Request $request)
 {
     try {
-        $rekapPengiriman = LaporanDetrans::whereMonth('tanggal', $month)
-            ->whereYear('tanggal', $year)
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+        $rekapPengiriman = LaporanDetrans::whereMonth('tanggal', $this->month)
+            ->whereYear('tanggal', $this->year)
             ->get();
 
         if ($rekapPengiriman->isEmpty()) {
-            return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+            return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
         }
 
         // Format data untuk tabel
@@ -802,14 +882,19 @@ class ExportLaporanAll extends Controller
 }
 
     // Export untuk divisi HRGA
-    public function exportPTBOS($month, $year) {
+    public function exportPTBOS(Request $request) {
     try {
-        $rekapPTBOS = LaporanPtBos::whereMonth('tanggal', $month)
-            ->whereYear('tanggal', $year)
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+        $rekapPTBOS = LaporanPtBos::whereMonth('tanggal', $this->month)
+            ->whereYear('tanggal', $this->year)
             ->get();
 
         if ($rekapPTBOS->isEmpty()) {
-            return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+            return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
         }
 
         $formattedData =  $rekapPTBOS->map(function ($item) {
@@ -834,14 +919,19 @@ class ExportLaporanAll extends Controller
     }
 }
     // Export untuk divisi HRGA
-    public function exportIJASA($month, $year) {
+    public function exportIJASA(Request $request) {
     try {
-        $rekapIJASA = LaporanIjasa::whereMonth('tanggal', $month)
-            ->whereYear('tanggal', $year)
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+        $rekapIJASA = LaporanIjasa::whereMonth('tanggal', $this->month)
+            ->whereYear('tanggal', $this->year)
             ->get();
 
         if ($rekapIJASA->isEmpty()) {
-            return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+            return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
         }
 
         $formattedData =  $rekapIJASA->map(function ($item) {
@@ -867,15 +957,20 @@ class ExportLaporanAll extends Controller
 }
 
 // Export untuk divisi tiktok
-public function exportIJASAGambar($month, $year)
+public function exportIJASAGambar(Request $request)
 {
     try {
-        $ijasaGambar = IjasaGambar::whereMonth('tanggal', $month)
-            ->whereYear('tanggal', $year)
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+        $ijasaGambar = IjasaGambar::whereMonth('tanggal', $this->month)
+            ->whereYear('tanggal', $this->year)
             ->get();
 
         if ($ijasaGambar->isEmpty()) {
-            return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+            return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
         }
 
         // Format data dengan path gambar
@@ -899,14 +994,19 @@ public function exportIJASAGambar($month, $year)
 }
 
     // Export untuk divisi HRGA
-    public function exportSakit($month, $year) {
+    public function exportSakit(Request $request) {
     try {
-        $rekapSakit = LaporanSakit::whereMonth('tanggal', $month)
-            ->whereYear('tanggal', $year)
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+        $rekapSakit = LaporanSakit::whereMonth('tanggal', $this->month)
+            ->whereYear('tanggal', $this->year)
             ->get();
 
         if ($rekapSakit->isEmpty()) {
-            return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+            return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
         }
 
         $formattedData =  $rekapSakit->map(function ($item) {
@@ -948,14 +1048,19 @@ public function exportIJASAGambar($month, $year)
 }
 
     // Export untuk divisi HRGA
-    public function exportCuti($month, $year) {
+    public function exportCuti(Request $request) {
     try {
-        $rekapCuti = LaporanCuti::whereMonth('tanggal', $month)
-            ->whereYear('tanggal', $year)
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+        $rekapCuti = LaporanCuti::whereMonth('tanggal', $this->month)
+            ->whereYear('tanggal', $this->year)
             ->get();
 
         if ($rekapCuti->isEmpty()) {
-            return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+            return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
         }
 
         $formattedData =  $rekapCuti->map(function ($item) {
@@ -996,14 +1101,19 @@ public function exportIJASAGambar($month, $year)
     }
 }
     // Export untuk divisi HRGA
-    public function exportIzin($month, $year) {
+    public function exportIzin(Request $request) {
     try {
-        $rekapIzin = LaporanIzin::whereMonth('tanggal', $month)
-            ->whereYear('tanggal', $year)
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+        $rekapIzin = LaporanIzin::whereMonth('tanggal', $this->month)
+            ->whereYear('tanggal', $this->year)
             ->get();
 
         if ($rekapIzin->isEmpty()) {
-            return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+            return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
         }
 
         $formattedData =  $rekapIzin->map(function ($item) {
@@ -1044,14 +1154,19 @@ public function exportIJASAGambar($month, $year)
     }
 }
     // Export untuk divisi HRGA
-    public function exportTerlambat($month, $year) {
+    public function exportTerlambat(Request $request) {
     try {
-        $rekapTerlambat = LaporanTerlambat::whereMonth('tanggal', $month)
-            ->whereYear('tanggal', $year)
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+        $rekapTerlambat = LaporanTerlambat::whereMonth('tanggal', $this->month)
+            ->whereYear('tanggal', $this->year)
             ->get();
 
         if ($rekapTerlambat->isEmpty()) {
-            return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+            return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
         }
 
         $formattedData =  $rekapTerlambat->map(function ($item) {
@@ -1093,15 +1208,20 @@ public function exportIJASAGambar($month, $year)
 }
 
     // Export untuk divisi laba rugi
-    public function exportLabaRugi($month, $year)
+    public function exportLabaRugi(Request $request)
     {
         try {
-            $rekapLabaRugi = LaporanLabaRugi::whereMonth('tanggal', $month)
-                ->whereYear('tanggal', $year)
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+            $rekapLabaRugi = LaporanLabaRugi::whereMonth('tanggal', $this->month)
+                ->whereYear('tanggal', $this->year)
                 ->get();
 
             if ($rekapLabaRugi->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
             }
 
             // Format data dengan path gambar
@@ -1125,15 +1245,20 @@ public function exportIJASAGambar($month, $year)
     }
 
     // Export untuk divisi laba rugi
-    public function exportNeraca($month, $year)
+    public function exportNeraca(Request $request)
     {
         try {
-            $rekapNeraca = LaporanNeraca::whereMonth('tanggal', $month)
-                ->whereYear('tanggal', $year)
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+            $rekapNeraca = LaporanNeraca::whereMonth('tanggal', $this->month)
+                ->whereYear('tanggal', $this->year)
                 ->get();
 
             if ($rekapNeraca->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
             }
 
             // Format data dengan path gambar
@@ -1157,15 +1282,20 @@ public function exportIJASAGambar($month, $year)
     }
 
     // Export untuk divisi laba rugi
-    public function exportRasio($month, $year)
+    public function exportRasio(Request $request)
     {
         try {
-            $rekapRasio = LaporanRasio::whereMonth('tanggal', $month)
-                ->whereYear('tanggal', $year)
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+            $rekapRasio = LaporanRasio::whereMonth('tanggal', $this->month)
+                ->whereYear('tanggal', $this->year)
                 ->get();
 
             if ($rekapRasio->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
             }
 
             // Format data dengan path gambar
@@ -1189,15 +1319,20 @@ public function exportIJASAGambar($month, $year)
     }
 
     // Export untuk divisi laba rugi
-    public function exportPPn($month, $year)
+    public function exportPPn(Request $request)
     {
         try {
-            $rekapPPn = LaporanPpn::whereMonth('tanggal', $month)
-                ->whereYear('tanggal', $year)
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+            $rekapPPn = LaporanPpn::whereMonth('tanggal', $this->month)
+                ->whereYear('tanggal', $this->year)
                 ->get();
 
             if ($rekapPPn->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
             }
 
             // Format data dengan path gambar
@@ -1221,15 +1356,20 @@ public function exportIJASAGambar($month, $year)
     }
 
     // Export untuk divisi taxplanning
-    public function exportTaxPlanning($month, $year)
+    public function exportTaxPlanning(Request $request)
     {
         try {
-            $rekapTaxPlanning = LaporanTaxPlaning::whereMonth('tanggal', $month)
-                ->whereYear('tanggal', $year)
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+            $rekapTaxPlanning = LaporanTaxPlaning::whereMonth('tanggal', $this->month)
+                ->whereYear('tanggal', $this->year)
                 ->get();
 
             if ($rekapTaxPlanning->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
             }
 
             // Format data dengan path gambar
@@ -1253,15 +1393,20 @@ public function exportIJASAGambar($month, $year)
     }
 
     // Export untuk divisi tiktok
-    public function exportTiktok($month, $year)
+    public function exportTiktok(Request $request)
     {
         try {
-            $rekapTiktok = ItMultimediaTiktok::whereMonth('tanggal', $month)
-                ->whereYear('tanggal', $year)
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+            $rekapTiktok = ItMultimediaTiktok::whereMonth('tanggal', $this->month)
+                ->whereYear('tanggal', $this->year)
                 ->get();
 
             if ($rekapTiktok->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
             }
 
             // Format data dengan path gambar
@@ -1284,15 +1429,20 @@ public function exportIJASAGambar($month, $year)
         }
     }
     // Export untuk divisi instagram
-    public function exportInstagram($month, $year)
+    public function exportInstagram(Request $request)
     {
         try {
-            $rekapInstagram = ItMultimediaInstagram::whereMonth('tanggal', $month)
-                ->whereYear('tanggal', $year)
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+            $rekapInstagram = ItMultimediaInstagram::whereMonth('tanggal', $this->month)
+                ->whereYear('tanggal', $this->year)
                 ->get();
 
             if ($rekapInstagram->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
             }
 
             // Format data dengan path gambar
@@ -1315,15 +1465,20 @@ public function exportIJASAGambar($month, $year)
         }
     }
     // Export untuk divisi instagram
-    public function exportBizdev($month, $year)
+    public function exportBizdev(Request $request)
     {
         try {
-            $rekapBizdev = LaporanBizdevGambar::whereMonth('tanggal', $month)
-                ->whereYear('tanggal', $year)
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+            $rekapBizdev = LaporanBizdevGambar::whereMonth('tanggal', $this->month)
+                ->whereYear('tanggal', $this->year)
                 ->get();
 
             if ($rekapBizdev->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
             }
 
             // Format data dengan path gambar
@@ -1346,14 +1501,19 @@ public function exportIJASAGambar($month, $year)
         }
     }
 
-    public function exportKHPS($month, $year) {
+    public function exportKHPS(Request $request) {
     try {
-        $rekapKHPS = KasHutangPiutang::whereMonth('tanggal', $month)
-            ->whereYear('tanggal', $year)
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+        $rekapKHPS = KasHutangPiutang::whereMonth('tanggal', $this->month)
+            ->whereYear('tanggal', $this->year)
             ->get();
 
         if ($rekapKHPS->isEmpty()) {
-            return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+            return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
         }
 
         $formattedData = $rekapKHPS->map(function ($item) {
@@ -1402,14 +1562,19 @@ public function exportIJASAGambar($month, $year)
     }
 }
 
-    public function exportArusKas($month, $year) {
+    public function exportArusKas(Request $request) {
     try {
-        $rekapArusKas = ArusKas::whereMonth('tanggal', $month)
-            ->whereYear('tanggal', $year)
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+        $rekapArusKas = ArusKas::whereMonth('tanggal', $this->month)
+            ->whereYear('tanggal', $this->year)
             ->get();
 
         if ($rekapArusKas->isEmpty()) {
-            return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+            return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
         }
 
         $formattedData = $rekapArusKas->map(function ($item) {
@@ -1450,18 +1615,25 @@ public function exportIJASAGambar($month, $year)
         return 'Error: ' . $th->getMessage();
     }
 }
-
-
     //Laporan SPI
     // Export untuk divisi HRGA
-    public function exportLaporanSPI($month, $year) {
+    public function exportLaporanSPI(Request $request) {
         try {
-            $laporanSPI = LaporanSPI::whereMonth('tanggal', $month)
-                ->whereYear('tanggal', $year)
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+            $startMonth = $request->input('start_month'); // format Y-m
+            $endMonth = $request->input('end_month');     // format Y-m
+            $this->__construct($startMonth, $endMonth);
+
+            $laporanSPI = LaporanSPI::whereMonth('tanggal', $this->month)
+                ->whereYear('tanggal', $this->year)
                 ->get();
     
             if ($laporanSPI->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
+                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
             }
     
             $formattedData =  $laporanSPI->map(function ($item) {
@@ -1484,33 +1656,46 @@ public function exportIJASAGambar($month, $year)
         }
     }
     // Export untuk divisi HRGA
-    public function exportLaporanSPIIT($month, $year) {
-        try {
-            $laporanSPIIT = LaporanSPITI::whereMonth('tanggal', $month)
-                ->whereYear('tanggal', $year)
-                ->get();
-    
-            if ($laporanSPIIT->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $month . ' tahun ' . $year;
-            }
-    
-            $formattedData =  $laporanSPIIT->map(function ($item) {
-                return [
-                    'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
-                    'Aspek' => $item->aspek,
-                    'Masalah' => $item->masalah,
-                    'Solusi' => $item->solusi,
-                    'Implementasi' => $item->implementasi,
-                ];
-            });
-    
-            return [
-                'rekap' => $formattedData,
-            ];
-    
-        } catch (\Throwable $th) {
-            Log::error('Error exporting  (exp new): ' . $th->getMessage());
-            return 'Error: ' . $th->getMessage();
+    public function exportLaporanSPIIT(Request $request)
+{
+    try {
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        // Panggil constructor
+        $this->__construct($startMonth, $endMonth);
+
+        $laporanSPIIT = LaporanSPITI::whereMonth('tanggal', $this->month)
+            ->whereYear('tanggal', $this->year)
+            ->get();
+
+        if ($laporanSPIIT->isEmpty()) {
+            return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
         }
+
+        $formattedData = $laporanSPIIT->map(function ($item) {
+            return [
+                'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
+                'Aspek' => $item->aspek,
+                'Masalah' => $item->masalah,
+                'Solusi' => $item->solusi,
+                'Implementasi' => $item->implementasi,
+            ];
+        });
+
+        return [
+            'rekap' => $formattedData,
+        ];
+
+    } catch (\Throwable $th) {
+        Log::error('Error exporting: ' . $th->getMessage());
+        return 'Error: ' . $th->getMessage();
     }
+}
+
 }
