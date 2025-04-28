@@ -41,32 +41,28 @@ class ExportLaporanAll extends Controller
 {
     private $month;
     private $year;
-
-    // public function __construct($data = 'March 2025') {
-    //     $this->month = Carbon::createFromFormat('F Y', $data)->month;
-    //     $this->year = Carbon::createFromFormat('F Y', $data)->year;
-    // }
-       
+    private $startDate;
+    private $endDate;
+    
     public function __construct($startMonth = null, $endMonth = null)
-{
-    if ($startMonth && $endMonth) {
-        $startDate = \Carbon\Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
-        $this->month = $startDate->month;
-        $this->year = $startDate->year;
-    } elseif ($startMonth) {
-        $date = \Carbon\Carbon::createFromFormat('Y-m', $startMonth);
-        $this->month = $date->month;
-        $this->year = $date->year;
-    } elseif ($endMonth) {
-        $date = \Carbon\Carbon::createFromFormat('Y-m', $endMonth);
-        $this->month = $date->month;
-        $this->year = $date->year;
-    } else {
-        $date = \Carbon\Carbon::now();
-        $this->month = $date->month;
-        $this->year = $date->year;
+    {
+        if ($startMonth && $endMonth) {
+            $this->startDate = \Carbon\Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+            $this->endDate = \Carbon\Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+        } elseif ($startMonth) {
+            $date = \Carbon\Carbon::createFromFormat('Y-m', $startMonth);
+            $this->month = $date->month;
+            $this->year = $date->year;
+        } elseif ($endMonth) {
+            $date = \Carbon\Carbon::createFromFormat('Y-m', $endMonth);
+            $this->month = $date->month;
+            $this->year = $date->year;
+        } else {
+            $date = \Carbon\Carbon::now();
+            $this->month = $date->month;
+            $this->year = $date->year;
+        }
     }
-}
     // Fungsi generate warna random
     public function getRandomRGBA()
     {
@@ -204,36 +200,47 @@ class ExportLaporanAll extends Controller
         }
     }    
 
-    public function exportRekapPenjualan(Request $request) {
+    public function exportRekapPenjualan(Request $request) 
+    {
         try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
-
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
-            $rekapPenjualan = RekapPenjualan::whereMonth('tanggal', $this->month)
-                ->whereYear('tanggal', $this->year)
-                ->get();
-
-            if ($rekapPenjualan->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
+            $startMonth = $request->input('start_month'); // format Y-m
+            $endMonth = $request->input('end_month');     // format Y-m
+    
+            // Buat instance baru class ini
+            $instance = new self($startMonth, $endMonth);
+    
+            // Bangun query berdasarkan data constructor
+            $query = RekapPenjualan::query();
+    
+            if ($instance->startDate && $instance->endDate) {
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } else {
+                $query->whereMonth('tanggal', $instance->month)
+                      ->whereYear('tanggal', $instance->year);
             }
-
-            $formattedData =  $rekapPenjualan->map(function ($item) {
+    
+            $rekapPenjualan = $query
+            ->orderBy('tanggal','asc')
+            ->get();
+    
+            if ($rekapPenjualan->isEmpty()) {
+                return 'Data tidak ditemukan.';
+            }
+    
+            $formattedData = $rekapPenjualan->map(function ($item) {
                 return [
                     'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
                     'Total Penjualan' => 'Rp ' . number_format($item->total_penjualan, 0, ',', '.'),
                 ];
             });
-
-            // Siapkan data untuk chart
+    
             $labels = $rekapPenjualan->map(function ($item) {
                 return \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
             })->toArray();
-
+    
             $data = $rekapPenjualan->pluck('total_penjualan')->toArray();
             $backgroundColors = array_map(fn() => $this->getRandomRGBA(), $data);
-
+    
             $chartData = [
                 'labels' => $labels,
                 'datasets' => [
@@ -244,32 +251,40 @@ class ExportLaporanAll extends Controller
                     ],
                 ],
             ];
-
+    
             return [
                 'rekap' => $formattedData,
                 'chart' => $chartData,
             ];
-
+    
         } catch (\Throwable $th) {
-            Log::error('Error exporting  (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (exp new): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
+    
 
     public function exportRekapPenjualanPerusahaan(Request $request) {
         try {
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
+        $instance = new self($startMonth, $endMonth);
+        $query = RekapPenjualanPerusahaan::query();
 
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
-            $rekapPenjualanPerusahaan = RekapPenjualanPerusahaan::whereMonth('tanggal', $this->month)
-                ->whereYear('tanggal', $this->year)
-                ->get();
+        if ($instance->startDate && $instance->endDate) {
+            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+        } else {
+            $query->whereMonth('tanggal', $instance->month)
+                  ->whereYear('tanggal', $instance->year);
+        }
 
-            if ($rekapPenjualanPerusahaan->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
-            }
+        $rekapPenjualanPerusahaan = $query
+        ->orderBy('tanggal','asc')
+        ->get();
+
+        if ($rekapPenjualanPerusahaan->isEmpty()) {
+            return 'Data tidak ditemukan.';
+        }
 
            $formattedData = $rekapPenjualanPerusahaan->map(function ($item) {
                 return [
@@ -314,18 +329,24 @@ class ExportLaporanAll extends Controller
         try {
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
+        $instance = new self($startMonth, $endMonth);
+        $query = LaporanPaketAdministrasi::query();
 
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
-            $rekapLaporanPaketAdministrasi = LaporanPaketAdministrasi::whereMonth('tanggal', $this->month)
-                ->whereYear('tanggal', $this->year)
-                ->get();
+        if ($instance->startDate && $instance->endDate) {
+            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+        } else {
+            $query->whereMonth('tanggal', $instance->month)
+                  ->whereYear('tanggal', $instance->year);
+        }
 
-            if ($rekapLaporanPaketAdministrasi->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
-            }
+        $rekapLaporanPaketAdministrasi = $query
+        ->orderBy('tanggal','asc')
+        ->get();
 
-            $formattedData = $rekapLaporanPaketAdministrasi->map(function ($item) {
+        if ($rekapLaporanPaketAdministrasi->isEmpty()) {
+            return 'Data tidak ditemukan.';
+        }
+        $formattedData = $rekapLaporanPaketAdministrasi->map(function ($item) {
                 return [
                     'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
                     'Website' => $item->website,
@@ -368,15 +389,25 @@ class ExportLaporanAll extends Controller
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
 
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
-            $rekapStatusPaket = StatusPaket::whereMonth('tanggal', $this->month)
-                ->whereYear('tanggal', $this->year)
-                ->get();
+        $instance = new self($startMonth, $endMonth);
+    
+        // Bangun query berdasarkan data constructor
+        $query = StatusPaket::query();
 
-            if ($rekapStatusPaket->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
-            }
+        if ($instance->startDate && $instance->endDate) {
+            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+        } else {
+            $query->whereMonth('tanggal', $instance->month)
+                  ->whereYear('tanggal', $instance->year);
+        }
+
+        $rekapStatusPaket = $query
+        ->orderBy('tanggal','asc')
+        ->get();
+
+        if ($rekapStatusPaket->isEmpty()) {
+            return 'Data tidak ditemukan.';
+        }
 
             $formattedData = $rekapStatusPaket->map(function ($item) {
                 return [
@@ -420,15 +451,25 @@ class ExportLaporanAll extends Controller
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
 
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
-            $rekapLaporanPerInstansi = LaporanPerInstansi::whereMonth('tanggal', $this->month)
-                ->whereYear('tanggal', $this->year)
-                ->get();
+        $instance = new self($startMonth, $endMonth);
+    
+        // Bangun query berdasarkan data constructor
+        $query = LaporanPerInstansi::query();
 
-            if ($rekapLaporanPerInstansi->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
-            }
+        if ($instance->startDate && $instance->endDate) {
+            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+        } else {
+            $query->whereMonth('tanggal', $instance->month)
+                  ->whereYear('tanggal', $instance->year);
+        }
+
+        $rekapLaporanPerInstansi = $query
+        ->orderBy('tanggal','asc')
+        ->get();
+
+        if ($rekapLaporanPerInstansi->isEmpty()) {
+            return 'Data tidak ditemukan.';
+        }
 
             $formattedData = $rekapLaporanPerInstansi->map(function ($item) {
                 return [
@@ -473,16 +514,25 @@ class ExportLaporanAll extends Controller
         try {
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
+        $instance = new self($startMonth, $endMonth);
+    
+        // Bangun query berdasarkan data constructor
+        $query = LaporanHolding::query();
 
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
-            $rekapLaporanHolding = LaporanHolding::whereMonth('tanggal', $this->month)
-                ->whereYear('tanggal', $this->year)
-                ->get();
+        if ($instance->startDate && $instance->endDate) {
+            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+        } else {
+            $query->whereMonth('tanggal', $instance->month)
+                  ->whereYear('tanggal', $instance->year);
+        }
 
-            if ($rekapLaporanHolding->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
-            }
+        $rekapLaporanHolding = $query
+        ->orderBy('tanggal','asc')
+        ->get();
+
+        if ($rekapLaporanHolding->isEmpty()) {
+            return 'Data tidak ditemukan.';
+        }
 
             $formattedData = $rekapLaporanHolding->map(function ($item) {
                 return [
@@ -528,15 +578,25 @@ class ExportLaporanAll extends Controller
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
 
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
-            $rekapLaporanStok = LaporanStok::whereMonth('tanggal', $this->month)
-                ->whereYear('tanggal', $this->year)
-                ->get();
+        $instance = new self($startMonth, $endMonth);
+    
+        // Bangun query berdasarkan data constructor
+        $query = LaporanStok::query();
 
-            if ($rekapLaporanStok->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
-            }
+        if ($instance->startDate && $instance->endDate) {
+            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+        } else {
+            $query->whereMonth('tanggal', $instance->month)
+                  ->whereYear('tanggal', $instance->year);
+        }
+
+        $rekapLaporanStok = $query
+        ->orderBy('tanggal','asc')
+        ->get();
+
+        if ($rekapLaporanStok->isEmpty()) {
+            return 'Data tidak ditemukan.';
+        }
 
             $formattedData = $rekapLaporanStok->map(function ($item) {
                 return [
@@ -581,16 +641,25 @@ class ExportLaporanAll extends Controller
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
 
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
-            $rekapLaporanPembelianOutlet = LaporanOutlet::whereMonth('tanggal', $this->month)
-                ->whereYear('tanggal', $this->year)
-                ->get();
+        $instance = new self($startMonth, $endMonth);
+    
+        // Bangun query berdasarkan data constructor
+        $query = LaporanOutlet::query();
 
-            if ($rekapLaporanPembelianOutlet->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
-            }
+        if ($instance->startDate && $instance->endDate) {
+            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+        } else {
+            $query->whereMonth('tanggal', $instance->month)
+                  ->whereYear('tanggal', $instance->year);
+        }
 
+        $rekapLaporanPembelianOutlet = $query
+        ->orderBy('tanggal','asc')
+        ->get();
+
+        if ($rekapLaporanPembelianOutlet->isEmpty()) {
+            return 'Data tidak ditemukan.';
+        }
             $formattedData = $rekapLaporanPembelianOutlet->map(function ($item) {
                 return [
                     'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
@@ -633,16 +702,25 @@ class ExportLaporanAll extends Controller
         try {
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
+        $instance = new self($startMonth, $endMonth);
+    
+        // Bangun query berdasarkan data constructor
+        $query = LaporanNegosiasi::query();
 
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
-            $rekapLaporanNegosiasi = LaporanNegosiasi::whereMonth('tanggal', $this->month)
-                ->whereYear('tanggal', $this->year)
-                ->get();
+        if ($instance->startDate && $instance->endDate) {
+            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+        } else {
+            $query->whereMonth('tanggal', $instance->month)
+                  ->whereYear('tanggal', $instance->year);
+        }
 
-            if ($rekapLaporanNegosiasi->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
-            }
+        $rekapLaporanNegosiasi = $query
+        ->orderBy('tanggal','asc')
+        ->get();
+
+        if ($rekapLaporanNegosiasi->isEmpty()) {
+            return 'Data tidak ditemukan.';
+        }
 
             $formattedData = $rekapLaporanNegosiasi->map(function ($item) {
                 return [
@@ -688,15 +766,26 @@ class ExportLaporanAll extends Controller
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
 
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
-            $rekapPendapatanASP = RekapPendapatanServisASP::whereMonth('tanggal', $this->month)
-                ->whereYear('tanggal', $this->year)
-                ->get();
+        $instance = new self($startMonth, $endMonth);
+    
+        // Bangun query berdasarkan data constructor
+        $query = RekapPendapatanServisASP::query();
 
-            if ($rekapPendapatanASP->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
-            }
+        if ($instance->startDate && $instance->endDate) {
+            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+        } else {
+            $query->whereMonth('tanggal', $instance->month)
+                  ->whereYear('tanggal', $instance->year);
+        }
+
+        $rekapPendapatanASP = $query
+        ->orderBy('tanggal','asc')
+        ->get();
+
+        if ($rekapPendapatanASP->isEmpty()) {
+            return 'Data tidak ditemukan.';
+        }
+
 
             $pelaksanaColors = [
                 'CV. ARI DISTRIBUTION CENTER' => 'rgba(255, 99, 132, 0.7)',
@@ -748,16 +837,26 @@ class ExportLaporanAll extends Controller
         try {
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
+        $instance = new self($startMonth, $endMonth);
+    
+        // Bangun query berdasarkan data constructor
+        $query = RekapPiutangServisASP::query();
 
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
-            $rekapPiutangServisASP = RekapPiutangServisASP::whereMonth('tanggal', $this->month)
-                ->whereYear('tanggal', $this->year)
-                ->get();
+        if ($instance->startDate && $instance->endDate) {
+            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+        } else {
+            $query->whereMonth('tanggal', $instance->month)
+                  ->whereYear('tanggal', $instance->year);
+        }
 
-            if ($rekapPiutangServisASP->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
-            }
+        $rekapPiutangServisASP = $query
+        ->orderBy('tanggal','asc')
+        ->get();
+
+        if ($rekapPiutangServisASP->isEmpty()) {
+            return 'Data tidak ditemukan.';
+        }
+
 
             $pelaksanaColors = [
                 'CV. ARI DISTRIBUTION CENTER' => 'rgba(255, 99, 132, 0.7)',
@@ -811,14 +910,24 @@ class ExportLaporanAll extends Controller
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
 
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
-        $rekapPengiriman = LaporanDetrans::whereMonth('tanggal', $this->month)
-            ->whereYear('tanggal', $this->year)
-            ->get();
+        $instance = new self($startMonth, $endMonth);
+    
+        // Bangun query berdasarkan data constructor
+        $query = LaporanDetrans::query();
+
+        if ($instance->startDate && $instance->endDate) {
+            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+        } else {
+            $query->whereMonth('tanggal', $instance->month)
+                  ->whereYear('tanggal', $instance->year);
+        }
+
+        $rekapPengiriman = $query
+        ->orderBy('tanggal','asc')
+        ->get();
 
         if ($rekapPengiriman->isEmpty()) {
-            return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
+            return 'Data tidak ditemukan.';
         }
 
         // Format data untuk tabel
@@ -887,15 +996,26 @@ class ExportLaporanAll extends Controller
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
 
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
-        $rekapPTBOS = LaporanPtBos::whereMonth('tanggal', $this->month)
-            ->whereYear('tanggal', $this->year)
-            ->get();
+        $instance = new self($startMonth, $endMonth);
+    
+        // Bangun query berdasarkan data constructor
+        $query = LaporanPtBos::query();
+
+        if ($instance->startDate && $instance->endDate) {
+            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+        } else {
+            $query->whereMonth('tanggal', $instance->month)
+                  ->whereYear('tanggal', $instance->year);
+        }
+
+        $rekapPTBOS = $query
+        ->orderBy('tanggal','asc')
+        ->get();
 
         if ($rekapPTBOS->isEmpty()) {
-            return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
+            return 'Data tidak ditemukan.';
         }
+
 
         $formattedData =  $rekapPTBOS->map(function ($item) {
             return [
@@ -924,14 +1044,24 @@ class ExportLaporanAll extends Controller
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
 
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
-        $rekapIJASA = LaporanIjasa::whereMonth('tanggal', $this->month)
-            ->whereYear('tanggal', $this->year)
-            ->get();
+        $instance = new self($startMonth, $endMonth);
+    
+        // Bangun query berdasarkan data constructor
+        $query = LaporanIjasa::query();
+
+        if ($instance->startDate && $instance->endDate) {
+            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+        } else {
+            $query->whereMonth('tanggal', $instance->month)
+                  ->whereYear('tanggal', $instance->year);
+        }
+
+        $rekapIJASA = $query
+        ->orderBy('tanggal','asc')
+        ->get();
 
         if ($rekapIJASA->isEmpty()) {
-            return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
+            return 'Data tidak ditemukan.';
         }
 
         $formattedData =  $rekapIJASA->map(function ($item) {
@@ -963,15 +1093,26 @@ public function exportIJASAGambar(Request $request)
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
 
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
-        $ijasaGambar = IjasaGambar::whereMonth('tanggal', $this->month)
-            ->whereYear('tanggal', $this->year)
-            ->get();
+        $instance = new self($startMonth, $endMonth);
+    
+        // Bangun query berdasarkan data constructor
+        $query = IjasaGambar::query();
+
+        if ($instance->startDate && $instance->endDate) {
+            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+        } else {
+            $query->whereMonth('tanggal', $instance->month)
+                  ->whereYear('tanggal', $instance->year);
+        }
+
+        $ijasaGambar = $query
+        ->orderBy('tanggal','asc')
+        ->get();
 
         if ($ijasaGambar->isEmpty()) {
-            return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
+            return 'Data tidak ditemukan.';
         }
+
 
         // Format data dengan path gambar
         $formattedData = $ijasaGambar->map(function ($item) {
@@ -998,17 +1139,26 @@ public function exportIJASAGambar(Request $request)
     try {
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
+        $instance = new self($startMonth, $endMonth);
+    
+        // Bangun query berdasarkan data constructor
+        $query = LaporanSakit::query();
 
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
-        $rekapSakit = LaporanSakit::whereMonth('tanggal', $this->month)
-            ->whereYear('tanggal', $this->year)
-            ->get();
-
-        if ($rekapSakit->isEmpty()) {
-            return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
+        if ($instance->startDate && $instance->endDate) {
+            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+        } else {
+            $query->whereMonth('tanggal', $instance->month)
+                  ->whereYear('tanggal', $instance->year);
         }
 
+        $rekapSakit = $query
+        ->orderBy('tanggal','asc')
+        ->get();
+
+        if ($rekapSakit->isEmpty()) {
+            return 'Data tidak ditemukan.';
+        }
+        
         $formattedData =  $rekapSakit->map(function ($item) {
             return [
                 'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
@@ -1053,15 +1203,26 @@ public function exportIJASAGambar(Request $request)
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
 
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
-        $rekapCuti = LaporanCuti::whereMonth('tanggal', $this->month)
-            ->whereYear('tanggal', $this->year)
-            ->get();
+        $instance = new self($startMonth, $endMonth);
+    
+        // Bangun query berdasarkan data constructor
+        $query = LaporanCuti::query();
+
+        if ($instance->startDate && $instance->endDate) {
+            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+        } else {
+            $query->whereMonth('tanggal', $instance->month)
+                  ->whereYear('tanggal', $instance->year);
+        }
+
+        $rekapCuti = $query
+        ->orderBy('tanggal','asc')
+        ->get();
 
         if ($rekapCuti->isEmpty()) {
-            return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
+            return 'Data tidak ditemukan.';
         }
+
 
         $formattedData =  $rekapCuti->map(function ($item) {
             return [
@@ -1105,16 +1266,26 @@ public function exportIJASAGambar(Request $request)
     try {
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
+        $instance = new self($startMonth, $endMonth);
+    
+        // Bangun query berdasarkan data constructor
+        $query = LaporanIzin::query();
 
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
-        $rekapIzin = LaporanIzin::whereMonth('tanggal', $this->month)
-            ->whereYear('tanggal', $this->year)
-            ->get();
+        if ($instance->startDate && $instance->endDate) {
+            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+        } else {
+            $query->whereMonth('tanggal', $instance->month)
+                  ->whereYear('tanggal', $instance->year);
+        }
+
+        $rekapIzin = $query
+        ->orderBy('tanggal','asc')
+        ->get();
 
         if ($rekapIzin->isEmpty()) {
-            return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
+            return 'Data tidak ditemukan.';
         }
+
 
         $formattedData =  $rekapIzin->map(function ($item) {
             return [
@@ -1158,16 +1329,26 @@ public function exportIJASAGambar(Request $request)
     try {
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
+        $instance = new self($startMonth, $endMonth);
+    
+        // Bangun query berdasarkan data constructor
+        $query = LaporanTerlambat::query();
 
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
-        $rekapTerlambat = LaporanTerlambat::whereMonth('tanggal', $this->month)
-            ->whereYear('tanggal', $this->year)
-            ->get();
+        if ($instance->startDate && $instance->endDate) {
+            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+        } else {
+            $query->whereMonth('tanggal', $instance->month)
+                  ->whereYear('tanggal', $instance->year);
+        }
+
+        $rekapTerlambat = $query
+        ->orderBy('tanggal','asc')
+        ->get();
 
         if ($rekapTerlambat->isEmpty()) {
-            return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
+            return 'Data tidak ditemukan.';
         }
+
 
         $formattedData =  $rekapTerlambat->map(function ($item) {
             return [
@@ -1213,16 +1394,26 @@ public function exportIJASAGambar(Request $request)
         try {
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
+        $instance = new self($startMonth, $endMonth);
+    
+        // Bangun query berdasarkan data constructor
+        $query = LaporanLabaRugi::query();
 
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
-            $rekapLabaRugi = LaporanLabaRugi::whereMonth('tanggal', $this->month)
-                ->whereYear('tanggal', $this->year)
-                ->get();
+        if ($instance->startDate && $instance->endDate) {
+            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+        } else {
+            $query->whereMonth('tanggal', $instance->month)
+                  ->whereYear('tanggal', $instance->year);
+        }
 
-            if ($rekapLabaRugi->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
-            }
+        $rekapLabaRugi = $query
+        ->orderBy('tanggal','asc')
+        ->get();
+
+        if ($rekapLabaRugi->isEmpty()) {
+            return 'Data tidak ditemukan.';
+        }
+
 
             // Format data dengan path gambar
             $formattedData = $rekapLabaRugi->map(function ($item) {
@@ -1251,15 +1442,25 @@ public function exportIJASAGambar(Request $request)
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
 
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
-            $rekapNeraca = LaporanNeraca::whereMonth('tanggal', $this->month)
-                ->whereYear('tanggal', $this->year)
-                ->get();
+        $instance = new self($startMonth, $endMonth);
+    
+        // Bangun query berdasarkan data constructor
+        $query = LaporanNeraca::query();
 
-            if ($rekapNeraca->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
-            }
+        if ($instance->startDate && $instance->endDate) {
+            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+        } else {
+            $query->whereMonth('tanggal', $instance->month)
+                  ->whereYear('tanggal', $instance->year);
+        }
+
+        $rekapNeraca = $query
+        ->orderBy('tanggal','asc')
+        ->get();
+
+        if ($rekapNeraca->isEmpty()) {
+            return 'Data tidak ditemukan.';
+        }
 
             // Format data dengan path gambar
             $formattedData = $rekapNeraca->map(function ($item) {
@@ -1288,15 +1489,25 @@ public function exportIJASAGambar(Request $request)
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
 
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
-            $rekapRasio = LaporanRasio::whereMonth('tanggal', $this->month)
-                ->whereYear('tanggal', $this->year)
-                ->get();
+        $instance = new self($startMonth, $endMonth);
+    
+        // Bangun query berdasarkan data constructor
+        $query = LaporanRasio::query();
 
-            if ($rekapRasio->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
-            }
+        if ($instance->startDate && $instance->endDate) {
+            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+        } else {
+            $query->whereMonth('tanggal', $instance->month)
+                  ->whereYear('tanggal', $instance->year);
+        }
+
+        $rekapRasio = $query
+        ->orderBy('tanggal','asc')
+        ->get();
+
+        if ($rekapRasio->isEmpty()) {
+            return 'Data tidak ditemukan.';
+        }
 
             // Format data dengan path gambar
             $formattedData = $rekapRasio->map(function ($item) {
@@ -1325,15 +1536,25 @@ public function exportIJASAGambar(Request $request)
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
 
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
-            $rekapPPn = LaporanPpn::whereMonth('tanggal', $this->month)
-                ->whereYear('tanggal', $this->year)
-                ->get();
+        $instance = new self($startMonth, $endMonth);
+    
+        // Bangun query berdasarkan data constructor
+        $query = LaporanPpn::query();
 
-            if ($rekapPPn->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
-            }
+        if ($instance->startDate && $instance->endDate) {
+            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+        } else {
+            $query->whereMonth('tanggal', $instance->month)
+                  ->whereYear('tanggal', $instance->year);
+        }
+
+        $rekapPPn = $query
+        ->orderBy('tanggal','asc')
+        ->get();
+
+        if ($rekapPPn->isEmpty()) {
+            return 'Data tidak ditemukan.';
+        }
 
             // Format data dengan path gambar
             $formattedData = $rekapPPn->map(function ($item) {
@@ -1362,15 +1583,25 @@ public function exportIJASAGambar(Request $request)
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
 
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
-            $rekapTaxPlanning = LaporanTaxPlaning::whereMonth('tanggal', $this->month)
-                ->whereYear('tanggal', $this->year)
-                ->get();
+        $instance = new self($startMonth, $endMonth);
+    
+        // Bangun query berdasarkan data constructor
+        $query = LaporanTaxPlaning::query();
 
-            if ($rekapTaxPlanning->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
-            }
+        if ($instance->startDate && $instance->endDate) {
+            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+        } else {
+            $query->whereMonth('tanggal', $instance->month)
+                  ->whereYear('tanggal', $instance->year);
+        }
+
+        $rekapTaxPlanning = $query
+        ->orderBy('tanggal','asc')
+        ->get();
+
+        if ($rekapTaxPlanning->isEmpty()) {
+            return 'Data tidak ditemukan.';
+        }
 
             // Format data dengan path gambar
             $formattedData = $rekapTaxPlanning->map(function ($item) {
@@ -1399,15 +1630,25 @@ public function exportIJASAGambar(Request $request)
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
 
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
-            $rekapTiktok = ItMultimediaTiktok::whereMonth('tanggal', $this->month)
-                ->whereYear('tanggal', $this->year)
-                ->get();
+        $instance = new self($startMonth, $endMonth);
+    
+        // Bangun query berdasarkan data constructor
+        $query = ItMultimediaTiktok::query();
 
-            if ($rekapTiktok->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
-            }
+        if ($instance->startDate && $instance->endDate) {
+            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+        } else {
+            $query->whereMonth('tanggal', $instance->month)
+                  ->whereYear('tanggal', $instance->year);
+        }
+
+        $rekapTiktok = $query
+        ->orderBy('tanggal','asc')
+        ->get();
+
+        if ($rekapTiktok->isEmpty()) {
+            return 'Data tidak ditemukan.';
+        }
 
             // Format data dengan path gambar
             $formattedData = $rekapTiktok->map(function ($item) {
@@ -1435,15 +1676,25 @@ public function exportIJASAGambar(Request $request)
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
 
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
-            $rekapInstagram = ItMultimediaInstagram::whereMonth('tanggal', $this->month)
-                ->whereYear('tanggal', $this->year)
-                ->get();
+        $instance = new self($startMonth, $endMonth);
+    
+        // Bangun query berdasarkan data constructor
+        $query = ItMultimediaInstagram::query();
 
-            if ($rekapInstagram->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
-            }
+        if ($instance->startDate && $instance->endDate) {
+            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+        } else {
+            $query->whereMonth('tanggal', $instance->month)
+                  ->whereYear('tanggal', $instance->year);
+        }
+
+        $rekapInstagram = $query
+        ->orderBy('tanggal','asc')
+        ->get();
+
+        if ($rekapInstagram->isEmpty()) {
+            return 'Data tidak ditemukan.';
+        }
 
             // Format data dengan path gambar
             $formattedData = $rekapInstagram->map(function ($item) {
@@ -1471,15 +1722,25 @@ public function exportIJASAGambar(Request $request)
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
 
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
-            $rekapBizdev = LaporanBizdevGambar::whereMonth('tanggal', $this->month)
-                ->whereYear('tanggal', $this->year)
-                ->get();
+        $instance = new self($startMonth, $endMonth);
+    
+        // Bangun query berdasarkan data constructor
+        $query = LaporanBizdevGambar::query();
 
-            if ($rekapBizdev->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
-            }
+        if ($instance->startDate && $instance->endDate) {
+            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+        } else {
+            $query->whereMonth('tanggal', $instance->month)
+                  ->whereYear('tanggal', $instance->year);
+        }
+
+        $rekapBizdev = $query
+        ->orderBy('tanggal','asc')
+        ->get();
+
+        if ($rekapBizdev->isEmpty()) {
+            return 'Data tidak ditemukan.';
+        }
 
             // Format data dengan path gambar
             $formattedData = $rekapBizdev->map(function ($item) {
@@ -1506,14 +1767,24 @@ public function exportIJASAGambar(Request $request)
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
 
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
-        $rekapKHPS = KasHutangPiutang::whereMonth('tanggal', $this->month)
-            ->whereYear('tanggal', $this->year)
-            ->get();
+        $instance = new self($startMonth, $endMonth);
+    
+        // Bangun query berdasarkan data constructor
+        $query = KasHutangPiutang::query();
+
+        if ($instance->startDate && $instance->endDate) {
+            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+        } else {
+            $query->whereMonth('tanggal', $instance->month)
+                  ->whereYear('tanggal', $instance->year);
+        }
+
+        $rekapKHPS = $query
+        ->orderBy('tanggal','asc')
+        ->get();
 
         if ($rekapKHPS->isEmpty()) {
-            return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
+            return 'Data tidak ditemukan.';
         }
 
         $formattedData = $rekapKHPS->map(function ($item) {
@@ -1567,14 +1838,24 @@ public function exportIJASAGambar(Request $request)
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
 
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
-        $rekapArusKas = ArusKas::whereMonth('tanggal', $this->month)
-            ->whereYear('tanggal', $this->year)
-            ->get();
+        $instance = new self($startMonth, $endMonth);
+    
+        // Bangun query berdasarkan data constructor
+        $query = ArusKas::query();
+
+        if ($instance->startDate && $instance->endDate) {
+            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+        } else {
+            $query->whereMonth('tanggal', $instance->month)
+                  ->whereYear('tanggal', $instance->year);
+        }
+
+        $rekapArusKas = $query
+        ->orderBy('tanggal','asc')
+        ->get();
 
         if ($rekapArusKas->isEmpty()) {
-            return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
+            return 'Data tidak ditemukan.';
         }
 
         $formattedData = $rekapArusKas->map(function ($item) {
@@ -1622,19 +1903,25 @@ public function exportIJASAGambar(Request $request)
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
 
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
-            $startMonth = $request->input('start_month'); // format Y-m
-            $endMonth = $request->input('end_month');     // format Y-m
-            $this->__construct($startMonth, $endMonth);
-
-            $laporanSPI = LaporanSPI::whereMonth('tanggal', $this->month)
-                ->whereYear('tanggal', $this->year)
-                ->get();
+        $instance = new self($startMonth, $endMonth);
     
-            if ($laporanSPI->isEmpty()) {
-                return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
-            }
+        // Bangun query berdasarkan data constructor
+        $query = LaporanSPI::query();
+
+        if ($instance->startDate && $instance->endDate) {
+            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+        } else {
+            $query->whereMonth('tanggal', $instance->month)
+                  ->whereYear('tanggal', $instance->year);
+        }
+
+        $laporanSPI = $query
+        ->orderBy('tanggal','asc')
+        ->get();
+
+        if ($laporanSPI->isEmpty()) {
+            return 'Data tidak ditemukan.';
+        }
     
             $formattedData =  $laporanSPI->map(function ($item) {
                 return [
@@ -1662,20 +1949,24 @@ public function exportIJASAGambar(Request $request)
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
 
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
+        $instance = new self($startMonth, $endMonth);
+    
+        // Bangun query berdasarkan data constructor
+        $query = LaporanSPITI::query();
 
-        // Panggil constructor
-        $this->__construct($startMonth, $endMonth);
+        if ($instance->startDate && $instance->endDate) {
+            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+        } else {
+            $query->whereMonth('tanggal', $instance->month)
+                  ->whereYear('tanggal', $instance->year);
+        }
 
-        $laporanSPIIT = LaporanSPITI::whereMonth('tanggal', $this->month)
-            ->whereYear('tanggal', $this->year)
-            ->get();
+        $laporanSPIIT = $query
+        ->orderBy('tanggal','asc')
+        ->get();
 
         if ($laporanSPIIT->isEmpty()) {
-            return 'Data tidak ditemukan untuk bulan ' . $this->month . ' tahun ' . $this->year;
+            return 'Data tidak ditemukan.';
         }
 
         $formattedData = $laporanSPIIT->map(function ($item) {
