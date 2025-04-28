@@ -105,12 +105,18 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @if (empty($dataExportLaporanPenjualan['rekap']) || count($dataExportLaporanPenjualan['rekap']) === 0)
+                        <tr>
+                            <td colspan="2" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                        </tr>
+                        @else
                         @foreach($dataExportLaporanPenjualan['rekap'] as $LaporanPenjualan)
                         <tr>
                             <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanPenjualan['Tanggal'] }}</td>
                             <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanPenjualan['Total Penjualan'] }}</td>
                         </tr>
                         @endforeach
+                        @endif
                     </tbody>
                 </table>
             </div>
@@ -153,6 +159,11 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @if (empty($dataExportLaporanPenjualanPerusahaan['rekap']) || count($dataExportLaporanPenjualanPerusahaan['rekap']) === 0)
+                        <tr>
+                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                        </tr>
+                        @else
                         @foreach($dataExportLaporanPenjualanPerusahaan['rekap'] as $LaporanPenjualanPerusahaan)
                         <tr>
                             <td class="border border-black p-1 text-center text-sm">{{ $LaporanPenjualanPerusahaan['Tanggal'] }}</td>
@@ -160,6 +171,7 @@
                             <td class="border border-black p-1 text-center text-sm">{{ $LaporanPenjualanPerusahaan['Total Penjualan'] }}</td>
                         </tr>
                         @endforeach
+                        @endif
                     </tbody>
                 </table>
             </div>
@@ -201,6 +213,11 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @if (empty($dataExportLaporanPaketAdministrasi['rekap']) || count($dataExportLaporanPaketAdministrasi['rekap']) === 0)
+                            <tr>
+                                <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                            </tr>
+                            @else
                             @foreach($dataExportLaporanPaketAdministrasi['rekap'] as $LaporanPaketAdministrasi)
                             <tr>
                                 <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanPaketAdministrasi['Tanggal'] }}</td>
@@ -208,6 +225,7 @@
                                 <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanPaketAdministrasi['Total Paket'] }}</td>
                             </tr>
                             @endforeach
+                            @endif
                         </tbody>
                     </table>
                 </div>
@@ -248,6 +266,11 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @if (empty($dataExportStatusPaket['rekap']) || count($dataExportStatusPaket['rekap']) === 0)
+                        <tr>
+                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                        </tr>
+                        @else
                         @foreach($dataExportStatusPaket['rekap'] as $StatusPaket)
                         <tr>
                             <td class="border border-black p-1 text-center text-sm font-serif">{{ $StatusPaket['Tanggal'] }}</td>
@@ -255,6 +278,7 @@
                             <td class="border border-black p-1 text-center text-sm font-serif">{{ $StatusPaket['Total Paket'] }}</td>
                         </tr>
                         @endforeach
+                        @endif
                     </tbody>
                 </table>
             </div>
@@ -295,6 +319,11 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @if (empty($dataExportLaporanPerInstansi['rekap']) || count($dataExportLaporanPerInstansi['rekap']) === 0)
+                        <tr>
+                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                        </tr>
+                        @else
                         @foreach($dataExportLaporanPerInstansi['rekap'] as $LaporanPerInstansi)
                         <tr>
                             <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanPerInstansi['Tanggal'] }}</td>
@@ -302,6 +331,7 @@
                             <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanPerInstansi['Nilai'] }}</td>
                         </tr>
                         @endforeach
+                        @endif
                     </tbody>
                 </table>
             </div>
@@ -341,6 +371,11 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @if (empty($dataExportLaporanHolding['rekap']) || count($dataExportLaporanHolding['rekap']) === 0)
+                        <tr>
+                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                        </tr>
+                        @else
                         @foreach($dataExportLaporanHolding['rekap'] as $LaporanHolding)
                         <tr>
                             <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanHolding['Tanggal'] }}</td>
@@ -348,6 +383,7 @@
                             <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanHolding['Nilai'] }}</td>
                         </tr>
                         @endforeach
+                        @endif
                     </tbody>
                 </table>
             </div>
@@ -386,12 +422,18 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @if (empty($dataExportLaporanStok['rekap']) || count($dataExportLaporanStok['rekap']) === 0)
+                        <tr>
+                            <td colspan="2" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                        </tr>
+                        @else
                         @foreach($dataExportLaporanStok['rekap'] as $LaporanStok)
                         <tr>
                             <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanStok['Tanggal'] }}</td>
                             <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanStok['Stok'] }}</td>
                         </tr>
                         @endforeach
+                        @endif
                     </tbody>
                 </table>
             </div>
@@ -430,12 +472,18 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @if (empty($dataExportLaporanPembelianOutlet['rekap']) || count($dataExportLaporanPembelianOutlet['rekap']) === 0)
+                        <tr>
+                            <td colspan="2" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                        </tr>
+                        @else
                         @foreach($dataExportLaporanPembelianOutlet['rekap'] as $LaporanOutlet)
                         <tr>
                             <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanOutlet['Tanggal'] }}</td>
                             <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanOutlet['Total'] }}</td>
                         </tr>
                         @endforeach
+                        @endif
                     </tbody>
                 </table>
             </div>
@@ -1023,7 +1071,7 @@
                     <tbody>
                         @if (empty($dataPTBOS['rekap']) || count($dataPTBOS['rekap']) === 0)
                         <tr>
-                            <td colspan="5" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                            <td colspan="7  " class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
                         </tr>
                         @else
                         @foreach($dataPTBOS['rekap'] as $Ptbos)
@@ -1522,7 +1570,7 @@
                                 let textY = bar.y - 10;
                                 if (textY < 20) textY = 20;
                                 ctx.fillStyle = 'black';
-                                ctx.font = 'bold 14px sans-serif';
+                                ctx.font = 'bold 8px sans-serif';
                                 ctx.textAlign = 'center';
                                 ctx.fillText('Rp ' + new Intl.NumberFormat('id-ID').format(value), bar.x, textY);
                             });
@@ -1616,7 +1664,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 let textY = bar.y - 10;
                                 if (textY < 20) textY = 20;
                                 ctx.fillStyle = 'black';
-                                ctx.font = 'bold 14px sans-serif';
+                                ctx.font = ' 8px sans-serif';
                                 ctx.textAlign = 'center';
                                 ctx.fillText( new Intl.NumberFormat('id-ID').format(value) + ' Paket ', bar.x, textY);
                             });
@@ -1710,7 +1758,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 let textY = bar.y - 10;
                                 if (textY < 20) textY = 20;
                                 ctx.fillStyle = 'black';
-                                ctx.font = 'bold 14px sans-serif';
+                                ctx.font = '8px sans-serif';
                                 ctx.textAlign = 'center';
                                 ctx.fillText( new Intl.NumberFormat('id-ID').format(value) + ' Hari ', bar.x, textY);
                             });
