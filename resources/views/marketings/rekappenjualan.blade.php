@@ -97,26 +97,10 @@
 
             <div class="flex items-center justify-end transition-all duration-500 mt-8 mb-4 p-4">
                 <!-- Search -->
-                <for method="GET" action="{{ route('rekappenjualan.index') }}" class="flex items-center gap-2">
-                    <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md gap-2">
-                        {{-- Dropdown Bulan --}}
-                        <select name="month" class="border-none focus:outline-none text-gray-700 bg-transparent">
-                            <option value="">Bulan</option>
-                            @foreach(range(1, 12) as $m)
-                                <option value="{{ str_pad($m, 2, '0', STR_PAD_LEFT) }}"
-                                    {{ request('month') == str_pad($m, 2, '0', STR_PAD_LEFT) ? 'selected' : '' }}>
-                                    {{ DateTime::createFromFormat('!m', $m)->format('F') }}
-                                </option>
-                            @endforeach
-                        </select>
-                
-                        {{-- Dropdown Tahun --}}
-                        <select name="year" class="border-none focus:outline-none text-gray-700 bg-transparent">
-                            <option value="">Tahun</option>
-                            @for($y = now()->year; $y >= 2020; $y--)
-                                <option value="{{ $y }}" {{ request('year') == $y ? 'selected' : '' }}>{{ $y }}</option>
-                            @endfor
-                        </select>
+                <form method="GET" action="{{ route('rekappenjualan.index') }}" class="flex items-center gap-2">
+                    <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
+                    <input type="month" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}"
+                            class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
                     </div>
                 
                     <button type="submit"
