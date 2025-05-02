@@ -58,8 +58,85 @@
             margin: 0;
             padding: 0;
         }
+        .table-container {
+        max-height: 600px;
+        }
+        table {
+            page-break-inside: auto;
+        }
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
+        }
+        .table-wrapper {
+            max-height: 600px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        thead {
+            display: table-header-group;
+        }
+        tfoot {
+            display: table-footer-group;
+        }
+        table, th, td {
+    border: 1px solid black;
     }
+    th, td {
+        padding: 4px;
+        font-size: 12px;
+        text-align: center;
+        font-family: serif;
+    }
+    thead {
+        background-color: #f0f0f0;
+    }
+
+}
     </style>
+    {{-- <style>
+        @media print {
+            @page {
+            margin: 0;
+            size: A4 landscape;
+            }
+            .page {
+                page-break-after: always;
+                page-break-inside: avoid;
+                position: relative;
+                min-height: 100%;
+            }
+            .header, .footer {
+                position: relative;
+                width: 100%;
+            }
+            .content {
+                padding-top: 100px;
+                padding-bottom: 50px;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            thead {
+                display: table-header-group;
+            }
+            tfoot {
+                display: table-footer-group;
+            }
+        }
+        .page {
+            width: 100%;
+            min-height: 100%;
+            padding: 20px;
+            background: white;
+        }
+        .table-wrapper {
+            max-height: 600px;
+        }
+        </style>         --}}
 
 <style>
     /* Styling agar numbered list & bullet list tetap tampil di tabel */
@@ -100,20 +177,20 @@
                 <table id="rekapTable" class="dataTable">
                     <thead>
                         <tr>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Total Penjualan (Rp)</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Total Penjualan (Rp)</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if (empty($dataExportLaporanPenjualan['rekap']) || count($dataExportLaporanPenjualan['rekap']) === 0)
                         <tr>
-                            <td colspan="2" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                            <td colspan="2" class="border border-black p-1 text-center text-[10px] font-serif">Maaf data pada bulan ini tidak ada</td>
                         </tr>
                         @else
                         @foreach($dataExportLaporanPenjualan['rekap'] as $LaporanPenjualan)
                         <tr>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanPenjualan['Tanggal'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanPenjualan['Total Penjualan'] }}</td>
+                            <td class="border border-black p-1 text-start text-[10px] font-serif">{{ $LaporanPenjualan['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-start text-[10px] font-serif">{{ $LaporanPenjualan['Total Penjualan'] }}</td>
                         </tr>
                         @endforeach
                         @endif
@@ -136,57 +213,55 @@
         <!-- === Page Break 2 === -->
         <div class="page-break"></div>
 
-        
         <!-- Export Page 2 -->
-        <!-- === Page 2 === -->
-        <div class="page">
+        <div id="pagesContainer">
 
-        <!-- buat header disini  -->
-        <div>
-            <img src={{ "images/HEADER.png" }} alt="">
-        </div>
-
-        <div class="flex justify-between p-6">
-            <!-- Tabel Data untuk ekspor PDF -->
-            <div class="width-1/2 pr-10">
-                <h2 class="text-center font-serif">Tabel Data</h2>
-                <table id="rekapTable" class="dataTable">
-                    <thead>
-                        <tr>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Perusahaan</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Total Penjualan (Rp)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (empty($dataExportLaporanPenjualanPerusahaan['rekap']) || count($dataExportLaporanPenjualanPerusahaan['rekap']) === 0)
-                        <tr>
-                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
-                        </tr>
-                        @else
-                        @foreach($dataExportLaporanPenjualanPerusahaan['rekap'] as $LaporanPenjualanPerusahaan)
-                        <tr>
-                            <td class="border border-black p-1 text-center text-sm">{{ $LaporanPenjualanPerusahaan['Tanggal'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm">{{ $LaporanPenjualanPerusahaan['Perusahaan'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm">{{ $LaporanPenjualanPerusahaan['Total Penjualan'] }}</td>
-                        </tr>
-                        @endforeach
-                        @endif
-                    </tbody>
-                </table>
+            <div class="page">
+                <!-- Header -->
+                <div class="header">
+                    <img src="{{ asset('images/HEADER.png') }}" alt="Header">
+                </div>
+        
+                <!-- Content -->
+            <div class="content">
+            <div class="flex justify-between p-6">
+                <div class="width-1/2 pr-10">
+                    <h2 class="text-center font-serif">Tabel Data</h2>
+                    <div class="table-wrapper">
+                        <table id="rekapTable" class="dataTable border border-black">
+                            <thead>
+                                <tr>
+                                    <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
+                                    <th class="border border-black p-1 text-center text-[10px] font-serif">Perusahaan</th>
+                                    <th class="border border-black p-1 text-center text-[10px] font-serif">Total Penjualan (Rp)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rekapTableBody">
+                                @foreach($dataExportLaporanPenjualanPerusahaan['rekap'] as $LaporanPenjualanPerusahaan)
+                                <tr>
+                                    <td class="border border-black p-1 text-center text-[10px]">{{ $LaporanPenjualanPerusahaan['Tanggal'] }}</td>
+                                    <td class="border border-black p-1 text-center text-[10px]">{{ $LaporanPenjualanPerusahaan['Perusahaan'] }}</td>
+                                    <td class="border border-black p-1 text-center text-[10px]">{{ $LaporanPenjualanPerusahaan['Total Penjualan'] }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                    <div id="chartContainer">
+                        <h2 class="text-center font-serif">Grafik Laporan</h2>
+                        <canvas class="chart-export w-[700px] max-h-[500px]" id="rekapChart" data-chart='@json($dataExportLaporanPenjualanPerusahaan["chart"])'></canvas>
+                    </div>
+                </div>
             </div>
-            <!-- Grafik untuk ekspor PDF -->
-            <div id="chartContainer">
-                <h2 class="text-center font-serif">Grafik Laporan</h2>
-                <canvas class="chart-export w-[700px] max-h-[500px]" id="rekapChart" data-chart='@json($dataExportLaporanPenjualanPerusahaan["chart"])'></canvas>
+        
+                <!-- Footer -->
+                <div class="footer border-t text-center pt-4 z-50 bg-white">
+                    <p class="text-sm font-serif mt-2">Laporan Marketing - Laporan Rekap Penjualan Perusahaan</p>
+                </div>
             </div>
         </div>
-
-        <!-- Sticky Footer -->
-        <div class="border-t text-center pt-4 z-50 bg-white">
-            <p class="text-sm font-serif mt-2">Laporan Marketing - Laporan Rekap Penjualan Perusahaan</p>
-        </div>
-        </div>
+        
 
         <!-- === Page Break 3 === -->
         <div class="page-break"></div>
@@ -207,22 +282,22 @@
                     <table id="rekapTable" class="dataTable">
                         <thead>
                             <tr>
-                                <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
-                                <th class="border border-black p-1 text-center text-sm font-serif">Website</th>
-                                <th class="border border-black p-1 text-center text-sm font-serif">Total Paket</th>
+                                <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
+                                <th class="border border-black p-1 text-center text-[10px] font-serif">Website</th>
+                                <th class="border border-black p-1 text-center text-[10px] font-serif">Total Paket</th>
                             </tr>
                         </thead>
                         <tbody>
                             @if (empty($dataExportLaporanPaketAdministrasi['rekap']) || count($dataExportLaporanPaketAdministrasi['rekap']) === 0)
                             <tr>
-                                <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                                <td colspan="3" class="border border-black p-1 text-center text-[10px] font-serif">Maaf data pada bulan ini tidak ada</td>
                             </tr>
                             @else
                             @foreach($dataExportLaporanPaketAdministrasi['rekap'] as $LaporanPaketAdministrasi)
                             <tr>
-                                <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanPaketAdministrasi['Tanggal'] }}</td>
-                                <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanPaketAdministrasi['Website'] }}</td>
-                                <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanPaketAdministrasi['Total Paket'] }}</td>
+                                <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $LaporanPaketAdministrasi['Tanggal'] }}</td>
+                                <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $LaporanPaketAdministrasi['Website'] }}</td>
+                                <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $LaporanPaketAdministrasi['Total Paket'] }}</td>
                             </tr>
                             @endforeach
                             @endif
@@ -260,22 +335,22 @@
                 <table id="rekapTable" class="dataTable">
                     <thead>
                         <tr>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Status</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Total Paket</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Status</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Total Paket</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if (empty($dataExportStatusPaket['rekap']) || count($dataExportStatusPaket['rekap']) === 0)
                         <tr>
-                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                            <td colspan="3" class="border border-black p-1 text-center text-[10px] font-serif">Maaf data pada bulan ini tidak ada</td>
                         </tr>
                         @else
                         @foreach($dataExportStatusPaket['rekap'] as $StatusPaket)
                         <tr>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $StatusPaket['Tanggal'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $StatusPaket['Status'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $StatusPaket['Total Paket'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $StatusPaket['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $StatusPaket['Status'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $StatusPaket['Total Paket'] }}</td>
                         </tr>
                         @endforeach
                         @endif
@@ -313,22 +388,22 @@
                 <table id="rekapTable" class="dataTable">
                     <thead>
                         <tr>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Instansi</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Nilai (Rp)</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Instansi</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Nilai (Rp)</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if (empty($dataExportLaporanPerInstansi['rekap']) || count($dataExportLaporanPerInstansi['rekap']) === 0)
                         <tr>
-                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                            <td colspan="3" class="border border-black p-1 text-center text-[10px] font-serif">Maaf data pada bulan ini tidak ada</td>
                         </tr>
                         @else
                         @foreach($dataExportLaporanPerInstansi['rekap'] as $LaporanPerInstansi)
                         <tr>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanPerInstansi['Tanggal'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanPerInstansi['Instansi'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanPerInstansi['Nilai'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $LaporanPerInstansi['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $LaporanPerInstansi['Instansi'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $LaporanPerInstansi['Nilai'] }}</td>
                         </tr>
                         @endforeach
                         @endif
@@ -365,22 +440,22 @@
                 <table id="rekapTable" class="dataTable">
                     <thead>
                         <tr>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Instansi</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Nilai (Rp)</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Instansi</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Nilai (Rp)</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if (empty($dataExportLaporanHolding['rekap']) || count($dataExportLaporanHolding['rekap']) === 0)
                         <tr>
-                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                            <td colspan="3" class="border border-black p-1 text-center text-[10px] font-serif">Maaf data pada bulan ini tidak ada</td>
                         </tr>
                         @else
                         @foreach($dataExportLaporanHolding['rekap'] as $LaporanHolding)
                         <tr>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanHolding['Tanggal'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanHolding['Perusahaan'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanHolding['Nilai'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $LaporanHolding['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $LaporanHolding['Perusahaan'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $LaporanHolding['Nilai'] }}</td>
                         </tr>
                         @endforeach
                         @endif
@@ -417,20 +492,20 @@
                 <table id="rekapTable" class="dataTable">
                     <thead>
                         <tr>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Stok (Rp)</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Stok (Rp)</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if (empty($dataExportLaporanStok['rekap']) || count($dataExportLaporanStok['rekap']) === 0)
                         <tr>
-                            <td colspan="2" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                            <td colspan="2" class="border border-black p-1 text-center text-[10px] font-serif">Maaf data pada bulan ini tidak ada</td>
                         </tr>
                         @else
                         @foreach($dataExportLaporanStok['rekap'] as $LaporanStok)
                         <tr>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanStok['Tanggal'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanStok['Stok'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $LaporanStok['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $LaporanStok['Stok'] }}</td>
                         </tr>
                         @endforeach
                         @endif
@@ -467,20 +542,20 @@
                 <table id="rekapTable" class="dataTable">
                     <thead>
                         <tr>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Stok (Rp)</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Stok (Rp)</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if (empty($dataExportLaporanPembelianOutlet['rekap']) || count($dataExportLaporanPembelianOutlet['rekap']) === 0)
                         <tr>
-                            <td colspan="2" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                            <td colspan="2" class="border border-black p-1 text-center text-[10px] font-serif">Maaf data pada bulan ini tidak ada</td>
                         </tr>
                         @else
                         @foreach($dataExportLaporanPembelianOutlet['rekap'] as $LaporanOutlet)
                         <tr>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanOutlet['Tanggal'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanOutlet['Total'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $LaporanOutlet['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $LaporanOutlet['Total'] }}</td>
                         </tr>
                         @endforeach
                         @endif
@@ -517,20 +592,20 @@
                 <table id="rekapTable" class="dataTable">
                     <thead>
                         <tr>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Stok (Rp)</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Stok (Rp)</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if (empty($dataExportLaporanNegosiasi['rekap']) || count($dataExportLaporanNegosiasi['rekap']) === 0)
                         <tr>
-                            <td colspan="2" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                            <td colspan="2" class="border border-black p-1 text-center text-[10px] font-serif">Maaf data pada bulan ini tidak ada</td>
                         </tr>
                         @else
                         @foreach($dataExportLaporanNegosiasi['rekap'] as $LaporanNegosiasi)
                         <tr>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanNegosiasi['Tanggal'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $LaporanNegosiasi['Total'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $LaporanNegosiasi['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $LaporanNegosiasi['Total'] }}</td>
                         </tr>
                         @endforeach
                         @endif
@@ -568,22 +643,22 @@
                 <table id="rekapTable" class="dataTable">
                     <thead>
                         <tr>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Pelaksana</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Nilai Pendapatan (Rp)</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Pelaksana</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Nilai Pendapatan (Rp)</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if (empty($dataExportRekapPendapatanASP['rekap']) || count($dataExportRekapPendapatanASP['rekap']) === 0)
                         <tr>
-                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                            <td colspan="3" class="border border-black p-1 text-center text-[10px] font-serif">Maaf data pada bulan ini tidak ada</td>
                         </tr>
                         @else
                         @foreach($dataExportRekapPendapatanASP['rekap'] as $rekapPendapatanServisASP)
                         <tr>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapPendapatanServisASP['Tanggal'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapPendapatanServisASP['Pelaksana'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapPendapatanServisASP['Nilai'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $rekapPendapatanServisASP['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $rekapPendapatanServisASP['Pelaksana'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $rekapPendapatanServisASP['Nilai'] }}</td>
                         </tr>
                         @endforeach
                         @endif
@@ -620,22 +695,22 @@
                 <table id="rekapTable" class="dataTable">
                     <thead>
                         <tr>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Pelaksana</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Nilai Piutang (Rp)</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Pelaksana</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Nilai Piutang (Rp)</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if (empty($dataExportRekapPiutangASP['rekap']) || count($dataExportRekapPiutangASP['rekap']) === 0)
                         <tr>
-                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                            <td colspan="3" class="border border-black p-1 text-center text-[10px] font-serif">Maaf data pada bulan ini tidak ada</td>
                         </tr>
                         @else
                         @foreach($dataExportRekapPiutangASP['rekap'] as $rekapPiutangServisASP)
                         <tr>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapPiutangServisASP['Tanggal'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapPiutangServisASP['Pelaksana'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapPiutangServisASP['Nilai'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $rekapPiutangServisASP['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $rekapPiutangServisASP['Pelaksana'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $rekapPiutangServisASP['Nilai'] }}</td>
                         </tr>
                         @endforeach
                         @endif
@@ -673,22 +748,22 @@
                 <table id="rekapTable" class="dataTable">
                     <thead>
                         <tr>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Pelaksana</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Total Pengiriman (Rp)</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Pelaksana</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Total Pengiriman (Rp)</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if (empty($dataLaporanPengiriman['rekap']) || count($dataLaporanPengiriman['rekap']) === 0)
                         <tr>
-                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                            <td colspan="3" class="border border-black p-1 text-center text-[10px] font-serif">Maaf data pada bulan ini tidak ada</td>
                         </tr>
                         @else
                         @foreach($dataLaporanPengiriman['rekap'] as $rekapLaporanPengiriman)
                         <tr>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapLaporanPengiriman['Tanggal'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapLaporanPengiriman['Pelaksana'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapLaporanPengiriman['Total'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $rekapLaporanPengiriman['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $rekapLaporanPengiriman['Pelaksana'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $rekapLaporanPengiriman['Total'] }}</td>
                         </tr>
                         @endforeach
                         @endif
@@ -811,26 +886,26 @@
                 <table id="rekapTable" class="dataTable">
                     <thead>
                         <tr>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Kas</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Hutang</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Piutang</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Stok</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Kas</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Hutang</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Piutang</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Stok</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if (empty($dataKHPS['rekap']) || count($dataKHPS['rekap']) === 0)
                         <tr>
-                            <td colspan="5" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                            <td colspan="5" class="border border-black p-1 text-center text-[10px] font-serif">Maaf data pada bulan ini tidak ada</td>
                         </tr>
                         @else
                         @foreach($dataKHPS['rekap'] as $KHPS)
                         <tr>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $KHPS['Tanggal'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $KHPS['Kas'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $KHPS['Hutang'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $KHPS['Piutang'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $KHPS['Stok'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $KHPS['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $KHPS['Kas'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $KHPS['Hutang'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $KHPS['Piutang'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $KHPS['Stok'] }}</td>
                         </tr>
                         @endforeach
                         @endif
@@ -867,22 +942,22 @@
                 <table id="rekapTable" class="dataTable">
                     <thead>
                         <tr>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Kas Masuk</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Kas Keluar</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Kas Masuk</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Kas Keluar</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if (empty($dataArusKas['rekap']) || count($dataArusKas['rekap']) === 0)
                         <tr>
-                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                            <td colspan="3" class="border border-black p-1 text-center text-[10px] font-serif">Maaf data pada bulan ini tidak ada</td>
                         </tr>
                         @else
                         @foreach($dataArusKas['rekap'] as $ArusKas)
                         <tr>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $ArusKas['Tanggal'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $ArusKas['Masuk'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $ArusKas['Keluar'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $ArusKas['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $ArusKas['Masuk'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $ArusKas['Keluar'] }}</td>
                         </tr>
                         @endforeach
                         @endif
@@ -1059,19 +1134,19 @@
                 <table id="rekapTable" class="dataTable">
                     <thead>
                         <tr>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Pekerjaan</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Kondisi Bulan Lalu</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Kondisi Bulan Ini</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Update</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Rencana Implementasi</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Keterangan</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Pekerjaan</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Kondisi Bulan Lalu</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Kondisi Bulan Ini</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Update</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Rencana Implementasi</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Keterangan</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if (empty($dataPTBOS['rekap']) || count($dataPTBOS['rekap']) === 0)
                         <tr>
-                            <td colspan="7  " class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                            <td colspan="7  " class="border border-black p-1 text-center text-[10px] font-serif">Maaf data pada bulan ini tidak ada</td>
                         </tr>
                         @else
                         @foreach($dataPTBOS['rekap'] as $Ptbos)
@@ -1113,19 +1188,19 @@
                 <table id="rekapTable" class="dataTable">
                     <thead>
                         <tr>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Jam</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Permasalahan</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Impact</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Troubleshooting</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Resolve Tanggal</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Resolve Jam</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Jam</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Permasalahan</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Impact</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Troubleshooting</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Resolve Tanggal</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Resolve Jam</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if (empty($dataIJASA['rekap']) || count($dataIJASA['rekap']) === 0)
                         <tr>
-                            <td colspan="7" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                            <td colspan="7" class="border border-black p-1 text-center text-[10px] font-serif">Maaf data pada bulan ini tidak ada</td>
                         </tr>
                         @else
                         @foreach($dataIJASA['rekap'] as $IJASA)
@@ -1194,22 +1269,22 @@
                 <table id="rekapTable" class="dataTable">
                     <thead>
                         <tr>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Pelaksana</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Total Sakit (Hari)</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Pelaksana</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Total Sakit (Hari)</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if (empty($dataLaporanSakit['rekap']) || count($dataLaporanSakit['rekap']) === 0)
                         <tr>
-                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                            <td colspan="3" class="border border-black p-1 text-center text-[10px] font-serif">Maaf data pada bulan ini tidak ada</td>
                         </tr>
                         @else
                         @foreach($dataLaporanSakit['rekap'] as $rekapSakit)
                         <tr>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapSakit['Tanggal'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapSakit['Nama'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapSakit['Total'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $rekapSakit['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $rekapSakit['Nama'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $rekapSakit['Total'] }}</td>
                         </tr>
                         @endforeach
                         @endif
@@ -1246,22 +1321,22 @@
                 <table id="rekapTable" class="dataTable">
                     <thead>
                         <tr>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Pelaksana</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Total Cuti (Hari)</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Pelaksana</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Total Cuti (Hari)</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if (empty($dataLaporanCuti['rekap']) || count($dataLaporanCuti['rekap']) === 0)
                         <tr>
-                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                            <td colspan="3" class="border border-black p-1 text-center text-[10px] font-serif">Maaf data pada bulan ini tidak ada</td>
                         </tr>
                         @else
                         @foreach($dataLaporanCuti['rekap'] as $rekapCuti)
                         <tr>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapCuti['Tanggal'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapCuti['Nama'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapCuti['Total'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $rekapCuti['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $rekapCuti['Nama'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $rekapCuti['Total'] }}</td>
                         </tr>
                         @endforeach
                         @endif
@@ -1298,22 +1373,22 @@
                 <table id="rekapTable" class="dataTable">
                     <thead>
                         <tr>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Pelaksana</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Total Izin (Hari)</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Pelaksana</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Total Izin (Hari)</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if (empty($dataLaporanIzin['rekap']) || count($dataLaporanIzin['rekap']) === 0)
                         <tr>
-                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                            <td colspan="3" class="border border-black p-1 text-center text-[10px] font-serif">Maaf data pada bulan ini tidak ada</td>
                         </tr>
                         @else
                         @foreach($dataLaporanIzin['rekap'] as $rekapIzin)
                         <tr>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapIzin['Tanggal'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapIzin['Nama'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapIzin['Total'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $rekapIzin['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $rekapIzin['Nama'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $rekapIzin['Total'] }}</td>
                         </tr>
                         @endforeach
                         @endif
@@ -1350,22 +1425,22 @@
                 <table id="rekapTable" class="dataTable">
                     <thead>
                         <tr>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Pelaksana</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Total Terlambat (Hari)</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Pelaksana</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Total Terlambat (Hari)</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if (empty($dataLaporanTerlambat['rekap']) || count($dataLaporanTerlambat['rekap']) === 0)
                         <tr>
-                            <td colspan="3" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                            <td colspan="3" class="border border-black p-1 text-center text-[10px] font-serif">Maaf data pada bulan ini tidak ada</td>
                         </tr>
                         @else
                         @foreach($dataLaporanTerlambat['rekap'] as $rekapTerlambat)
                         <tr>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapTerlambat['Tanggal'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapTerlambat['Nama'] }}</td>
-                            <td class="border border-black p-1 text-center text-sm font-serif">{{ $rekapTerlambat['Total'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $rekapTerlambat['Tanggal'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $rekapTerlambat['Nama'] }}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $rekapTerlambat['Total'] }}</td>
                         </tr>
                         @endforeach
                         @endif
@@ -1403,26 +1478,26 @@
                 <table id="rekapTable" class="dataTable">
                     <thead>
                         <tr>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Tanggal</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Aspek</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Masalah</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Solusi</th>
-                            <th class="border border-black p-1 text-center text-sm font-serif">Implementasi</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Aspek</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Masalah</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Solusi</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Implementasi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if (empty($dataLaporanSPI['rekap']) || count($dataLaporanSPI['rekap']) === 0)
                         <tr>
-                            <td colspan="5" class="border border-black p-1 text-center text-sm font-serif">Maaf data pada bulan ini tidak ada</td>
+                            <td colspan="5" class="border border-black p-1 text-center text-[10px] font-serif">Maaf data pada bulan ini tidak ada</td>
                         </tr>
                         @else
                         @foreach($dataLaporanSPI['rekap'] as $SPI)
                         <tr>
-                            <td class="border border-black p-1 text-center text-[12px] font-serif">{{ $SPI['Tanggal'] }}</td>
-                            <td class="border border-black p-1 content-html text-[12px] align-top text-justify font-serif">{!! $SPI['Aspek'] !!}</td>
-                            <td class="border border-black p-1 content-html text-[12px] align-top text-justify font-serif">{!! $SPI['Masalah'] !!}</td>
-                            <td class="border border-black p-1 content-html text-[12px] align-top text-justify font-serif">{!! $SPI['Solusi'] !!}</td>
-                            <td class="border border-black p-1 content-html text-[12px] align-top text-justify font-serif">{!! $SPI['Implementasi'] !!}</td>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $SPI['Tanggal'] }}</td>
+                            <td class="border border-black p-1 content-html text-[10px] align-top text-justify font-serif">{!! $SPI['Aspek'] !!}</td>
+                            <td class="border border-black p-1 content-html text-[10px] align-top text-justify font-serif">{!! $SPI['Masalah'] !!}</td>
+                            <td class="border border-black p-1 content-html text-[10px] align-top text-justify font-serif">{!! $SPI['Solusi'] !!}</td>
+                            <td class="border border-black p-1 content-html text-[10px] align-top text-justify font-serif">{!! $SPI['Implementasi'] !!}</td>
                        </tr>
                         @endforeach
                         @endif
@@ -1453,11 +1528,11 @@
                  <table id="rekapTable" class="dataTable" style="'border-collapse: collapse; width: 100%; font-size: 2px;' border='1'">                     
                     <thead>
                          <tr>
-                             <th class="border border-black p-1 text-center font-serif">Tanggal</th>
-                             <th class="border border-black p-1 text-center font-serif">Aspek</th>
-                             <th class="border border-black p-1 text-center font-serif">Masalah</th>
-                             <th class="border border-black p-1 text-center font-serif">Solusi</th>
-                             <th class="border border-black p-1 text-center font-serif">Implementasi</th>
+                             <th class="border border-black p-1 text-center font-serif text-[10px]">Tanggal</th>
+                             <th class="border border-black p-1 text-center font-serif text-[10px]">Aspek</th>
+                             <th class="border border-black p-1 text-center font-serif text-[10px]">Masalah</th>
+                             <th class="border border-black p-1 text-center font-serif text-[10px]">Solusi</th>
+                             <th class="border border-black p-1 text-center font-serif text-[10px]">Implementasi</th>
                          </tr>
                      </thead>
                      <tbody>
@@ -1468,11 +1543,11 @@
                          @else
                          @foreach($dataLaporanSPIIT['rekap'] as $SPIIT)
                          <tr>
-                             <td class="border border-black p-1 text-center text-[12px] font-serif">{{ $SPIIT['Tanggal'] }}</td>
-                             <td class="border border-black p-1 content-html text-[12px] align-top text-justify font-serif">{!! $SPIIT['Aspek'] !!}</td>
-                             <td class="border border-black p-1 content-html text-[12px] align-top text-justify font-serif">{!! $SPIIT['Masalah'] !!}</td>
-                             <td class="border border-black p-1 content-html text-[12px] align-top text-justify font-serif">{!! $SPIIT['Solusi'] !!}</td>
-                             <td class="border border-black p-1 content-html text-[12px] align-top text-justify font-serif">{!! $SPIIT['Implementasi'] !!}</td>
+                             <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $SPIIT['Tanggal'] }}</td>
+                             <td class="border border-black p-1 content-html text-[10px] align-top text-justify font-serif">{!! $SPIIT['Aspek'] !!}</td>
+                             <td class="border border-black p-1 content-html text-[10px] align-top text-justify font-serif">{!! $SPIIT['Masalah'] !!}</td>
+                             <td class="border border-black p-1 content-html text-[10px] align-top text-justify font-serif">{!! $SPIIT['Solusi'] !!}</td>
+                             <td class="border border-black p-1 content-html text-[10px] align-top text-justify font-serif">{!! $SPIIT['Implementasi'] !!}</td>
                          </tr>
                          @endforeach
                          @endif
@@ -1769,17 +1844,34 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
-//function chart untuk HRGA
+
+// function chart untuk HRGA
 document.addEventListener('DOMContentLoaded', function () {
     const chartCanvases = document.querySelectorAll('.chart-export-pie');
 
     chartCanvases.forEach((canvas) => {
-        const chartData = JSON.parse(canvas.dataset.chart);
+        let chartData = JSON.parse(canvas.dataset.chart || '{}');
+
+        // Cek jika data kosong, set dummy data
+        if (
+            !chartData.labels || !chartData.labels.length ||
+            !chartData.datasets || !chartData.datasets.length ||
+            !chartData.datasets[0].data || !chartData.datasets[0].data.length
+        ) {
+            chartData = {
+                labels: ['Data Kosong'],
+                datasets: [{
+                    data: [1],
+                    backgroundColor: ['#e0e0e0'], // Warna abu-abu untuk menunjukkan kekosongan
+                }]
+            };
+        }
+
         const ctx = canvas.getContext('2d');
 
         new Chart(ctx, {
-            type: 'pie', 
-            data: chartData, 
+            type: 'pie',
+            data: chartData,
             options: {
                 responsive: true,
                 animation: false,
@@ -1797,7 +1889,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     tooltip: {
                         callbacks: {
                             label: function(tooltipItem) {
-                                return tooltipItem.label + ': ' + tooltipItem.raw.toLocaleString(); // Menampilkan data dengan format angka
+                                return tooltipItem.label + ': ' + tooltipItem.raw.toLocaleString();
                             }
                         }
                     }
@@ -1806,9 +1898,114 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
-
-
 </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const maxHeight = 600;
+        const pagesContainer = document.getElementById('pagesContainer');
+        const originalPage = pagesContainer.querySelector('.page');
+        const originalTable = originalPage.querySelector('table');
+        const originalRows = Array.from(originalTable.querySelectorAll('tbody tr'));
+        const tableHeaderHTML = originalTable.querySelector('thead').outerHTML;
+    
+        // Bersihkan tbody asli agar tidak dobel saat render ulang
+        originalTable.querySelector('tbody').innerHTML = '';
+    
+        let currentPage = originalPage;
+        let currentTbody = currentPage.querySelector('tbody');
+    
+        for (let i = 0; i < originalRows.length; i++) {
+            currentTbody.appendChild(originalRows[i]);
+    
+            // Cek apakah tinggi tabel melampaui batas
+            const tableWrapper = currentPage.querySelector('.table-wrapper');
+            if (tableWrapper.scrollHeight > maxHeight) {
+                // Pindahkan baris ke halaman baru
+                currentTbody.removeChild(originalRows[i]);
+    
+                // Buat halaman baru
+                const newPage = originalPage.cloneNode(true);
+                const newTable = newPage.querySelector('table');
+                newTable.querySelector('tbody').innerHTML = '';
+                newTable.querySelector('thead').outerHTML = tableHeaderHTML;
+    
+                // Simpan baris ke halaman baru
+                newTable.querySelector('tbody').appendChild(originalRows[i]);
+    
+                // Tambahkan halaman ke kontainer
+                pagesContainer.appendChild(newPage);
+    
+                // Update referensi halaman dan tbody
+                currentPage = newPage;
+                currentTbody = newPage.querySelector('tbody');
+            }
+        }
+    });
+    </script>
+    
+{{-- <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const maxHeight = 600;
+        const pagesContainer = document.getElementById('pagesContainer');
+        const table = document.getElementById('rekapTable');
+        const tbody = document.getElementById('rekapTableBody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+    
+        let currentPage = pagesContainer.querySelector('.page');
+        let content = currentPage.querySelector('.content .table-wrapper tbody');
+    
+        let newTbody = content;
+        let tempTableWrapper = currentPage.querySelector('.table-wrapper');
+    
+        let newTable = null;
+        let newPage = null;
+        let headerHtml = table.querySelector('thead').outerHTML;
+    
+        rows.forEach((row, index) => {
+            newTbody.appendChild(row);
+    
+            // Cek tinggi table-wrapper
+            if (tempTableWrapper.scrollHeight > maxHeight) {
+                // Hapus row terakhir (karena kelebihan)
+                newTbody.removeChild(row);
+    
+                // Buat page baru
+                newPage = document.createElement('div');
+                newPage.className = 'page';
+    
+                newPage.innerHTML = `
+                    <div class="header">
+                        <img src="{{ asset('images/HEADER.png') }}" alt="Header">
+                    </div>
+                    <div class="content">
+                        <h2 class="text-center font-serif">Tabel Data (lanjutan)</h2>
+                        <div class="table-wrapper">
+                            <table class="dataTable border border-black">
+                                ${headerHtml}
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="footer border-t text-center pt-4 z-50 bg-white">
+                        <p class="text-sm font-serif mt-2">Laporan Marketing - Laporan Rekap Penjualan Perusahaan</p>
+                    </div>
+                `;
+    
+                pagesContainer.appendChild(newPage);
+    
+                // Update variabel untuk halaman baru
+                currentPage = newPage;
+                tempTableWrapper = newPage.querySelector('.table-wrapper');
+                newTbody = tempTableWrapper.querySelector('tbody');
+    
+                // Tambahkan row tadi ke halaman baru
+                newTbody.appendChild(row);
+            }
+        });
+    });
+    </script> --}}
+    
 </body>
 </html>
 
