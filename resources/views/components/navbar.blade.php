@@ -1,7 +1,7 @@
 <nav id="navbar"
      class="main-header fixed top-0 left-0 right-0
             bg-[#2c2e3e] text-white border-b border-gray-800 shadow-md
-            z-50 transition-all duration-300 h-14">
+            transition-all duration-300 h-14">
     <div class="container px-4 flex items-center justify-between h-full">
         <!-- Left: Sidebar Toggle and Home Link -->
         <div class="flex items-center space-x-2">

@@ -1441,9 +1441,12 @@ public function exportIJASAGambar(Request $request)
             $formattedData = $rekapNeraca->map(function ($item) {
             $imagePath = public_path('images/accounting/neraca/' . $item->gambar);
                 return [
+                    'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
                     'Gambar' => (!empty($item->gambar) && file_exists($imagePath))
                         ? asset('images/accounting/neraca/' . $item->gambar)
                         : asset('images/no-image.png'),
+                    'Keterangan' => $item->keterangan,
+
                 ];
             });
 
@@ -1485,9 +1488,12 @@ public function exportIJASAGambar(Request $request)
             $formattedData = $rekapRasio->map(function ($item) {
             $imagePath = public_path('images/accounting/rasio/' . $item->gambar);
                 return [
+                    'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
                     'Gambar' => (!empty($item->gambar) && file_exists($imagePath))
                         ? asset('images/accounting/rasio/' . $item->gambar)
                         : asset('images/no-image.png'),
+                    'Keterangan' => $item->keterangan,
+
                 ];
             });
 
@@ -1529,9 +1535,11 @@ public function exportIJASAGambar(Request $request)
             $formattedData = $rekapPPn->map(function ($item) {
             $imagePath = public_path('images/accounting/ppn/' . $item->thumbnail);
                 return [
+                    'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
                     'Gambar' => (!empty($item->thumbnail) && file_exists($imagePath))
                         ? asset('images/accounting/ppn/' . $item->thumbnail)
                         : asset('images/no-image.png'),
+                    'Keterangan' => $item->keterangan,
                 ];
             });
 
@@ -1573,9 +1581,11 @@ public function exportIJASAGambar(Request $request)
             $formattedData = $rekapTaxPlanning->map(function ($item) {
             $imagePath = public_path('images/accounting/taxplaning/' . $item->gambar);
                 return [
+                    'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
                     'Gambar' => (!empty($item->gambar) && file_exists($imagePath))
                         ? asset('images/accounting/taxplaning/' . $item->gambar)
                         : asset('images/no-image.png'),
+                    'Keterangan' => $item->keterangan,
                 ];
             });
 
@@ -1617,9 +1627,12 @@ public function exportIJASAGambar(Request $request)
             $formattedData = $rekapTiktok->map(function ($item) {
             $imagePath = public_path('images/it/multimediatiktok/' . $item->gambar);
                 return [
+                    'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
                     'Gambar' => (!empty($item->gambar) && file_exists($imagePath))
                         ? asset('images/it/multimediatiktok/' . $item->gambar)
                         : asset('images/no-image.png'),
+                    'Keterangan' => $item->keterangan
+
                 ];
             });
 
@@ -1660,9 +1673,11 @@ public function exportIJASAGambar(Request $request)
             $formattedData = $rekapInstagram->map(function ($item) {
             $imagePath = public_path('images/it/multimediainstagram/' . $item->gambar);
                 return [
+                    'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
                     'Gambar' => (!empty($item->gambar) && file_exists($imagePath))
                         ? asset('images/it/multimediainstagram/' . $item->gambar)
                         : asset('images/no-image.png'),
+                    'Keterangan' => $item->keterangan
                 ];
             });
 
@@ -1703,9 +1718,11 @@ public function exportIJASAGambar(Request $request)
             $formattedData = $rekapBizdev->map(function ($item) {
             $imagePath = public_path('images/it/laporanbizdevgambar/' . $item->gambar);
                 return [
+                    'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
                     'Gambar' => (!empty($item->gambar) && file_exists($imagePath))
                         ? asset('images/it/laporanbizdevgambar/' . $item->gambar)
                         : asset('images/no-image.png'),
+                    'Keterangan' => $item->keterangan,
                 ];
             });
 
