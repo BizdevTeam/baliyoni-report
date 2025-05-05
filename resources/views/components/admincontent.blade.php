@@ -21,7 +21,7 @@
     <div id="gridContainer" class="grid gap-6 grid-cols-1">
         <!-- MARKETING: Tampil untuk Superadmin & Marketing -->
         @if(in_array(Auth::user()->role, ['superadmin', 'marketing']))
-        
+    
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
             Grafik Laporan Rekap Penjualan

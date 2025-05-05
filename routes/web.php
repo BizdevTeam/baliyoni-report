@@ -5,7 +5,7 @@ use App\Http\Controllers\SessionController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ArusKasController;
 use App\Http\Controllers\EvaluasiController;
-use App\Http\Controllers\ExportAllController;
+use App\Http\Controllers\AdminContentController;
 use App\Http\Controllers\ExportLaporanAll;
 use App\Http\Controllers\LaporanPpnController;
 use App\Http\Controllers\LaporanCutiController;
@@ -357,3 +357,16 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::get('/export-laporan-all', [ExportLaporanAll::class, 'exportAll'])->name('export-laporan-all-new'); 
+// Route::get('/admincontent', [AdminContentController::class, 'adminContent'])->name('admincontent'); 
+// Route::resource('admincontent', AdminContentController::class)->only(['index']);
+// Route::get('/admin', [AdminContentController::class, 'adminContent'])->name('components.content');
+// Add these routes for the AdminContentController
+Route::middleware(['auth'])->group(function () {
+    // Main dashboard route
+    Route::get('/admin/dashboard', [AdminContentController::class, 'index'])->name('admin.dashboard');
+    
+    // You can also add specific routes for individual reports if needed
+    Route::get('/admin/dashboard/export-penjualan', [AdminContentController::class, 'exportRekapPenjualan'])->name('admin.export.penjualan');
+    Route::get('/admin/dashboard/export-penjualan-perusahaan', [AdminContentController::class, 'exportRekapPenjualanPerusahaan'])->name('admin.export.penjualan-perusahaan');
+    // Add other export routes as needed...
+});

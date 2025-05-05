@@ -68,6 +68,12 @@
                                 <span class="ml-2">Tambah Data Perusahaan</span>
                             </a>
                         </li>
+                        <li>
+                            <a href="/admin/dashboard" class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
+                                <img src="{{ asset("icon/LaporanPerinstansi.svg") }}" class="w-5 h-5">
+                                <span class="ml-2">dashboard test</span>
+                            </a>
+                        </li>
                     </ul>
                 </li>
 
