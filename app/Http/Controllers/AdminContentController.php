@@ -138,88 +138,85 @@ class AdminContentController extends Controller
     
             // === Untuk divisi Marketing ===
             $dataExportLaporanPenjualan = $this->safeView(fn() => $this->exportRekapPenjualan($request));
-
-            // $dataExportLaporanPenjualanPerusahaan = $this->safeView(fn() => $this->exportRekapPenjualanPerusahaan(request()));
-
-            // $dataExportLaporanPaketAdministrasi = $this->safeView(fn() => $this->exportLaporanPaketAdministrasi(request()));
-
-            // $dataExportStatusPaket = $this->safeView(fn() => $this->exportStatusPaket(request()));
-
-            // $dataExportLaporanPerInstansi = $this->safeView(fn() => $this->exportLaporanPerInstansi(request()));
+            $dataExportLaporanPenjualanPerusahaan = $this->safeView(fn() => $this->exportRekapPenjualanPerusahaan($request));
+            $dataExportLaporanPaketAdministrasi = $this->safeView(fn() => $this->exportLaporanPaketAdministrasi($request));
+            $dataExportStatusPaket = $this->safeView(fn() => $this->exportStatusPaket($request));
+            $dataExportLaporanPerInstansi = $this->safeView(fn() => $this->exportLaporanPerInstansi($request));
     
-            // // === Untuk divisi Procurement ===
-            // $dataExportLaporanHolding = $this->safeView(fn() => $this->exportLaporanHolding(request())); 
-            // $dataExportLaporanStok = $this->safeView(fn() => $this->exportLaporanStok(request())); 
-            // $dataExportLaporanPembelianOutlet = 
-            // $this->safeView(fn() => $this->exportLaporanPembelianOutlet(request())); 
-            // $dataExportLaporanNegosiasi = $this->safeView(fn() => $this->exportLaporanNegosiasi(request()));
+            // === Untuk divisi Procurement ===
+            $dataExportLaporanHolding = $this->safeView(fn() => $this->exportLaporanHolding($request)); 
+            $dataExportLaporanStok = $this->safeView(fn() => $this->exportLaporanStok($request)); 
+            $dataExportLaporanPembelianOutlet = 
+            $this->safeView(fn() => $this->exportLaporanPembelianOutlet($request)); 
+            $dataExportLaporanNegosiasi = $this->safeView(fn() => $this->exportLaporanNegosiasi($request));
 
-            // // === Untuk divisi Supports ===
-            // $dataExportRekapPendapatanASP = $this->safeView(fn() => $this->exportRekapPendapatanASP(request()));
-            // $dataExportRekapPiutangASP = $this->safeView(fn() => $this->exportRekapPiutangASP(request()));
-            // $dataLaporanPengiriman = $this->safeView(fn() => $this->exportLaporanPengiriman(request()));
+            // === Untuk divisi Supports ===
+            $dataExportRekapPendapatanASP = $this->safeView(fn() => $this->exportRekapPendapatanASP($request));
+            $dataExportRekapPiutangASP = $this->safeView(fn() => $this->exportRekapPiutangASP($request));
+            $dataLaporanPengiriman = $this->safeView(fn() => $this->exportLaporanPengiriman($request));
 
-            // // === Untuk divisi HRGA ===
-            // $dataPTBOS = $this->safeView(fn() => $this->exportPTBOS(request()));
-            // $dataIJASA = $this->safeView(fn() => $this->exportIJASA(request()));
-            // $dataIJASAGambar = $this->safeView(fn() => $this->exportIJASAGambar(request()));
-            // $dataLaporanSakit = $this->safeView(fn() => $this->exportSakit(request()));
-            // $dataLaporanCuti = $this->safeView(fn() => $this->exportCuti(request()));
-            // $dataLaporanIzin = $this->safeView(fn() => $this->exportIzin(request()));
-            // $dataLaporanTerlambat = $this->safeView(fn() => $this->exportTerlambat(request()));
+            // === Untuk divisi HRGA ===
+            $dataPTBOS = $this->safeView(fn() => $this->exportPTBOS($request));
+            $dataIJASA = $this->safeView(fn() => $this->exportIJASA($request));
+            $dataIJASAGambar = $this->safeView(fn() => $this->exportIJASAGambar($request));
+            $dataLaporanSakit = $this->safeView(fn() => $this->exportSakit($request));
+            $dataLaporanCuti = $this->safeView(fn() => $this->exportCuti($request));
+            $dataLaporanIzin = $this->safeView(fn() => $this->exportIzin($request));
+            $dataLaporanTerlambat = $this->safeView(fn() => $this->exportTerlambat($request));
 
-            // // === Untuk divisi Accounting ===
-            // $dataKHPS = $this->safeView(fn() => $this->exportKHPS(request()));
-            // $dataLabaRugi = $this->safeView(fn() => $this->exportLabaRugi(request()));
-            // $dataNeraca = $this ->safeView(fn() => $this->exportNeraca(request()));
-            // $dataRasio = $this->safeView(fn() => $this->exportRasio(request()));
-            // $dataPPn = $this->safeView(fn() => $this->exportPPn(request()));
-            // $dataArusKas = $this->safeView(fn() => $this->exportArusKas(request()));
-            // $dataTaxPlanning = $this->safeView(fn() => $this->exportTaxPlanning(request()));
+            // === Untuk divisi Accounting ===
+            $dataKHPS = $this->safeView(fn() => $this->exportKHPS($request));
+            $dataLabaRugi = $this->safeView(fn() => $this->exportLabaRugi($request));
+            $dataNeraca = $this ->safeView(fn() => $this->exportNeraca($request));
+            $dataRasio = $this->safeView(fn() => $this->exportRasio($request));
+            $dataPPn = $this->safeView(fn() => $this->exportPPn($request));
+            $dataArusKas = $this->safeView(fn() => $this->exportArusKas($request));
+            $dataTaxPlanning = $this->safeView(fn() => $this->exportTaxPlanning($request));
 
-            // // === Untuk divisi SPI ===
-            // $dataLaporanSPI = $this->safeView(fn() => $this->exportLaporanSPI(request()));
-            // $dataLaporanSPIIT = $this->safeView(fn() => $this->exportLaporanSPIIT(request()));
+            // === Untuk divisi SPI ===
+            $dataLaporanSPI = $this->safeView(fn() => $this->exportLaporanSPI($request));
+            $dataLaporanSPIIT = $this->safeView(fn() => $this->exportLaporanSPIIT($request));
 
-            // // IT
-            // $dataTiktok = $this->safeView(fn() => $this->exportTiktok(request()));
-            // $dataInstagram = $this->safeView(fn() => $this->exportInstagram(request()));
-            // $dataBizdev = $this->safeView(fn() => $this->exportBizdev(request()));
+            // IT
+            $dataTiktok = $this->safeView(fn() => $this->exportTiktok($request));
+            $dataInstagram = $this->safeView(fn() => $this->exportInstagram($request));
+            $dataBizdev = $this->safeView(fn() => $this->exportBizdev($request));
 
+    
     
             return view('components.content', compact(
                 'dataExportLaporanPenjualan',
-                // 'dataExportLaporanPenjualanPerusahaan',
-                // 'dataExportLaporanPaketAdministrasi',
-                // 'dataExportStatusPaket',
-                // 'dataExportLaporanPerInstansi',
-                // 'dataExportLaporanHolding',
-                // 'dataExportLaporanStok',
-                // 'dataExportLaporanPembelianOutlet',
-                // 'dataExportLaporanNegosiasi',
-                // 'dataExportRekapPendapatanASP',
-                // 'dataExportRekapPiutangASP',
-                // 'dataLaporanPengiriman',
-                // 'dataLaporanSakit',
-                // 'dataLaporanCuti',
-                // 'dataLaporanIzin',
-                // 'dataLaporanTerlambat',
-                // 'dataKHPS',
-                // 'dataArusKas',
-                // 'dataLaporanSPI',
-                // 'dataLaporanSPIIT',
-                // 'dataArusKas',
-                // 'dataLabaRugi',
-                // 'dataNeraca',
-                // 'dataRasio',
-                // 'dataPPn',
-                // 'dataTaxPlanning',
-                // 'dataTiktok',
-                // 'dataInstagram',
-                // 'dataBizdev',
-                // 'dataPTBOS',
-                // 'dataIJASA',
-                // 'dataIJASAGambar',
+                'dataExportLaporanPenjualanPerusahaan',
+                'dataExportLaporanPaketAdministrasi',
+                'dataExportStatusPaket',
+                'dataExportLaporanPerInstansi',
+                'dataExportLaporanHolding',
+                'dataExportLaporanStok',
+                'dataExportLaporanPembelianOutlet',
+                'dataExportLaporanNegosiasi',
+                'dataExportRekapPendapatanASP',
+                'dataExportRekapPiutangASP',
+                'dataLaporanPengiriman',
+                'dataLaporanSakit',
+                'dataLaporanCuti',
+                'dataLaporanIzin',
+                'dataLaporanTerlambat',
+                'dataKHPS',
+                'dataArusKas',
+                'dataLaporanSPI',
+                'dataLaporanSPIIT',
+                'dataArusKas',
+                'dataLabaRugi',
+                'dataNeraca',
+                'dataRasio',
+                'dataPPn',
+                'dataTaxPlanning',
+                'dataTiktok',
+                'dataInstagram',
+                'dataBizdev',
+                'dataPTBOS',
+                'dataIJASA',
+                'dataIJASAGambar',
                 
             ))
             ->with('month', $this->month)
@@ -254,15 +251,6 @@ class AdminContentController extends Controller
             
             // Apply filter only if needed
             $query = $instance->applyDateFilter($query);
-
-            // if (isset($instance->startDate) && isset($instance->endDate)) {
-            //     // Kedua bulan diisi: filter rentang tanggal
-            //     $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            // } elseif (isset($instance->month) && isset($instance->year)) {
-            //     // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-            //     $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-            //     $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            // }
     
             $rekapPenjualan = $query->orderBy('tanggal', 'asc')->get();
             // dd($instance->startDate ?? null, $instance->endDate ?? null); // Untuk debug
@@ -315,13 +303,8 @@ class AdminContentController extends Controller
         $instance = new self($startMonth, $endMonth);
         $query = RekapPenjualanPerusahaan::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            if ($request->has('filter')) {
+                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
             }
 
         $rekapPenjualanPerusahaan = $query
@@ -378,13 +361,8 @@ class AdminContentController extends Controller
         $instance = new self($startMonth, $endMonth);
         $query = LaporanPaketAdministrasi::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            if ($request->has('filter')) {
+                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
             }
 
         $rekapLaporanPaketAdministrasi = $query
@@ -442,13 +420,8 @@ class AdminContentController extends Controller
         // Bangun query berdasarkan data constructor
         $query = StatusPaket::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            if ($request->has('filter')) {
+                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
             }
 
         $rekapStatusPaket = $query
@@ -506,13 +479,8 @@ class AdminContentController extends Controller
         // Bangun query berdasarkan data constructor
         $query = LaporanPerInstansi::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            if ($request->has('filter')) {
+                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
             }
 
         $rekapLaporanPerInstansi = $query
@@ -571,13 +539,8 @@ class AdminContentController extends Controller
         // Bangun query berdasarkan data constructor
         $query = LaporanHolding::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            if ($request->has('filter')) {
+                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
             }
 
         $rekapLaporanHolding = $query
@@ -637,13 +600,8 @@ class AdminContentController extends Controller
         // Bangun query berdasarkan data constructor
         $query = LaporanStok::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            if ($request->has('filter')) {
+                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
             }
 
         $rekapLaporanStok = $query
@@ -702,13 +660,8 @@ class AdminContentController extends Controller
         // Bangun query berdasarkan data constructor
         $query = LaporanOutlet::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            if ($request->has('filter')) {
+                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
             }
 
         $rekapLaporanPembelianOutlet = $query
@@ -765,13 +718,8 @@ class AdminContentController extends Controller
         // Bangun query berdasarkan data constructor
         $query = LaporanNegosiasi::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            if ($request->has('filter')) {
+                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
             }
 
         $rekapLaporanNegosiasi = $query
@@ -831,13 +779,8 @@ class AdminContentController extends Controller
         // Bangun query berdasarkan data constructor
         $query = RekapPendapatanServisASP::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            if ($request->has('filter')) {
+                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
             }
 
         $rekapPendapatanASP = $query
@@ -904,13 +847,8 @@ class AdminContentController extends Controller
         // Bangun query berdasarkan data constructor
         $query = RekapPiutangServisASP::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            if ($request->has('filter')) {
+                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
             }
 
         $rekapPiutangServisASP = $query
@@ -979,13 +917,8 @@ class AdminContentController extends Controller
         // Bangun query berdasarkan data constructor
         $query = LaporanDetrans::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            if ($request->has('filter')) {
+                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
             }
 
         $rekapPengiriman = $query
@@ -1067,13 +1000,8 @@ class AdminContentController extends Controller
         // Bangun query berdasarkan data constructor
         $query = LaporanPtBos::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            if ($request->has('filter')) {
+                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
             }
 
         $rekapPTBOS = $query
@@ -1117,13 +1045,8 @@ class AdminContentController extends Controller
         // Bangun query berdasarkan data constructor
         $query = LaporanIjasa::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            if ($request->has('filter')) {
+                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
             }
 
         $rekapIJASA = $query
@@ -1168,13 +1091,8 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = IjasaGambar::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            if ($request->has('filter')) {
+                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
             }
 
         $ijasaGambar = $query
@@ -1216,13 +1134,8 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = LaporanSakit::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            if ($request->has('filter')) {
+                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
             }
 
         $rekapSakit = $query
@@ -1282,13 +1195,8 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = LaporanCuti::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            if ($request->has('filter')) {
+                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
             }
 
         $rekapCuti = $query
@@ -1347,13 +1255,8 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = LaporanIzin::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            if ($request->has('filter')) {
+                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
             }
 
         $rekapIzin = $query
@@ -1412,13 +1315,8 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = LaporanTerlambat::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            if ($request->has('filter')) {
+                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
             }
 
         $rekapTerlambat = $query
@@ -1479,13 +1377,8 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = LaporanLabaRugi::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            if ($request->has('filter')) {
+                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
             }
 
         $rekapLabaRugi = $query
@@ -1501,9 +1394,12 @@ public function exportIJASAGambar(Request $request)
             $formattedData = $rekapLabaRugi->map(function ($item) {
             $imagePath = public_path('images/accounting/labarugi/' . $item->gambar);
                 return [
+                    'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
                     'Gambar' => (!empty($item->gambar) && file_exists($imagePath))
                         ? asset('images/accounting/labarugi/' . $item->gambar)
                         : asset('images/no-image.png'),
+                    'Keterangan' => $item->keterangan,
+
                 ];
             });
 
@@ -1529,13 +1425,8 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = LaporanNeraca::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            if ($request->has('filter')) {
+                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
             }
 
         $rekapNeraca = $query
@@ -1578,13 +1469,8 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = LaporanRasio::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            if ($request->has('filter')) {
+                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
             }
 
         $rekapRasio = $query
@@ -1627,13 +1513,8 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = LaporanPpn::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            if ($request->has('filter')) {
+                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
             }
 
         $rekapPPn = $query
@@ -1676,13 +1557,8 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = LaporanTaxPlaning::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            if ($request->has('filter')) {
+                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
             }
 
         $rekapTaxPlanning = $query
@@ -1725,13 +1601,8 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = ItMultimediaTiktok::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            if ($request->has('filter')) {
+                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
             }
 
         $rekapTiktok = $query
@@ -1773,13 +1644,8 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = ItMultimediaInstagram::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            if ($request->has('filter')) {
+                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
             }
 
         $rekapInstagram = $query
@@ -1821,13 +1687,8 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = LaporanBizdevGambar::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            if ($request->has('filter')) {
+                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
             }
 
         $rekapBizdev = $query
@@ -1868,13 +1729,8 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = KasHutangPiutang::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            if ($request->has('filter')) {
+                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
             }
 
         $rekapKHPS = $query
@@ -1941,13 +1797,8 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = ArusKas::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            if ($request->has('filter')) {
+                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
             }
 
         $rekapArusKas = $query
@@ -2008,13 +1859,8 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = LaporanSPI::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            if ($request->has('filter')) {
+                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
             }
 
         $laporanSPI = $query
@@ -2056,13 +1902,8 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = LaporanSPITI::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            if ($request->has('filter')) {
+                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
             }
 
         $laporanSPIIT = $query
