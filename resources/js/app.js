@@ -12,13 +12,15 @@ document.addEventListener('DOMContentLoaded', () => {
   
 
 
-    // Fungsi untuk menyesuaikan layout berdasarkan status sidebar
     const adjustLayout = (isMinimized) => {
         const sidebarWidth = isMinimized ? '4rem' : '16rem'; // Lebar sidebar
-        navbar.style.marginLeft = sidebarWidth;
-        admincontent.style.marginLeft = sidebarWidth;
-        admincontent.style.width = `calc(100% - ${sidebarWidth})`;
-        footer.style.marginLeft = sidebarWidth;
+    
+        if (navbar) navbar.style.marginLeft = sidebarWidth;
+        if (admincontent) {
+            admincontent.style.marginLeft = sidebarWidth;
+            admincontent.style.width = `calc(100% - ${sidebarWidth})`;
+        }
+        if (footer) footer.style.marginLeft = sidebarWidth;
     };
     
     // Toggle Sidebar

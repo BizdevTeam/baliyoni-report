@@ -206,22 +206,20 @@ class ExportLaporanAll extends Controller
             $startMonth = $request->input('start_month'); // format Y-m
             $endMonth = $request->input('end_month');     // format Y-m
     
-            // Buat instance baru class ini
             $instance = new self($startMonth, $endMonth);
-    
-            // Bangun query berdasarkan data constructor
             $query = RekapPenjualan::query();
     
-            if ($instance->startDate && $instance->endDate) {
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
                 $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } else {
-                $query->whereMonth('tanggal', $instance->month)
-                      ->whereYear('tanggal', $instance->year);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
             }
     
-            $rekapPenjualan = $query
-            ->orderBy('tanggal','asc')
-            ->get();
+            $rekapPenjualan = $query->orderBy('tanggal', 'asc')->get();
+            // dd($instance->startDate ?? null, $instance->endDate ?? null); // Untuk debug
     
             if ($rekapPenjualan->isEmpty()) {
                 return 'Data tidak ditemukan.';
@@ -263,7 +261,7 @@ class ExportLaporanAll extends Controller
         }
     }
     
-
+    
     public function exportRekapPenjualanPerusahaan(Request $request) {
         try {
         $startMonth = $request->input('start_month'); // format Y-m
@@ -271,12 +269,14 @@ class ExportLaporanAll extends Controller
         $instance = new self($startMonth, $endMonth);
         $query = RekapPenjualanPerusahaan::query();
 
-        if ($instance->startDate && $instance->endDate) {
-            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-        } else {
-            $query->whereMonth('tanggal', $instance->month)
-                  ->whereYear('tanggal', $instance->year);
-        }
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
 
         $rekapPenjualanPerusahaan = $query
         ->orderBy('tanggal','asc')
@@ -332,12 +332,14 @@ class ExportLaporanAll extends Controller
         $instance = new self($startMonth, $endMonth);
         $query = LaporanPaketAdministrasi::query();
 
-        if ($instance->startDate && $instance->endDate) {
-            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-        } else {
-            $query->whereMonth('tanggal', $instance->month)
-                  ->whereYear('tanggal', $instance->year);
-        }
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
 
         $rekapLaporanPaketAdministrasi = $query
         ->orderBy('tanggal','asc')
@@ -394,12 +396,14 @@ class ExportLaporanAll extends Controller
         // Bangun query berdasarkan data constructor
         $query = StatusPaket::query();
 
-        if ($instance->startDate && $instance->endDate) {
-            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-        } else {
-            $query->whereMonth('tanggal', $instance->month)
-                  ->whereYear('tanggal', $instance->year);
-        }
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
 
         $rekapStatusPaket = $query
         ->orderBy('tanggal','asc')
@@ -456,12 +460,14 @@ class ExportLaporanAll extends Controller
         // Bangun query berdasarkan data constructor
         $query = LaporanPerInstansi::query();
 
-        if ($instance->startDate && $instance->endDate) {
-            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-        } else {
-            $query->whereMonth('tanggal', $instance->month)
-                  ->whereYear('tanggal', $instance->year);
-        }
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
 
         $rekapLaporanPerInstansi = $query
         ->orderBy('tanggal','asc')
@@ -519,12 +525,14 @@ class ExportLaporanAll extends Controller
         // Bangun query berdasarkan data constructor
         $query = LaporanHolding::query();
 
-        if ($instance->startDate && $instance->endDate) {
-            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-        } else {
-            $query->whereMonth('tanggal', $instance->month)
-                  ->whereYear('tanggal', $instance->year);
-        }
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
 
         $rekapLaporanHolding = $query
         ->orderBy('tanggal','asc')
@@ -583,12 +591,14 @@ class ExportLaporanAll extends Controller
         // Bangun query berdasarkan data constructor
         $query = LaporanStok::query();
 
-        if ($instance->startDate && $instance->endDate) {
-            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-        } else {
-            $query->whereMonth('tanggal', $instance->month)
-                  ->whereYear('tanggal', $instance->year);
-        }
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
 
         $rekapLaporanStok = $query
         ->orderBy('tanggal','asc')
@@ -646,12 +656,14 @@ class ExportLaporanAll extends Controller
         // Bangun query berdasarkan data constructor
         $query = LaporanOutlet::query();
 
-        if ($instance->startDate && $instance->endDate) {
-            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-        } else {
-            $query->whereMonth('tanggal', $instance->month)
-                  ->whereYear('tanggal', $instance->year);
-        }
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
 
         $rekapLaporanPembelianOutlet = $query
         ->orderBy('tanggal','asc')
@@ -707,12 +719,14 @@ class ExportLaporanAll extends Controller
         // Bangun query berdasarkan data constructor
         $query = LaporanNegosiasi::query();
 
-        if ($instance->startDate && $instance->endDate) {
-            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-        } else {
-            $query->whereMonth('tanggal', $instance->month)
-                  ->whereYear('tanggal', $instance->year);
-        }
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
 
         $rekapLaporanNegosiasi = $query
         ->orderBy('tanggal','asc')
@@ -771,12 +785,14 @@ class ExportLaporanAll extends Controller
         // Bangun query berdasarkan data constructor
         $query = RekapPendapatanServisASP::query();
 
-        if ($instance->startDate && $instance->endDate) {
-            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-        } else {
-            $query->whereMonth('tanggal', $instance->month)
-                  ->whereYear('tanggal', $instance->year);
-        }
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
 
         $rekapPendapatanASP = $query
         ->orderBy('tanggal','asc')
@@ -842,12 +858,14 @@ class ExportLaporanAll extends Controller
         // Bangun query berdasarkan data constructor
         $query = RekapPiutangServisASP::query();
 
-        if ($instance->startDate && $instance->endDate) {
-            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-        } else {
-            $query->whereMonth('tanggal', $instance->month)
-                  ->whereYear('tanggal', $instance->year);
-        }
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
 
         $rekapPiutangServisASP = $query
         ->orderBy('tanggal','asc')
@@ -915,12 +933,14 @@ class ExportLaporanAll extends Controller
         // Bangun query berdasarkan data constructor
         $query = LaporanDetrans::query();
 
-        if ($instance->startDate && $instance->endDate) {
-            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-        } else {
-            $query->whereMonth('tanggal', $instance->month)
-                  ->whereYear('tanggal', $instance->year);
-        }
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
 
         $rekapPengiriman = $query
         ->orderBy('tanggal','asc')
@@ -1001,12 +1021,14 @@ class ExportLaporanAll extends Controller
         // Bangun query berdasarkan data constructor
         $query = LaporanPtBos::query();
 
-        if ($instance->startDate && $instance->endDate) {
-            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-        } else {
-            $query->whereMonth('tanggal', $instance->month)
-                  ->whereYear('tanggal', $instance->year);
-        }
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
 
         $rekapPTBOS = $query
         ->orderBy('tanggal','asc')
@@ -1049,12 +1071,14 @@ class ExportLaporanAll extends Controller
         // Bangun query berdasarkan data constructor
         $query = LaporanIjasa::query();
 
-        if ($instance->startDate && $instance->endDate) {
-            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-        } else {
-            $query->whereMonth('tanggal', $instance->month)
-                  ->whereYear('tanggal', $instance->year);
-        }
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
 
         $rekapIJASA = $query
         ->orderBy('tanggal','asc')
@@ -1098,12 +1122,14 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = IjasaGambar::query();
 
-        if ($instance->startDate && $instance->endDate) {
-            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-        } else {
-            $query->whereMonth('tanggal', $instance->month)
-                  ->whereYear('tanggal', $instance->year);
-        }
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
 
         $ijasaGambar = $query
         ->orderBy('tanggal','asc')
@@ -1144,12 +1170,14 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = LaporanSakit::query();
 
-        if ($instance->startDate && $instance->endDate) {
-            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-        } else {
-            $query->whereMonth('tanggal', $instance->month)
-                  ->whereYear('tanggal', $instance->year);
-        }
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
 
         $rekapSakit = $query
         ->orderBy('tanggal','asc')
@@ -1208,12 +1236,14 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = LaporanCuti::query();
 
-        if ($instance->startDate && $instance->endDate) {
-            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-        } else {
-            $query->whereMonth('tanggal', $instance->month)
-                  ->whereYear('tanggal', $instance->year);
-        }
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
 
         $rekapCuti = $query
         ->orderBy('tanggal','asc')
@@ -1271,12 +1301,14 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = LaporanIzin::query();
 
-        if ($instance->startDate && $instance->endDate) {
-            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-        } else {
-            $query->whereMonth('tanggal', $instance->month)
-                  ->whereYear('tanggal', $instance->year);
-        }
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
 
         $rekapIzin = $query
         ->orderBy('tanggal','asc')
@@ -1334,12 +1366,14 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = LaporanTerlambat::query();
 
-        if ($instance->startDate && $instance->endDate) {
-            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-        } else {
-            $query->whereMonth('tanggal', $instance->month)
-                  ->whereYear('tanggal', $instance->year);
-        }
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
 
         $rekapTerlambat = $query
         ->orderBy('tanggal','asc')
@@ -1399,12 +1433,14 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = LaporanLabaRugi::query();
 
-        if ($instance->startDate && $instance->endDate) {
-            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-        } else {
-            $query->whereMonth('tanggal', $instance->month)
-                  ->whereYear('tanggal', $instance->year);
-        }
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
 
         $rekapLabaRugi = $query
         ->orderBy('tanggal','asc')
@@ -1447,12 +1483,14 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = LaporanNeraca::query();
 
-        if ($instance->startDate && $instance->endDate) {
-            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-        } else {
-            $query->whereMonth('tanggal', $instance->month)
-                  ->whereYear('tanggal', $instance->year);
-        }
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
 
         $rekapNeraca = $query
         ->orderBy('tanggal','asc')
@@ -1494,12 +1532,14 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = LaporanRasio::query();
 
-        if ($instance->startDate && $instance->endDate) {
-            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-        } else {
-            $query->whereMonth('tanggal', $instance->month)
-                  ->whereYear('tanggal', $instance->year);
-        }
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
 
         $rekapRasio = $query
         ->orderBy('tanggal','asc')
@@ -1541,12 +1581,14 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = LaporanPpn::query();
 
-        if ($instance->startDate && $instance->endDate) {
-            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-        } else {
-            $query->whereMonth('tanggal', $instance->month)
-                  ->whereYear('tanggal', $instance->year);
-        }
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
 
         $rekapPPn = $query
         ->orderBy('tanggal','asc')
@@ -1588,12 +1630,14 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = LaporanTaxPlaning::query();
 
-        if ($instance->startDate && $instance->endDate) {
-            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-        } else {
-            $query->whereMonth('tanggal', $instance->month)
-                  ->whereYear('tanggal', $instance->year);
-        }
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
 
         $rekapTaxPlanning = $query
         ->orderBy('tanggal','asc')
@@ -1635,12 +1679,14 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = ItMultimediaTiktok::query();
 
-        if ($instance->startDate && $instance->endDate) {
-            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-        } else {
-            $query->whereMonth('tanggal', $instance->month)
-                  ->whereYear('tanggal', $instance->year);
-        }
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
 
         $rekapTiktok = $query
         ->orderBy('tanggal','asc')
@@ -1681,12 +1727,14 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = ItMultimediaInstagram::query();
 
-        if ($instance->startDate && $instance->endDate) {
-            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-        } else {
-            $query->whereMonth('tanggal', $instance->month)
-                  ->whereYear('tanggal', $instance->year);
-        }
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
 
         $rekapInstagram = $query
         ->orderBy('tanggal','asc')
@@ -1727,12 +1775,14 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = LaporanBizdevGambar::query();
 
-        if ($instance->startDate && $instance->endDate) {
-            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-        } else {
-            $query->whereMonth('tanggal', $instance->month)
-                  ->whereYear('tanggal', $instance->year);
-        }
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
 
         $rekapBizdev = $query
         ->orderBy('tanggal','asc')
@@ -1772,12 +1822,14 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = KasHutangPiutang::query();
 
-        if ($instance->startDate && $instance->endDate) {
-            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-        } else {
-            $query->whereMonth('tanggal', $instance->month)
-                  ->whereYear('tanggal', $instance->year);
-        }
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
 
         $rekapKHPS = $query
         ->orderBy('tanggal','asc')
@@ -1843,12 +1895,14 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = ArusKas::query();
 
-        if ($instance->startDate && $instance->endDate) {
-            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-        } else {
-            $query->whereMonth('tanggal', $instance->month)
-                  ->whereYear('tanggal', $instance->year);
-        }
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
 
         $rekapArusKas = $query
         ->orderBy('tanggal','asc')
@@ -1908,12 +1962,14 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = LaporanSPI::query();
 
-        if ($instance->startDate && $instance->endDate) {
-            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-        } else {
-            $query->whereMonth('tanggal', $instance->month)
-                  ->whereYear('tanggal', $instance->year);
-        }
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
 
         $laporanSPI = $query
         ->orderBy('tanggal','asc')
@@ -1954,12 +2010,14 @@ public function exportIJASAGambar(Request $request)
         // Bangun query berdasarkan data constructor
         $query = LaporanSPITI::query();
 
-        if ($instance->startDate && $instance->endDate) {
-            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-        } else {
-            $query->whereMonth('tanggal', $instance->month)
-                  ->whereYear('tanggal', $instance->year);
-        }
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
 
         $laporanSPIIT = $query
         ->orderBy('tanggal','asc')

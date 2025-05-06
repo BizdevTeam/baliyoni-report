@@ -18,7 +18,7 @@
             <ul class="flex flex-col space-y-3">
                 <div class="home">
                     <li class="group hover:text-white menu-item">
-                        <a href="/admin" class="flex items-center space-x-3 px-4 py-2 rounded-md transition">
+                        <a href="/admin/dashboard" class="flex items-center space-x-3 px-4 py-2 rounded-md transition">
                             <img src="{{ asset ("images/homepage.svg") }}" class="w-5 h-5">
                             <span class="menu-label">Homepage</span>
                         </a>
