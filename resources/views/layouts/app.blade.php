@@ -53,6 +53,22 @@
             </style>
         `);
     </script>
+    <style>
+        /* Styling agar numbered list & bullet list tetap tampil di tabel */
+        .content-html ol {
+        list-style-type: decimal;
+        margin-left: 20px;
+        }
+    
+        .content-html ul {
+        list-style-type: disc;
+        margin-left: 20px;
+        }
+    
+        .content-html li {
+        margin-bottom: 4px;
+        }
+    </style>
 
     <!-- Google Font -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
