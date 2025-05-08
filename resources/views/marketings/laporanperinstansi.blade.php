@@ -345,7 +345,7 @@
                                     <option value="Singaraja">Singaraja</option>
                                     <option value="Tabanan">Tabanan</option>
                                     <option value="Jembrana">Jembrana</option>
-                                    <option value="Klungung">Klungung</option>
+                                    <option value="Klungkung">Klungkung</option>
                                     <option value="Provinsi">Provinsi</option>
                                 </select>
                             </div>
