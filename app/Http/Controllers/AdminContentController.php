@@ -37,6 +37,8 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\DB;
+
 
 class AdminContentController extends Controller
 {
@@ -70,25 +72,47 @@ class AdminContentController extends Controller
         }
     }
 
-    // Fungsi untuk menerapkan filter pada query jika diperlukan
+    // // Fungsi untuk menerapkan filter pada query jika diperlukan
+    // private function applyDateFilter($query, $tanggalColumn = 'tanggal')
+    // {
+    //     // Hanya terapkan filter jika flag useFilter aktif
+    //     if (!$this->useFilter) {
+    //         return $query; // Return query tanpa filter
+    //     }
+
+    //     if (isset($this->startDate) && isset($this->endDate)) {
+    //         // Kedua bulan diisi: filter rentang tanggal
+    //         $query->whereBetween($tanggalColumn, [$this->startDate, $this->endDate]);
+    //     } elseif (isset($this->month) && isset($this->year)) {
+    //         // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+    //         $search = sprintf('%04d-%02d', $this->year, $this->month);
+    //         $query->whereRaw("DATE_FORMAT($tanggalColumn, '%Y-%m') LIKE ?", ["%$search%"]);
+    //     }
+
+    //     return $query;
+    // }
+
     private function applyDateFilter($query, $tanggalColumn = 'tanggal')
     {
-        // Hanya terapkan filter jika flag useFilter aktif
         if (!$this->useFilter) {
-            return $query; // Return query tanpa filter
+            return $query;
         }
-
+    
         if (isset($this->startDate) && isset($this->endDate)) {
-            // Kedua bulan diisi: filter rentang tanggal
-            $query->whereBetween($tanggalColumn, [$this->startDate, $this->endDate]);
+            // Filter rentang tanggal, konversi varchar ke DATE
+            $query->whereBetween(
+                DB::raw("STR_TO_DATE($tanggalColumn, '%Y-%m-%d')"),
+                [$this->startDate, $this->endDate]
+            );
         } elseif (isset($this->month) && isset($this->year)) {
-            // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+            // Filter berdasarkan bulan dan tahun
             $search = sprintf('%04d-%02d', $this->year, $this->month);
-            $query->whereRaw("DATE_FORMAT($tanggalColumn, '%Y-%m') LIKE ?", ["%$search%"]);
+            $query->whereRaw("DATE_FORMAT(STR_TO_DATE($tanggalColumn, '%Y-%m-%d'), '%Y-%m') = ?", [$search]);
         }
-
+    
         return $query;
     }
+    
     // Fungsi generate warna random
     public function getRandomRGBA()
     {
