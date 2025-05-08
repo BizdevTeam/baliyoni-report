@@ -343,7 +343,7 @@ Route::middleware(['guest'])->group(function () {
 
 // Authenticated routes
 Route::middleware(['auth'])->group(function () {
-    Route::get('/admin', [AdminController::class, 'index'])->name('layouts.admin')->middleware('UserAccess:superadmin');
+    Route::get('/admin/app', [AdminController::class, 'index'])->name('layouts.app')->middleware('UserAccess:superadmin');
     Route::get('/admin/laporan-paket-administrasi', [LaporanPaketAdministrasiController::class, 'index'])->name('admin.laporan.paket.administrasi');
     Route::get('/admin/marketing', [AdminController::class, 'marketing'])->name('layouts.marketing')->middleware('UserAccess:marketing');
     Route::get('/admin/it', [AdminController::class, 'it'])->name('layouts.it')->middleware('UserAccess:it');
@@ -363,7 +363,7 @@ Route::get('/export-laporan-all', [ExportLaporanAll::class, 'exportAll'])->name(
 // Add these routes for the AdminContentController
 Route::middleware(['auth'])->group(function () {
     // Main dashboard route
-    Route::get('/admin/dashboard', [AdminContentController::class, 'index'])->name('admin.dashboard');
+    Route::get('/admin/app', [AdminContentController::class, 'index'])->name('layouts.app');
     
     // You can also add specific routes for individual reports if needed
     Route::get('/admin/dashboard/export-penjualan', [AdminContentController::class, 'exportRekapPenjualan'])->name('admin.export.penjualan');

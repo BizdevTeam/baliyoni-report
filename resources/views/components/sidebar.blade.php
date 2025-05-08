@@ -3,10 +3,16 @@
     <!-- Logo Section -->
     <div class="mt-8 mb-8 pb-3 flex justify-center">
         <div id="logo-full" class="logo w-40 h-auto">
-            <img src="{{ asset('images/baliyoni.png') }}" class="w-full" alt="Logo Full">
+            <p class="flex items-center justify-center text-center text-3xl font-bold text-red-600">
+                Ar<span class="text-black">Work</span>
+            </p>
+            {{-- <img src="{{ asset('images/baliyoni.png') }}" class="w-full" alt="Logo Full"> --}}
         </div>
         <div id="logo-mini" class="logo w-10 h-auto hidden">
-            <img src="{{ asset('images/BYS_LOGO.png') }}" class="w-full" alt="Logo Mini">
+            <p class="flex items-center justify-center text-center text-[10px] font-bold text-red-600">
+                ArWork
+            </p>
+            {{-- <img src="{{ asset('images/BYS_LOGO.png') }}" class="w-full" alt="Logo Mini"> --}}
         </div>
     </div>
 
@@ -18,7 +24,7 @@
             <ul class="flex flex-col space-y-3">
                 <div class="home">
                     <li class="group hover:text-white menu-item">
-                        <a href="/admin/dashboard" class="flex items-center space-x-3 px-4 py-2 rounded-md transition">
+                        <a href="/admin/app" class="flex items-center space-x-3 px-4 py-2 rounded-md transition">
                             <img src="{{ asset ("images/homepage.svg") }}" class="w-5 h-5">
                             <span class="menu-label">Homepage</span>
                         </a>

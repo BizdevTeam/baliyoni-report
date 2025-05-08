@@ -30,7 +30,7 @@ class SessionController extends Controller
             $role = Auth::user()->role;
             switch ($role) {
                 case 'superadmin':
-                    return redirect('admin');
+                    return redirect('admin/app');
                 case 'marketing':
                     return redirect('admin/marketing');
                 case 'it':

@@ -11,7 +11,7 @@ class AdminController extends Controller
     // 
     function index()
     {
-        return view('layouts.admin');
+        return view('layouts.app');
     }
     function marketing()
     {

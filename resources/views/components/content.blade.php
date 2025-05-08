@@ -45,7 +45,7 @@
                 </div>
                 <!--ganti source datanya nanti-->
                 <div class="chart-container chart2 bg-white shadow-md rounded-lg p-6 hidden">
-                    <canvas class="chart-export w-full h-96" data-chart='@json($dataExportLaporanPenjualan["chart"])'></canvas>
+                    <canvas class="chart-export w-full h-96" data-chart='@json($dataTotalLaporanPenjualanPerusahaan["chart"])'></canvas>
                 </div>
 
                 <div class="flex justify-end mt-4">
@@ -70,7 +70,7 @@
                 </div>
                 <!--ganti source datanya nanti-->
                 <div class="chart-container chart2 bg-white shadow-md rounded-lg p-6 hidden">
-                    <canvas class="chart-export w-full h-96" data-chart='@json($dataExportLaporanPenjualan["chart"])'></canvas>
+                    <canvas class="chart-export w-full h-96" data-chart='@json($dataTotalLaporanPaketAdministrasi["chart"])'></canvas>
                 </div>
 
                 <div class="flex justify-end mt-4">
@@ -95,7 +95,7 @@
                 </div>
                 <!--ganti source datanya nanti-->
                 <div class="chart-container chart2 bg-white shadow-md rounded-lg p-6 hidden">
-                    <canvas class="chart-export w-full h-96" data-chart='@json($dataExportLaporanPenjualan["chart"])'></canvas>
+                    <canvas class="chart-export w-full h-96" data-chart='@json($dataTotalStatusPaket["chart"])'></canvas>
                 </div>
 
                 <div class="flex justify-end mt-4">
@@ -120,7 +120,7 @@
                 </div>
                 <!--ganti source datanya nanti-->
                 <div class="chart-container chart2 bg-white shadow-md rounded-lg p-6 hidden">
-                    <canvas class="chart-export w-full h-96" data-chart='@json($dataExportLaporanPenjualan["chart"])'></canvas>
+                    <canvas class="chart-export w-full h-96" data-chart='@json($dataTotalInstansi["chart"])'></canvas>
                 </div>
 
                 <div class="flex justify-end mt-4">
@@ -149,7 +149,7 @@
                 </div>
                 <!--ganti source datanya nanti-->
                 <div class="chart-container chart2 bg-white shadow-md rounded-lg p-6 hidden">
-                    <canvas class="chart-export w-full h-96" data-chart='@json($dataExportLaporanPenjualan["chart"])'></canvas>
+                    <canvas class="chart-export w-full h-96" data-chart='@json($dataTotalLaporanHolding["chart"])'></canvas>
                 </div>
 
                 <div class="flex justify-end mt-4">
@@ -222,7 +222,7 @@
                 </div>
                 <!--ganti source datanya nanti-->
                 <div class="chart-container chart2 bg-white shadow-md rounded-lg p-6 hidden">
-                    <canvas class="chart-export w-full h-96" data-chart='@json($dataExportLaporanPenjualan["chart"])'></canvas>
+                    <canvas class="chart-export w-full h-96" data-chart='@json($dataTotalRekapPendapatanASP["chart"])'></canvas>
                 </div>
 
                 <div class="flex justify-end mt-4">
@@ -246,7 +246,7 @@
                 </div>
                 <!--ganti source datanya nanti-->
                 <div class="chart-container chart2 bg-white shadow-md rounded-lg p-6 hidden">
-                    <canvas class="chart-export w-full h-96" data-chart='@json($dataExportLaporanPenjualan["chart"])'></canvas>
+                    <canvas class="chart-export w-full h-96" data-chart='@json($dataTotalRekapPiutangASP["chart"])'></canvas>
                 </div>
 
                 <div class="flex justify-end mt-4">
@@ -835,7 +835,7 @@
                 </div>
                 <!--ganti source datanya nanti-->
                 <div class="chart-container chart2 bg-white shadow-md rounded-lg p-6 hidden">
-                    <canvas class="chart-export-hrga w-full h-96" data-chart='@json($dataExportLaporanPenjualan["chart"])'></canvas>
+                    <canvas class="chart-export-hrga w-full h-96" data-chart='@json($dataTotalSakit["chart"])'></canvas>
                 </div>
 
                 <div class="flex justify-end mt-4">
@@ -860,7 +860,7 @@
                 </div>
                 <!--ganti source datanya nanti-->
                 <div class="chart-container chart2 bg-white shadow-md rounded-lg p-6 hidden">
-                    <canvas class="chart-export-hrga w-full h-96" data-chart='@json($dataExportLaporanPenjualan["chart"])'></canvas>
+                    <canvas class="chart-export-hrga w-full h-96" data-chart='@json($dataTotalCuti["chart"])'></canvas>
                 </div>
 
                 <div class="flex justify-end mt-4">
@@ -885,7 +885,7 @@
                 </div>
                 <!--ganti source datanya nanti-->
                 <div class="chart-container chart2 bg-white shadow-md rounded-lg p-6 hidden">
-                    <canvas class="chart-export-hrga w-full h-96" data-chart='@json($dataExportLaporanPenjualan["chart"])'></canvas>
+                    <canvas class="chart-export-hrga w-full h-96" data-chart='@json($dataTotalIzin["chart"])'></canvas>
                 </div>
 
                 <div class="flex justify-end mt-4">
@@ -910,7 +910,7 @@
                 </div>
                 <!--ganti source datanya nanti-->
                 <div class="chart-container chart2 bg-white shadow-md rounded-lg p-6 hidden">
-                    <canvas class="chart-export-hrga w-full h-96" data-chart='@json($dataExportLaporanPenjualan["chart"])'></canvas>
+                    <canvas class="chart-export-hrga w-full h-96" data-chart='@json($dataTotalTerlambat["chart"])'></canvas>
                 </div>
 
                 <div class="flex justify-end mt-4">
