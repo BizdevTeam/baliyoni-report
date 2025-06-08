@@ -1071,14 +1071,14 @@ class ExportLaporanAll extends Controller
         // Bangun query berdasarkan data constructor
         $query = LaporanIjasa::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            }
+        if (isset($instance->startDate) && isset($instance->endDate)) {
+            // Kedua bulan diisi: filter rentang tanggal
+            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+        } elseif (isset($instance->month) && isset($instance->year)) {
+            // Hanya satu bulan diisi: filter berdasarkan bulan dan tahun
+            $query->whereYear('tanggal', $instance->year)
+                ->whereMonth('tanggal', $instance->month);
+        }
 
         $rekapIJASA = $query
         ->orderBy('tanggal','asc')

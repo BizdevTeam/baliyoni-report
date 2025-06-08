@@ -320,6 +320,14 @@
                         </a>
                     </li>
                 </div>
+                <div class="home">
+                    <li class="group hover:text-white menu-item">
+                        <a href="{{ route("questions.index") }}" class="flex items-center space-x-3 px-4 py-2 rounded-md transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M9 15.616q-.877 0-1.496-.62t-.62-1.496t.62-1.496T9 11.384t1.496.62t.62 1.496t-.62 1.496t-1.496.62M5.616 21q-.691 0-1.153-.462T4 19.385V6.615q0-.69.463-1.152T5.616 5h1.769V2.77h1.077V5h7.154V2.77h1V5h1.769q.69 0 1.153.463T20 6.616v12.769q0 .69-.462 1.153T18.384 21zm0-1h12.769q.23 0 .423-.192t.192-.424v-8.768H5v8.769q0 .23.192.423t.423.192M5 9.615h14v-3q0-.23-.192-.423T18.384 6H5.616q-.231 0-.424.192T5 6.616zm0 0V6z"/></svg>
+                            <span class="menu-label">Daily Report</span>
+                        </a>
+                    </li>
+                </div>
                 <li class="relative mb-24">
                     <a href="{{ route('logout') }}">
                         <button type="submit" class="flex items-center w-full px-4 py-2 text-gray-700 rounded-md . . transition" aria-controls="dropdown-logout" aria-expanded="false">
@@ -336,7 +344,7 @@
             <ul class="flex flex-col space-y-3">
                 <div class="home">
                     <li class="group hover:text-white menu-item">
-                        <a href="/admin" class="flex items-center space-x-3 px-4 py-2 rounded-md transition">
+                        <a href="/admin/app" class="flex items-center space-x-3 px-4 py-2 rounded-md transition">
                             <img src="{{ asset('images/homepage.svg') }}" class="w-5 h-5">
                             <span class="menu-label">Homepage</span>
                         </a>
@@ -398,7 +406,7 @@
             <ul class="flex flex-col space-y-3">
                 <div class="home">
                     <li class="group hover:text-white menu-item">
-                        <a href="/admin" class="flex items-center space-x-3 px-4 py-2 rounded-md transition">
+                        <a href="/admin/app" class="flex items-center space-x-3 px-4 py-2 rounded-md transition">
                             <img src="{{ asset('images/homepage.svg') }}" class="w-5 h-5">
                             <span class="menu-label">Homepage</span>
                         </a>
@@ -454,7 +462,7 @@
             <ul class="flex flex-col space-y-3">
                 <div class="home">
                     <li class="group hover:text-white menu-item">
-                        <a href="#" class="flex items-center space-x-3 px-4 py-2 rounded-md transition">
+                        <a href="/admin/app" class="flex items-center space-x-3 px-4 py-2 rounded-md transition">
                             <img src="{{ asset('images/homepage.svg') }}" class="w-5 h-5">
                             <span class="menu-label">Homepage</span>
                         </a>
@@ -511,7 +519,7 @@
             <ul class="flex flex-col space-y-3">
                 <div class="home">
                     <li class="group hover:text-white menu-item">
-                        <a href="#" class="flex items-center space-x-3 px-4 py-2 rounded-md transition">
+                        <a href="/admin/app" class="flex items-center space-x-3 px-4 py-2 rounded-md transition">
                             <img src="{{ asset('images/homepage.svg') }}" class="w-5 h-5">
                             <span class="menu-label">Homepage</span>
                         </a>
@@ -585,7 +593,7 @@
             <ul class="flex flex-col space-y-3">
                 <div class="home">
                     <li class="group hover:text-white menu-item">
-                        <a href="#" class="flex items-center space-x-3 px-4 py-2 rounded-md transition">
+                        <a href="/admin/app" class="flex items-center space-x-3 px-4 py-2 rounded-md transition">
                             <img src="{{ asset('images/homepage.svg') }}" class="w-5 h-5">
                             <span class="menu-label">Homepage</span>
                         </a>
@@ -659,7 +667,7 @@
             <ul class="flex flex-col space-y-3">
                 <div class="home">
                     <li class="group hover:text-white menu-item">
-                        <a href="#" class="flex items-center space-x-3 px-4 py-2 rounded-md transition">
+                        <a href="/admin/app" class="flex items-center space-x-3 px-4 py-2 rounded-md transition">
                             <img src="{{ asset('images/homepage.svg') }}" class="w-5 h-5">
                             <span class="menu-label">Homepage</span>
                         </a>
@@ -703,7 +711,7 @@
             <ul class="flex flex-col space-y-3">
                 <div class="home">
                     <li class="group hover:text-white menu-item">
-                        <a href="#" class="flex items-center space-x-3 px-4 py-2 rounded-md transition">
+                        <a href="/admin/app" class="flex items-center space-x-3 px-4 py-2 rounded-md transition">
                             <img src="{{ asset('images/homepage.svg') }}" class="w-5 h-5">
                             <span class="menu-label">Homepage</span>
                         </a>

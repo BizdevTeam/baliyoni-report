@@ -18,40 +18,47 @@ class LaporanIjasaController extends Controller
 {
     use DateValidationTrait;
 
-        public function index(Request $request)
-    {
-        $perPage = $request->input('per_page', 12);
-        $search = $request->input('search');
-        $startMonth = $request->input('start_month');
-        $endMonth = $request->input('end_month');
-    
-        $query = LaporanIjasa::query();
-    
-        // Filter berdasarkan tanggal jika ada
-        if ($search) {
-            $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-        }
-    
-        // Filter berdasarkan range bulan-tahun jika keduanya diisi
-        if (!empty($startMonth) && !empty($endMonth)) {
-            try {
-                $startDate = Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
-                $endDate = Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
-                $query->whereBetween('tanggal', [$startDate, $endDate]);
-            } catch (Exception $e) {
-                return response()->json(['error' => 'Format tanggal tidak valid. Gunakan format Y-m.'], 400);
-            }
-        }
-        // Ambil data dengan pagination
-        $laporanijasas = $query->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
-                                  ->paginate($perPage);
+       public function index(Request $request)
+{
+    $perPage = $request->input('per_page', 12);
+    $search = $request->input('search');
+    $startMonth = $request->input('start_month');
+    $endMonth = $request->input('end_month');
 
-        if ($request->ajax()) {
-            return response()->json(['laporanijasas' => $laporanijasas]);
+    $query = LaporanIjasa::query();
+
+    // Filter berdasarkan bulan dan tahun (format Y-m)
+    if ($search) {
+        try {
+            $date = Carbon::createFromFormat('Y-m', $search);
+            $query->whereYear('tanggal', $date->year)
+                  ->whereMonth('tanggal', $date->month);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Format pencarian tidak valid. Gunakan format Y-m.'], 400);
         }
-    
-    return view('hrga.laporanijasa', compact('laporanijasas'));
     }
+
+    // Filter berdasarkan range bulan-tahun jika keduanya diisi
+    if (!empty($startMonth) && !empty($endMonth)) {
+        try {
+            $startDate = Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+            $endDate = Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+            $query->whereBetween('tanggal', [$startDate, $endDate]);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Format tanggal tidak valid. Gunakan format Y-m.'], 400);
+        }
+    }
+
+    // Ambil data dengan pagination
+    $laporanijasas = $query->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
+                           ->paginate($perPage);
+
+    if ($request->ajax()) {
+        return response()->json(['laporanijasas' => $laporanijasas]);
+    }
+
+    return view('hrga.laporanijasa', compact('laporanijasas'));
+}
 
     public function store(Request $request)
     {
