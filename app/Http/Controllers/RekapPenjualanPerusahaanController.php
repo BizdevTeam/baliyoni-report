@@ -55,8 +55,8 @@ class RekapPenjualanPerusahaanController extends Controller
             'labels' => $labels, // Labels untuk chart
             'datasets' => [
                 [
-                    'label' => 'Grafik Rekap Penjualan Perusahaan', // Nama dataset
-                    'text' => 'Total Penjualan Perusahaan', // Nama dataset
+                    'label' => 'Sales Recap by Company', // Nama dataset
+                    'text' => 'Sales Recap by Company', // Nama dataset
                     'data' => $data, // Data untuk chart
                     'backgroundColor' => $backgroundColors, // Warna batang random
                 ],
@@ -183,19 +183,19 @@ class RekapPenjualanPerusahaanController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
 
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Marketing - Laporan Rekap Penjualan Perusahaan|');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Marketing - Sales Recap by Company|');
 
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "
             <div style='gap: 100px; width: 100%;'>
                 <div style='width: 30%; float: left; padding-right: 20px;'>
-                    <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Tabel Data</h2>
+                    <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Table Data</h2>
                     <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                         <thead>
                             <tr style='background-color: #f2f2f2;'>
-                                <th style='border: 1px solid #000; padding: 1px;'>Tanggal</th>
-                                <th style='border: 1px solid #000; padding: 1px;'>Perusahaan</th>
-                                <th style='border: 1px solid #000; padding: 2px;'>Total Penjualan (Rp)</th>
+                                <th style='border: 1px solid #000; padding: 1px;'>Date</th>
+                                <th style='border: 1px solid #000; padding: 1px;'>Company</th>
+                                <th style='border: 1px solid #000; padding: 2px;'>Value (Rp)</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -204,7 +204,7 @@ class RekapPenjualanPerusahaanController extends Controller
                     </table>
                 </div>
                 <div style='width: 65%; text-align:center; margin-left: 20px;'>
-                    <h2 style='font-size: 14px; margin-bottom: 10px;'>Grafik Laporan Penjualan Perusahaan</h2>
+                    <h2 style='font-size: 14px; margin-bottom: 10px;'>Chart Sales Recap by Company</h2>
                     <img src='{$chartBase64}' style='width: 100%; height: auto;' alt='Grafik Laporan' />
                 </div>
             </div>

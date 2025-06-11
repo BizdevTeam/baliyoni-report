@@ -135,7 +135,7 @@ class laporanSPITiController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan SPI - Laporan SPI IT|');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan SPI - IT SPI Report|');
     
             // Set CSS untuk memastikan formatting CKEditor dipertahankan
             $styleCSS = "
@@ -163,15 +163,15 @@ class laporanSPITiController extends Controller
                     {$styleCSS}
                 </style>
                 <div style='width: 100%;'>
-                    <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Tabel Data</h2>
+                    <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Table Data</h2>
                     <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                         <thead>
                             <tr style='background-color: #f2f2f2;'>
-                                <th style='border: 1px solid #000; padding: 1px;'>Tanggal</th>
-                                <th style='border: 1px solid #000; padding: 2px;'>Aspek</th>
-                                <th style='border: 1px solid #000; padding: 2px;'>Masalah</th>
-                                <th style='border: 1px solid #000; padding: 2px;'>Solusi</th>
-                                <th style='border: 1px solid #000; padding: 2px;'>Implementasi</th>
+                                <th style='border: 1px solid #000; padding: 1px;'>Date</th>
+                                <th style='border: 1px solid #000; padding: 2px;'>Aspects</th>
+                                <th style='border: 1px solid #000; padding: 2px;'>Problem</th>
+                                <th style='border: 1px solid #000; padding: 2px;'>Solution</th>
+                                <th style='border: 1px solid #000; padding: 2px;'>Implementation</th>
                             </tr>
                         </thead>
                         <tbody>

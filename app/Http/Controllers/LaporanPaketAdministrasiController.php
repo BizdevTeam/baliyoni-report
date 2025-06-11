@@ -53,8 +53,8 @@ class LaporanPaketAdministrasiController extends Controller
             'labels' => $labels, // Labels untuk chart
             'datasets' => [
                 [
-                    'label' => 'Grafik Laporan Paket Administrasi', // Nama dataset
-                    'text' => 'Total Paket', // Nama dataset
+                    'label' => 'Administrative Package Chart', // Nama dataset
+                    'text' => 'Total Package', // Nama dataset
                     'data' => $data, // Data untuk chart
                     'backgroundColor' => $backgroundColors, // Warna batang random
                 ],
@@ -203,19 +203,19 @@ class LaporanPaketAdministrasiController extends Controller
             }
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Marketing - Laporan Paket Administrasi|');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Marketing - Administrative Package Report|');
     
             // Buat konten HTML dengan styling CSS yang lebih ketat
             $htmlContent = "
             <div style='gap: 100px; width: 100%;'>
                 <div style='width: 30%; float: left; padding-right: 20px;'>
-                    <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Tabel Data</h2>
+                    <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Table Data</h2>
                     <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                         <thead>
                             <tr style='background-color: #f2f2f2;'>
-                                <th style='border: 1px solid #000; padding: 1px;'>Tanggal</th>
+                                <th style='border: 1px solid #000; padding: 1px;'>Date</th>
                                 <th style='border: 1px solid #000; padding: 1px;'>Website</th>
-                                <th style='border: 1px solid #000; padding: 2px;'>Nilai Paket</th>
+                                <th style='border: 1px solid #000; padding: 2px;'>Value Package</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -224,7 +224,7 @@ class LaporanPaketAdministrasiController extends Controller
                     </table>
                 </div>
                 <div style='width: 65%; text-align:center; margin-left: 20px;'>
-                    <h2 style='font-size: 14px; margin-bottom: 10px;'>Grafik Laporan Paket Administrasi</h2>
+                    <h2 style='font-size: 14px; margin-bottom: 10px;'>Administrative Package Chart</h2>
                     <img src='{$chartBase64}' style='width: 100%; height: auto;' alt='Grafik Laporan' />
                 </div>
             </div>

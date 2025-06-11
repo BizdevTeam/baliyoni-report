@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Rekap Pendapatan Pengiriman</title>
+    <title>Shipping Report Recap</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @vite('resources/css/app.css')
@@ -90,7 +90,7 @@
     
         <!-- Main Content -->
         <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
-            <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Rekap Pendapatan Pengiriman</h1>
+            <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Shipping Report Recap</h1>
 
             <div class="flex items-center justify-end transition-all duration-500 mt-8 mb-4">
                 <!-- Search -->
@@ -130,10 +130,10 @@
             <table class="table-auto w-full border-collapse border border-gray-300" id="data-table">
                 <thead class="bg-gray-200">
                     <tr>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Pelaksana</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Total Pengiriman</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Aksi</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Date</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Executor</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Total Shipping</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -167,7 +167,7 @@
                                     @method('PUT')
                                     <div class="space-y-4">
                                         <div>
-                                            <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                                            <label for="tanggal" class="block text-sm font-medium">Date</label>
                                             <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $laporandetran->tanggal }}" required>
                                         </div>
                                         <div>
@@ -178,7 +178,7 @@
                                             </select>
                                         </div>
                                         <div>
-                                            <label for="total_pengiriman" class="block text-sm font-medium">Total Pengiriman</label>
+                                            <label for="total_pengiriman" class="block text-sm font-medium">Total Shipping</label>
                                             <input type="number" name="total_pengiriman" class="w-full p-2 border rounded" value="{{ $laporandetran->total_pengiriman }}" required>
                                         </div>
                                     </div>
@@ -286,7 +286,7 @@
             @csrf
             <div class="space-y-4">
                 <div>
-                    <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                    <label for="tanggal" class="block text-sm font-medium">Date</label>
                     <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
                 </div>
                 <div>
@@ -297,7 +297,7 @@
                     </select>
                 </div>
                 <div>
-                    <label for="total_pengiriman" class="block text-sm font-medium">Total Pengiriman</label>
+                    <label for="total_pengiriman" class="block text-sm font-medium">Total Shipping</label>
                     <input type="number" name="total_pengiriman" class="w-full p-2 border rounded" required>
                 </div>
             </div>

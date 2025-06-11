@@ -41,37 +41,37 @@
                         <li>
                             <a href="{{ route("rekappenjualan.index") }}" class="flex items-center px-3 py-2 text-gray-700  transition">
                                 <img src="{{ asset("icon/RekapPenjualan.svg") }}" class="w-5 h-5">
-                                <span class="ml-2">Rekap Penjualan</span>
+                                <span class="ml-2">Sales Recap</span>
                             </a>
                         </li>
                         <li>
                             <a href="{{ route("rekappenjualanperusahaan.index") }}" class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                                 <img src="{{ asset("icon/RekapPenjualanPerusahaan.svg") }}" class="w-5 h-5">
-                                <span class="ml-2">Rekap Penjualan Perusahaan</span>
+                                <span class="ml-2">Sales Recap by Company</span>
                             </a>
                         </li>
                         <li>
                             <a href="{{ route("laporanpaketadministrasi.index") }}" class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                                 <img src="{{ asset("icon/LaporanPaketAdministrasi.svg") }}" class="w-5 h-5">
-                                <span class="ml-2">Laporan Paket Administrasi</span>
+                                <span class="ml-2">Administrative Package Report</span>
                             </a>
                         </li>
                         <li>
                             <a href="{{ route("statuspaket.index") }}" class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                                 <img src="{{ asset("icon/LaporanStatusPaket.svg") }}" class="w-5 h-5">
-                                <span class="ml-2">Laporan Status Paket </span>
+                                <span class="ml-2">Package Status Report </span>
                             </a>
                         </li>
                         <li>
                             <a href="{{ route("laporanperinstansi.index") }}" class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                                 <img src="{{ asset("icon/LaporanPerinstansi.svg") }}" class="w-5 h-5">
-                                <span class="ml-2">Laporan Per Instansi</span>
+                                <span class="ml-2">Institution-Based Report</span>
                             </a>
                         </li>
                         <li>
                             <a href="{{ route("perusahaan.index") }}" class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                                 <img src="{{ asset("icon/LaporanPerinstansi.svg") }}" class="w-5 h-5">
-                                <span class="ml-2">Tambah Data Perusahaan</span>
+                                <span class="ml-2">Add Company Data</span>
                             </a>
                         </li>
                     </ul>
@@ -88,25 +88,25 @@
                         <li>
                             <a href="{{ route("laporanholding.index") }}" class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
                                 <img src="{{ asset("icon/RekapPenjualan.svg") }}" class="w-5 h-5">
-                                <span class="ml-2">Laporan Pembelian (Holding)</span>
+                                <span class="ml-2">Purchase Report (Holding)</span>
                             </a>
                         </li>
                         <li>
                             <a href="{{ route("laporanstok.index") }}" class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                                 <img src="{{ asset("icon/RekapPenjualanPerusahaan.svg") }}" class="w-5 h-5">
-                                <span class="ml-2">Laporan Stok</span>
+                                <span class="ml-2">Stock Report</span>
                             </a>
                         </li>
                         <li>
                             <a href="{{ route('laporanoutlet.index') }}" class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                                 <img src="{{ asset("icon/LaporanPaketAdministrasi.svg") }}" class="w-5 h-5">
-                                <span class="ml-2">Laporan Pembelian Outlet</span>
+                                <span class="ml-2">Outlet Purchase Report</span>
                             </a>
                         </li>
                         <li>
                             <a href="{{ route("laporannegosiasi.index") }}" class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                                 <img src="{{ asset("icon/LaporanStatusPaket.svg") }}" class="w-5 h-5">
-                                <span class="ml-2">Laporan Negosiasi</span>
+                                <span class="ml-2">Negotiation Report</span>
                             </a>
                         </li>
                     </ul>
@@ -123,19 +123,19 @@
                         <li>
                             <a href="{{ route('rekappendapatanservisasp.index') }}" class="flex items-center px-3 py-2 text-gray-700 rounded-md . transition">
                                 <img src="{{ asset("icon/RekapPenjualan.svg") }}" class="w-5 h-5">
-                                <span class="ml-2">Rekap Pendapatan Servis ASP</span>
+                                <span class="ml-2">ASP Service Revenue Recap</span>
                             </a>
                         </li>
                         <li>
                             <a href="{{ route('rekappiutangservisasp.index') }}" class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                                 <img src="{{ asset("icon/RekapPenjualanPerusahaan.svg") }}" class="w-5 h-5">
-                                <span class="ml-2">Rekap Piutang Servis ASP</span>
+                                <span class="ml-2">ASP Service Receivables Recap</span>
                             </a>
                         </li>
                         <li>
                             <a href="{{ route("laporandetrans.index") }}" class="flex items-center px-3 py-2 text-gray-700 rounded-md . transition">
                                 <img src="{{ asset("icon/RekapPenjualanPerusahaan.svg") }}" class="w-5 h-5">
-                                <span class="ml-2">Rekap Laporan Pengiriman</span>
+                                <span class="ml-2">Shipping Report Recap</span>
                             </a>
                         </li>
                     </ul>
@@ -361,31 +361,31 @@
                         <li>
                             <a href="{{ route("rekappenjualan.index") }}" class="flex items-center px-3 py-2 text-gray-700  transition">
                                 <img src="{{ asset("icon/RekapPenjualan.svg") }}" class="w-5 h-5">
-                                <span class="ml-2">Rekap Penjualan</span>
+                                <span class="ml-2">Sales Recap</span>
                             </a>
                         </li>
                         <li>
                             <a href="{{ route("rekappenjualanperusahaan.index") }}" class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                                 <img src="{{ asset("icon/RekapPenjualanPerusahaan.svg") }}" class="w-5 h-5">
-                                <span class="ml-2">Rekap Penjualan Perusahaan</span>
+                                <span class="ml-2">Sales Recap by Company</span>
                             </a>
                         </li>
                         <li>
                             <a href="{{ route("laporanpaketadministrasi.index") }}" class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                                 <img src="{{ asset("icon/LaporanPaketAdministrasi.svg") }}" class="w-5 h-5">
-                                <span class="ml-2">Laporan Paket Administrasi</span>
+                                <span class="ml-2">Administrative Package Report</span>
                             </a>
                         </li>
                         <li>
                             <a href="{{ route("statuspaket.index") }}" class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                                 <img src="{{ asset("icon/LaporanStatusPaket.svg") }}" class="w-5 h-5">
-                                <span class="ml-2">Laporan Status Paket </span>
+                                <span class="ml-2">Package Status Report </span>
                             </a>
                         </li>
                         <li>
                             <a href="{{ route("laporanperinstansi.index") }}" class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                                 <img src="{{ asset("icon/LaporanPerinstansi.svg") }}" class="w-5 h-5">
-                                <span class="ml-2">Laporan Per Instansi</span>
+                                <span class="ml-2">Institution-Based Report</span>
                             </a>
                         </li>
                     </ul>
@@ -423,13 +423,13 @@
                         <li>
                             <a href="{{ route("laporanholding.index") }}" class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
                                 <img src="{{ asset("icon/RekapPenjualan.svg") }}" class="w-5 h-5">
-                                <span class="ml-2">Laporan Pembelian (Holding)</span>
+                                <span class="ml-2">Purchase Report (Holding)</span>
                             </a>
                         </li>
                         <li>
                             <a href="{{ route("laporanstok.index") }}" class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                                 <img src="{{ asset("icon/RekapPenjualanPerusahaan.svg") }}" class="w-5 h-5">
-                                <span class="ml-2">Laporan Stok</span>
+                                <span class="ml-2">Stock Report</span>
                             </a>
                         </li>
                         <li>
@@ -441,7 +441,7 @@
                         <li>
                             <a href="{{ route("laporannegosiasi.index") }}" class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                                 <img src="{{ asset("icon/LaporanStatusPaket.svg") }}" class="w-5 h-5">
-                                <span class="ml-2">Laporan Negosiasi</span>
+                                <span class="ml-2">Negotiation Report</span>
                             </a>
                         </li>
                     </ul>
@@ -728,7 +728,7 @@
                         <li>
                             <a href="{{ route('rekappendapatanservisasp.index') }}" class="flex items-center  px-3 py-2 text-gray-700 rounded-md . transition">
                                 <img src="{{ asset("icon/RekapPenjualan.svg") }}" class="w-5 h-5">
-                                <span class="ml-2">Rekap Pendapatan Servis ASP</span>
+                                <span class="ml-2">ASP Service Revenue Recap</span>
                             </a>
                         </li>
                         <li>
@@ -740,7 +740,7 @@
                         <li>
                             <a href="{{ route("laporandetrans.index") }}" class="flex items-center px-3 py-2 text-gray-700 rounded-md . transition">
                                 <img src="{{ asset("icon/RekapPenjualanPerusahaan.svg") }}" class="w-5 h-5">
-                                <span class="ml-2">Rekap Laporan Pengiriman</span>
+                                <span class="ml-2">Shipping Report Recap</span>
                             </a>
                         </li>
                     </ul>

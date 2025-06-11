@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Laporan Per Instansi</title>
+    <title>Institution-Based Report</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @vite('resources/css/app.css')
@@ -88,7 +88,7 @@
        @endif
 
         <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
-            <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan Per Instansi</h1>
+            <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Institution-Based Report</h1>
 
             <div class="flex items-center justify-end transition-all duration-500 mt-8 mb-4">
                 <!-- Search -->
@@ -172,10 +172,10 @@
                         <table class="table-auto w-full border-collapse border border-gray-300" id="data-table">
                             <thead class="bg-gray-200">
                                 <tr>
-                                    <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
-                                    <th class="border border-gray-300 px-4 py-2 text-center">Instansi</th>
-                                    <th class="border border-gray-300 px-4 py-2 text-center">Nilai</th>
-                                    <th class="border border-gray-300 px-4 py-2 text-center">Aksi</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-center">Date</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-center">Institution</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-center">Value</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -208,7 +208,7 @@
                                             @method('PUT')
                                             <div class="space-y-4">
                                                 <div>
-                                                    <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                                                    <label for="tanggal" class="block text-sm font-medium">Date</label>
                                                     <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $laporanperinstansi->tanggal }}" required>
                                                 </div>
                                                 <div>
@@ -226,7 +226,7 @@
                                                     </select>
                                                 </div>
                                                 <div>
-                                                    <label for="nilai" class="block text-sm font-medium">Nilai</label>
+                                                    <label for="nilai" class="block text-sm font-medium">Value</label>
                                                     <input type="number" name="nilai" class="w-full p-2 border rounded" value="{{ $laporanperinstansi->nilai }}" required>
                                                 </div>
                                             </div>
@@ -261,7 +261,7 @@
             </div>
             <div id="formChart" class="visible">
                 <div class="flex flex-col mx-auto bg-white p-6 mt-4 rounded-lg shadow-xl border border-grey-500">
-                    <h1 class="text-4xl font-bold text-red-600 mb-4 font-montserrat text-start">Diagram</h1>
+                    <h1 class="text-4xl font-bold text-red-600 mb-4 font-montserrat text-start">Chart</h1>
 
                     <div class="mt-6 self-center w-full h-auto flex justify-center">
                         <canvas id="chart"></canvas>
@@ -331,7 +331,7 @@
                         @csrf
                         <div class="space-y-4">
                             <div>
-                                <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                                <label for="tanggal" class="block text-sm font-medium">Date</label>
                                 <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
                             </div>
                             <div>
@@ -350,7 +350,7 @@
                                 </select>
                             </div>
                             <div>
-                                <label for="nilai" class="block text-sm font-medium">Nilai</label>
+                                <label for="nilai" class="block text-sm font-medium">Value</label>
                                 <input type="number" name="nilai" class="w-full p-2 border rounded" required>
                             </div>
                         </div>

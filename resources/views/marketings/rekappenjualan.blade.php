@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Rekap Penjualan</title>
+    <title>Sales Recap</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @vite('resources/css/app.css')
@@ -93,7 +93,8 @@
     
         <!-- Main Content -->
         <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
-            <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan Rekap Penjualan</h1>
+            {{-- <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan Rekap Penjualan</h1> --}}
+            <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Sales Recap</h1>
 
             <div class="flex items-center justify-end transition-all duration-500 mt-8 mb-4 p-4">
                 <!-- Search -->
@@ -143,9 +144,9 @@
                         <table class="table-auto w-full border-collapse border border-gray-300" id="data-table">
                             <thead class="bg-gray-200">
                                 <tr>
-                                    <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
-                                    <th class="border border-gray-300 px-4 py-2 text-center">Total Penjualan</th>
-                                    <th class="border border-gray-300 px-4 py-2 text-center">Aksi</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-center">Date</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-center">Total Sales</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -186,13 +187,13 @@
                                             @method('PUT')
                                             <div class="space-y-4">
                                                 <div>
-                                                    <label for="tanggal" class="block text-sm font-medium">tanggal</label>
+                                                    <label for="tanggal" class="block text-sm font-medium">Date</label>
                                                     <input type="date" name="tanggal" class="w-full p-2 border rounded"
                                                         value="{{ $rekappenjualan->tanggal }}" required>
                                                 </div>
                                                 <div>
                                                     <label for="total_penjualan" class="block text-sm font-medium">Total
-                                                        Penjualan</label>
+                                                        Sales</label>
                                                     <input type="number" name="total_penjualan"
                                                         class="w-full p-2 border rounded"
                                                         value="{{ $rekappenjualan->total_penjualan }}" required>
@@ -214,7 +215,7 @@
                     <div class="flex justify-center items-center mt-2 mb-4 p-4 bg-gray-50 rounded-lg">
                         <!-- Dropdown untuk memilih jumlah data per halaman -->
                         <div class="flex items-center">
-                            <label for="perPage" class="mr-2 text-sm text-gray-600">Tampilkan</label>
+                            <label for="perPage" class="mr-2 text-sm text-gray-600">Show</label>
                             <select 
                                 id="perPage" 
                                 class="p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -223,7 +224,7 @@
                                 <option value="12" {{ request('per_page') == 12 || !request('per_page') ? 'selected' : '' }}>12</option>
                                 <option value="24" {{ request('per_page') == 24 ? 'selected' : '' }}>24</option>
                             </select>
-                            <span class="ml-2 text-sm text-gray-600">data per halaman</span>
+                            <span class="ml-2 text-sm text-gray-600">data per page</span>
                         </div>
                     </div>
 
@@ -234,7 +235,7 @@
             </div>
             <div id="formChart" class="visible">
             <div class="flex flex-col mx-auto bg-white p-6 mt-4 rounded-lg shadow-xl border border-grey-500">
-            <h1 class="text-4xl font-bold text-red-600 mb-4 font-montserrat text-start">Diagram</h1>
+            <h1 class="text-4xl font-bold text-red-600 mb-4 font-montserrat text-start">Chart</h1>
 
             <div class="mt-6 self-center w-full h-auto flex justify-center">
                 <canvas id="chart"></canvas>
@@ -305,11 +306,11 @@
                     @csrf
                     <div class="space-y-4">
                         <div>
-                            <label for="tanggal" class="block text-sm font-medium">tanggal</label>
+                            <label for="tanggal" class="block text-sm font-medium">Date</label>
                             <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
                         </div>
                         <div>
-                            <label for="total_penjualan" class="block text-sm font-medium">Total Penjualan</label>
+                            <label for="total_penjualan" class="block text-sm font-medium">Total Sales</label>
                             <input type="number" name="total_penjualan" class="w-full p-2 border rounded" required>
                         </div>
                     </div>

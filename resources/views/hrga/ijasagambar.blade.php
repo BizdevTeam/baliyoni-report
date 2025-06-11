@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Laporan iJASA Gambar</title>
+    <title>iJASA Report Picture</title>
     <script src="https://cdn.tailwindcss.com"></script>
     @vite('resources/css/app.css')
     <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
@@ -91,7 +91,7 @@
 
         <!-- Main Content -->
         <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
-            <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan iJASA Gambar</h1>
+            <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">iJASA Report Picture</h1>
 
             <div class="flex items-center justify-end transition-all duration-500 mt-8 mb-4 p-4">
                 <!-- Search -->
@@ -153,9 +153,9 @@
                         <table class="table-auto w-full border-collapse border border-gray-300">
                             <thead class="bg-gray-200">
                                 <tr>
-                                    <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-center">Date</th>
                                     <th class="border border-gray-300 px-4 py-2 text-center">File</th>
-                                    <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-center">Description</th>
                                     <th class="border border-gray-300 px-4 py-2 text-center">Action</th>
                                 </tr>
                             </thead>
@@ -198,26 +198,26 @@
                                             @method('PUT')
                                             <div class="space-y-4 max-h-[60vh] overflow-y-auto">
                                                 <div>
-                                                    <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                                                    <label for="tanggal" class="block text-sm font-medium">Date</label>
                                                     <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $ijasagambar->tanggal }}" required>
                                                 </div>
 
-                                                <!-- Input Gambar dengan Preview -->
+                                                <!-- Input File dengan Preview -->
                                                 <div>
-                                                    <label class="block text-sm font-medium">Gambar</label>
+                                                    <label class="block text-sm font-medium">File</label>
                                                     <div id="dropzoneEdit{{ $ijasagambar->id_ijasa_gambar }}" class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
                                                         <div class="flex flex-col items-center justify-center pt-5 pb-6 text-center">
                                                             <svg class="w-10 h-10 text-gray-400" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h16M3 12h16m-4-4l4 4m-4-4l4 4"></path>
                                                             </svg>
-                                                            <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Klik untuk upload</span> atau seret file ke sini</p>
+                                                            <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag file here</p>
                                                             <p class="text-xs text-gray-500">PNG, JPG, JPEG (Maks 2MB)</p>
                                                         </div>
                                                         <input id="gambarEdit{{ $ijasagambar->id_ijasa_gambar }}" type="file" name="gambar" class="hidden" accept="image/png, image/jpeg">
                                                     </div>
-                                                    <!-- Preview Gambar -->
+                                                    <!-- Preview File -->
                                                     <div id="filePreviewEdit{{ $ijasagambar->id_ijasa_gambar }}" class="mt-3">
-                                                        <p class="text-sm font-medium">Gambar Saat Ini:</p>
+                                                        <p class="text-sm font-medium">File choosen:</p>
                                                         <div class="flex items-center gap-2 mt-2">
                                                             <img id="previewImageEdit{{ $ijasagambar->id_ijasa_gambar }}" src="{{ asset('images/hrga/ijasagambar/' . $ijasagambar->gambar) }}" alt="Preview" class="w-20 h-20 object-cover rounded-lg">
                                                         </div>
@@ -225,7 +225,7 @@
                                                 </div>
 
                                                 <div>
-                                                    <label for="keterangan" class="block text-sm font-medium">Keterangan</label>
+                                                    <label for="keterangan" class="block text-sm font-medium">Description</label>
                                                     <textarea name="keterangan" class="w-full p-2 border rounded" rows="3" required>{{ $ijasagambar->keterangan }}</textarea>
                                                 </div>
                                             </div>
@@ -302,11 +302,11 @@
                                         ✖
                                     </button>
 
-                                    <h2 class="text-xl font-semibold text-red-600 mb-4 text-center">Export Laporan</h2>
+                                    <h2 class="text-xl font-semibold text-red-600 mb-4 text-center">Export</h2>
 
                                     <form action="{{ route('ijasagambar.exportPDF') }}" method="POST">
                                         @csrf
-                                        <label for="tanggal" class="block text-gray-700 font-medium mb-2 text-center">Pilih Tanggal:</label>
+                                        <label for="tanggal" class="block text-gray-700 font-medium mb-2 text-center">Choose Date:</label>
                                         <input type="date" id="tanggal" name="tanggal" required class="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-red-500">
 
                                         <button type="submit" class="w-full mt-3 bg-red-600 text-white py-2 rounded hover:bg-red-700 transition">
@@ -324,13 +324,13 @@
                         <div class="flex justify-center items-center mt-2 mb-4 p-4 bg-gray-50 rounded-lg">
                             <!-- Dropdown untuk memilih jumlah data per halaman -->
                             <div class="flex items-center">
-                                <label for="perPage" class="mr-2 text-sm text-gray-600">Tampilkan</label>
+                                <label for="perPage" class="mr-2 text-sm text-gray-600">Show</label>
                                 <select id="perPage" class="p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" onchange="changePerPage(this.value)">
                                     <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
                                     <option value="12" {{ request('per_page') == 12 || !request('per_page') ? 'selected' : '' }}>12</option>
                                     <option value="24" {{ request('per_page') == 24 ? 'selected' : '' }}>24</option>
                                 </select>
-                                <span class="ml-2 text-sm text-gray-600">data per halaman</span>
+                                <span class="ml-2 text-sm text-gray-600">data per page</span>
                             </div>
                         </div>
 
@@ -350,26 +350,26 @@
                 @csrf
                 <div class="space-y-4 max-h-[60vh] overflow-y-auto">
                     <div>
-                        <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                        <label for="tanggal" class="block text-sm font-medium">Date</label>
                         <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
                     </div>
 
-                    <!-- Input Gambar dengan Drag & Drop -->
+                    <!-- Input File dengan Drag & Drop -->
                     <div>
-                        <label class="block text-sm font-medium">Gambar</label>
+                        <label class="block text-sm font-medium">File</label>
                         <div id="dropzone" class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
                             <div class="flex flex-col items-center justify-center pt-5 pb-6 text-center">
                                 <svg class="w-10 h-10 text-gray-400" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h16M3 12h16m-4-4l4 4m-4-4l4 4"></path>
                                 </svg>
-                                <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Klik untuk upload</span> atau seret file ke sini</p>
+                                <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag file here</p>
                                 <p class="text-xs text-gray-500">PNG, JPG, JPEG (Maks 2MB)</p>
                             </div>
                             <input id="gambar" type="file" name="gambar" class="hidden" accept="image/png, image/jpeg">
                         </div>
                         <!-- Preview -->
                         <div id="filePreview" class="mt-3 hidden">
-                            <p class="text-sm font-medium">File yang dipilih:</p>
+                            <p class="text-sm font-medium">File choosen:</p>
                             <div class="flex items-center gap-2 mt-2">
                                 <img id="previewImage" src="" alt="Preview" class="w-20 h-20 object-cover rounded-lg hidden">
                                 <span id="fileName" class="text-gray-600 text-sm"></span>
@@ -378,7 +378,7 @@
                     </div>
 
                     <div>
-                        <label for="keterangan" class="block text-sm font-medium">Keterangan</label>
+                        <label for="keterangan" class="block text-sm font-medium">Description</label>
                         <textarea name="keterangan" class="w-full p-2 border rounded" rows="3" required></textarea>
                     </div>
                 </div>

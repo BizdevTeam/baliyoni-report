@@ -143,7 +143,7 @@ class LaporanIjasaController extends Controller
         ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
 
         // Tambahkan footer ke PDF
-        $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA - Laporan iJASA|');
+        $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA - iJASA Report|');
 
          // Set CSS untuk memastikan formatting CKEditor dipertahankan
          $styleCSS = "
@@ -171,17 +171,17 @@ class LaporanIjasaController extends Controller
              {$styleCSS}
          </style>
             <div style='width: 100%;'>
-                <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Tabel Data</h2>
+                <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Table Data</h2>
                 <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                     <thead>
                         <tr style='background-color: #f2f2f2;'>
-                            <th style='border: 1px solid #000; padding: 1px;'>Tanggal</th>
-                            <th style='border: 1px solid #000; padding: 1px;'>Jam</th>
-                            <th style='border: 1px solid #000; padding: 1px;'>Permasalahan</th>
+                            <th style='border: 1px solid #000; padding: 1px;'>Date</th>
+                            <th style='border: 1px solid #000; padding: 1px;'>Hours</th>
+                            <th style='border: 1px solid #000; padding: 1px;'>Problem</th>
                             <th style='border: 1px solid #000; padding: 1px;'>Impact</th>
                             <th style='border: 1px solid #000; padding: 1px;'>Troubleshooting</th>
-                            <th style='border: 1px solid #000; padding: 1px;'>Resolve Tanggal</th>
-                            <th style='border: 1px solid #000; padding: 1px;'>Resolve Jam</th>
+                            <th style='border: 1px solid #000; padding: 1px;'>Resolve Date</th>
+                            <th style='border: 1px solid #000; padding: 1px;'>Resolve Hours</th>
                         </tr>
                     </thead>
                     <tbody>

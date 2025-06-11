@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Laporan PT BOS</title>
+    <title>PT BOS Report</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @vite('resources/css/app.css')
@@ -91,7 +91,7 @@
 
        <!-- Main Content -->
        <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
-        <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan PT BOS</h1>
+        <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">PT BOS Report</h1>
 
         <div class="flex items-center justify-end transition-all duration-500 mt-8 mb-4 p-4">
             <!-- Search -->
@@ -125,14 +125,14 @@
                     <table class="table-fixed w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full" id="data-table">
                         <thead class="bg-gray-200">
                             <tr>
-                                <th class="border border-gray-300 px-4 py-2 text-center w-32">Tanggal</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center w-64">Pekerjaan</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center w-64">Kondisi Bulan Lalu</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center w-64">Kondisi Bulan Ini</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center w-32">Date</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center w-64">Work</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center w-64">Last Month Condition</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center w-64">This Month Condition</th>
                                 <th class="border border-gray-300 px-4 py-2 text-center w-64">Update</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center w-64">Rencana Implementasi</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center w-64">Keterangan</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center w-20">Aksi</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center w-64">Implementation Plan</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center w-64">Remarks</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center w-20">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -179,21 +179,21 @@
                             @method('PUT')
                             <div class="space-y-4 max-h-[60vh] overflow-y-auto">
                                 <div>
-                                    <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                                    <label for="tanggal" class="block text-sm font-medium">Date</label>
                                     <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $laporanptbos->tanggal }}" required>
                                 </div>
                                 <div>
-                                    <label for="pekerjaan" class="block text-sm font-medium">Pekerjaan</label>
+                                    <label for="pekerjaan" class="block text-sm font-medium">Work</label>
                                     <input type="hidden" name="pekerjaan" class="w-full p-2 border rounded" id="edit-{{ $laporanptbos->id_ptbos }}-pekerjaan-input" value="{{ $laporanptbos->pekerjaan }}" required></input>
                                     <div id="edit-{{ $laporanptbos->id_ptbos }}-pekerjaan"></div>
                                 </div>
                                 <div>
-                                    <label for="kondisi_bulanlalu" class="block text-sm font-medium">Kondisi Bulan Lalu</label>
+                                    <label for="kondisi_bulanlalu" class="block text-sm font-medium">Last Month Condition</label>
                                     <input type="hidden" name="kondisi_bulanlalu" class="w-full p-2 border rounded" id="edit-{{ $laporanptbos->id_ptbos }}-kondisi_bulanlalu-input" value="{{ $laporanptbos->kondisi_bulanlalu }}" required></input>
                                         <div id="edit-{{ $laporanptbos->id_ptbos }}-kondisi_bulanlalu"></div>
                                 </div>
                                 <div>
-                                    <label for="kondisi_bulanini" class="block text-sm font-medium">Kondisi Bulan Ini</label>
+                                    <label for="kondisi_bulanini" class="block text-sm font-medium">This Month Condition</label>
                                     <input type="hidden" name="kondisi_bulanini" class="w-full p-2 border rounded" id="edit-{{ $laporanptbos->id_ptbos }}-kondisi_bulanini-input" value="{{ $laporanptbos->kondisi_bulanini }}" required></input>
                                         <div id="edit-{{ $laporanptbos->id_ptbos }}-kondisi_bulanini"></div>
                                 </div>
@@ -203,12 +203,12 @@
                                         <div id="edit-{{ $laporanptbos->id_ptbos }}-update"></div>
                                 </div>
                                 <div>
-                                    <label for="rencana_implementasi" class="block text-sm font-medium">Rencana Implementasi</label>
+                                    <label for="rencana_implementasi" class="block text-sm font-medium">Implementasion Plan</label>
                                     <input type="hidden" name="rencana_implementasi" class="w-full p-2 border rounded" id="edit-{{ $laporanptbos->id_ptbos }}-rencana_implementasi-input" value="{{ $laporanptbos->rencana_implementasi }}" required></input>
                                         <div id="edit-{{ $laporanptbos->id_ptbos }}-rencana_implementasi"></div>
                                 </div>
                                 <div>
-                                    <label for="keterangan" class="block text-sm font-medium">Rencana Implementasi</label>
+                                    <label for="keterangan" class="block text-sm font-medium">Remarks</label>
                                     <input type="hidden" name="keterangan" class="w-full p-2 border rounded" id="edit-{{ $laporanptbos->id_ptbos }}-keterangan-input" value="{{ $laporanptbos->keterangan }}" required></input>
                                         <div id="edit-{{ $laporanptbos->id_ptbos }}-keterangan"></div>
                                 </div>
@@ -309,23 +309,23 @@
             @csrf
             <div class="space-y-4">
                 <div>
-                    <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                    <label for="tanggal" class="block text-sm font-medium">Date</label>
                     <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
                 </div>
                 <div>
-                    <label for="pekerjaan" class="block text-sm font-medium">Pekerjaan</label>
+                    <label for="pekerjaan" class="block text-sm font-medium">Work</label>
                     <input type="hidden" name="pekerjaan" id="pekerjaan-input" class="w-full p-2 border rounded">
                     <div id="editor-pekerjaan"></div>
                     <div class="text-red-500 text-sm mt-1 hidden" id="input-pekerjaan">This field is required</div>
                 </div>
                 <div>
-                    <label for="kondisi_bulanlalu" class="block text-sm font-medium">Kondisi Bulan Lalu</label>
+                    <label for="kondisi_bulanlalu" class="block text-sm font-medium">Last Month Condition</label>
                     <input type="hidden" name="kondisi_bulanlalu" id="kondisi_bulanlalu-input" class="w-full p-2 border rounded">
                     <div id="editor-kondisi_bulanlalu"></div>
                     <div class="text-red-500 text-sm mt-1 hidden" id="input-kondisi_bulanlalu">This field is required</div>
                 </div>
                 <div>
-                    <label for="kondisi_bulanini" class="block text-sm font-medium">Kondisi Bulan Ini</label>
+                    <label for="kondisi_bulanini" class="block text-sm font-medium">This Month Condition</label>
                     <input type="hidden" name="kondisi_bulanini" id="kondisi_bulanini-input" class="w-full p-2 border rounded" rows="1"></input>
                     <div id="editor-kondisi_bulanini"></div>
                     <div class="text-red-500 text-sm mt-1 hidden" id="input-kondisi_bulanini">This field is required</div>
@@ -337,13 +337,13 @@
                     <div class="text-red-500 text-sm mt-1 hidden" id="input-update">This field is required</div>
                 </div>
                 <div>
-                    <label for="rencana_implementasi" class="block text-sm font-medium">Rencana Implementasi</label>
+                    <label for="rencana_implementasi" class="block text-sm font-medium">Implementasion Plan</label>
                     <input type="hidden" name="rencana_implementasi" id="rencana_implementasi-input" class="w-full p-2 border rounded">
                     <div id="editor-rencana_implementasi"></div>
                     <div class="text-red-500 text-sm mt-1 hidden" id="input-rencana_implementasi">This field is required</div>
                 </div>
                 <div>
-                    <label for="keterangan" class="block text-sm font-medium">Keterangan</label>
+                    <label for="keterangan" class="block text-sm font-medium">Remarks</label>
                     <input type="hidden" name="keterangan" id="keterangan-input" class="w-full p-2 border rounded">
                     <div id="editor-keterangan"></div>
                     <div class="text-red-500 text-sm mt-1 hidden" id="input-keterangan">This field is required</div>
