@@ -51,8 +51,8 @@ class LaporanPerInstansiController extends Controller
             'labels' => $labels, // Labels untuk chart
             'datasets' => [
                 [
-                    'label' => 'Grafik Laporan Per Instansi', // Nama dataset
-                    'text' => 'Total Penjualan Instansi', // Nama dataset
+                    'label' => 'Institution-Based Chart', // Nama dataset
+                    'text' => 'Institution-Based Chart', // Nama dataset
                     'data' => $data, // Data untuk chart
                     'backgroundColor' => $backgroundColors, // Warna batang random
                 ],
@@ -213,13 +213,13 @@ class LaporanPerInstansiController extends Controller
             $htmlContent = "
             <div style='gap: 100px; width: 100%;'>
                 <div style='width: 30%; float: left; padding-right: 20px;'>
-                    <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Tabel Data</h2>
+                    <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Table Data</h2>
                     <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                         <thead>
                             <tr style='background-color: #f2f2f2;'>
-                                <th style='border: 1px solid #000; padding: 1px;'>Tanggal</th>
+                                <th style='border: 1px solid #000; padding: 1px;'>Date</th>
                                 <th style='border: 1px solid #000; padding: 2px;'>Instansi</th>
-                                <th style='border: 1px solid #000; padding: 2px;'>Nilai</th>
+                                <th style='border: 1px solid #000; padding: 2px;'>Value</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -228,7 +228,7 @@ class LaporanPerInstansiController extends Controller
                     </table>
                 </div>
                 <div style='width: 65%; text-align:center; margin-left: 20px;'>
-                    <h2 style='font-size: 14px; margin-bottom: 10px;'>Grafik Laporan Per Instansi</h2>
+                    <h2 style='font-size: 14px; margin-bottom: 10px;'>Institution-Based Chart</h2>
                     <img src='{$chartBase64}' style='width: 100%; height: auto;' alt='Grafik Laporan' />
                 </div>
             </div>

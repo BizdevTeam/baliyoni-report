@@ -141,22 +141,22 @@ class LaporanPtBosController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA - Laporan PT BOS|');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA - PT BOS Report|');
     
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "
                 <div style='width: 100%;'>
-                    <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Tabel Data</h2>
+                    <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Table Data</h2>
                     <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                         <thead>
                             <tr style='background-color: #f2f2f2;'>
-                            <th style='border: 1px solid #000; padding: 1px;'>Tanggal</th>
-                            <th style='border: 1px solid #000; padding: 2px;'>Pekerjaan</th>
-                            <th style='border: 1px solid #000; padding: 2px;'>Kondisi Bulan Ini</th>
-                            <th style='border: 1px solid #000; padding: 2px;'>Kondisi Bulan Lalu</th>
+                            <th style='border: 1px solid #000; padding: 1px;'>Date</th>
+                            <th style='border: 1px solid #000; padding: 2px;'>Work</th>
+                            <th style='border: 1px solid #000; padding: 2px;'>Last Month Condition</th>
+                            <th style='border: 1px solid #000; padding: 2px;'>This Month Condition</th>
                             <th style='border: 1px solid #000; padding: 2px;'>Update</th>
-                            <th style='border: 1px solid #000; padding: 2px;'>Rencana Implementasi</th>
-                            <th style='border: 1px solid #000; padding: 2px;'>Keterangan</th>
+                            <th style='border: 1px solid #000; padding: 2px;'>Implementation Plan</th>
+                            <th style='border: 1px solid #000; padding: 2px;'>Remarks</th>
                             </tr>
                         </thead>
                         <tbody>

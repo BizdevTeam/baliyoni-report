@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Laporan SPI - IT</title>
+    <title>IT SPI Report
+</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @vite('resources/css/app.css')
@@ -90,7 +91,8 @@
         
        <!-- Main Content -->
        <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
-        <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan SPI IT</h1>
+        <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">IT SPI Report
+</h1>
 
         <div class="flex items-center justify-end transition-all duration-500 mt-8 p-4">
             <!-- Search -->
@@ -125,12 +127,12 @@
             <table class="table-auto w-full border-collapse border border-gray-300" id="data-table">
                 <thead class="bg-gray-200">
                     <tr>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Aspek</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Masalah</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Solusi</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Implementasi</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Aksi</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Date</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Aspects</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Problem</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Solution</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Implementation</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -174,29 +176,29 @@
                         @method('PUT')
                         <div class="space-y-4">
                             <div>
-                                <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                                <label for="tanggal" class="block text-sm font-medium">Date</label>
                                 <input type="date" name="tanggal" id="edit-{{ $laporanspiti->id_spiti }}-tanggal-input" value="{{ $laporanspiti->tanggal }}" class="w-full p-2 border rounded">                           
                             </div>
                             <div>
-                                <label for="aspek" class="block text-sm font-medium">Aspek</label>
+                                <label for="aspek" class="block text-sm font-medium">Aspects</label>
                                 <input type="hidden" name="aspek" id="edit-{{ $laporanspiti->id_spiti }}-aspek-input" value="{{ $laporanspiti->aspek }}">
                                 <div id="edit-{{ $laporanspiti->id_spiti }}-aspek"></div>
                             </div>
                             <div>
-                                <label for="masalah" class="block text-sm font-medium">Masalah</label>
+                                <label for="masalah" class="block text-sm font-medium">Problem</label>
                                 <input type="hidden" name="masalah" id="edit-{{ $laporanspiti->id_spiti }}-masalah-input" value="{{ $laporanspiti->masalah }}">
                                 <div id="edit-{{ $laporanspiti->id_spiti }}-masalah"></div>
                             </div>
                             <!-- Repeat for other fields -->
                             <div>
-                                <label for="solusi" class="block text-sm font-medium mb-1">Solusi <span class="text-red-500">*</span></label>
+                                <label for="solusi" class="block text-sm font-medium mb-1">Solution <span class="text-red-500">*</span></label>
                                 <input type="hidden" name="solusi" id="edit-{{ $laporanspiti->id_spiti }}-solusi-input" value="{{ $laporanspiti->solusi }}" required>
                                 <div id="edit-{{ $laporanspiti->id_spiti }}-solusi"></div>
                                 <div class="text-red-500 text-sm mt-1 hidden" id="edit-solusi-error-{{ $laporanspiti->id_spiti }}">This field is required</div>
                             </div>
                             <!-- Repeat for other fields -->
                             <div>
-                                <label for="implementasi" class="block text-sm font-medium mb-1">Implementasi <span class="text-red-500">*</span></label>
+                                <label for="implementasi" class="block text-sm font-medium mb-1">Implementation <span class="text-red-500">*</span></label>
                                 <input type="hidden" name="implementasi" id="edit-{{ $laporanspiti->id_spiti }}-implementasi-input" value="{{ $laporanspiti->implementasi }}" required>
                                 <div id="edit-{{ $laporanspiti->id_spiti }}-implementasi"></div>
                                 <div class="text-red-500 text-sm mt-1 hidden" id="edit-implementasi-error-{{ $laporanspiti->id_spiti }}">This field is required</div>
@@ -297,27 +299,27 @@
                 @csrf
                 <div class="space-y-4">
                     <div>
-                        <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                        <label for="tanggal" class="block text-sm font-medium">Date</label>
                         <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
                     </div>
                     <div>
-                        <label for="aspek" class="block text-sm font-medium">Aspek</label>
+                        <label for="aspek" class="block text-sm font-medium">Aspects</label>
                         <input type="hidden" name="aspek" id="aspek-input">
                         <div id="editor-aspek"></div>
                     </div>
                     <div>
-                        <label for="masalah" class="block text-sm font-medium">Masalah</label>
+                        <label for="masalah" class="block text-sm font-medium">Problem</label>
                         <input type="hidden" name="masalah" id="masalah-input">
                         <div id="editor-masalah"></div>
                     </div>
                     <div>
-                        <label for="solusi" class="block text-sm font-medium mb-1">Solusi <span class="text-red-500">*</span></label>
+                        <label for="solusi" class="block text-sm font-medium mb-1">Solution <span class="text-red-500">*</span></label>
                         <input type="hidden" name="solusi" id="solusi-input" required>
                         <div id="editor-solusi"></div>
                         <div class="text-red-500 text-sm mt-1 hidden" id="solusi-error">This field is required</div>
                     </div>
                     <div>
-                        <label for="implementasi" class="block text-sm font-medium">Implementasi</label>
+                        <label for="implementasi" class="block text-sm font-medium">Implementation</label>
                         <input type="hidden" name="implementasi" id="implementasi-input">
                         <div id="editor-implementasi"></div>
                     </div>

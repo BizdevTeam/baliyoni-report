@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Laporan iJASA</title>
+    <title>iJASA Report</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @vite('resources/css/app.css')
@@ -89,7 +89,7 @@
     @endif
         <!-- Main Content -->
        <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
-        <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan iJASA</h1>
+        <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">iJASA Report</h1>
         <div class="flex items-center justify-end transition-all duration-500 mt-8 p-4">
             <!-- Search -->
             <form method="GET" action="{{ route('laporanijasa.index') }}" class="flex items-center gap-2">
@@ -123,13 +123,13 @@
             <table class="table-auto w-full border-collapse border border-gray-300" id="data-table">
                 <thead class="bg-gray-200">
                     <tr>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Jam</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Permasalahan</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Date</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Hours</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Problem</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Impact</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Troubleshooting</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Resolve Tanggal</th>
-                        <th class="border border-gray-300 px-4 py-2 text-center">Resolve Jam</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Resolve Date</th>
+                        <th class="border border-gray-300 px-4 py-2 text-center">Resolve Hours</th>
                         <th class="border border-gray-300 px-4 py-2 text-center">Action</th>
                     </tr>
                 </thead>
@@ -176,11 +176,11 @@
                         @method('PUT')
                         <div class="space-y-4">
                             <div>
-                                <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                                <label for="tanggal" class="block text-sm font-medium">Date</label>
                                 <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $laporanijasa->tanggal }}" required>
                             </div>
                             <div>
-                                <label for="jam" class="block text-sm font-medium">Jam</label>
+                                <label for="jam" class="block text-sm font-medium">Hours</label>
                                 <div class="relative">
                                     <div class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
                                         <svg class="w-4 h-4 text-gray-50 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
@@ -191,7 +191,7 @@
                                 </div> 
                             </div>
                             <div>
-                                <label for="permasalahan" class="block text-sm font-medium">Permasalahan</label>
+                                <label for="permasalahan" class="block text-sm font-medium">Problem</label>
                                 <input type="hidden" name="permasalahan" class="w-full p-2 border rounded" id="edit-{{ $laporanijasa->id_ijasa }}-permasalahan-input" value="{{ $laporanijasa->permasalahan }}" required>
                                 <div id="edit-{{ $laporanijasa->id_ijasa }}-permasalahan"></div>
                             </div>
@@ -206,11 +206,11 @@
                                 <div id="edit-{{ $laporanijasa->id_ijasa }}-troubleshooting"></div>
                             </div>
                             <div>
-                                <label for="resolve_tanggal" class="block text-sm font-medium">Resolve Tanggal</label>
+                                <label for="resolve_tanggal" class="block text-sm font-medium">Resolve Date</label>
                                 <input type="date" name="resolve_tanggal" class="w-full p-2 border rounded" value="{{ $laporanijasa->resolve_tanggal }}" required>
                             </div>
                             <div>
-                                <label for="resolve_jam" class="block text-sm font-medium">Resolve Jam</label>
+                                <label for="resolve_jam" class="block text-sm font-medium">Resolve Hours</label>
                                 <div class="relative">
                                     <div class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
                                         <svg class="w-4 h-4 text-gray-50 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
@@ -234,7 +234,7 @@
          <div class="flex justify-center items-center mt-2 mb-4 p-4 bg-gray-50 rounded-lg">
             <!-- Dropdown untuk memilih jumlah data per halaman -->
             <div class="flex items-center">
-                <label for="perPage" class="mr-2 text-sm text-gray-600">Tampilkan</label>
+                <label for="perPage" class="mr-2 text-sm text-gray-600">Show</label>
                 <select 
                     id="perPage" 
                     class="p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -243,7 +243,7 @@
                     <option value="12" {{ request('per_page') == 12 || !request('per_page') ? 'selected' : '' }}>12</option>
                     <option value="24" {{ request('per_page') == 24 ? 'selected' : '' }}>24</option>
                 </select>
-                <span class="ml-2 text-sm text-gray-600">data per halaman</span>
+                <span class="ml-2 text-sm text-gray-600">data per page</span>
             </div>
         </div>
 
@@ -317,11 +317,11 @@
         <form method="POST" action="{{ route('laporanijasa.store') }}" enctype="multipart/form-data" id="addForm" class="flex-grow overflow-y-auto space-y-4 pr-2">
             @csrf
 =                <div>
-                    <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                    <label for="tanggal" class="block text-sm font-medium">Date</label>
                     <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
                 </div>
                 <div>
-                    <label for="time" class="block mb-2 text-sm font-medium text-black">Jam</label>
+                    <label for="time" class="block mb-2 text-sm font-medium text-black">Hours</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
                             <svg class="w-4 h-4 text-gray-50 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
@@ -332,7 +332,7 @@
                     </div>             
                 </div>
                 <div>
-                    <label for="permasalahan" class="block text-sm font-medium">Permasalahan</label>
+                    <label for="permasalahan" class="block text-sm font-medium">Problem</label>
                     <input type="hidden" name="permasalahan" id="permasalahan-input" class="w-full p-2 border rounded" required>
                     <div id="editor-permasalahan"></div>
                     <div class="text-red-500 text-sm mt-1 hidden" id="input-permasalahan">This field is required</div>
@@ -350,11 +350,11 @@
                     <div class="text-red-500 text-sm mt-1 hidden" id="input-troubleshooting">This field is required</div>
                 </div>
                 <div>
-                    <label for="resolve_tanggal" class="block text-sm font-medium">Resolve Tanggal</label>
+                    <label for="resolve_tanggal" class="block text-sm font-medium">Resolve Date</label>
                     <input type="date" name="resolve_tanggal" class="w-full p-2 border rounded" value="{{ old('resolve_tanggal') }}" required>
                 </div>
                 <div>
-                    <label for="resolve_jam" class="block mb-2 text-sm font-medium text-black">Resolve Jam</label>
+                    <label for="resolve_jam" class="block mb-2 text-sm font-medium text-black">Resolve Hours</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
                             <svg class="w-4 h-4 text-gray-50 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">

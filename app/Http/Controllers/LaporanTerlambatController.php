@@ -194,18 +194,18 @@ class LaporanTerlambatController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA - Laporan Terlambat|');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan HRGA - Late Arrival Report|');
             
             $htmlContent = "
             <div style='gap: 100px; width: 100%;'>
                 <div style='width: 30%; float: left; padding-right: 20px;'>
-                    <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Tabel Data</h2>
+                    <h2 style='font-size: 14px; text-align: center; margin-bottom: 10px;'>Table Data</h2>
                     <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                         <thead>
                             <tr style='background-color: #f2f2f2;'>
-                                <th style='border: 1px solid #000; padding: 1px;'>Tanggal</th>
-                                <th style='border: 1px solid #000; padding: 2px;'>Nama Karyawan</th>
-                                <th style='border: 1px solid #000; padding: 2px;'>Total Terlambat</th>
+                                <th style='border: 1px solid #000; padding: 1px;'>Date</th>
+                                <th style='border: 1px solid #000; padding: 2px;'>Employee</th>
+                                <th style='border: 1px solid #000; padding: 2px;'>Late Arrival Total</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -214,7 +214,7 @@ class LaporanTerlambatController extends Controller
                     </table>
                 </div>
                 <div style='width: 65%; text-align:center; margin-left: 20px;'>
-                    <h2 style='font-size: 14px; margin-bottom: 10px;'>Grafik Laporan Terlambat</h2>
+                    <h2 style='font-size: 14px; margin-bottom: 10px;'>Late Arrival Chart</h2>
                     <img src='{$chartBase64}' style='width: 100%; height: auto;' alt='Grafik Laporan' />
                 </div>
             </div>

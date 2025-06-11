@@ -175,7 +175,7 @@ class ItMultimediaTiktokController extends Controller
             ", 'O');
     
             // Tambahkan footer
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan IT - Laporan Multimedia Tiktok|');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan IT - Tiktok Multimedia Report|');
     
             // Loop melalui setiap laporan dan tambahkan ke PDF
             foreach ($laporans as $index => $laporan) {
@@ -185,15 +185,15 @@ class ItMultimediaTiktokController extends Controller
                     $imagePath = public_path("images/it/multimediatiktok/{$laporan->gambar}");
                     $imageHTML = "<img src='{$imagePath}' style='width: auto; max-height: 500px; display: block; margin: auto;' />";
                 } else {
-                    $imageHTML = "<p style='text-align: center; color: red; font-weight: bold;'>Gambar tidak tersedia</p>";
+                    $imageHTML = "<p style='text-align: center; color: red; font-weight: bold;'>File not found</p>";
                 }
     
                 // Konten untuk setiap laporan
                 $htmlContent = "
             <div style='text-align: center; top: 0; margin: 0; padding: 0;'>
                 {$imageHTML}
-                    <h3 style='margin: 0; padding: 0;'>Keterangan : {$laporan->keterangan}</h3>
-                    <h3 style='margin: 0; padding: 0;'>Laporan : {$laporan->tanggal_formatted}</h3>
+                    <h3 style='margin: 0; padding: 0;'>Description : {$laporan->keterangan}</h3>
+                    <h3 style='margin: 0; padding: 0;'>Report : {$laporan->tanggal_formatted}</h3>
             </div>
 
                 ";

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Laporan PPN</title>
+    <title>PPN Report</title>
     <script src="https://cdn.tailwindcss.com"></script>
     @vite('resources/css/app.css')
     <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
@@ -91,7 +91,7 @@
 
         <!-- Main Content -->
         <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
-            <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan PPN</h1>
+            <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">PPN Report</h1>
 
             <div class="flex items-center justify-end transition-all duration-500 mt-8 mb-4 p-4">
                 <!-- Search -->
@@ -128,7 +128,7 @@
                             <tr class="font-sans">
                                 <th class="px-6 py-3 text-center border border-gray-300 " data-aos="fade-right"
                                     data-aos-duration="400"
-                                    data-aos-easing="ease-out-sine">Tanggal</th>
+                                    data-aos-easing="ease-out-sine">Date</th>
                                 <th class="px-6 py-3 text-center border border-gray-300 " data-aos="fade-right"
                                     data-aos-duration="400"
                                     data-aos-easing="ease-out-sine">Thumbnail</th>
@@ -137,7 +137,7 @@
                                     data-aos-easing="ease-out-sine">File Excel</th>
                                 <th class="px-6 py-3 text-center border border-gray-300 " data-aos="fade-right"
                                     data-aos-duration="400"
-                                    data-aos-easing="ease-out-sine">Keterangan</th>
+                                    data-aos-easing="ease-out-sine">Description</th>
                                 <th class="px-6 py-3 text-center border border-gray-300" data-aos="fade-right"
                                     data-aos-duration="400"
                                     data-aos-easing="ease-out-sine">Action</th>
@@ -200,26 +200,26 @@
                                         @method('PUT')
                                         <div class="space-y-4 max-h-[60vh] overflow-y-auto">
                                             <div>
-                                                <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                                                <label for="tanggal" class="block text-sm font-medium">Date</label>
                                                 <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $laporanppn->tanggal }}" required>
                                             </div>
 
-                                            <!-- Input Gambar dengan Preview -->
+                                            <!-- Input Thumbnail dengan Preview -->
                                             <div>
-                                                <label class="block text-sm font-medium">Gambar</label>
+                                                <label class="block text-sm font-medium">Thumbnail</label>
                                                 <div id="dropzoneEdit{{ $laporanppn->id_laporanppn }}" class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
                                                     <div class="flex flex-col items-center justify-center pt-5 pb-6 text-center">
                                                         <svg class="w-10 h-10 text-gray-400" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h16M3 12h16m-4-4l4 4m-4-4l4 4"></path>
                                                         </svg>
-                                                        <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Klik untuk upload</span> atau seret file ke sini</p>
+                                                        <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag file here</p>
                                                         <p class="text-xs text-gray-500">PNG, JPG, JPEG (Maks 2MB)</p>
                                                     </div>
                                                     <input id="gambarEdit{{ $laporanppn->id_laporanppn }}" type="file" name="thumbnail" class="hidden" accept="image/png, image/jpeg">
                                                 </div>
-                                                <!-- Preview Gambar -->
+                                                <!-- Preview Thumbnail -->
                                                 <div id="filePreviewEdit{{ $laporanppn->id_laporanppn }}" class="mt-3">
-                                                    <p class="text-sm font-medium">Gambar Saat Ini:</p>
+                                                    <p class="text-sm font-medium">Thumbnail Saat Ini:</p>
                                                     <div class="flex items-center gap-2 mt-2">
                                                         <img id="previewImageEdit{{ $laporanppn->id_laporanppn }}" src="{{ asset('images/accounting/ppn/' . $laporanppn->thumbnail) }}" alt="Preview" class="w-20 h-20 object-cover rounded-lg">
                                                     </div>
@@ -234,7 +234,7 @@
                                                         <svg class="w-10 h-10 text-gray-400" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h16M3 12h16m-4-4l4 4m-4-4l4 4"></path>
                                                         </svg>
-                                                        <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Klik untuk upload</span> atau seret file ke sini</p>
+                                                        <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag file here</p>
                                                         <p class="text-xs text-gray-500">Hanya file .xlsx, .xls (Maks 5MB)</p>
                                                     </div>
                                                     <input id="fileExcelEdit{{ $laporanppn->id_laporanppn }}" type="file" name="file_excel" class="hidden" accept=".xlsx, .xls">
@@ -249,7 +249,7 @@
                                             </div>
 
                                             <div>
-                                                <label for="keterangan" class="block text-sm font-medium">Keterangan</label>
+                                                <label for="keterangan" class="block text-sm font-medium">Description</label>
                                                 <textarea name="keterangan" class="w-full p-2 border rounded" rows="3" required>{{ $laporanppn->keterangan }}</textarea>
                                             </div>
                                         </div>
@@ -304,7 +304,7 @@
                 
                             <form action="{{ route('laporanppn.exportPDF') }}" method="POST">
                                 @csrf
-                                <label for="tanggal" class="block text-gray-700 font-medium mb-2 text-center">Pilih Tanggal:</label>
+                                <label for="tanggal" class="block text-gray-700 font-medium mb-2 text-center">Pilih Date:</label>
                                 <input type="date" id="tanggal" name="tanggal" required
                                     class="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-red-500">
                                 
@@ -328,28 +328,28 @@
                     <h3 class="text-lg font-semibold mb-3">Add New Data</h3>
                     <form method="POST" action="{{ route('laporanppn.store') }}" enctype="multipart/form-data">
                         @csrf
-                        <div class="space-y-3">
+                        <div class="space-y-4 max-h-[60vh] overflow-y-auto">
                             <div>
-                                <label for="tanggal" class="block text-sm font-medium">Tanggal</label>
+                                <label for="tanggal" class="block text-sm font-medium">Date</label>
                                 <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
                             </div>
                             
-                            <!-- Input Gambar dengan Drag & Drop -->
+                            <!-- Input Thumbnail dengan Drag & Drop -->
                             <div>
-                                <label class="block text-sm font-medium">Gambar</label>
+                                <label class="block text-sm font-medium">Thumbnail</label>
                                 <div id="dropzone" class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
                                     <div class="flex flex-col items-center justify-center pt-5 pb-6 text-center">
                                         <svg class="w-10 h-10 text-gray-400" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h16M3 12h16m-4-4l4 4m-4-4l4 4"></path>
                                         </svg>
-                                        <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Klik untuk upload</span> atau seret file ke sini</p>
+                                        <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag file here</p>
                                         <p class="text-xs text-gray-500">PNG, JPG, JPEG (Maks 2MB)</p>
                                     </div>
                                     <input id="thumbnail" type="file" name="thumbnail" class="hidden" accept="image/png, image/jpeg">
                                 </div>
                                 <!-- Preview -->
                                 <div id="filePreview" class="mt-3 hidden">
-                                    <p class="text-sm font-medium">File yang dipilih:</p>
+                                    <p class="text-sm font-medium">File choosen:</p>
                                     <div class="flex items-center gap-2 mt-2">
                                         <img id="previewImage" src="" alt="Preview" class="w-20 h-20 object-cover rounded-lg hidden">
                                         <span id="fileName" class="text-gray-600 text-sm"></span>
@@ -365,20 +365,20 @@
                                         <svg class="w-10 h-10 text-gray-400" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h16M3 12h16m-4-4l4 4m-4-4l4 4"></path>
                                         </svg>
-                                        <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Klik untuk upload</span> atau seret file ke sini</p>
+                                        <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag file here</p>
                                         <p class="text-xs text-gray-500">Hanya file .xlsx, .xls (Maks 5MB)</p>
                                     </div>
                                     <input id="fileExcel" type="file" name="file_excel" class="hidden" accept=".xlsx, .xls">
                                 </div>
                                 <!-- Preview -->
                                 <div id="filePreviewExcel" class="mt-3 hidden">
-                                    <p class="text-sm font-medium">File yang dipilih:</p>
+                                    <p class="text-sm font-medium">File choosen:</p>
                                     <span id="fileNameExcel" class="text-gray-600 text-sm"></span>
                                 </div>
                             </div>
                             
                             <div>
-                                <label for="keterangan" class="block text-sm font-medium">Keterangan</label>
+                                <label for="keterangan" class="block text-sm font-medium">Description</label>
                                 <textarea name="keterangan" class="w-full p-2 border rounded" rows="3" required></textarea>
                             </div>
                         </div>

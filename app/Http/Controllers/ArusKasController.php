@@ -151,19 +151,19 @@ class ArusKasController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Accounting - Laporan Arus Kas|');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Accounting - Cash Flow Statement|');
     
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "
                 <div style='gap: 100px; width: 100%;'>
                 <div style='width: 45%; float: left; padding-right: 20px;'>
-                <h2 style='text-align:center; font-size: 12px; margin: 5px 0;'>Tabel Data</h2>
+                <h2 style='text-align:center; font-size: 12px; margin: 5px 0;'>Table Data</h2>
                 <table style='border-collapse: collapse; width: 100%; font-size: 10px;' border='1'>
                     <thead>
                         <tr style='background-color: #f2f2f2;'>
-                            <th style='border: 1px solid #000; padding: 5px;'>Tanggal</th>
-                            <th style='border: 1px solid #000; padding: 5px;'>Kas Masuk (Rp)</th>
-                            <th style='border: 1px solid #000; padding: 5px;'>Kas Keluar (Rp)</th>
+                            <th style='border: 1px solid #000; padding: 5px;'>Date</th>
+                            <th style='border: 1px solid #000; padding: 5px;'>Cash In (Rp)</th>
+                            <th style='border: 1px solid #000; padding: 5px;'>Cash Out (Rp)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -172,7 +172,7 @@ class ArusKasController extends Controller
                 </table>
                         </div>
                 <div style='width: 45%; text-align:center; margin-left: 20px;'>
-                    <h2 style='font-size: 14px; margin-bottom: 10px;'>Grafik Laporan Arus Kas</h2>
+                    <h2 style='font-size: 14px; margin-bottom: 10px;'>Chart Cash Flow</h2>
                     <img src='{$chartBase64}' style='width: 100%; height: auto;' alt='Grafik Laporan' />
                 </div>
             </div>

@@ -170,7 +170,7 @@ class LaporanBizdevGambarController extends Controller
         </div>", 'O');
 
         // Tambahkan footer
-        $mpdf->SetFooter('{DATE j-m-Y}|Laporan IT - Laporan Bizdev Gambar|');
+        $mpdf->SetFooter('{DATE j-m-Y}|Laporan IT - Business Development Report|');
 
         // Loop melalui setiap laporan dan tambahkan ke PDF
         foreach ($laporans as $index => $laporan) {
@@ -180,7 +180,7 @@ class LaporanBizdevGambarController extends Controller
                 $imagePath = public_path("images/it/laporanbizdevgambar/{$laporan->gambar}");
                 $imageHTML = "<img src='{$imagePath}' style='width: auto; max-height: 500px; text-align:center;' />";
             } else {
-                $imageHTML = "<p style='text-align: center; color: red; font-weight: bold;'>Gambar tidak tersedia</p>";
+                $imageHTML = "<p style='text-align: center; color: red; font-weight: bold;'>File not found</p>";
             }
 
             // Konten untuk setiap laporan
@@ -196,12 +196,12 @@ class LaporanBizdevGambarController extends Controller
 
         // Tambahkan halaman baru untuk tabel kendala dan tanggal
         $mpdf->AddPage();
-        $tableContent = "<h2 style='text-align: center;'>Daftar Kendala</h2>
+        $tableContent = "<h2 style='text-align: center;'>Diffculty List</h2>
             <table border='1' style='width: 100%; border-collapse: collapse;'>
                 <thead>
                     <tr>
-                        <th style='padding: 8px; background-color: #f2f2f2;'>Kendala</th>
-                        <th style='padding: 8px; background-color: #f2f2f2;'>Tanggal</th>
+                        <th style='padding: 8px; background-color: #f2f2f2;'>Diffculty</th>
+                        <th style='padding: 8px; background-color: #f2f2f2;'>Date</th>
                     </tr>
                 </thead>
                 <tbody>";
