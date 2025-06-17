@@ -95,6 +95,38 @@
         <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
             <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan Instagram Multimedia Report</h1>
 
+            <div class="ai-aiInsight mt-6 p-4 sm:p-6 bg-white rounded-xl shadow-md border border-gray-200">
+            {{-- Judul Komponen --}}
+            <h3 class="text-lg font-semibold text-gray-800 flex items-center mb-4">
+
+            {{-- Konten Dinamis --}}
+            <div class="content-container">
+                @if(is_null($aiInsight))
+                    {{-- State: Saat halaman pertama kali dimuat atau aiInsight belum ada --}}
+                    <div class="flex items-center text-gray-500 animate-pulse">
+                        <svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>Membangkitkan analisis, mohon tunggu...</span>
+                    </div>
+
+                @elseif(Str::startsWith($aiInsight, ['Gagal', 'Layanan', 'Terjadi', 'Tidak ada']))
+                    {{-- State: Jika terjadi eror dari backend --}}
+                    <div class="p-4 bg-red-50 border-l-4 border-red-400 text-red-700">
+                        <p class="font-bold">Terjadi Masalah</p>
+                        <p>{{ $aiInsight }}</p>
+                    </div>
+
+                @else
+                    {{-- State: Sukses, tampilkan hasil analisis --}}
+                    {{-- Class 'prose' dari Tailwind akan otomatis memformat hasil markdown --}}
+                    <div class="prose prose-sm sm:prose-base max-w-none text-gray-700">
+                        {!! \Illuminate\Support\Str::markdown($aiInsight) !!}
+                    </div>
+                @endif
+            </div>
+        </div>
+
             <div class="flex items-center justify-end transition-all duration-500 mt-8 mb-4 p-4">
                 <!-- Search -->
                 <form method="GET" action="{{ route('multimediainstagram.index') }}" class="flex items-center gap-2">

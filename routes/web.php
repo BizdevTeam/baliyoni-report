@@ -41,6 +41,7 @@ use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\LaporanBizdevGambarController;
 use App\Http\Controllers\IjasaGambarController;
 use App\Http\Controllers\PerusahaanController;
+use App\Http\Controllers\TaxPlanningController;
 use App\Models\RekapPenjualan;
 
 Route::middleware(['web'])->group(function () {
@@ -73,6 +74,15 @@ Route::middleware(['web'])->group(function () {
         Route::resource('aruskas', ArusKasController::class);
         Route::post('aruskas/export-pdf', [ArusKasController::class, 'exportPDF'])
         ->name('accounting.aruskas.exportPDF');
+
+    Route::resource('taxplanning', TaxPlanningController::class);
+    Route::get('taxplanning/monthly-data', [TaxPlanningController::class, 'monthlyChart'])
+            ->name('accounting.taxplanning.monthly.data');
+    // Route::get('/admin/chart-data', [LaporanPaketAdministrasiController::class, 'showChart'])->name('admin.chart.data');
+
+    // Route::resource('taxplanning/monthly-data',  [TaxPlanningController::class, 'monthlyChart']);
+    // Route::get('taxplannings', [TaxPlanningController::class,'getAPI'])
+    //      ->name('acconting.taxplannings.index');
     
     });
 
