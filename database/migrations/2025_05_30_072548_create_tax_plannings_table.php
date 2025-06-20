@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('tax_plannings', function (Blueprint $table) {
             $table->id();
             $table->string('nama_perusahaan');
-            $table->dateTime('tanggal');
+            $table->string('tanggal');
             $table->bigInteger('tax_planning');
             $table->bigInteger('total_penjualan');
             $table->timestamps();

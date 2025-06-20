@@ -1,5 +1,4 @@
-<?php
-
+<?php 
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -332,7 +331,7 @@ class RekapPenjualanController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
 
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}Marketing Report - Chart Sales Report|');
+            $mpdf->SetFooter('{DATE j-m-Y}Marketing Report - Sales Recap|');
 
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "

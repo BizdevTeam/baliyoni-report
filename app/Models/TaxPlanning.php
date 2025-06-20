@@ -17,9 +17,4 @@ class TaxPlanning extends Model
         'tax_planning',
         'total_penjualan',
     ];
-
-    // Cast tanggal to a Carbon instance
-    protected $casts = [
-        'tanggal' => 'datetime',
-    ];
 }

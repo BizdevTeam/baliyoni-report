@@ -16,7 +16,7 @@
             @if(in_array(Auth::user()->role, ['superadmin', 'marketing']))
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
-                    Grafik Laporan Rekap Penjualan
+                Sales Recap Chart
                 </h1>
 
                 <div class="bg-white shadow-md rounded-lg p-6">
@@ -24,14 +24,14 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("rekappenjualan.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Rekap Penjualan →</a>
+                    <a href="{{ route("rekappenjualan.index") }}" class="text-red-600 font-semibold hover:underline">Sales Recap Chart →</a>
                 </div>
             </div>
 
             <!--rekap penjualan perusahaan-->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300 chart-group" data-group="penjualan-perusahaan">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
-                    Grafik Laporan Rekap Penjualan Perusahaan
+                    Sales Recap by Company
                 </h1>
                 <div class="mb-2 flex justify-end">
                     <select class="chart-select p-2 border border-gray-300 rounded">
@@ -49,14 +49,14 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("rekappenjualanperusahaan.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Rekap Penjualan →</a>
+                    <a href="{{ route("rekappenjualanperusahaan.index") }}" class="text-red-600 font-semibold hover:underline">Sales Recap by Company →</a>
                 </div>
             </div>
 
             <!--laporan paket administrasi-->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300 chart-group" data-group="penjualan-perusahaan">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
-                    Grafik Laporan Paket Administrasi
+                    Administrative Package Report
                 </h1>
                 <div class="mb-2 flex justify-end">
                     <select class="chart-select p-2 border border-gray-300 rounded">
@@ -74,14 +74,14 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("laporanpaketadministrasi.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Paket Administrasi →</a>
+                    <a href="{{ route("laporanpaketadministrasi.index") }}" class="text-red-600 font-semibold hover:underline">Administrative Package Report →</a>
                 </div>
             </div>
 
             <!--status paket-->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300 chart-group" data-group="penjualan-perusahaan">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
-                    Grafik Laporan Status Paket
+                    Package Status Report
                 </h1>
                 <div class="mb-2 flex justify-end">
                     <select class="chart-select p-2 border border-gray-300 rounded">
@@ -99,14 +99,14 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("statuspaket.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Status Paket →</a>
+                    <a href="{{ route("statuspaket.index") }}" class="text-red-600 font-semibold hover:underline">Package Status Report →</a>
                 </div>
             </div>
 
             <!-- laporan per instansi -->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300 chart-group" data-group="penjualan-perusahaan">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
-                    Grafik Laporan Per Instansi
+                    Institution Based Report
                 </h1>
                 <div class="mb-2 flex justify-end">
                     <select class="chart-select p-2 border border-gray-300 rounded">
@@ -124,7 +124,7 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("laporanperinstansi.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Per Instansi →</a>
+                    <a href="{{ route("laporanperinstansi.index") }}" class="text-red-600 font-semibold hover:underline">Institution Based Report →</a>
                 </div>
             </div>
             @endif
@@ -135,7 +135,7 @@
             <!-- PROCUREMENT -->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300 chart-group" data-group="penjualan-perusahaan">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
-                    Grafik Laporan Rekap Pembelian (HOLDING)
+                    Purchase Report (HOLDING)
                 </h1>
                 <div class="mb-2 flex justify-end">
                     <select class="chart-select p-2 border border-gray-300 rounded">
@@ -153,14 +153,14 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("laporanholding.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Rekap Pembelian (HOLDING) →</a>
+                    <a href="{{ route("laporanholding.index") }}" class="text-red-600 font-semibold hover:underline">Purchase Report (HOLDING) →</a>
                 </div>
             </div>
 
             <!--laporan stok-->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
-                    Grafik Laporan Stok
+                    Stock Report
                 </h1>
 
                 <div class="bg-white shadow-md rounded-lg p-6">
@@ -168,14 +168,14 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("laporanstok.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Stok →</a>
+                    <a href="{{ route("laporanstok.index") }}" class="text-red-600 font-semibold hover:underline">Stock Report →</a>
                 </div>
             </div>
 
             <!--laporan pembelian outlet-->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
-                    Grafik Pembelian Outlet
+                    Outlet Purchase Report
                 </h1>
 
                 <div class="bg-white shadow-md rounded-lg p-6">
@@ -183,14 +183,14 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("laporanoutlet.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Pembelian Outlet →</a>
+                    <a href="{{ route("laporanoutlet.index") }}" class="text-red-600 font-semibold hover:underline">Outlet Purchase Report →</a>
                 </div>
             </div>
 
             <!--laporan negosiasi -->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
-                    Grafik Laporan Negosiasi
+                    Negotiation Report
                 </h1>
 
                 <div class="bg-white shadow-md rounded-lg p-6">
@@ -198,7 +198,7 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("laporannegosiasi.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Negosiasi →</a>
+                    <a href="{{ route("laporannegosiasi.index") }}" class="text-red-600 font-semibold hover:underline">Negotiation Report →</a>
                 </div>
             </div>
             @endif
@@ -208,7 +208,7 @@
             @if(in_array(Auth::user()->role, ['superadmin', 'support']))
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300 chart-group" data-group="penjualan-perusahaan">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
-                    Grafik Laporan Rekap Pendapatan Servis ASP
+                    ASP Service Revenue Recap
                 </h1>
                 <div class="mb-2 flex justify-end">
                     <select class="chart-select p-2 border border-gray-300 rounded">
@@ -226,13 +226,13 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("rekappendapatanservisasp.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Rekap Pendapatan Servis ASP →</a>
+                    <a href="{{ route("rekappendapatanservisasp.index") }}" class="text-red-600 font-semibold hover:underline">ASP Service Revenue Recap →</a>
                 </div>
             </div>
 
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300 chart-group" data-group="penjualan-perusahaan">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
-                    Grafik Laporan Rekap Piutang Servis ASP
+                    ASP Service Receivables Recap
                 </h1>
                 <div class="mb-2 flex justify-end">
                     <select class="chart-select p-2 border border-gray-300 rounded">
@@ -250,14 +250,14 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("rekappiutangservisasp.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Rekap Piutang Servis ASP →</a>
+                    <a href="{{ route("rekappiutangservisasp.index") }}" class="text-red-600 font-semibold hover:underline">ASP Service Receivables Recap →</a>
                 </div>
             </div>
 
             <!--laporan pengiriman -->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
-                    Grafik Laporan Rekap Pengiriman
+                    Shipping Report Recap
                 </h1>
 
                 <div class="bg-white shadow-md rounded-lg p-6">
@@ -265,7 +265,7 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("laporandetrans.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Rekap Pendapatan Pengiriman→ →</a>
+                    <a href="{{ route("laporandetrans.index") }}" class="text-red-600 font-semibold hover:underline">Shipping Report Recap →</a>
                 </div>
             </div>
             @endif
@@ -275,7 +275,7 @@
             <!-- LAPORAN LABA RUGI -->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
-                    Laporan Laba Rugi
+                    Profit and Loss Report
                 </h1>
 
                 <div class="flex bg-white shadow-md rounded-lg p-6 justify-center">
@@ -313,14 +313,14 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("labarugi.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Laba Rugi →</a>
+                    <a href="{{ route("labarugi.index") }}" class="text-red-600 font-semibold hover:underline">Profit and Loss Report →</a>
                 </div>
             </div>
 
             <!-- LAPORAN NERACA -->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
-                    Laporan Neraca
+                    Balance Sheet
                 </h1>
 
                 <div class="flex bg-white shadow-md rounded-lg p-6 justify-center">
@@ -358,14 +358,14 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("neraca.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Neraca →</a>
+                    <a href="{{ route("neraca.index") }}" class="text-red-600 font-semibold hover:underline">Balance Sheet →</a>
                 </div>
             </div>
 
             <!-- LAPORAN RASIO -->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
-                    Laporan Rasio
+                    Financial Ratio Report
                 </h1>
 
                 <div class="flex bg-white shadow-md rounded-lg p-6 justify-center">
@@ -403,14 +403,14 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("rasio.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Rasio →</a>
+                    <a href="{{ route("rasio.index") }}" class="text-red-600 font-semibold hover:underline">Financial Ratio Report →</a>
                 </div>
             </div>
 
             <!-- LAPORAN KHPS -->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
-                    Grafik Laporan Kas Hutang Piutang Stok
+                    Cash, Debts, Receivables, and Stock Reports
                 </h1>
 
                 <div class="flex justify-center items-center bg-white shadow-md rounded-lg p-6">
@@ -420,14 +420,14 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("khps.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Kas Hutang Piutang Stok →</a>
+                    <a href="{{ route("khps.index") }}" class="text-red-600 font-semibold hover:underline">Cash, Debts, Receivables, and Stock Reports →</a>
                 </div>
             </div>
 
             <!-- LAPORAN ARUS KAS -->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
-                    Grafik Laporan Arus Kas
+                    Cash Flow Statement
                 </h1>
 
                 <div class="flex justify-center items-center bg-white shadow-md rounded-lg p-6">
@@ -437,14 +437,14 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("aruskas.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Arus Kas →</a>
+                    <a href="{{ route("aruskas.index") }}" class="text-red-600 font-semibold hover:underline">Cash Flow Statement →</a>
                 </div>
             </div>
 
             <!-- LAPORAN PPn -->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
-                    Laporan PPN
+                    PPN Report
                 </h1>
 
                 <div class="flex bg-white shadow-md rounded-lg p-6 justify-center">
@@ -482,14 +482,14 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("laporanppn.index") }}" class="text-red-600 font-semibold hover:underline">Laporan PPN →</a>
+                    <a href="{{ route("laporanppn.index") }}" class="text-red-600 font-semibold hover:underline">PPN Report →</a>
                 </div>
             </div>
 
             <!-- LAPORAN Tax Planning -->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
-                    Laporan Tax Planning
+                    Tax Planning Report
                 </h1>
 
                 <div class="flex bg-white shadow-md rounded-lg p-6 justify-center">
@@ -527,7 +527,7 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("taxplaning.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Tax Planning →</a>
+                    <a href="{{ route("taxplaning.index") }}" class="text-red-600 font-semibold hover:underline">Tax Planning Report →</a>
                 </div>
             </div>
             @endif
@@ -538,7 +538,7 @@
             <!-- LAPORAN Instagram -->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
-                    Laporan Multimedia Instagram
+                    Instagram Multimedia Report
                 </h1>
 
                 <div class="flex bg-white shadow-md rounded-lg p-6 justify-center">
@@ -576,14 +576,14 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("multimediainstagram.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Multimedia Instagram →</a>
+                    <a href="{{ route("multimediainstagram.index") }}" class="text-red-600 font-semibold hover:underline">Instagram Multimedia Report →</a>
                 </div>
             </div>
 
             <!-- LAPORAN TIKTOK -->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
-                    Laporan Multimedia Tiktok
+                    Tiktok Multimedia Report
                 </h1>
 
                 <div class="flex bg-white shadow-md rounded-lg p-6 justify-center">
@@ -621,14 +621,14 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("tiktok.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Multimedia Tiktok →</a>
+                    <a href="{{ route("tiktok.index") }}" class="text-red-600 font-semibold hover:underline">Tiktok Multimedia Report →</a>
                 </div>
             </div>
 
             <!-- LAPORAN BIZDEV -->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
-                    Laporan Bizdev
+                    Business Development Report
                 </h1>
 
                 <div class="flex bg-white shadow-md rounded-lg p-6 justify-center">
@@ -666,7 +666,7 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("laporanbizdevgambar.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Bizdev →</a>
+                    <a href="{{ route("laporanbizdevgambar.index") }}" class="text-red-600 font-semibold hover:underline">Business Development Report →</a>
                 </div>
             </div>
             @endif
@@ -678,7 +678,7 @@
             <!-- LAPORAN PT BOS -->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
-                    Laporan PT BOS
+                    PT BOS Report
                 </h1>
 
                 <div class="flex bg-white shadow-md rounded-lg p-6 justify-center">
@@ -720,14 +720,14 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("laporanptbos.index") }}" class="text-red-600 font-semibold hover:underline">Laporan PT BOS →</a>
+                    <a href="{{ route("laporanptbos.index") }}" class="text-red-600 font-semibold hover:underline">PT BOS Report →</a>
                 </div>
             </div>
 
             <!-- LAPORAN IJASA -->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
-                    Laporan iJASA
+                    iJASA Report
                 </h1>
 
                 <div class="flex bg-white shadow-md rounded-lg p-6 justify-center">
@@ -769,14 +769,14 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("laporanijasa.index") }}" class="text-red-600 font-semibold hover:underline">Laporan iJASA →</a>
+                    <a href="{{ route("laporanijasa.index") }}" class="text-red-600 font-semibold hover:underline">iJASA Report →</a>
                 </div>
             </div>
 
             <!-- LAPORAN iJASA Gambar -->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
-                    Laporan iJASA Gambar
+                    iJASA Report Picture
                 </h1>
 
                 <div class="flex bg-white shadow-md rounded-lg p-6 justify-center">
@@ -814,14 +814,14 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("ijasagambar.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Tax Planning →</a>
+                    <a href="{{ route("ijasagambar.index") }}" class="text-red-600 font-semibold hover:underline">iJASA Report Picture →</a>
                 </div>
             </div>
 
             <!-- LAPORAN Sakit -->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300 chart-group" data-group="penjualan-perusahaan">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
-                    Grafik Laporan Sakit
+                    Sick Leave Report
                 </h1>
                 <div class="mb-2 flex justify-end">
                     <select class="chart-select p-2 border border-gray-300 rounded">
@@ -839,14 +839,14 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("laporansakit.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Sakit →</a>
+                    <a href="{{ route("laporansakit.index") }}" class="text-red-600 font-semibold hover:underline">Sick Leave Report →</a>
                 </div>
             </div>
 
             <!-- LAPORAN CUTI -->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300 chart-group" data-group="penjualan-perusahaan">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
-                    Grafik Laporan Cuti
+                    Annual Leave Report
                 </h1>
                 <div class="mb-2 flex justify-end">
                     <select class="chart-select p-2 border border-gray-300 rounded">
@@ -864,14 +864,14 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("laporancuti.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Cuti →</a>
+                    <a href="{{ route("laporancuti.index") }}" class="text-red-600 font-semibold hover:underline">Annual Leave Report →</a>
                 </div>
             </div>
 
             <!-- LAPORAN Izin -->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300 chart-group" data-group="penjualan-perusahaan">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
-                    Grafik Laporan Izin
+                    Permission/Leave Report
                 </h1>
                 <div class="mb-2 flex justify-end">
                     <select class="chart-select p-2 border border-gray-300 rounded">
@@ -889,14 +889,14 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("laporanizin.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Izin →</a>
+                    <a href="{{ route("laporanizin.index") }}" class="text-red-600 font-semibold hover:underline">Permission/Leave Report →</a>
                 </div>
             </div>
 
             <!-- LAPORAN Terlambat -->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300 chart-group" data-group="penjualan-perusahaan">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
-                    Grafik Laporan Terlambat
+                    Late Arrival Report
                 </h1>
                 <div class="mb-2 flex justify-end">
                     <select class="chart-select p-2 border border-gray-300 rounded">
@@ -914,7 +914,7 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("laporanizin.index") }}" class="text-red-600 font-semibold hover:underline">Laporan Terlambat →</a>
+                    <a href="{{ route("laporanizin.index") }}" class="text-red-600 font-semibold hover:underline">Late Arrival Report →</a>
                 </div>
             </div>
             @endif
@@ -924,7 +924,7 @@
             <!-- SPI -->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
-                    Laporan SPI Operasional
+                    Operational SPI Report
                 </h1>
 
                 <div class="flex bg-white shadow-md rounded-lg p-6 justify-center">
@@ -962,13 +962,13 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("laporanspi.index") }}" class="text-red-600 font-semibold hover:underline">Laporan SPI Operasional →</a>
+                    <a href="{{ route("laporanspi.index") }}" class="text-red-600 font-semibold hover:underline">Operational SPI Report →</a>
                 </div>
             </div>
             <!-- SPI -->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
-                    Laporan SPI IT
+                    IT SPI Report
                 </h1>
 
                 <div class="flex bg-white shadow-md rounded-lg p-6 justify-center">
@@ -1006,15 +1006,10 @@
                 </div>
 
                 <div class="flex justify-end mt-4">
-                    <a href="{{ route("laporanspi.index") }}" class="text-red-600 font-semibold hover:underline">Laporan SPI IT →</a>
+                    <a href="{{ route("laporanspi.index") }}" class="text-red-600 font-semibold hover:underline">IT SPI Report →</a>
                 </div>
             </div>
             @endif
-
-
-
-
-
         </div>
         @endif
 

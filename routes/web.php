@@ -60,8 +60,8 @@ Route::middleware(['web'])->group(function () {
         ->name('rasio.exportPDF');
 
         Route::resource('taxplaning', LaporanTaxPlaningController::class);
-        Route::post('taxplaning/export-pdf', [LaporanTaxPlaningController::class, 'exportPDF'])
-        ->name('taxplaning.exportPDF');
+        // Route::post('taxplaning/export-pdf', [LaporanTaxPlaningController::class, 'exportPDF'])
+        // ->name('taxplaning.exportPDF');
 
         Route::resource('laporanppn', LaporanPpnController::class);
         Route::post('laporanppn/export-pdf', [LaporanPpnController::class, 'exportPDF'])
@@ -75,9 +75,14 @@ Route::middleware(['web'])->group(function () {
         Route::post('aruskas/export-pdf', [ArusKasController::class, 'exportPDF'])
         ->name('accounting.aruskas.exportPDF');
 
-    Route::resource('taxplanning', TaxPlanningController::class);
-    Route::get('taxplanning/monthly-data', [TaxPlanningController::class, 'monthlyChart'])
-            ->name('accounting.taxplanning.monthly.data');
+        Route::resource('taxplaning', TaxPlanningController::class);
+        Route::get('taxplaning/monthly-data', [TaxPlanningController::class, 'monthlyChart'])
+                ->name('accounting.taxplaning.monthly.data');
+        Route::post('taxplaning/export-pdf', [TaxPlanningController::class, 'exportPDF'])
+            ->name('taxplaning.exportPDF');
+        Route::post('/accounting/taxplaning/fetch-api', [TaxPlanningController::class, 'fetchTaxPlanningDataFromApi'])
+            ->name('taxplaning.fetchApi');
+
     // Route::get('/admin/chart-data', [LaporanPaketAdministrasiController::class, 'showChart'])->name('admin.chart.data');
 
     // Route::resource('taxplanning/monthly-data',  [TaxPlanningController::class, 'monthlyChart']);

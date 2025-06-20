@@ -90,6 +90,16 @@
         <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
             <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Cash, Debts, Receivables, and Stock</h1>
 
+            {{-- Display Gemini Analysis --}}
+            <div style="margin-top: 30px; border: 1px solid #ccc; padding: 20px; border-radius: 8px;">
+                <h2>Analisis AI Gemini</h2>
+                @if(isset($aiInsight))
+                    <p>{{ $aiInsight }}</p>
+                @else
+                    <p>Tidak ada analisis AI yang tersedia.</p>
+                @endif
+            </div>
+
             <div class="flex items-center justify-end transition-all duration-500 mt-8 mb-4">
                 <!-- Search -->
                 <form method="GET" action="{{ route('khps.index') }}" class="flex items-center gap-2">
