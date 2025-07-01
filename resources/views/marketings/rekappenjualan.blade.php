@@ -94,8 +94,16 @@
         <!-- Main Content -->
         <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
             {{-- <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan Rekap Penjualan</h1> --}}
-            <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Sales Recap</h1>
+        <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Sales Recap</h1>
 
+        @if(!empty($aiInsight))
+        <div class="ai-insight mt-4 p-4 bg-white rounded-lg shadow">
+            <h3 class="text-lg font-semibold mb-2">Analisis Penjualan oleh AI</h3>
+            <div class="prose max-w-none">
+                {!! \Illuminate\Support\Str::markdown($aiInsight) !!}
+            </div>
+        </div>
+        @endif
             <div class="flex items-center justify-end transition-all duration-500 mt-8 mb-4 p-4">
                 <!-- Search -->
                 <form method="GET" action="{{ route('rekappenjualan.index') }}" class="flex items-center gap-2">
@@ -324,7 +332,28 @@
         </div>
 
 </body>
-<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+{{-- <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script>
+    import "./bootstrap";  // if you have one
+    import { fetchAIInsight } from "./aiInsight";
+
+        // Wait for DOM and then load the insight
+        document.addEventListener("DOMContentLoaded", async () => {
+        const container = document.querySelector(".ai-insight .prose");
+        if (!container) return;
+
+        // `data-prompt` comes from Blade (see next step)
+        const prompt = container.dataset.prompt;
+        container.innerHTML = "Loading AI insight…";
+
+        const insight = await fetchAIInsight(prompt);
+        // preserve line breaks
+        container.innerHTML = insight
+            .split("\n")
+            .map(line => `<p>${line}</p>`)
+            .join("");
+        });
+    </script> --}}
 <script>
         //toogle form
         const toggleFormButton = document.getElementById('toggleFormButton');

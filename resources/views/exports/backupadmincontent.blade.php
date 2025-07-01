@@ -1,7 +1,7 @@
 <div id="admincontent" class="content-wrapper ml-72 p-4 transition-all duration-300">
     <!-- Grafik Laporan Paket Administrasi -->
     <div class="p-4 ">
-        <h1 class="mt-10 text-4xl font-bold text-red-600">Dash<span class="text-red-600">board</span></h1>
+        <h1 class="mt-10 text-4xl font-bold text-red-600">Dash<span class="text-black">board</span></h1>
         <div class="flex justify-end mb-4">
 
             <form id="chartFilterForm" method="GET" action="#" class="flex items-center justify-end gap-2">

@@ -207,7 +207,7 @@ class LaporanPerInstansiController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Marketing - Laporan Per Instansi|');
+            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Marketing - Institution Based Report|');
 
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "
