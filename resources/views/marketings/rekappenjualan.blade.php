@@ -98,7 +98,7 @@
 
         @if(!empty($aiInsight))
         <div class="ai-insight mt-4 p-4 bg-white rounded-lg shadow">
-            <h3 class="text-lg font-semibold mb-2">Analisis Penjualan oleh AI</h3>
+            <h3 class="text-lg font-semibold mb-2">Analisis Penjualan</h3>
             <div class="prose max-w-none">
                 {!! \Illuminate\Support\Str::markdown($aiInsight) !!}
             </div>

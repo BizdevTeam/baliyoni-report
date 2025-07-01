@@ -17,59 +17,6 @@ use Illuminate\Support\Facades\Http;
 class RekapPenjualanController extends Controller
 {
     use DateValidationTrait;
-    // Show the view
-    // public function index(Request $request)
-    // {
-    //     $perPage = $request->input('per_page', 12);
-    //     $search = $request->input('search');
-    //     $month = $request->input('month');
-    //     $year = $request->input('year');
-
-    //     #$query = KasHutangPiutang::query();
-
-    //     // Query untuk mencari berdasarkan tahun dan date
-    //     $rekappenjualans = RekapPenjualan::query()
-    //         ->when($search, function ($query, $search) {
-    //         return $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-    
-    //         })
-    //         ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
-    //         ->paginate($perPage);
-
-    //     // Hitung total untuk masing-masing kategori
-    //     $totalPenjualan = $rekappenjualans->sum('total_penjualan');
-
-    //     // Siapkan data untuk chart
-    //     function getRandomRGBA($opacity = 0.7)
-    //     {
-    //         return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
-    //     }
-    //     $rekappenjualans->map(function ($item) {
-    //         $item->total_penjualan_formatted = 'Rp ' . number_format($item->total_penjualan, 0, ',', '.');
-    //         return $item;
-    //     });
-
-    //     $labels = $rekappenjualans->map(function ($item) {
-    //         $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
-    //         return $formattedDate;
-    //     })->toArray();
-    //     $data = $rekappenjualans->pluck('total_penjualan')->toArray();
-    //     // Generate random colors for each data item
-    //     $backgroundColors = array_map(fn() => getRandomRGBA(), $data);
-
-    //     $chartData = [
-    //         'labels' => $labels, // Labels untuk chart
-    //         'datasets' => [
-    //             [
-    //                 'text' => 'Total Sales', // Nama dataset
-    //                 'data' => $data, // Data untuk chart
-    //                 'backgroundColor' => $backgroundColors, // Warna batang random
-    //             ],
-    //         ],
-    //     ];
-
-    //     return view('marketings.rekappenjualan', compact('rekappenjualans', 'chartData'));
-    // }
 
      public function index(Request $request)
     {
@@ -164,7 +111,7 @@ class RekapPenjualanController extends Controller
                 return $result['candidates'][0]['content']['parts'][0]['text'] ?? 'Tidak dapat menghasilkan insight dari AI.';
             } else {
                 Log::error('Gemini API error: ' . $response->body());
-                return 'Gagal menghubungi layanan analisihjs AI. Cek log untuk detail.';
+                return 'Gagal menghubungi layanan analisis AI. Cek log untuk detail.';
             }
         } catch (\Exception $e) {
             Log::error('Error generating AI insight: ' . $e->getMessage());
