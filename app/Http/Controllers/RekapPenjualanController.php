@@ -18,6 +18,48 @@ class RekapPenjualanController extends Controller
 {
     use DateValidationTrait;
 
+    //  public function index(Request $request)
+    // {
+    //     $perPage = $request->input('per_page', 12);
+    //     $search = $request->input('search');
+        
+    //     $rekappenjualans = RekapPenjualan::query()
+    //         ->when($search, function ($query, $search) {
+    //             return $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+    //         })
+    //         ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
+    //         ->paginate($perPage);
+
+    //     // Bagian ini sudah benar
+    //     $rekappenjualans->map(function ($item) {
+    //         $item->total_penjualan_formatted = 'Rp ' . number_format($item->total_penjualan, 0, ',', '.');
+    //         return $item;
+    //     });
+
+    //     $labels = $rekappenjualans->map(function ($item) {
+    //         return Carbon::parse($item->tanggal)->translatedFormat('F Y');
+    //     })->toArray();
+        
+    //     $data = $rekappenjualans->pluck('total_penjualan')->toArray();
+    //     $backgroundColors = array_map(fn() => $this->getRandomRGBA(), $data);
+
+    //     $chartData = [
+    //         'labels' => $labels,
+    //         'datasets' => [
+    //             [
+    //                 'text' => 'Total Sales',
+    //                 'data' => $data,
+    //                 'backgroundColor' => $backgroundColors,
+    //             ],
+    //         ],
+    //     ];
+        
+    //     // Panggil fungsi generateSalesInsight yang SUDAH DIPERBAIKI
+    //     $aiInsight = $this->generateSalesInsight($rekappenjualans, $chartData);
+
+    //     return view('marketings.rekappenjualan', compact('rekappenjualans', 'chartData','aiInsight'));
+    // }
+
      public function index(Request $request)
     {
         $perPage = $request->input('per_page', 12);
@@ -53,10 +95,12 @@ class RekapPenjualanController extends Controller
                 ],
             ],
         ];
-        
-        // Panggil fungsi generateSalesInsight yang SUDAH DIPERBAIKI
-        $aiInsight = $this->generateSalesInsight($rekappenjualans, $chartData);
+        $aiInsight = null;
 
+    // 2. Hanya jalankan fungsi AI jika request memiliki parameter 'generate_ai'.
+    if ($request->has('generate_ai')) {
+        $aiInsight = $this->generateSalesInsight($rekappenjualans, $chartData);
+    }
         return view('marketings.rekappenjualan', compact('rekappenjualans', 'chartData','aiInsight'));
     }
       private function generateSalesInsight($salesData, $chartData)
