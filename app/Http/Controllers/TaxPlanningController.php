@@ -15,7 +15,7 @@ class TaxPlanningController extends Controller
     // Fungsi untuk mengambil dan menyimpan data dari API eksternal
     public function fetchTaxPlanningDataFromApi()
     {
-        $url = "https://bali.arpro.id/api/getTax";
+        $url = "http://bali.arpro.id/api/getTax";
         $response = Http::timeout(5)->get($url);
 
         if ($response->successful()) {
