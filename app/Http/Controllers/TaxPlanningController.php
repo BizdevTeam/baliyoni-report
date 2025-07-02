@@ -43,7 +43,7 @@ class TaxPlanningController extends Controller
 
     public function index(Request $request)
     {
-        $perPage = $request->input('per_page', 100);
+        $perPage = $request->input('per_page', 200);
         $search  = $request->input('search');
 
         // ── 2) Bangun query dasar dan terapkan pencarian ────────────────────────
