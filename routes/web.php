@@ -79,9 +79,9 @@ Route::middleware(['web'])->group(function () {
         Route::get('taxplaning/monthly-data', [TaxPlanningController::class, 'monthlyChart'])
                 ->name('accounting.taxplaning.monthly.data');
         Route::post('taxplaning/export-pdf', [TaxPlanningController::class, 'exportPDF'])
-            ->name('taxplaning.exportPDF');
-        Route::post('/accounting/taxplaning/fetch-api', [TaxPlanningController::class, 'fetchTaxPlanningDataFromApi'])
-            ->name('taxplaning.fetchApi');
+            ->name('accounting.taxplaning.exportPDF');
+        Route::post('taxplaning/fetch-api', [TaxPlanningController::class, 'fetchTaxPlanningDataFromApi'])
+            ->name('accounting.taxplaning.fetchApi');
 
     // Route::get('/admin/chart-data', [LaporanPaketAdministrasiController::class, 'showChart'])->name('admin.chart.data');
 

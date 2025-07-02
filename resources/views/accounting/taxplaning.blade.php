@@ -85,8 +85,6 @@
                 </button>
             </div>
             @endif
-            <span id="syncStatus" class="ml-2 text-sm"></span>
-
         </div>
         @endif
 
@@ -198,9 +196,60 @@
                         </g>
                     </svg>
                 </button>
-                <button id="btnSyncTax" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition">
+            <div x-data="syncAndModalManager()">
+
+    <button @click="runSync()" :disabled="isLoading"
+            class="bg-blue-600 text-white px-5 py-2 rounded-lg shadow hover:bg-blue-700 transition duration-300 flex items-center gap-2 disabled:bg-blue-400 disabled:cursor-wait">
+        
+        <svg x-show="isLoading" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        
+        <svg x-show="!isLoading" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M12 16.5A4.5 4.5 0 0 0 16.5 12A4.5 4.5 0 0 0 12 7.5A4.5 4.5 0 0 0 7.5 12A4.5 4.5 0 0 0 12 16.5M12 9A3 3 0 0 1 15 12A3 3 0 0 1 12 15A3 3 0 0 1 9 12A3 3 0 0 1 12 9m9-3h-2.1c-.4-1.2-.9-2.3-1.6-3.2L19 1l-2-2l-1.8 1.3C14.3.4 13.2.1 12 0c-1.2.1-2.3.4-3.2 1.3L7 1l-2 2l1.7 1.7c-.7.9-1.2 2-1.6 3.2H3v3c.1 1.2.4 2.3 1.3 3.2L3 18l2 2l1.8-1.7c.9.7 2 1.2 3.2 1.6v2.1h3v-2.1c1.2-.4 2.3-.9 3.2-1.6L17 21l2-2l-1.7-1.7c.7-.9 1.2-2 1.6-3.2V6M12 18a6 6 0 0 1-6-6H4.2c-.2 1.9.4 3.7 1.6 5.2L4 19l1 1l2-1.5c1.5 1.2 3.3 1.8 5.2 1.6V20h1.8v-1.8c1.9-.2 3.7-.8 5.2-2L20 19l1-1l-1.5-2c1.2-1.5 1.8-3.3 1.6-5.2H18a6 6 0 0 1-6 6Z"/>
+        </svg>
+        
+        <span x-text="isLoading ? 'Sinkronisasi...' : 'Sync Data dari API'"></span>
+    </button>
+
+    <div @keydown.escape.window="closeModal()" x-show="modal.isOpen" x-cloak
+         class="fixed inset-0 z-50 flex items-center justify-center p-4">
+
+        <div x-show="modal.isOpen" x-transition.opacity.duration.300ms @click="closeModal()"
+             class="fixed inset-0 bg-black bg-opacity-50"></div>
+
+        <div x-show="modal.isOpen" x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 scale-90"
+             x-transition:enter-end="opacity-100 scale-100"
+             class="relative bg-white rounded-lg shadow-xl w-full max-w-md p-6 text-center">
+            
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full"
+                 :class="modal.type === 'success' ? 'bg-green-100' : 'bg-red-100'">
+                <svg x-show="modal.type === 'success'" class="h-6 w-6 text-green-600" ...></svg>
+                <svg x-show="modal.type === 'error'" class="h-6 w-6 text-red-600" ...></svg>
+            </div>
+
+            <h3 class="mt-4 text-lg font-medium text-gray-900" x-text="modal.title"></h3>
+            <div class="mt-2">
+                <p class="text-sm text-gray-500" x-html="modal.message"></p>
+            </div>
+
+            <div class="mt-5">
+                <button @click="closeModal()" type="button"
+                        class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white focus:outline-none"
+                        :class="modal.type === 'success' ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+                {{-- <button id="btnSyncTax" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition">
                     Sync Data dari API
                 </button>
+                <div id="syncStatus" class="mt-2 text-sm font-medium">
+                </div> --}}
             </div>
 
             <div id="formContainer" class="hidden">
@@ -243,7 +292,7 @@
                             <select id="perPage"
                                 class="p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 onchange="changePerPage(this.value)">
-                                <option value="5" {{ request('per_page')==5 ? 'selected' : '' }}>5</option>
+                                <option value="100" {{ request('per_page')==100 ? 'selected' : '' }}>5</option>
                                 <option value="12" {{ request('per_page')==12 || !request('per_page') ? 'selected' : ''
                                     }}>12</option>
                                 <option value="24" {{ request('per_page')==24 ? 'selected' : '' }}>24</option>
@@ -367,7 +416,7 @@
             </div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
+{{-- <script>
 document.getElementById('btnSyncTax').addEventListener('click', async function() {
     const btn   = this;
     const status = document.getElementById('syncStatus');
@@ -378,7 +427,8 @@ document.getElementById('btnSyncTax').addEventListener('click', async function()
     status.textContent = '';
 
     try {
-        const res = await fetch("{{ route('taxplaning.fetchApi') }}", {
+        const res = await fetch("{{ route('accounting.taxplaning.fetchApi') }}", {
+        // const res = await fetch("/accounting/taxplaning/fetch-api", {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': token,
@@ -401,6 +451,62 @@ document.getElementById('btnSyncTax').addEventListener('click', async function()
         btn.textContent = '🔄 Sync Data dari API';
     }
 });
+</script> --}}
+<script>
+    function syncAndModalManager() {
+        return {
+            // State untuk tombol
+            isLoading: false,
+
+            // State untuk modal (dijadikan satu objek agar rapi)
+            modal: {
+                isOpen: false,
+                type: 'success',
+                title: '',
+                message: ''
+            },
+
+            // Method utama yang dipanggil tombol
+            async runSync() {
+                this.isLoading = true;
+                const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                try {
+                    const res = await fetch("{{ route('accounting.taxplaning.fetchApi') }}", {
+                        method: 'POST',
+                        headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
+                    });
+                    const data = await res.json();
+                    
+                    if (res.ok && data.success) {
+                        // Langsung panggil method untuk menampilkan modal sukses
+                        this.showModal('success', data.message);
+                        setTimeout(() => window.location.reload(), 2000);
+                    } else {
+                        // Langsung panggil method untuk menampilkan modal error
+                        this.showModal('error', data.message || 'Terjadi kesalahan di server.');
+                    }
+                } catch (err) {
+                    this.showModal('error', 'Gagal terhubung ke server. Periksa koneksi Anda.');
+                } finally {
+                    this.isLoading = false;
+                }
+            },
+
+            // Method untuk menampilkan modal
+            showModal(type, message) {
+                this.modal.type = type;
+                this.modal.title = type === 'success' ? 'Sinkronisasi Berhasil!' : 'Terjadi Kesalahan!';
+                this.modal.message = message;
+                this.modal.isOpen = true;
+            },
+
+            // Method untuk menutup modal
+            closeModal() {
+                this.modal.isOpen = false;
+            }
+        }
+    }
 </script>
 <script>
     // Variabel ini akan berisi SEMUA data chart untuk keperluan ekspor
@@ -628,7 +734,7 @@ async function exportToPDF() {
     });
 
     try {
-        const response = await fetch('/accounting/taxplaning/export-pdf', {
+        const response = await fetch("{{ route('accounting.taxplaning.exportPDF') }}", {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,
@@ -643,7 +749,7 @@ async function exportToPDF() {
         const blob = await response.blob();
         const url  = URL.createObjectURL(blob);
         const a    = document.createElement('a');
-        a.href = url; a.download = 'Laporan_rekap_penjualan.pdf';
+        a.href = url; a.download = 'Laporan_tax_planning.pdf';
         document.body.appendChild(a);
         a.click();
         a.remove();
