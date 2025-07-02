@@ -15,12 +15,22 @@ class TaxPlanningController extends Controller
     // Fungsi untuk mengambil dan menyimpan data dari API eksternal
     public function fetchTaxPlanningDataFromApi()
     {
-        $url = "http://bali.arpro.id/api/getTax";
-        $response = Http::timeout(5)->get($url);
+        $baseUrl = 'https://bali.arpro.id/api';
+        $endpoint = '/getTax';
 
-        if ($response->successful()) {
-            foreach ($response->json() as $rec) {
-                // Gunakan tanggal/waktu server saat ini untuk 'tanxggal'
+        $url = $baseUrl . $endpoint;
+
+        // Gunakan Guzzle untuk HTTP request
+        $client = new \GuzzleHttp\Client();
+        $response = $client->request('GET', $url);
+
+        Log::info('Response from API: ' . $response->getBody());        
+
+        if ($response->getStatusCode() === 200) {
+            $data = json_decode($response->getBody(), true);
+
+            foreach ($data as $rec) {
+                // Gunakan tanggal/waktu server saat ini untuk 'tanggal'
                 $now = Carbon::now()->toDateTimeString();
 
                 TaxPlanning::updateOrCreate(
@@ -39,6 +49,30 @@ class TaxPlanningController extends Controller
         } else {
             return response()->json(['success' => false, 'message' => 'Gagal mengambil data dari API.'], 500);
         }
+        // $url = "https://bali.arpro.id/api/getTax";
+        // $response = Http::timeout(5)->get($url);
+
+        // if ($response->successful()) {
+        //     foreach ($response->json() as $rec) {
+        //         // Gunakan tanggal/waktu server saat ini untuk 'tanxggal'
+        //         $now = Carbon::now()->toDateTimeString();
+
+        //         TaxPlanning::updateOrCreate(
+        //             [
+        //                 'nama_perusahaan' => $rec['nama'],
+        //                 'tanggal'         => $now,
+        //             ],
+        //             [
+        //                 'tanggal'         => $now,
+        //                 'tax_planning'    => intval($rec['tax_planning']),
+        //                 'total_penjualan' => intval($rec['limit_penjualan']),
+        //             ]
+        //         );
+        //     }
+        //     return response()->json(['success' => true, 'message' => 'Data berhasil diambil dan disimpan.']);
+        // } else {
+        //     return response()->json(['success' => false, 'message' => 'Gagal mengambil data dari API.'], 500);
+        // }
     }
 
     public function index(Request $request)
