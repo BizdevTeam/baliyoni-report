@@ -93,6 +93,15 @@
             {{-- <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan Rekap Penjualan Perusahaan</h1> --}}
             <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Sales Recap by Company</h1>
 
+        @if(!empty($aiInsight))
+        <div class="ai-insight mt-4 p-4 bg-white rounded-lg shadow">
+            <h3 class="text-lg font-semibold mb-2">Analisis Penjualan oleh AI</h3>
+            <div class="prose max-w-none">
+                {!! \Illuminate\Support\Str::markdown($aiInsight) !!}
+            </div>
+        </div>
+        @endif
+        
             <div class="flex items-center justify-end transition-all duration-500 mt-8 mb-4">
                 <!-- Search -->
                 <form method="GET" action="{{ route('rekappenjualanperusahaan.index') }}" class="flex items-center gap-2">
