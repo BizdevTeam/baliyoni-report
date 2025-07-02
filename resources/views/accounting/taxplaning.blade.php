@@ -85,6 +85,7 @@
                 </button>
             </div>
             @endif
+            <span id="syncStatus" class="ml-2 text-sm"></span>
 
         </div>
         @endif
@@ -129,7 +130,7 @@
                         </svg>
                     </button>
                 </form>
-                <button
+                {{-- <button
                     class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm mr-2"
                     data-modal-target="#addEventModal">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -152,7 +153,7 @@
                             </path>
                         </g>
                     </svg>
-                </button>
+                </button> --}}
                 <button id="toggleFormButton"
                     class="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-4 py-2 rounded shadow-md hover:shadow-lg transition duration-300 mr-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -197,10 +198,9 @@
                         </g>
                     </svg>
                 </button>
-                <button id="btnSyncTax" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+                <button id="btnSyncTax" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition">
                     Sync Data dari API
                 </button>
-                <span id="syncStatus" class="ml-2 text-sm"></span>
             </div>
 
             <div id="formContainer" class="hidden">
@@ -426,10 +426,10 @@ document.getElementById('btnSyncTax').addEventListener('click', async function()
     //chart
     const chartCanvas = document.getElementById('chart');
 // Mengatur tombol untuk membuka modal add
-    document.querySelector('[data-modal-target="#addEventModal"]').addEventListener('click', function() {
-        const modal = document.querySelector('#addEventModal');
-        modal.classList.remove('hidden');
-    });
+    // document.querySelector('[data-modal-target="#addEventModal"]').addEventListener('click', function() {
+    //     const modal = document.querySelector('#addEventModal');
+    //     modal.classList.remove('hidden');
+    // });
     // Mengatur tombol untuk membuka modal edit
     document.querySelectorAll('[data-modal-target]').forEach(button => {
         button.addEventListener('click', function() {

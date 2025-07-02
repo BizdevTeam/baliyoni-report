@@ -20,7 +20,7 @@ class TaxPlanningController extends Controller
 
         if ($response->successful()) {
             foreach ($response->json() as $rec) {
-                // Gunakan tanggal/waktu server saat ini untuk 'tanggal'
+                // Gunakan tanggal/waktu server saat ini untuk 'tanxggal'
                 $now = Carbon::now()->toDateTimeString();
 
                 TaxPlanning::updateOrCreate(
