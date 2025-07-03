@@ -7,8 +7,11 @@ use App\Models\LaporanLabaRugi;
 use App\Traits\DateValidationTraitAccSPI;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
 use Mpdf\Mpdf;
 
 
@@ -52,15 +55,134 @@ class LaporanLabaRugiController extends Controller
     
             return $item;
         });
-    
+        $aiInsight = null;
+
+        if (!$request->ajax() && $request->has('generate_ai')) {
+            // ambil collection (halaman saat ini)
+            $postsToAnalyze = $laporanlabarugis->getCollection();
+            // panggil fungsi analisis batch gambar
+            $aiInsight = $this->generateImageBatchAnalysis($postsToAnalyze);
+        }
+
         if ($request->ajax()) {
             return response()->json(['laporanlabarugis' => $laporanlabarugis]);
         }
     
-        return view('accounting.labarugi', compact('laporanlabarugis'));
+        return view('accounting.labarugi', compact('laporanlabarugis','aiInsight'));
+    }
+
+      private function generateImageBatchAnalysis($rows): string
+    {
+        // 1. Convert paginator/collection → array
+        if ($rows instanceof LengthAwarePaginator) {
+            $rows = $rows->items();
+        } elseif ($rows instanceof Collection) {
+            $rows = $rows->all();
+        }
+
+        // 2. Setup API
+        $apiKey = config('services.gemini.api_key');
+        $apiUrl = config('services.gemini.api_url');
+        if (! $apiKey || ! $apiUrl) {
+            Log::error('Gemini API Key or URL is not configured.');
+            return 'Layanan AI tidak terkonfigurasi dengan benar.';
+        }
+        if (empty($rows)) {
+            return 'Tidak ada laporan untuk dianalisis.';
+        }
+
+        // 3. Kumpulkan inline_data gambar
+        $imageParts = [];
+        foreach ($rows as $item) {
+            if (empty($item->gambar)) continue;
+            $path = public_path("images/accounting/labarugi/{$item->gambar}");
+            if (file_exists($path) && is_readable($path)) {
+                $imageParts[] = [
+                    'inline_data' => [
+                        'mime_type' => mime_content_type($path),
+                        'data'      => base64_encode(file_get_contents($path)),
+                    ]
+                ];
+            }
+        }
+        if (empty($imageParts)) {
+            return 'Tidak ada file gambar yang valid untuk dianalisis.';
+        }
+
+        // 4. Buat prompt khusus Laba Rugi
+        $count = count($imageParts);
+        $textPrompt = $this->createFormattedLabaRugiPrompt($count);
+
+        // 5. Gabungkan teks + gambar
+        $payloadParts = array_merge(
+            [['text' => $textPrompt]],
+            $imageParts
+        );
+
+        // 6. Kirim ke Gemini Vision
+        try {
+            $response = Http::timeout(120)
+                ->withHeaders(['Content-Type' => 'application/json'])
+                ->post($apiUrl . '?key=' . $apiKey, [
+                    'contents' => [['parts' => $payloadParts]],
+                    'generationConfig' => [
+                        'temperature'     => 0.4,
+                        'maxOutputTokens' => 4096,
+                    ],
+                ]);
+
+            if ($response->successful()) {
+                $body = $response->json();
+                return $body['candidates'][0]['content']['parts'][0]['text']
+                    ?? 'Tidak dapat menghasilkan insight dari gambar.';
+            }
+            Log::error('Gemini Vision API error: ' . $response->body());
+            return 'Gagal menghubungi layanan AI. Cek log untuk detail.';
+        } catch (\Exception $e) {
+            Log::error('Error generating AI insight: ' . $e->getMessage());
+            return 'Terjadi kesalahan sistem saat menghasilkan analisis gambar.';
+        }
+    }
+
+    /**
+     * Prompt dinamis untuk analisis Laporan Laba Rugi.
+     */
+    private function createFormattedLabaRugiPrompt(int $imageCount): string
+    {
+        return <<<PROMPT
+Anda adalah seorang Analis Keuangan senior. Saya telah mengirim **{$imageCount} gambar** yang berisi tabel Laporan Laba Rugi untuk dua periode (JAN dan FEB), dengan kolom: 
+- **Pendapatan** (berapa total revenue),
+- **HPP** (harga pokok penjualan),
+- **Biaya Operasional** (rincian akun 601–610),
+- **Common Size** untuk masing-masing bulan,
+- dan **Growth %** di sisi.
+
+**TUGAS ANDA:**
+1. **Ekstrak Angka Utama**  
+   - Total Pendapatan JAN & FEB + growth (%)  
+   - Total HPP JAN & FEB + growth (%)  
+   - Total Biaya Operasional JAN & FEB + growth (%)  
+2. **Analisis Margin**  
+   - Hitung dan bandingkan margin kotor (Revenue – HPP) untuk kedua periode.  
+   - Hitung dan bandingkan margin bersih (Margin Kotor – Biaya Operasional).  
+3. **Identifikasi Penyimpangan**  
+   - Temukan akun biaya operasional (601–610) dengan perubahan common size tertinggi/terendah antara JAN–FEB.  
+   - Jelaskan kemungkinan penyebab (misalnya fluktuasi energi, marketing, amortisasi).  
+4. **Rekomendasi**  
+   - Berikan 3 rekomendasi untuk meningkatkan profitabilitas (misalnya optimasi HPP, pengendalian biaya tertentu, alokasi budget).  
+5. **Langkah Tindak Lanjut**  
+   - Saran milestone implementasi (1–2 bulan ke depan) untuk memperbaiki indikator keuangan.
+
+**FORMAT OUTPUT (Markdown):**
+- **Ringkasan Eksekutif:** 1 paragraf  
+- **Angka Utama & Margin:** Tabel atau poin  
+- **Penyimpangan & Penyebab:** Poin  
+- **Rekomendasi & Milestone:** Poin dengan garis waktu singkat  
+
+Gunakan bahasa Indonesia formal dan profesional.
+PROMPT;
     }
     
-
     public function store(Request $request)
     {
         try {

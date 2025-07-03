@@ -7,6 +7,7 @@ use App\Traits\DateValidationTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Mpdf\Mpdf;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rule;
@@ -16,52 +17,191 @@ class LaporanPaketAdministrasiController extends Controller
     use DateValidationTrait;
 
     // Menampilkan halaman utama
+    // public function index(Request $request)
+    // { 
+    //     $perPage = $request->input('per_page', 12);
+    //     $search = $request->input('search');
+
+    //     #$query = KasHutangPiutang::query();
+
+    //     // Query untuk mencari berdasarkan tahun dan date
+    //     $laporanpaketadministrasis = LaporanPaketAdministrasi::query()
+    //         ->when($search, function ($query, $search) {
+    //             return $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+
+    //         })
+    //         ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
+    //         ->paginate($perPage);
+
+    //     // Hitung total untuk masing-masing kategori
+    //     $totalPenjualan = $laporanpaketadministrasis->sum('total_paket');
+
+    //     // Siapkan data untuk chart
+    //     function getRandomRGBA($opacity = 0.7) {
+    //         return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
+    //     }
+        
+    //     $labels = $laporanpaketadministrasis->map(function($item) {
+    //         $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
+    //         return $item->website . ' - ' . $formattedDate;
+    //     })->toArray();
+    //     $data = $laporanpaketadministrasis->pluck('total_paket')->toArray();
+        
+    //     // Generate random colors for each data item
+    //     $backgroundColors = array_map(fn() => getRandomRGBA(), $data);
+        
+    //     $chartData = [
+    //         'labels' => $labels, // Labels untuk chart
+    //         'datasets' => [
+    //             [
+    //                 'label' => 'Administrative Package Chart', // Nama dataset
+    //                 'text' => 'Total Package', // Nama dataset
+    //                 'data' => $data, // Data untuk chart
+    //                 'backgroundColor' => $backgroundColors, // Warna batang random
+    //             ],
+    //         ],
+    //     ];
+    // $aiInsight = null;
+
+    // // 2. Hanya jalankan fungsi AI jika request memiliki parameter 'generate_ai'.
+    // if ($request->has('generate_ai')) {
+    //     $aiInsight = $this->generateSalesInsight($laporanpaketadministrasis, $chartData);
+    // }
+        
+    //     return view('marketings.laporanpaketadministrasi',  compact('laporanpaketadministrasis', 'chartData','aiInsight'));    
+    // }
     public function index(Request $request)
-    { 
-        $perPage = $request->input('per_page', 12);
-        $search = $request->input('search');
+{
+    $perPage = $request->input('per_page', 12);
+    $search = $request->input('search');
 
-        #$query = KasHutangPiutang::query();
+    // Query dasar untuk digunakan kembali
+    $baseQuery = LaporanPaketAdministrasi::query()
+        ->when($search, fn($q) => $q->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%{$search}%"]));
 
-        // Query untuk mencari berdasarkan tahun dan date
-        $laporanpaketadministrasis = LaporanPaketAdministrasi::query()
-            ->when($search, function ($query, $search) {
-                return $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+    // [FIX] Ambil SEMUA data untuk analisis dan chart
+    $allReports = (clone $baseQuery)->orderBy('tanggal', 'asc')->get();
 
-            })
-            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
-            ->paginate($perPage);
+    // Ambil data yang DIPAGINASI hanya untuk tampilan tabel
+    $laporanpaketadministrasis = (clone $baseQuery)->orderBy('tanggal', 'desc')->paginate($perPage);
 
-        // Hitung total untuk masing-masing kategori
-        $totalPenjualan = $laporanpaketadministrasis->sum('total_paket');
+    // Siapkan data chart dari SEMUA data
+    $labels = $allReports->map(function($item) {
+        $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
+        return $item->website . ' - ' . $formattedDate;
+    })->all();
+    
+    $data = $allReports->pluck('total_paket')->all();
+    
+    $chartData = [
+        'labels' => $labels,
+        'datasets' => [[
+            'label' => 'Administrative Package Chart',
+            'text' => 'Total Package',
+            'data' => $data,
+            'backgroundColor' => array_map(fn() => $this->getRandomRGBA(), $data),
+        ]],
+    ];
+    
+    $aiInsight = null;
+    if ($request->has('generate_ai')) {
+        // [FIX] Panggil AI dengan SEMUA data, bukan data terpaginasi
+        $aiInsight = $this->generateSalesInsight($allReports, $chartData);
+    }
+        
+    return view('marketings.laporanpaketadministrasi', compact('laporanpaketadministrasis', 'chartData', 'aiInsight'));
+    }
 
-        // Siapkan data untuk chart
-        function getRandomRGBA($opacity = 0.7) {
-            return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
+    private function generateSalesInsight($reportData, $chartData): string // [FIX] Nama variabel diubah agar lebih jelas
+    {
+        $apiKey = config('services.gemini.api_key');
+        $apiUrl = config('services.gemini.api_url');
+
+        if (!$apiKey || !$apiUrl) {
+            Log::error('Gemini API Key or URL is not configured.');
+            return 'Layanan AI tidak terkonfigurasi dengan benar.';
         }
-        
-        $labels = $laporanpaketadministrasis->map(function($item) {
-            $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
-            return $item->website . ' - ' . $formattedDate;
-        })->toArray();
-        $data = $laporanpaketadministrasis->pluck('total_paket')->toArray();
-        
-        // Generate random colors for each data item
-        $backgroundColors = array_map(fn() => getRandomRGBA(), $data);
-        
-        $chartData = [
-            'labels' => $labels, // Labels untuk chart
-            'datasets' => [
-                [
-                    'label' => 'Administrative Package Chart', // Nama dataset
-                    'text' => 'Total Package', // Nama dataset
-                    'data' => $data, // Data untuk chart
-                    'backgroundColor' => $backgroundColors, // Warna batang random
-                ],
-            ],
-        ];
 
-        return view('marketings.laporanpaketadministrasi',  compact('laporanpaketadministrasis', 'chartData'));    
+        if ($reportData->isEmpty()) {
+            return 'Tidak ada data laporan yang cukup untuk dianalisis.';
+        }
+
+        try {
+            // [FIX] Menggunakan nama kolom dan variabel yang sesuai dengan data
+            $analysisData = [
+                'periods'        => $chartData['labels'],
+                'package_values' => $chartData['datasets'][0]['data'],
+                'total_packages' => $reportData->sum('total_paket'),    // Menggunakan 'total_paket'
+                'average_package'=> $reportData->avg('total_paket'),     // Menggunakan 'total_paket'
+                'max_package'    => $reportData->max('total_paket'),      // Menggunakan 'total_paket'
+                'min_package'    => $reportData->min('total_paket'),      // Menggunakan 'total_paket'
+                'data_count'     => $reportData->count(),
+            ];
+
+            $prompt = $this->createAnalysisPrompt($analysisData);
+
+            // ... (sisa kode pemanggilan API tidak berubah) ...
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+            ])->post("{$apiUrl}?key={$apiKey}", [
+                'contents' => [['parts' => [['text' => $prompt]]]],
+                'generationConfig' => [
+                    'temperature'     => 0.7,
+                    'maxOutputTokens' => 800,
+                ],
+            ]);
+
+            if ($response->successful()) {
+                $result = $response->json();
+                return $result['candidates'][0]['content']['parts'][0]['text']
+                    ?? 'Tidak dapat menghasilkan insight dari AI.';
+            }
+
+            Log::error('Gemini API error: ' . $response->body());
+            return 'Gagal menghubungi layanan analisis AI. Cek log untuk detail.';
+        } catch (\Exception $e) {
+            Log::error('Error generating AI insight: ' . $e->getMessage());
+            return 'Terjadi kesalahan dalam menghasilkan analisis.';
+        }
+    }
+
+    /**
+     * Buat prompt analisis yang dikirim ke AI.
+     */
+    private function createAnalysisPrompt(array $data): string
+    {
+        // [FIX] Prompt diubah total agar sesuai konteks
+        $periods = implode(', ', $data['periods']);
+        $values  = implode(', ', array_map(fn($v) => 'Rp' . number_format($v, 0, ',', '.'), $data['package_values']));
+        $total_packages = number_format($data['total_packages'], 0, ',', '.');
+        $average_package = number_format($data['average_package'], 0, ',', '.');
+        $max_package = number_format($data['max_package'], 0, ',', '.');
+        $min_package = number_format($data['min_package'], 0, ',', '.');
+
+        return <<<PROMPT
+    Anda adalah seorang analis performa layanan digital dan operasional di sebuah perusahaan teknologi.
+
+    Berikut adalah data rekap nilai "Paket Administrasi" bulanan per website yang dikelola, dalam Rupiah:
+    - Periode/Website Data: {$periods}
+    - Rincian Nilai Paket per Periode/Website: {$values}
+    - Total Nilai Paket Selama Periode: Rp {$total_packages}
+    - Rata-rata Nilai Paket: Rp {$average_package}
+    - Nilai Paket Tertinggi: Rp {$max_package}
+    - Nilai Paket Terendah: Rp {$min_package}
+    - Jumlah Data Laporan: {$data['data_count']}
+
+    Tugas Anda adalah membuat laporan analisis singkat (maksimal 5 paragraf) dalam Bahasa Indonesia yang formal dan profesional untuk manajer operasional. Laporan harus mencakup:
+    1. **Ringkasan Kinerja:** Jelaskan secara singkat tren nilai paket administrasi. Apakah ada website yang menonjol (secara konsisten tinggi atau rendah)?
+    2. **Identifikasi Puncak & Penurunan:** Sebutkan website/periode dengan nilai paket tertinggi dan terendah. Berikan kemungkinan interpretasi bisnis dari data ini (misalnya, nilai tinggi mungkin karena ada proyek setup baru, nilai rendah karena website dalam mode maintenance).
+    3. **Rekomendasi Operasional:** Berdasarkan data, berikan 2-3 poin rekomendasi. Contoh: 'Website X memiliki nilai paket tertinggi, perlu dianalisis apakah ini karena efisiensi atau ada biaya tak terduga.' atau 'Standarisasi paket layanan berdasarkan performa Website Y bisa dipertimbangkan untuk efisiensi biaya.'
+    4. **Alokasi Sumber Daya:** Berikan saran singkat tentang bagaimana data ini bisa digunakan untuk merencanakan alokasi sumber daya atau budget untuk periode berikutnya.
+
+    Gunakan format markdown untuk penomoran atau poin-poin agar mudah dibaca.
+    PROMPT;
+    }
+    private function getRandomRGBA($opacity = 0.7)
+    {
+        return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
     }
 
     public function store(Request $request)
@@ -76,7 +216,8 @@ class LaporanPaketAdministrasiController extends Controller
                         'E - Katalog',
                         'E - Katalog Luar Bali',
                         'Balimall',
-                        'Siplah'
+                        'Siplah',
+                        'PL',
                     ]),
                 ],
                 'total_paket' => 'required|integer|min:0',
@@ -118,6 +259,7 @@ class LaporanPaketAdministrasiController extends Controller
                     'E - Katalog Luar Bali',
                     'Balimall',
                     'Siplah',
+                    'PL',
                 ]),
             ],
                 'total_paket' => 'required|integer|min:0',

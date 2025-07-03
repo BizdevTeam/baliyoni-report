@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\LaporanStok;
 use App\Traits\DateValidationTrait;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
 use Illuminate\Validation\ValidationException;
@@ -13,7 +14,7 @@ use Illuminate\Validation\ValidationException;
 class LaporanStokController extends Controller
 {
     use DateValidationTrait;
-    // Show the view
+
     public function index(Request $request)
     { 
         $perPage = $request->input('per_page', 12);
@@ -56,8 +57,106 @@ class LaporanStokController extends Controller
                 ],
             ],
         ];
-        
+         $aiInsight = null;
+
+    // 2. Hanya jalankan fungsi AI jika request memiliki parameter 'generate_ai'.
+    if ($request->has('generate_ai')) {
+        $aiInsight = $this->generateSalesInsight($laporanstoks, $chartData);
+    }   
         return view('procurements.laporanstok', compact('laporanstoks', 'chartData'));    }
+
+    private function generateSalesInsight($stockData, $chartData): string
+    {
+        $apiKey = config('services.gemini.api_key');
+        $apiUrl = config('services.gemini.api_url');
+
+        if (!$apiKey || !$apiUrl) {
+            Log::error('Gemini API Key or URL is not configured.');
+            return 'Layanan AI tidak terkonfigurasi dengan benar.';
+        }
+
+        if ($stockData->isEmpty()) {
+            return 'Tidak ada data stok yang cukup untuk dianalisis.';
+        }
+
+        try {
+            // [FIX] Menggunakan nama kolom dan variabel yang sesuai dengan data "Laporan Stok"
+            $analysisData = [
+                'periods'       => $chartData['labels'],
+                'stock_values'  => $chartData['datasets'][0]['data'],
+                'total_stock'   => $stockData->sum('stok'),    // Menggunakan 'stok'
+                'average_stock' => $stockData->avg('stok'),     // Menggunakan 'stok'
+                'max_stock'     => $stockData->max('stok'),      // Menggunakan 'stok'
+                'min_stock'     => $stockData->min('stok'),      // Menggunakan 'stok'
+                'data_count'    => $stockData->count(),
+            ];
+            
+            // [FIX] Panggil fungsi prompt yang baru
+            $prompt = $this->createStockAnalysisPrompt($analysisData);
+
+            // ... sisa kode pemanggilan API tidak berubah ...
+            $response = Http::withHeaders(['Content-Type' => 'application/json'])
+                ->post("{$apiUrl}?key={$apiKey}", [
+                    'contents' => [['parts' => [['text' => $prompt]]]],
+                    'generationConfig' => [ 'temperature' => 0.7, 'maxOutputTokens' => 800 ],
+                ]);
+
+            if ($response->successful()) {
+                $result = $response->json();
+                return $result['candidates'][0]['content']['parts'][0]['text'] ?? 'Tidak dapat menghasilkan insight dari AI.';
+            }
+
+            Log::error('Gemini API error: ' . $response->body());
+            return 'Gagal menghubungi layanan analisis AI.';
+        } catch (\Exception $e) {
+            Log::error('Error generating AI insight: ' . $e->getMessage());
+            return 'Terjadi kesalahan dalam menghasilkan analisis.';
+        }
+    }
+
+    /**
+     * [FIX] Seluruh prompt dirombak agar sesuai konteks Laporan Stok.
+     */
+    private function createStockAnalysisPrompt(array $data): string
+    {
+        $periods = implode(', ', $data['periods']);
+        $values  = implode(', ', array_map(fn($v) => number_format($v, 0, ',', '.'), $data['stock_values'])); // Stok mungkin tidak dalam Rupiah
+        $total_stock = number_format($data['total_stock'], 0, ',', '.');
+        $average_stock = number_format($data['average_stock'], 0, ',', '.');
+        $max_stock = number_format($data['max_stock'], 0, ',', '.');
+        $min_stock = number_format($data['min_stock'], 0, ',', '.');
+
+        return <<<PROMPT
+    Anda adalah seorang Manajer Gudang dan Logistik yang berpengalaman.
+
+    Berikut adalah data rekapitulasi nilai total stok (bisa dalam unit atau nilai moneter) per periode waktu.
+    - Periode Data: {$periods}
+    - Rincian Nilai Stok per Periode: {$values}
+
+    **Ringkasan Statistik Stok:**
+    - Total Akumulasi Stok: {$total_stock}
+    - Rata-rata Nilai Stok per Periode: {$average_stock}
+    - Nilai Stok Tertinggi dalam Satu Periode: {$max_stock}
+    - Nilai Stok Terendah dalam Satu Periode: {$min_stock}
+    - Jumlah Periode Data: {$data['data_count']}
+
+    **Tugas Anda:**
+    Buat laporan analisis singkat (maksimal 5 paragraf) dalam Bahasa Indonesia yang formal untuk manajer logistik atau pengadaan (procurement).
+
+    Analisis harus mencakup:
+    1.  **Ringkasan Kondisi Stok:** Jelaskan tren umum dari nilai stok. Apakah stok cenderung menumpuk (naik), menipis (turun), atau stabil?
+    2.  **Identifikasi Puncak & Penurunan Stok:** Sebutkan periode dengan stok tertinggi (potensi overstock) dan terendah (potensi stockout). Berikan hipotesis penyebabnya (misal: "Stok memuncak pada bulan Desember karena persiapan liburan akhir tahun," atau "Stok menipis di bulan Maret, kemungkinan karena keterlambatan pengiriman dari pemasok.").
+    3.  **Rekomendasi Manajemen Inventaris:** Berikan 2-3 poin rekomendasi konkret. Contoh: 'Pertimbangkan untuk melakukan 'stock opname' pada periode setelah stok puncak untuk validasi data.' atau 'Tinjau 'safety stock level' untuk mencegah level stok turun serendah yang terjadi pada periode X.'
+    4.  **Proyeksi Kebutuhan:** Berdasarkan tren, berikan saran singkat mengenai perencanaan pengadaan (procurement) untuk periode berikutnya. Contoh: 'Melihat tren kenaikan, disarankan untuk meningkatkan volume pemesanan sebesar 10% untuk kuartal berikutnya.'
+
+    Gunakan format markdown untuk poin-poin agar mudah dibaca.
+    PROMPT;
+    }
+
+    private function getRandomRGBA($opacity = 0.7)
+    {
+        return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
+    }
 
     public function store(Request $request)
     {

@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\LaporanCuti;
 use App\Traits\DateValidationTrait;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rule;
 
@@ -15,53 +17,188 @@ class LaporanCutiController extends Controller
 {
     use DateValidationTrait;
     // Show the view
+    // public function index(Request $request)
+    // { 
+    //     $perPage = $request->input('per_page', 12);
+    //     $search = $request->input('search');
+
+    //     #$query = KasHutangPiutang::query();
+
+    //     // Query untuk mencari berdasarkan tahun dan date
+    //     $laporancutis = LaporanCuti::query()
+    //         ->when($search, function ($query, $search) {
+    //             return $query->where('tanggal', 'LIKE', "%$search%")
+    //                          ->orWhere('nama', 'like', "%$search%");
+    //         })
+    //         ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
+    //         ->paginate($perPage);
+
+    //     // Hitung total untuk masing-masing kategori
+    //     $totalPenjualan = $laporancutis->sum('total_cuti');
+
+    //     // Siapkan data untuk chart
+    //     function getRandomRGBA($opacity = 0.7) {
+    //         return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
+    //     }
+        
+    //     $labels = $laporancutis->map(function($item) {
+    //         $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
+    //         return $item->nama. ' - ' .$formattedDate;
+    //     })->toArray();        
+    //     $data = $laporancutis->pluck('total_cuti')->toArray();
+        
+    //     // Generate random colors for each data item
+    //     $backgroundColors = array_map(fn() => getRandomRGBA(), $data);
+        
+    //     $chartData = [
+    //         'labels' => $labels, // Labels untuk chart
+    //         'datasets' => [
+    //             [
+    //                 'label' => 'Grafik Laporan Cuti', // Nama  dataset
+    //                 'text' => 'Total Cuti', // Nama  dataset
+    //                 'data' => $data, // Data untuk chart
+    //                 'backgroundColor' => $backgroundColors, // Warna batang random
+    //             ],
+    //         ],
+    //     ];
+        
+    //     return view('hrga.laporancuti', compact('laporancutis', 'chartData'));  
+    //   }
     public function index(Request $request)
-    { 
+    {
         $perPage = $request->input('per_page', 12);
         $search = $request->input('search');
 
-        #$query = KasHutangPiutang::query();
-
-        // Query untuk mencari berdasarkan tahun dan date
-        $laporancutis = LaporanCuti::query()
+        // Query dasar untuk digunakan kembali
+        $baseQuery = LaporanCuti::query()
             ->when($search, function ($query, $search) {
-                return $query->where('tanggal', 'LIKE', "%$search%")
-                             ->orWhere('nama', 'like', "%$search%");
-            })
-            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
-            ->paginate($perPage);
+                $query->where('tanggal', 'LIKE', "%{$search}%")
+                      ->orWhere('nama', 'like', "%{$search}%");
+            });
 
-        // Hitung total untuk masing-masing kategori
-        $totalPenjualan = $laporancutis->sum('total_cuti');
+        // [FIX] Ambil SEMUA data untuk analisis dan chart agar akurat
+        $allLeaveReports = (clone $baseQuery)->orderBy('tanggal', 'asc')->get();
 
-        // Siapkan data untuk chart
-        function getRandomRGBA($opacity = 0.7) {
-            return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
-        }
+        // Ambil data yang DIPAGINASI hanya untuk tampilan tabel
+        $laporancutis = (clone $baseQuery)->orderBy('tanggal', 'desc')->paginate($perPage);
+
+        // [FIX] Siapkan data chart dari SEMUA data
+        $labels = $allLeaveReports->map(function($item) {
+            $formattedDate = Carbon::parse($item->tanggal)->translatedFormat('F Y');
+            return $item->nama. ' - ' . $formattedDate;
+        })->all();
         
-        $labels = $laporancutis->map(function($item) {
-            $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
-            return $item->nama. ' - ' .$formattedDate;
-        })->toArray();        
-        $data = $laporancutis->pluck('total_cuti')->toArray();
-        
-        // Generate random colors for each data item
-        $backgroundColors = array_map(fn() => getRandomRGBA(), $data);
+        // [FIX] Gunakan kolom 'total_cuti'
+        $data = $allLeaveReports->pluck('total_cuti')->all();
         
         $chartData = [
-            'labels' => $labels, // Labels untuk chart
-            'datasets' => [
-                [
-                    'label' => 'Grafik Laporan Cuti', // Nama  dataset
-                    'text' => 'Total Cuti', // Nama  dataset
-                    'data' => $data, // Data untuk chart
-                    'backgroundColor' => $backgroundColors, // Warna batang random
-                ],
-            ],
+            'labels' => $labels,
+            'datasets' => [[
+                'label' => 'Grafik Laporan Cuti',
+                'text' => 'Total Hari Cuti',
+                'data' => $data,
+                'backgroundColor' => array_map(fn() => $this->getRandomRGBA(), $data),
+            ]],
         ];
         
-        return view('hrga.laporancuti', compact('laporancutis', 'chartData'));    }
+        $aiInsight = null;
+        if ($request->has('generate_ai')) {
+            // [FIX] Panggil AI dengan SEMUA data dan nama fungsi yang sesuai
+            $aiInsight = $this->generateAnnualLeaveInsight($allLeaveReports, $chartData);
+        }
+            
+        return view('hrga.laporancuti', compact('laporancutis', 'chartData', 'aiInsight'));
+    }
 
+    /**
+     * [FIX] Nama fungsi dan parameter diubah agar sesuai konteks Laporan Cuti Tahunan.
+     */
+    private function generateAnnualLeaveInsight($leaveData, $chartData): string
+    {
+        $apiKey = config('services.gemini.api_key');
+        $apiUrl = config('services.gemini.api_url');
+
+        if (!$apiKey || !$apiUrl) { /* ... error handling ... */ }
+        if ($leaveData->isEmpty()) {
+            return 'Tidak ada data cuti yang cukup untuk dianalisis.';
+        }
+
+        try {
+            // [FIX] Menggunakan nama kolom dan variabel yang sesuai
+            $analysisData = [
+                'periods_and_employees' => $chartData['labels'],
+                'leave_values'        => $chartData['datasets'][0]['data'],
+                'total_leave_days'    => $leaveData->sum('total_cuti'),    // Menggunakan 'total_cuti'
+                'average_leave_days'  => $leaveData->avg('total_cuti'),     // Menggunakan 'total_cuti'
+                'max_leave_days'      => $leaveData->max('total_cuti'),      // Menggunakan 'total_cuti'
+                'data_count'          => $leaveData->count(),
+                // [BARU] Menambahkan data agregat per karyawan untuk analisis yang lebih baik
+                'leave_days_per_employee' => $leaveData->groupBy('nama')->map->sum('total_cuti')->all(),
+            ];
+            
+            // [FIX] Panggil fungsi prompt yang baru
+            $prompt = $this->createAnnualLeaveAnalysisPrompt($analysisData);
+
+            $response = Http::withHeaders(['Content-Type' => 'application/json'])
+                ->post("{$apiUrl}?key={$apiKey}", [
+                    'contents' => [['parts' => [['text' => $prompt]]]],
+                    'generationConfig' => [ 'temperature' => 0.7, 'maxOutputTokens' => 800 ],
+                ]);
+
+            if ($response->successful()) {
+                return $response->json('candidates.0.content.parts.0.text', 'Tidak dapat menghasilkan insight dari AI.');
+            }
+
+            Log::error('Gemini API error: ' . $response->body());
+            return 'Gagal menghubungi layanan analisis AI.';
+        } catch (\Exception $e) {
+            Log::error('Error generating AI insight: ' . $e->getMessage());
+            return 'Terjadi kesalahan dalam menghasilkan analisis.';
+        }
+    }
+
+    /**
+     * [FIX] Seluruh prompt dirombak agar sesuai konteks Laporan Cuti (HR).
+     */
+    private function createAnnualLeaveAnalysisPrompt(array $data): string
+    {
+        $total_leave_days = number_format($data['total_leave_days'], 0, ',', '.');
+        $average_leave_days = number_format($data['average_leave_days'], 2, ',', '.');
+        
+        $employeeValuesStr = '';
+        // Urutkan dari yang paling banyak cuti
+        arsort($data['leave_days_per_employee']);
+        foreach ($data['leave_days_per_employee'] as $employee => $total) {
+            $employeeValuesStr .= "- **{$employee}**: " . number_format($total, 0, ',', '.') . " hari\n";
+        }
+
+        return <<<PROMPT
+            Anda adalah seorang Manajer Sumber Daya Manusia (HR Manager) yang proaktif dan fokus pada perencanaan sumber daya serta kesejahteraan karyawan (employee well-being).
+
+            Berikut adalah data rekapitulasi jumlah hari cuti tahunan yang diambil oleh karyawan dalam periode waktu tertentu.
+            - Total Hari Cuti yang Diambil Seluruh Karyawan: {$total_leave_days} hari
+            - Rata-rata Hari Cuti per Pengajuan: {$average_leave_days} hari
+            - Jumlah Total Pengajuan Cuti: {$data['data_count']}
+
+            **Akumulasi Total Hari Cuti per Karyawan (Diurutkan dari Terbanyak):**
+            {$employeeValuesStr}
+
+            **Tugas Anda:**
+            Buat laporan analisis singkat (maksimal 5 paragraf) dalam Bahasa Indonesia yang formal dan strategis untuk manajemen.
+
+            Analisis harus fokus pada pola pemanfaatan cuti dan dampaknya terhadap perencanaan operasional.
+            1.  **Analisis Pola Pengambilan Cuti:** Jelaskan tren umum pengambilan cuti. Apakah ada puncak pengambilan cuti di bulan-bulan tertentu? Berikan hipotesis (misal: "Puncak pengambilan cuti terjadi pada bulan Juni dan Desember, yang wajar karena bertepatan dengan periode libur sekolah dan akhir tahun.").
+            2.  **Identifikasi Pemanfaatan Cuti & Risiko Burnout:** Identifikasi karyawan yang paling banyak memanfaatkan cuti (baik untuk perencanaan). Lebih penting lagi, identifikasi karyawan yang mengambil sangat sedikit atau **belum mengambil cuti sama sekali**. Tekankan bahwa ini adalah **potensi risiko burnout**. Contoh: "Perlu pendekatan personal kepada karyawan yang belum mengambil cuti, untuk mendorong mereka merencanakan liburan demi menjaga work-life balance dan mencegah kelelahan kerja."
+            3.  **Rekomendasi Perencanaan Sumber Daya (Manpower Planning):** Berikan 2-3 poin rekomendasi konkret untuk manajemen operasional. Contoh: 'Melihat pola cuti yang menumpuk di akhir tahun, semua kepala departemen wajib menyusun jadwal cuti timnya paling lambat di awal Q4 untuk memastikan operasional tetap lancar.' atau 'Implementasikan kebijakan 'cuti tidak bisa diuangkan' untuk mendorong karyawan memanfaatkan hak istirahatnya.'
+            4.  **Dampak pada Produktivitas & Kultur Perusahaan:** Berikan komentar singkat mengenai pentingnya cuti untuk me-recharge energi yang berdampak positif pada produktivitas dan kultur kerja yang sehat dalam jangka panjang.
+
+            Gunakan format markdown untuk poin-poin agar mudah dibaca.
+            PROMPT;
+    }
+    private function getRandomRGBA($opacity = 0.7)
+    {
+        return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
+    }
     public function store(Request $request)
     {
         try {

@@ -13,81 +13,245 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Http;
 
 class LaporanIjasaController extends Controller
 {
     use DateValidationTrait;
 
-       public function index(Request $request)
-{
-    $perPage = $request->input('per_page', 12);
-    $search = $request->input('search');
-    $startMonth = $request->input('start_month');
-    $endMonth = $request->input('end_month');
+//     public function index(Request $request)
+// {
+//     $perPage = $request->input('per_page', 12);
+//     $search = $request->input('search');
+//     $startMonth = $request->input('start_month');
+//     $endMonth = $request->input('end_month');
 
-    $query = LaporanIjasa::query();
+//     $query = LaporanIjasa::query();
 
-    // Filter berdasarkan bulan dan tahun (format Y-m)
-    if ($search) {
-        try {
-            $date = Carbon::createFromFormat('Y-m', $search);
-            $query->whereYear('tanggal', $date->year)
-                  ->whereMonth('tanggal', $date->month);
-        } catch (Exception $e) {
-            return response()->json(['error' => 'Format pencarian tidak valid. Gunakan format Y-m.'], 400);
+//     // Filter berdasarkan bulan dan tahun (format Y-m)
+//     if ($search) {
+//         try {
+//             $date = Carbon::createFromFormat('Y-m', $search);
+//             $query->whereYear('tanggal', $date->year)
+//                   ->whereMonth('tanggal', $date->month);
+//         } catch (Exception $e) {
+//             return response()->json(['error' => 'Format pencarian tidak valid. Gunakan format Y-m.'], 400);
+//         }
+//     }
+
+//     // Filter berdasarkan range bulan-tahun jika keduanya diisi
+//     if (!empty($startMonth) && !empty($endMonth)) {
+//         try {
+//             $startDate = Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+//             $endDate = Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+//             $query->whereBetween('tanggal', [$startDate, $endDate]);
+//         } catch (Exception $e) {
+//             return response()->json(['error' => 'Format tanggal tidak valid. Gunakan format Y-m.'], 400);
+//         }
+//     }
+
+//     // Ambil data dengan pagination
+//     $laporanijasas = $query->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
+//                            ->paginate($perPage);
+
+//     if ($request->ajax()) {
+//         return response()->json(['laporanijasas' => $laporanijasas]);
+//     }
+//             $aiInsight = null;
+//         if ($request->has('generate_ai')) {
+//             // Kita pass langsung paginator, fungsi akan meng-handle conversion
+//             $aiInsight = $this->generateReportInsight($laporanijasas);
+//         }
+
+//     return view('hrga.laporanijasa', compact('laporanijasas','aiInsight'));
+//     }
+
+//     public function store(Request $request)
+//     {
+//         try {
+//             $validatedData = $request->validate([
+//                 'tanggal' => 'required|date',
+//                 'jam' => 'required|date_format:H:i',
+//                 'permasalahan' => 'required|string',
+//                 'impact' => 'required|string',
+//                 'troubleshooting' => 'required|string',
+//                 'resolve_tanggal' => 'required|date',
+//                 'resolve_jam' => 'required|date_format:H:i',
+//             ]);
+           
+
+//             $errorMessage = '';
+//             if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
+//                 return redirect()->back()->with('error', $errorMessage);
+//             }
+
+//             LaporanIjasa::create($validatedData);
+
+//             return redirect()->route('laporanijasa.index')->with('success', 'Data Berhasil Ditambahkan');
+//         } catch (\Exception $e) {
+//             Log::error('Error storing Ijasa data: ' . $e->getMessage());
+//             return redirect()->route('laporanijasa.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
+//         }
+//     }
+ public function index(Request $request)
+    {
+        $perPage    = $request->input('per_page', 12);
+        $search     = $request->input('search');
+        $startMonth = $request->input('start_month');
+        $endMonth   = $request->input('end_month');
+
+        $query = LaporanIjasa::query();
+
+        // Filter berdasarkan bulan & tahun (format Y-m)
+        if ($search) {
+            try {
+                $date = Carbon::createFromFormat('Y-m', $search);
+                $query->whereYear('tanggal', $date->year)
+                      ->whereMonth('tanggal', $date->month);
+            } catch (Exception $e) {
+                return response()->json([
+                    'error' => 'Format pencarian tidak valid. Gunakan format Y-m.'
+                ], 400);
+            }
         }
-    }
 
-    // Filter berdasarkan range bulan-tahun jika keduanya diisi
-    if (!empty($startMonth) && !empty($endMonth)) {
-        try {
-            $startDate = Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
-            $endDate = Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
-            $query->whereBetween('tanggal', [$startDate, $endDate]);
-        } catch (Exception $e) {
-            return response()->json(['error' => 'Format tanggal tidak valid. Gunakan format Y-m.'], 400);
+        // Filter range bulan-tahun
+        if (!empty($startMonth) && !empty($endMonth)) {
+            try {
+                $startDate = Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+                $endDate   = Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+                $query->whereBetween('tanggal', [$startDate, $endDate]);
+            } catch (Exception $e) {
+                return response()->json([
+                    'error' => 'Format tanggal tidak valid. Gunakan format Y-m.'
+                ], 400);
+            }
         }
+
+        // Ambil dengan pagination
+        $laporanijasas = $query
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
+            ->paginate($perPage);
+
+        $aiInsight = null;
+        if ($request->has('generate_ai')) {
+            // Pass paginator langsung ke fungsi insight
+            $aiInsight = $this->generateReportInsight($laporanijasas);
+        }
+
+        return view('hrga.laporanijasa', compact('laporanijasas', 'aiInsight'));
     }
-
-    // Ambil data dengan pagination
-    $laporanijasas = $query->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
-                           ->paginate($perPage);
-
-    if ($request->ajax()) {
-        return response()->json(['laporanijasas' => $laporanijasas]);
-    }
-
-    return view('hrga.laporanijasa', compact('laporanijasas'));
-}
 
     public function store(Request $request)
     {
+        $validated = $request->validate([
+            'tanggal'         => 'required|date',
+            'jam'             => 'required|date_format:H:i',
+            'permasalahan'    => 'required|string',
+            'impact'          => 'required|string',
+            'troubleshooting' => 'required|string',
+            'resolve_tanggal' => 'required|date',
+            'resolve_jam'     => 'required|date_format:H:i',
+        ]);
+
+        $errorMessage = '';
+        if (! $this->isInputAllowed($validated['tanggal'], $errorMessage)) {
+            return redirect()->back()->with('error', $errorMessage);
+        }
+
+        LaporanIjasa::create($validated);
+
+        return redirect()
+            ->route('laporanijasa.index')
+            ->with('success', 'Data Berhasil Ditambahkan');
+    }
+
+    private function generateReportInsight($rows): string
+    {
+        // Convert paginator/collection ke array model
+        if ($rows instanceof LengthAwarePaginator) {
+            $rows = $rows->items();
+        } elseif ($rows instanceof Collection) {
+            $rows = $rows->all();
+        }
+
+        $apiKey = config('services.gemini.api_key');
+        $apiUrl = config('services.gemini.api_url');
+
+        if (! $apiKey || ! $apiUrl) {
+            Log::error('Gemini API Key or URL is not configured.');
+            return 'Layanan AI tidak terkonfigurasi dengan benar.';
+        }
+
+        if (empty($rows)) {
+            return 'Tidak ada data laporan untuk dianalisis.';
+        }
+
+        // Susun entri dalam markdown list
+        $entriesText = '';
+        foreach ($rows as $item) {
+            /** @var LaporanIjasa $item */
+            $entriesText .= "- **Tanggal & Jam:** " 
+                . Carbon::parse($item->tanggal)->format('Y-m-d')
+                . " " . $item->jam . "\n"
+                . "  - Permasalahan: {$item->permasalahan}\n"
+                . "  - Impact: {$item->impact}\n"
+                . "  - Troubleshooting: {$item->troubleshooting}\n"
+                . "  - Tanggal & Jam Selesai: " 
+                . Carbon::parse($item->resolve_tanggal)->format('Y-m-d')
+                . " {$item->resolve_jam}\n\n";
+        }
+
+        $prompt = $this->createReportPrompt($entriesText);
+
         try {
-            $validatedData = $request->validate([
-                'tanggal' => 'required|date',
-                'jam' => 'required|date_format:H:i',
-                'permasalahan' => 'required|string',
-                'impact' => 'required|string',
-                'troubleshooting' => 'required|string',
-                'resolve_tanggal' => 'required|date',
-                'resolve_jam' => 'required|date_format:H:i',
-            ]);
-           
+            $response = Http::withHeaders([
+                    'Content-Type' => 'application/json',
+                ])->post($apiUrl . '?key=' . $apiKey, [
+                    'contents' => [[
+                        'parts' => [['text' => $prompt]]
+                    ]],
+                    'generationConfig' => [
+                        'temperature'     => 0.7,
+                        'maxOutputTokens' => 800,
+                    ]
+                ]);
 
-            $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
-                return redirect()->back()->with('error', $errorMessage);
+            if ($response->successful()) {
+                $body = $response->json();
+                return $body['candidates'][0]['content']['parts'][0]['text']
+                    ?? 'Tidak dapat menghasilkan insight dari AI.';
+            } else {
+                Log::error('Gemini API error: ' . $response->body());
+                return 'Gagal menghubungi layanan analisis AI. Cek log untuk detail.';
             }
-
-            LaporanIjasa::create($validatedData);
-
-            return redirect()->route('laporanijasa.index')->with('success', 'Data Berhasil Ditambahkan');
-        } catch (\Exception $e) {
-            Log::error('Error storing Ijasa data: ' . $e->getMessage());
-            return redirect()->route('laporanijasa.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
+        } catch (Exception $e) {
+            Log::error('Error generating AI insight: ' . $e->getMessage());
+            return 'Terjadi kesalahan dalam menghasilkan analisis.';
         }
     }
 
+    /**
+     * Buat prompt AI berdasar entri laporan.
+     */
+    private function createReportPrompt(string $entriesText): string
+    {
+        return <<<PROMPT
+            Anda adalah seorang analis TI senior di sebuah perusahaan di Indonesia.
+            Berikut data laporan insiden & troubleshooting harian:
+
+            {$entriesText}
+            Tugas Anda:
+            1. **Ringkasan Umum**: Gambarkan tren frekuensi dan jenis permasalahan (misal: banyak gangguan jaringan, error sistem, dsb.).
+            2. **Analisis Dampak**: Identifikasi 2–3 kasus dengan impact tertinggi; jelaskan faktor penyebab yang menonjol.
+            3. **Evaluasi Troubleshooting**: Tinjau efektivitas langkah troubleshooting; sebutkan 2 langkah paling berhasil dan 2 yang perlu diperbaiki.
+            4. **Rekomendasi & Proyeksi**: Berikan minimal 3 rekomendasi teknis/operasional untuk mencegah insiden serupa dan proyeksi kualitatif untuk periode berikutnya.
+
+            Gunakan bahasa Indonesia formal, maksimal 5 paragraf. Gunakan format markdown untuk poin-poin.
+            PROMPT;
+        }
     public function update(Request $request, LaporanIjasa $laporanijasa)
     {
         try {
