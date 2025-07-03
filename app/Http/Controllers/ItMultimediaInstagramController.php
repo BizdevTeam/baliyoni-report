@@ -59,65 +59,63 @@ class ItMultimediaInstagramController extends Controller
     //     return view('it.multimediainstagram', compact('itmultimediainstagrams'));
     // }
     public function index(Request $request)
-    {
-        $perPage = $request->input('per_page', 12);
-        $search = $request->input('search');
-        $startMonth = $request->input('start_month');
-        $endMonth = $request->input('end_month');
-    
-        $query = ItMultimediaInstagram::query();
-    
-        // Filter berdasarkan tanggal jika ada (sudah benar)
-        if ($search) {
-            $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-        }
-    
-        // Filter berdasarkan range bulan-tahun jika keduanya diisi (sudah benar)
-        if (!empty($startMonth) && !empty($endMonth)) {
-            try {
-                $startDate = \Carbon\Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
-                $endDate = \Carbon\Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
-                $query->whereBetween('tanggal', [$startDate, $endDate]);
-            } catch (\Exception $e) {
-                // Sebaiknya kembalikan ke view dengan pesan error, bukan JSON, kecuali ini API endpoint
-                return back()->withErrors(['msg' => 'Format tanggal tidak valid. Gunakan format Y-m.']);
-            }
-        }
+{
+    $perPage     = $request->input('per_page', 12);
+    $search      = $request->input('search');
+    $startMonth  = $request->input('start_month');
+    $endMonth    = $request->input('end_month');
 
-        // Ambil data dengan pagination
-        $itmultimediainstagrams = $query->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
-                                        ->paginate($perPage);
-            
-        // Ubah path gambar agar dapat diakses dari frontend (sudah benar)
-        $itmultimediainstagrams->getCollection()->transform(function ($item) {
-            $item->gambar_url = !empty($item->gambar) && file_exists(public_path("images/it/multimediainstagram/{$item->gambar}"))
-                ? asset("images/it/multimediainstagram/{$item->gambar}")
-                : asset("images/no-image.png");
-    
-            return $item;
-        });
+    $query = ItMultimediaInstagram::query();
 
-        // --- PERUBAHAN UTAMA DIMULAI DI SINI ---
-
-        $aiInsight = null; // Inisialisasi variabel
-        
-        // Hanya jalankan analisis AI untuk request non-AJAX untuk efisiensi
-        if (!$request->ajax()) {
-             // Ambil koleksi data yang sudah dipaginasi
-            $postsToAnalyze = $itmultimediainstagrams->getCollection();
-            // Panggil fungsi analisis gambar yang baru
-            $aiInsight = $this->generateImageBatchAnalysis($postsToAnalyze);
-        }
-        
-        if ($request->ajax()) {
-            return response()->json(['itmultimediainstagrams' => $itmultimediainstagrams]);
-        }
-
-        // Tambahkan $aiInsight ke data yang dikirim ke view
-        return view('it.multimediainstagram', compact('itmultimediainstagrams', 'aiInsight'));
+    // Filter berdasarkan format Y-m
+    if ($search) {
+        $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
     }
 
-      private function generateImageBatchAnalysis($instagramPosts)
+    if (!empty($startMonth) && !empty($endMonth)) {
+        try {
+            $startDate = Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+            $endDate   = Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+            $query->whereBetween('tanggal', [$startDate, $endDate]);
+        } catch (\Exception $e) {
+            return back()->withErrors(['msg' => 'Format tanggal tidak valid. Gunakan format Y-m.']);
+        }
+    }
+
+    // Ambil dengan pagination
+    $itmultimediainstagrams = $query
+        ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
+        ->paginate($perPage);
+
+    // Ubah path gambar
+    $itmultimediainstagrams->getCollection()->transform(function ($item) {
+        $item->gambar_url = !empty($item->gambar) && file_exists(public_path("images/it/multimediainstagram/{$item->gambar}"))
+            ? asset("images/it/multimediainstagram/{$item->gambar}")
+            : asset("images/no-image.png");
+        return $item;
+    });
+
+    // --- AI INSIGHT: JALANKAN HANYA KETIKA generate_ai ada di URL ---
+    $aiInsight = null;
+    if (!$request->ajax() && $request->has('generate_ai')) {
+        // ambil collection (halaman saat ini)
+        $postsToAnalyze = $itmultimediainstagrams->getCollection();
+        // panggil fungsi analisis batch gambar
+        $aiInsight = $this->generateImageBatchAnalysis($postsToAnalyze);
+    }
+
+    // AJAX response tetap seperti semula
+    if ($request->ajax()) {
+        return response()->json([
+            'itmultimediainstagrams' => $itmultimediainstagrams
+        ]);
+    }
+
+    // Render view dengan $aiInsight (null atau berisi string markdown)
+    return view('it.multimediainstagram', compact('itmultimediainstagrams', 'aiInsight'));
+}
+
+    private function generateImageBatchAnalysis($instagramPosts)
     {
         // 1. Setup Kredensial API
         $apiKey = config('services.gemini.api_key');
@@ -217,7 +215,7 @@ class ItMultimediaInstagramController extends Controller
 
         **Solution:**
         - **Adopsi & Adaptasi Strategi Unggulan:** Analisis dan adopsi elemen sukses dari akun dengan performa terbaik, terutama strategi mereka dalam menggunakan variasi format konten untuk menarik non-followers.
-        - **Diversifikasi Format Konten:** Alihkan fokus dari 'Posts' ke format 'Reels' dan 'Stories' yang lebih dinamis. Targetkan [angka] Reels dan [angka] konten TikTok/interaktif lainnya per minggu. *[Berdasarkan analisis gambar, sarankan 2-3 pilar konten visual yang bisa dieksekusi untuk memenuhi target ini.]*
+        - **Diversifikasi Format Konten:** Alihkan fokus dari 'Posts' ke format 'Reels' dan 'Stories' yang lebih dinamis. Targetkan [angka] Reels dan [angka] konten Instagram/interaktif lainnya per minggu. *[Berdasarkan analisis gambar, sarankan 2-3 pilar konten visual yang bisa dieksekusi untuk memenuhi target ini.]*
         - **Tetapkan 'Standar Emas' Visual:** Jadikan performa dan kualitas visual dari akun terbaik sebagai benchmark yang harus dicapai oleh akun lain yang menjadi prioritas. *[Pilih satu gambar yang paling efektif dari yang dianalisis untuk dijadikan contoh 'standar emas' ini.]*
 
         **Implementation:**

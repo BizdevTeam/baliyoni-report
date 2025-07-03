@@ -9,54 +9,240 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Http;
 
 class LaporanBizdevGambarController extends Controller
 {
     use DateValidationTrait;
 
-    public function index(Request $request)
+    // public function index(Request $request)
+    // {
+    //     $perPage = $request->input('per_page', 12);
+    //     $search = $request->input('search');
+    //     $startMonth = $request->input('start_month');
+    //     $endMonth = $request->input('end_month');
+    
+    //     $query = LaporanBizdevGambar::query();
+    
+    //     // Filter berdasarkan tanggal jika ada
+    //     if ($search) {
+    //         $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+    //     }
+    
+    //     // Filter berdasarkan range bulan-tahun jika keduanya diisi
+    //     if (!empty($startMonth) && !empty($endMonth)) {
+    //         try {
+    //             $startDate = Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+    //             $endDate = Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+    //             $query->whereBetween('tanggal', [$startDate, $endDate]);
+    //         } catch (Exception $e) {
+    //             return response()->json(['error' => 'Format tanggal tidak valid. Gunakan format Y-m.'], 400);
+    //         }
+    //     }
+    //     // Ambil data dengan pagination
+    //     $laporanbizdevgambars = $query->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
+    //                               ->paginate($perPage);
+
+    //     // Ubah path gambar agar dapat diakses dari frontend
+    //     $laporanbizdevgambars->getCollection()->transform(function ($item) {
+    //     $item->gambar_url = !empty($item->gambar) && file_exists(public_path("images/it/laporanbizdevgambar/{$item->gambar}"))
+    //         ? asset("images/it/laporanbizdevgambar/{$item->gambar}")
+    //         : asset("images/no-image.png"); // Placeholder jika tidak ada gambar
+
+    //         return $item;
+    //         });
+        
+    //         if ($request->ajax()) {
+    //             return response()->json(['laporanbizdevgambars' => $laporanbizdevgambars]);
+    //         }
+
+    //     return view('it.laporanbizdevgambar', compact('laporanbizdevgambars'));
+    // }
+
+    // public function store(Request $request)
+    // {
+    //     try {
+    //         $validatedData = $request->validate([
+    //             'tanggal' => 'required|date',
+    //             'kendala' => 'required|string',
+    //             'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550'
+    //         ]);
+
+    //         $errorMessage = '';
+    //         if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
+    //             return redirect()->back()->with('error', $errorMessage);
+    //         }
+
+    //         if ($request->hasFile('gambar')) {
+    //             $filename = time() . $request->file('gambar')->getClientOriginalName();
+    //             $request->file('gambar')->move(public_path('images/it/laporanbizdevgambar'), $filename);
+    //             $validatedData['gambar'] = $filename;
+    //         }
+
+    //         LaporanBizdevGambar::create($validatedData);
+
+    //         return redirect()->route('laporanbizdevgambar.index')->with('success', 'Data Berhasil Ditambahkan');
+    //     } catch (\Exception $e) {
+    //         Log::error('Error storing Instagram data: ' . $e->getMessage());
+    //         return redirect()->route('laporanbizdevgambar.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
+    //     }
+    // }
+
+     public function index(Request $request)
     {
-        $perPage = $request->input('per_page', 12);
-        $search = $request->input('search');
-        $startMonth = $request->input('start_month');
-        $endMonth = $request->input('end_month');
-    
+        $perPage     = $request->input('per_page', 12);
+        $search      = $request->input('search');
+        $startMonth  = $request->input('start_month');
+        $endMonth    = $request->input('end_month');
+
         $query = LaporanBizdevGambar::query();
-    
-        // Filter berdasarkan tanggal jika ada
+
+        // Filter berdasarkan bulan-tahun
         if ($search) {
-            $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%{$search}%"]);
         }
-    
-        // Filter berdasarkan range bulan-tahun jika keduanya diisi
         if (!empty($startMonth) && !empty($endMonth)) {
             try {
                 $startDate = Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
-                $endDate = Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+                $endDate   = Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
                 $query->whereBetween('tanggal', [$startDate, $endDate]);
             } catch (Exception $e) {
-                return response()->json(['error' => 'Format tanggal tidak valid. Gunakan format Y-m.'], 400);
+                return back()->withErrors(['msg' => 'Format tanggal tidak valid. Gunakan format Y-m.']);
             }
         }
-        // Ambil data dengan pagination
-        $laporanbizdevgambars = $query->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
-                                  ->paginate($perPage);
+        // Pagination
+        $laporanbizdevgambars = $query
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
+            ->paginate($perPage);
 
-        // Ubah path gambar agar dapat diakses dari frontend
+        // Ubah path gambar
         $laporanbizdevgambars->getCollection()->transform(function ($item) {
-        $item->gambar_url = !empty($item->gambar) && file_exists(public_path("images/it/laporanbizdevgambar/{$item->gambar}"))
-            ? asset("images/it/laporanbizdevgambar/{$item->gambar}")
-            : asset("images/no-image.png"); // Placeholder jika tidak ada gambar
-
+            $path = public_path("images/it/laporanbizdevgambar/{$item->gambar}");
+            $item->gambar_url = $item->gambar && file_exists($path)
+                ? asset("images/it/laporanbizdevgambar/{$item->gambar}")
+                : asset("images/no-image.png");
             return $item;
-            });
-        
-            if ($request->ajax()) {
-                return response()->json(['laporanbizdevgambars' => $laporanbizdevgambars]);
+        });
+
+        // AI Insight: hanya jika ada query generate_ai dan bukan AJAX
+        $aiInsight = null;
+        if (! $request->ajax() && $request->has('generate_ai')) {
+            $aiInsight = $this->generateBizdevImageInsight($laporanbizdevgambars);
+        }
+
+        if ($request->ajax()) {
+            return response()->json(['laporanbizdevgambars' => $laporanbizdevgambars]);
+        }
+
+        return view('it.laporanbizdevgambar', compact('laporanbizdevgambars', 'aiInsight'));
+    }
+  private function generateBizdevImageInsight($rows): string
+    {
+        // 1. Convert paginator/collection ke array
+        if ($rows instanceof LengthAwarePaginator) {
+            $rows = $rows->items();
+        } elseif ($rows instanceof Collection) {
+            $rows = $rows->all();
+        }
+
+        // 2. Setup API
+        $apiKey = config('services.gemini.api_key');
+        $apiUrl = config('services.gemini.api_url');
+        if (! $apiKey || ! $apiUrl) {
+            Log::error('Gemini API Key or URL is not configured.');
+            return 'Layanan AI tidak terkonfigurasi dengan benar.';
+        }
+        if (empty($rows)) {
+            return 'Tidak ada data kendala untuk dianalisis.';
+        }
+
+        // 3. Siapkan teks deskripsi kendala per tanggal
+        $kendalaLines = [];
+        foreach ($rows as $item) {
+            $date = Carbon::parse($item->tanggal)->format('Y-m-d');
+            $kendalaLines[] = "• {$date}: {$item->kendala}";
+        }
+        $kendalaText = implode("\n", $kendalaLines);
+
+        // 4. Kumpulkan inline gambar
+        $imageParts = [];
+        foreach ($rows as $item) {
+            if (empty($item->gambar)) continue;
+            $path = public_path("images/it/laporanbizdevgambar/{$item->gambar}");
+            if (file_exists($path) && is_readable($path)) {
+                $imageParts[] = [
+                    'inline_data' => [
+                        'mime_type' => mime_content_type($path),
+                        'data'      => base64_encode(file_get_contents($path)),
+                    ]
+                ];
+            }
+        }
+        if (empty($imageParts)) {
+            return 'Tidak ada file gambar yang valid untuk dianalisis.';
+        }
+
+        // 5. Buat prompt akhir
+        $textPrompt = $this->createFormattedBizdevPrompt($kendalaText, count($imageParts));
+
+        // 6. Gabungkan teks + gambar, kirim ke API
+        $payloadParts = array_merge(
+            [['text' => $textPrompt]],
+            $imageParts
+        );
+
+        try {
+            $response = Http::timeout(120)
+                ->withHeaders(['Content-Type' => 'application/json'])
+                ->post($apiUrl . '?key=' . $apiKey, [
+                    'contents' => [['parts' => $payloadParts]],
+                    'generationConfig' => [
+                        'temperature'     => 0.4,
+                        'maxOutputTokens' => 4096,
+                    ],
+                ]);
+
+            if ($response->successful()) {
+                $body = $response->json();
+                return $body['candidates'][0]['content']['parts'][0]['text']
+                    ?? 'Tidak dapat menghasilkan insight dari gambar.';
             }
 
-        return view('it.laporanbizdevgambar', compact('laporanbizdevgambars'));
+            Log::error('Gemini Vision API error: ' . $response->body());
+            return 'Gagal menghubungi layanan AI. Cek log untuk detail.';
+        } catch (\Exception $e) {
+            Log::error('Error generating image AI insight: ' . $e->getMessage());
+            return 'Terjadi kesalahan saat menghasilkan analisis gambar.';
+        }
     }
+
+    /**
+     * Buat prompt dinamis sesuai data kendala & jumlah gambar
+     */
+    private function createFormattedBizdevPrompt(string $kendalaText, int $imageCount): string
+    {
+        return <<<PROMPT
+            Anda adalah Analis BizDev dan Ahli Strategi Produk senior.  
+            Saya telah mengirim **{$imageCount} gambar screenshot** dari modul‐modul dan progress mengenai aplikasi kami, beserta ringkasan kendala harian:
+
+            {$kendalaText}
+
+            TUGAS ANDA:
+            1. **Ekstrak & Klasifikasi Kendala:** Dari deskripsi di atas dan gambar, identifikasi tipe‐tipe kendala (misal: workflow pending, bug UI, inkonsistensi status, performa lambat).
+            2. **Analisis Dampak:** Jelaskan bagaimana setiap kategori kendala memengaruhi progress dan timeline proyek.
+            3. **Rekomendasi Prioritas:** Beri 3–5 rekomendasi konkret untuk memperbaiki alur kerja, UI/UX, dan performa, urutkan berdasarkan urgensi.
+            4. **Langkah Selanjutnya:** Sarankan tahapan implementasi (milestone) untuk menyelesaikan perbaikan dalam 1–2 sprint ke depan.
+
+            Gunakan bahasa Indonesia formal, susun output dalam markdown dengan:
+            - Ringkasan Umum (1 paragraf)
+            - Klasifikasi Kendala (poin‐poin)
+            - Rekomendasi (poin‐poin)
+            - Langkah Selanjutnya (1 paragraf)
+            PROMPT;
+    }
+
 
     public function store(Request $request)
     {

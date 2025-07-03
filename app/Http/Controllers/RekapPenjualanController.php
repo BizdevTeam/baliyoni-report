@@ -188,9 +188,6 @@ class RekapPenjualanController extends Controller
         Gunakan format markdown untuk penomoran atau poin-poin agar mudah dibaca.";
     }
 
-    /**
-     * Fungsi ini sudah benar. Tidak perlu diubah.
-     */
     private function getRandomRGBA($opacity = 0.7)
     {
         return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);

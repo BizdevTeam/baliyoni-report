@@ -12,72 +12,177 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Http;
 
 class LaporanPtBosController extends Controller
 {
     use DateValidationTrait;
 
-    public function index(Request $request)
+     public function index(Request $request)
     {
-        $perPage = $request->input('per_page', 12);
-        $search = $request->input('search');
+        $perPage    = $request->input('per_page', 12);
+        $search     = $request->input('search');
         $startMonth = $request->input('start_month');
-        $endMonth = $request->input('end_month');
-    
+        $endMonth   = $request->input('end_month');
+
         $query = LaporanPtBos::query();
-    
-        // Filter berdasarkan tanggal jika ada
+
         if ($search) {
             $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
         }
-    
-        // Filter berdasarkan range bulan-tahun jika keduanya diisi
+
         if (!empty($startMonth) && !empty($endMonth)) {
             try {
                 $startDate = Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
-                $endDate = Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+                $endDate   = Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
                 $query->whereBetween('tanggal', [$startDate, $endDate]);
             } catch (Exception $e) {
-                return response()->json(['error' => 'Format tanggal tidak valid. Gunakan format Y-m.'], 400);
+                return response()->json([
+                    'error' => 'Format tanggal tidak valid. Gunakan format Y-m.'
+                ], 400);
             }
         }
-        // Ambil data dengan pagination
-        $laporanptboss = $query->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
-                                  ->paginate($perPage);
-    
-        if ($request->ajax()) {
-            return response()->json(['laporanptboss' => $laporanptboss]);
+
+        $laporanptboss = $query
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
+            ->paginate($perPage);
+
+        $aiInsight = null;
+        if ($request->has('generate_ai')) {
+            // Kita pass langsung paginator, fungsi akan meng-handle conversion
+            $aiInsight = $this->generateReportInsight($laporanptboss);
         }
-    
-        return view('hrga.laporanptbos', compact('laporanptboss'));
+
+        return view('hrga.laporanptbos', compact('laporanptboss', 'aiInsight'));
     }
 
     public function store(Request $request)
     {
-        try {
-            $validatedData = $request->validate([
-                'tanggal' => 'required|date',
-                'pekerjaan' => 'required|string',
-                'kondisi_bulanlalu' => 'required|string',
-                'kondisi_bulanini' => 'required|string',
-                'update' => 'required|string',
-                'rencana_implementasi' => 'required|string',
-                'keterangan' => 'required|string'
-            ]);
+        $validated = $request->validate([
+            'tanggal'               => 'required|date',
+            'pekerjaan'             => 'required|string',
+            'kondisi_bulanlalu'     => 'required|string',
+            'kondisi_bulanini'      => 'required|string',
+            'update'                => 'required|string',
+            'rencana_implementasi'  => 'required|string',
+            'keterangan'            => 'required|string',
+        ]);
 
-            $errorMessage = '';
-            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
-                return redirect()->back()->with('error', $errorMessage);
+        $errorMessage = '';
+        if (! $this->isInputAllowed($validated['tanggal'], $errorMessage)) {
+            return redirect()->back()->with('error', $errorMessage);
+        }
+
+        LaporanPtBos::create($validated);
+
+        return redirect()
+            ->route('laporanptbos.index')
+            ->with('success', 'Data Berhasil Ditambahkan');
+    }
+
+    /**
+     * Mengirim data laporan ke Gemini API untuk menghasilkan insight.
+     * Bisa menerima LengthAwarePaginator, Collection, atau array.
+     *
+     * @param  mixed  $rows
+     * @return string
+     */
+    private function generateReportInsight($rows): string
+    {
+        // Jika paginator, ambil items() → array
+        if ($rows instanceof LengthAwarePaginator) {
+            $rows = $rows->items();
+        }
+        // Jika collection, ubah ke array
+        elseif ($rows instanceof Collection) {
+            $rows = $rows->all();
+        }
+        // jika sudah array, biarkan saja
+
+        $apiKey = config('services.gemini.api_key');
+        $apiUrl = config('services.gemini.api_url');
+
+        if (! $apiKey || ! $apiUrl) {
+            Log::error('Gemini API Key or URL is not configured.');
+            return 'Layanan AI tidak terkonfigurasi dengan benar.';
+        }
+
+        if (empty($rows)) {
+            return 'Tidak ada data laporan untuk dianalisis.';
+        }
+
+        // Susun entri laporan dalam markdown list
+        $entriesText = '';
+        foreach ($rows as $item) {
+            /** @var LaporanPtBos $item */
+            $entriesText .= "- **Tanggal:** " . Carbon::parse($item->tanggal)->format('Y-m-d') . "\n"
+                          . "  - Pekerjaan: {$item->pekerjaan}\n"
+                          . "  - Kondisi Bulan Lalu: {$item->kondisi_bulanlalu}\n"
+                          . "  - Kondisi Bulan Ini: {$item->kondisi_bulanini}\n"
+                          . "  - Update: {$item->update}\n"
+                          . "  - Rencana Implementasi: {$item->rencana_implementasi}\n"
+                          . "  - Keterangan: {$item->keterangan}\n\n";
+        }
+
+        $prompt = $this->createReportPrompt($entriesText);
+
+        try {
+            $response = Http::withHeaders([
+                    'Content-Type' => 'application/json',
+                ])
+                ->post($apiUrl . '?key=' . $apiKey, [
+                    'contents' => [
+                        [
+                            'parts' => [
+                                ['text' => $prompt]
+                            ]
+                        ]
+                    ],
+                    'generationConfig' => [
+                        'temperature'     => 0.7,
+                        'maxOutputTokens' => 800,
+                    ]
+                ]);
+
+            if ($response->successful()) {
+                $result = $response->json();
+                return $result['candidates'][0]['content']['parts'][0]['text']
+                    ?? 'Tidak dapat menghasilkan insight dari AI.';
+            } else {
+                Log::error('Gemini API error: ' . $response->body());
+                return 'Gagal menghubungi layanan analisis AI. Cek log untuk detail.';
             }
-    
-            LaporanPtBos::create($validatedData);
-    
-            return redirect()->route('laporanptbos.index')->with('success', 'Data Berhasil Ditambahkan');
-        } catch (\Exception $e) {
-            Log::error('Error Storing PT BOS Data: ' . $e->getMessage());
-            return redirect()->route('laporanptbos.index')->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        } catch (Exception $e) {
+            Log::error('Error generating AI insight: ' . $e->getMessage());
+            return 'Terjadi kesalahan dalam menghasilkan analisis.';
         }
     }
+
+    /**
+     * Buat prompt untuk AI berdasarkan teks entri laporan.
+     *
+     * @param  string  $entriesText
+     * @return string
+     */
+    private function createReportPrompt(string $entriesText): string
+    {
+    return <<<PROMPT
+        Anda adalah seorang analis bisnis senior di sebuah perusahaan di Indonesia.
+        Berikut adalah data laporan bulanan yang telah diinput oleh tim HRGA:
+
+        {$entriesText}
+        Tugas Anda:
+        1. **Ringkasan Umum**: Berikan gambaran singkat mengenai tren keseluruhan (apakah ada perbaikan, stagnasi, atau penurunan), berdasarkan kumpulan laporan di atas.
+        2. **Sorotan Utama**: Identifikasi 2–3 entri dengan kondisi terbaik dan 2–3 entri dengan kondisi terburuk; jelaskan kemungkinan penyebab (misalnya kendala operasional, inisiatif baru, dll.).
+        3. **Rekomendasi Strategis**: Berikan minimal 3 poin rekomendasi yang konkret dan dapat ditindaklanjuti untuk perbaikan di periode berikutnya.
+        4. **Tindak Lanjut & Proyeksi**: Sarankan langkah-langkah tindak lanjut dan prediksi kualitatif untuk periode laporan selanjutnya.
+
+        Gunakan bahasa Indonesia yang formal dan profesional, maksimal 5 paragraf. Gunakan format markdown untuk poin-poin agar mudah dibaca.
+        PROMPT;
+    }
+            
 
     public function update(Request $request, LaporanPtBos $laporanptbo)
     {

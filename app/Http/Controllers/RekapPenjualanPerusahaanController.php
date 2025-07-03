@@ -65,8 +65,10 @@ class RekapPenjualanPerusahaanController extends Controller
                 ],
             ],
         ];
+        $aiInsight = null;
+        if ($request->has('generate_ai')) {
         $aiInsight = $this->generateSalesInsight($rekappenjualanperusahaans, $chartData);
-
+        }
         return view('marketings.rekappenjualanperusahaan', compact('rekappenjualanperusahaans', 'chartData', 'perusahaans', 'aiInsight'));
     }
     private function generateSalesInsight($salesData, $chartData, $companyName = null)

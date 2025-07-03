@@ -92,7 +92,24 @@
        <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
         {{-- <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan Package Administrasi</h1> --}}
         <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Administrative Package Report</h1>
+        @if(empty($aiInsight))
+            <div class="my-6 text-center">
+                <a href="{{ request()->fullUrlWithQuery(['generate_ai' => 'true']) }}"
+                class="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-indigo-700 transition duration-300">
+                    Buat Analisis AI
+                </a>
+            </div>
+        @endif
 
+        {{-- Bagian ini tidak berubah. Ia hanya akan tampil jika $aiInsight tidak kosong. --}}
+        @if(!empty($aiInsight))
+        <div class="ai-insight mt-4 p-4 bg-white rounded-lg shadow">
+            <h3 class="text-lg font-semibold mb-2">Analisis Penjualan</h3>
+            <div class="prose max-w-none">
+                {!! \Illuminate\Support\Str::markdown($aiInsight) !!}
+            </div>
+        </div>
+        @endif
         <div class="flex items-center justify-end transition-all duration-500 mt-8 mb-4">
             <!-- Search -->
             <form method="GET" action="{{ route('laporanpaketadministrasi.index') }}" class="flex items-center gap-2">
@@ -178,6 +195,7 @@
                                                 <option value="E - Katalog Luar Bali" {{ $laporanpaketadministrasi->website == 'E - Katalog Luar Bali' ? 'selected' : '' }}>E - Katalog Luar Bali</option>
                                                 <option value="Balimall" {{ $laporanpaketadministrasi->website == 'Balimall' ? 'selected' : '' }}>Balimall</option>
                                                 <option value="Siplah" {{ $laporanpaketadministrasi->website == 'Siplah' ? 'selected' : '' }}>Siplah</option>
+                                                <option value="PL" {{ $laporanpaketadministrasi->website == 'PL' ? 'selected' : '' }}>Pengadaan Langsung</option>
                                             </select>
                                         </div>
                                         <div>
@@ -299,6 +317,7 @@
                         <option value="E - Katalog Luar Bali">E - Katalog Luar Bali</option>
                         <option value="Balimall">Balimall</option>
                         <option value="Siplah">Siplah</option>
+                        <option value="PL">Pengadaan Langsung</option>
                     </select>
                 </div>
                 <div>
