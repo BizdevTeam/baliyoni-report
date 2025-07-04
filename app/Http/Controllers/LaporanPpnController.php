@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Http;
 
 class LaporanPpnController extends Controller
 {
@@ -50,17 +53,134 @@ class LaporanPpnController extends Controller
         
                 return $item;
             });
+
+        $aiInsight = null;
+
+        if (!$request->ajax() && $request->has('generate_ai')) {
+            // ambil collection (halaman saat ini)
+            $postsToAnalyze = $laporanppns->getCollection();
+            // panggil fungsi analisis batch thumbnail
+            $aiInsight = $this->generateImageBatchAnalysis($postsToAnalyze);
+        }
         
             if ($request->ajax()) {
                 return response()->json(['laporanppns' => $laporanppns]);
             }
 
-        return view('accounting.laporanppn', compact('laporanppns'));
+        return view('accounting.laporanppn', compact('laporanppns','aiInsight'));
+    }
+    private function generateImageBatchAnalysis($rows): string
+    {
+        // 1. Convert paginator/collection → array
+        if ($rows instanceof LengthAwarePaginator) {
+            $rows = $rows->items();
+        } elseif ($rows instanceof Collection) {
+            $rows = $rows->all();
+        }
+
+        // 2. Setup API
+        $apiKey = config('services.gemini.api_key');
+        $apiUrl = config('services.gemini.api_url');
+        if (! $apiKey || ! $apiUrl) {
+            Log::error('Gemini API Key or URL is not configured.');
+            return 'Layanan AI tidak terkonfigurasi dengan benar.';
+        }
+        if (empty($rows)) {
+            return 'Tidak ada data PPN untuk dianalisis.';
+        }
+
+        // 3. Kumpulkan inline_data setiap thumbnail
+        $imageParts = [];
+        foreach ($rows as $item) {
+            if (empty($item->thumbnail)) continue;
+            $path = public_path("images/accounting/ppn/{$item->thumbnail}");
+            if (file_exists($path) && is_readable($path)) {
+                $imageParts[] = [
+                    'inline_data' => [
+                        'mime_type' => mime_content_type($path),
+                        'data'      => base64_encode(file_get_contents($path)),
+                    ]
+                ];
+            }
+        }
+        if (empty($imageParts)) {
+            return 'Tidak ada gambar PPN yang valid untuk dianalisis.';
+        }
+
+        // 4. Buat prompt spesifik PPN
+        $count      = count($imageParts);
+        $textPrompt = $this->createFormattedPpnPrompt($count);
+
+        // 5. Gabungkan teks + gambar
+        $payloadParts = array_merge(
+            [['text' => $textPrompt]],
+            $imageParts
+        );
+
+        // 6. Kirim ke Gemini Vision
+        try {
+            $response = Http::timeout(120)
+                ->withHeaders(['Content-Type' => 'application/json'])
+                ->post($apiUrl . '?key=' . $apiKey, [
+                    'contents' => [['parts' => $payloadParts]],
+                    'generationConfig' => [
+                        'temperature'     => 0.4,
+                        'maxOutputTokens' => 2048,
+                    ],
+                ]);
+
+            if ($response->successful()) {
+                $body = $response->json();
+                return $body['candidates'][0]['content']['parts'][0]['text']
+                    ?? 'Tidak dapat menghasilkan insight dari gambar PPN.';
+            }
+
+            Log::error('Gemini Vision API error: ' . $response->body());
+            return 'Gagal menghubungi layanan AI. Cek log untuk detail.';
+        } catch (\Exception $e) {
+            Log::error('Error generating AI insight: ' . $e->getMessage());
+            return 'Terjadi kesalahan saat menghasilkan analisis gambar PPN.';
+        }
+    }
+    private function createFormattedPpnPrompt(int $imageCount): string
+    {
+        return <<<PROMPT
+            Anda adalah seorang Analis Keuangan senior yang ahli dalam manajemen piutang dan restitusi PPN.  
+            Saya telah mengirim **{$imageCount} screenshot** tabel Laporan PPN berisi kolom:
+
+            - **Outlet** (nama pelanggan/vendor)  
+            - **KPP** (kantor pajak)  
+            - **Nilai Restitusi** (nilai negatif dalam tanda kurung)  
+            - **Koreksi** (adjustment, bisa positif atau negatif)  
+            - **Uang Masuk** (nilai bersih setelah koreksi)  
+            - **Tanggal Cair**  
+
+            **TUGAS ANDA:**  
+            1. **Ekstrak & Hitung**  
+            - Total Nilai Restitusi (JAN–FEB) dan total Koreksi.  
+            - Total Uang Masuk.  
+            2. **Identifikasi Anomali**  
+            - Outlet dengan restitusi terbesar (nilai absolut tertinggi).  
+            - Koreksi terbesar (positif/negatif) dan kenapa mungkin terjadi.  
+            - Pola tanggal cair (apakah clustering di akhir bulan?).  
+            3. **Analisis Cash Flow**  
+            - Bandingkan jumlah uang masuk vs total restitusi. Apakah ada selisih signifikan?  
+            4. **Rekomendasi Proses**  
+            - Berikan 3 saran untuk mempercepat proses pencairan atau meminimalkan koreksi ulang.  
+            5. **Langkah Selanjutnya**  
+            - Rekomendasi milestone perbaikan (misal: review KPP, SOP verifikasi restitusi) dalam 1–2 periode ke depan.  
+
+            **FORMAT OUTPUT (Markdown):**  
+            - **Ringkasan Eksekutif:** 1 paragraf  
+            - **Angka Utama:** Poin-poin atau tabel ringkas  
+            - **Anomali & Pola:** Poin-poin  
+            - **Rekomendasi & Milestone:** Poin-poin dengan timeline  
+
+            Gunakan bahasa Indonesia formal dan profesional.
+            PROMPT;
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+
     public function store(Request $request)
     {
         try {

@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Http;
 
 class LaporanRasioController extends Controller
 {
@@ -50,12 +53,128 @@ class LaporanRasioController extends Controller
         
                 return $item;
             });
+        $aiInsight = null;
+
+        if (!$request->ajax() && $request->has('generate_ai')) {
+            // ambil collection (halaman saat ini)
+            $postsToAnalyze = $laporanrasios->getCollection();
+            // panggil fungsi analisis batch gambar
+            $aiInsight = $this->generateImageBatchAnalysis($postsToAnalyze);
+        }
         
             if ($request->ajax()) {
                 return response()->json(['laporanrasios' => $laporanrasios]);
             }
 
-        return view('accounting.rasio', compact('laporanrasios'));
+        return view('accounting.rasio', compact('laporanrasios','aiInsight'));
+    }
+
+    private function generateImageBatchAnalysis($rows): string
+    {
+        // 1. Convert paginator/collection → array
+        if ($rows instanceof LengthAwarePaginator) {
+            $rows = $rows->items();
+        } elseif ($rows instanceof Collection) {
+            $rows = $rows->all();
+        }
+
+        // 2. Setup API
+        $apiKey = config('services.gemini.api_key');
+        $apiUrl = config('services.gemini.api_url');
+        if (! $apiKey || ! $apiUrl) {
+            Log::error('Gemini API Key or URL is not configured.');
+            return 'Layanan AI tidak terkonfigurasi dengan benar.';
+        }
+        if (empty($rows)) {
+            return 'Tidak ada laporan rasio untuk dianalisis.';
+        }
+
+        // 3. Kumpulkan inline_data semua gambar rasio
+        $imageParts = [];
+        foreach ($rows as $item) {
+            if (empty($item->gambar)) continue;
+            $path = public_path("images/accounting/rasio/{$item->gambar}");
+            if (file_exists($path) && is_readable($path)) {
+                $imageParts[] = [
+                    'inline_data' => [
+                        'mime_type' => mime_content_type($path),
+                        'data'      => base64_encode(file_get_contents($path)),
+                    ]
+                ];
+            }
+        }
+        if (empty($imageParts)) {
+            return 'Tidak ada file gambar rasio yang valid untuk dianalisis.';
+        }
+
+        // 4. Buat prompt khusus rasio
+        $count       = count($imageParts);
+        $textPrompt  = $this->createFormattedRasioPrompt($count);
+
+        // 5. Gabungkan teks + gambar
+        $payloadParts = array_merge(
+            [['text' => $textPrompt]],
+            $imageParts
+        );
+
+        // 6. Kirim ke Gemini Vision API
+        try {
+            $response = Http::timeout(120)
+                ->withHeaders(['Content-Type' => 'application/json'])
+                ->post($apiUrl . '?key=' . $apiKey, [
+                    'contents' => [['parts' => $payloadParts]],
+                    'generationConfig' => [
+                        'temperature'     => 0.4,
+                        'maxOutputTokens' => 1024,
+                    ],
+                ]);
+
+            if ($response->successful()) {
+                $body = $response->json();
+                return $body['candidates'][0]['content']['parts'][0]['text']
+                    ?? 'Tidak dapat menghasilkan insight dari gambar rasio.';
+            }
+            Log::error('Gemini Vision API error: ' . $response->body());
+            return 'Gagal menghubungi layanan AI. Cek log untuk detail.';
+        } catch (\Exception $e) {
+            Log::error('Error generating AI insight: ' . $e->getMessage());
+            return 'Terjadi kesalahan saat menghasilkan analisis rasio.';
+        }
+    }
+
+    private function createFormattedRasioPrompt(int $imageCount): string
+    {
+        return <<<PROMPT
+            Anda adalah Analis Keuangan senior yang ahli dalam analisis likuiditas dan struktur modal.  
+            Saya telah mengirim **{$imageCount} screenshot** tabel Rasio keuangan untuk dua periode (JAN dan FEB), dengan kolom:
+
+            - **Current Ratio** (Aktiva Lancar ÷ Hutang Lancar)  
+            - **Cash Ratio** (Kas + Setara Kas ÷ Hutang Lancar)  
+            - **Debt Ratio** (Total Hutang ÷ Total Aset)  
+            - dan **Growth %** antara FEB vs JAN.  
+
+            **TUGAS ANDA:**  
+            1. **Ekstrak & Bandingkan Nilai**  
+            - Tuliskan nilai Current, Cash, dan Debt Ratio untuk JAN & FEB.  
+            - Sertakan perubahan persen (Growth %) yang terlihat di tabel.  
+            2. **Interpretasi Tren**  
+            - Apakah likuiditas membaik atau menurun? Jelaskan untuk Current & Cash Ratio.  
+            - Apakah leverage (Debt Ratio) stabil atau meningkat?  
+            3. **Dampak & Risiko**  
+            - Jelaskan implikasi angka-angka tersebut terhadap kemampuan perusahaan membayar kewajiban jangka pendek dan struktur modal.  
+            4. **Rekomendasi**  
+            - Berikan 2–3 saran konkret untuk memperbaiki rasio likuiditas atau mengelola utang.  
+            5. **Langkah Selanjutnya**  
+            - Sarankan milestone untuk 1–2 bulan ke depan (misalnya target rasio, kebijakan kas, refinancing).  
+
+            **FORMAT OUTPUT (Markdown):**  
+            - Ringkasan Eksekutif (1 paragraf)  
+            - Tabel Ringkas Nilai & Growth (%)  
+            - Interpretasi Tren & Risiko (poin)  
+            - Rekomendasi & Milestone (poin)  
+
+            Gunakan bahasa Indonesia formal dan profesional.
+            PROMPT;
     }
 
     public function store(Request $request)

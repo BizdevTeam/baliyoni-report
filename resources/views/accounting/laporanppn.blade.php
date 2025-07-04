@@ -92,7 +92,24 @@
         <!-- Main Content -->
         <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
             <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">PPN Report</h1>
+            @if(empty($aiInsight))
+                <div class="my-6 text-center">
+                    <a href="{{ request()->fullUrlWithQuery(['generate_ai' => 'true']) }}"
+                    class="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-indigo-700 transition duration-300">
+                        Buat Analisis AI
+                    </a>
+                </div>
+            @endif
 
+            {{-- Bagian ini tidak berubah. Ia hanya akan tampil jika $aiInsight tidak kosong. --}}
+            @if(!empty($aiInsight))
+            <div class="ai-insight mt-4 p-4 bg-white rounded-lg shadow">
+                <h3 class="text-lg font-semibold mb-2">Analisis Penjualan</h3>
+                <div class="prose max-w-none">
+                    {!! \Illuminate\Support\Str::markdown($aiInsight) !!}
+                </div>
+            </div>
+            @endif
             <div class="flex items-center justify-end transition-all duration-500 mt-8 mb-4 p-4">
                 <!-- Search -->
                 <form method="GET" action="{{ route('laporanppn.index') }}" class="flex items-center gap-2">
