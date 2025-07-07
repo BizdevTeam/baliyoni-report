@@ -22,7 +22,7 @@ class LaporanTaxPlaningController extends Controller
         $endMonth = $request->input('end_month');
 
         $query = LaporanTaxPlaning::query();
-    
+
         // Filter berdasarkan tanggal jika ada
         if (!empty($search)) {
             $query->where('tanggal', 'LIKE', "%$search%");
