@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Http;
 
 class LaporanNeracaController extends Controller
 {
@@ -49,11 +52,135 @@ class LaporanNeracaController extends Controller
         
                 return $item;
             });
+        $aiInsight = null;
+
+        if (!$request->ajax() && $request->has('generate_ai')) {
+            // ambil collection (halaman saat ini)
+            $postsToAnalyze = $laporanneracas->getCollection();
+            // panggil fungsi analisis batch gambar
+            $aiInsight = $this->generateImageBatchAnalysis($postsToAnalyze);
+        }
 
         if ($request->ajax()) {
             return response()->json(['laporanneracas' => $laporanneracas]);
         }
-        return view('accounting.neraca', compact('laporanneracas'));
+        return view('accounting.neraca', compact('laporanneracas','aiInsight'));
+    }
+      private function generateImageBatchAnalysis($rows): string
+    {
+        // 1. Convert paginator/collection → array
+        if ($rows instanceof LengthAwarePaginator) {
+            $rows = $rows->items();
+        } elseif ($rows instanceof Collection) {
+            $rows = $rows->all();
+        }
+
+        // 2. Setup API
+        $apiKey = config('services.gemini.api_key');
+        $apiUrl = config('services.gemini.api_url');
+        if (! $apiKey || ! $apiUrl) {
+            Log::error('Gemini API Key or URL is not configured.');
+            return 'Layanan AI tidak terkonfigurasi dengan benar.';
+        }
+        if (empty($rows)) {
+            return 'Tidak ada laporan Neraca untuk dianalisis.';
+        }
+
+        // 3. Kumpulkan inline_data gambar
+        $imageParts = [];
+        foreach ($rows as $item) {
+            if (empty($item->gambar)) continue;
+            $path = public_path("images/accounting/neraca/{$item->gambar}");
+            if (file_exists($path) && is_readable($path)) {
+                $imageParts[] = [
+                    'inline_data' => [
+                        'mime_type' => mime_content_type($path),
+                        'data'      => base64_encode(file_get_contents($path)),
+                    ]
+                ];
+            }
+        }
+        if (empty($imageParts)) {
+            return 'Tidak ada file gambar Neraca yang valid untuk dianalisis.';
+        }
+
+        // 4. Buat prompt khusus Neraca
+        $count = count($imageParts);
+        $textPrompt = $this->createFormattedNeracaPrompt($count);
+
+        // 5. Gabungkan teks + gambar → payload
+        $payloadParts = array_merge(
+            [['text' => $textPrompt]],
+            $imageParts
+        );
+
+        // 6. Kirim ke Gemini Vision API
+        try {
+            $response = Http::timeout(120)
+                ->withHeaders(['Content-Type' => 'application/json'])
+                ->post($apiUrl . '?key=' . $apiKey, [
+                    'contents' => [['parts' => $payloadParts]],
+                    'generationConfig' => [
+                        'temperature'     => 0.4,
+                        'maxOutputTokens' => 4096,
+                    ],
+                ]);
+
+            if ($response->successful()) {
+                $body = $response->json();
+                return $body['candidates'][0]['content']['parts'][0]['text']
+                    ?? 'Tidak dapat menghasilkan insight dari gambar Neraca.';
+            }
+
+            Log::error('Gemini Vision API error: ' . $response->body());
+            return 'Gagal menghubungi layanan AI. Cek log untuk detail.';
+        } catch (\Exception $e) {
+            Log::error('Error generating AI insight: ' . $e->getMessage());
+            return 'Terjadi kesalahan sistem saat menghasilkan analisis Neraca.';
+        }
+    }
+
+    private function createFormattedNeracaPrompt(int $imageCount): string
+    {
+        return <<<PROMPT
+            Anda adalah Analis Keuangan senior dengan spesialisasi di Financial Reporting.  
+            Saya telah mengirim **{$imageCount} screenshot** tabel Neraca (Balance Sheet) yang mencakup:
+
+            - **Aktiva Lancar** dan **Aktiva Tetap**, beserta subtotal dan total Aktiva.  
+            - **Hutang Lancar** dan **Hutang Jangka Panjang**, subtotal dan total Hutang.  
+            - **Modal** (ekuitas) dan total Pasiva.  
+            - Kolom **Jumlah** dan **Common Size (%)** untuk masing-masing kategori.
+
+            **TUGAS ANDA:**
+            1. **Ekstrak Angka Utama**  
+            - Total Aktiva Lancar, Aktiva Tetap, dan Total Aktiva.  
+            - Total Hutang Lancar, Hutang Jangka Panjang, dan Total Hutang.  
+            - Total Modal dan Total Pasiva.  
+
+            2. **Analisis Struktur Neraca**  
+            - Bandingkan proporsi Common Size Aktiva Lancar vs Aktiva Tetap.  
+            - Bandingkan proporsi Hutang vs Modal.  
+
+            3. **Hitung Rasio Keuangan**  
+            - Current Ratio = Aktiva Lancar ÷ Hutang Lancar.  
+            - Debt to Equity Ratio = Total Hutang ÷ Total Modal.  
+
+            4. **Identifikasi Penyimpangan**  
+            - Temukan akun terbesar (dengan common size tertinggi) di setiap kategori.  
+            - Catat akun yang growth-nya paling signifikan (jika ada data perbandingan periode sebelumnya).  
+
+            5. **Rekomendasi & Langkah Selanjutnya**  
+            - Berikan 3–5 rekomendasi untuk memperbaiki struktur modal, likuiditas, atau efisiensi aset.  
+            - Saran milestone implementasi untuk 1–2 kuartal ke depan.  
+
+            **FORMAT OUTPUT (Markdown):**  
+            - Ringkasan Eksekutif (1 paragraf)  
+            - Angka Utama & Rasio (tabel/poin)  
+            - Struktur & Penyimpangan (poin)  
+            - Rekomendasi & Milestone (poin)  
+
+            Gunakan bahasa Indonesia formal dan profesional.
+            PROMPT;
     }
 
     public function store(Request $request)

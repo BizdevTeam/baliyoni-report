@@ -150,37 +150,37 @@ class LaporanLabaRugiController extends Controller
     private function createFormattedLabaRugiPrompt(int $imageCount): string
     {
         return <<<PROMPT
-Anda adalah seorang Analis Keuangan senior. Saya telah mengirim **{$imageCount} gambar** yang berisi tabel Laporan Laba Rugi untuk dua periode (JAN dan FEB), dengan kolom: 
-- **Pendapatan** (berapa total revenue),
-- **HPP** (harga pokok penjualan),
-- **Biaya Operasional** (rincian akun 601–610),
-- **Common Size** untuk masing-masing bulan,
-- dan **Growth %** di sisi.
+            Anda adalah seorang Analis Keuangan senior. Saya telah mengirim **{$imageCount} gambar** yang berisi tabel Laporan Laba Rugi untuk dua periode (JAN dan FEB), dengan kolom: 
+            - **Pendapatan** (berapa total revenue),
+            - **HPP** (harga pokok penjualan),
+            - **Biaya Operasional** (rincian akun 601–610),
+            - **Common Size** untuk masing-masing bulan,
+            - dan **Growth %** di sisi.
 
-**TUGAS ANDA:**
-1. **Ekstrak Angka Utama**  
-   - Total Pendapatan JAN & FEB + growth (%)  
-   - Total HPP JAN & FEB + growth (%)  
-   - Total Biaya Operasional JAN & FEB + growth (%)  
-2. **Analisis Margin**  
-   - Hitung dan bandingkan margin kotor (Revenue – HPP) untuk kedua periode.  
-   - Hitung dan bandingkan margin bersih (Margin Kotor – Biaya Operasional).  
-3. **Identifikasi Penyimpangan**  
-   - Temukan akun biaya operasional (601–610) dengan perubahan common size tertinggi/terendah antara JAN–FEB.  
-   - Jelaskan kemungkinan penyebab (misalnya fluktuasi energi, marketing, amortisasi).  
-4. **Rekomendasi**  
-   - Berikan 3 rekomendasi untuk meningkatkan profitabilitas (misalnya optimasi HPP, pengendalian biaya tertentu, alokasi budget).  
-5. **Langkah Tindak Lanjut**  
-   - Saran milestone implementasi (1–2 bulan ke depan) untuk memperbaiki indikator keuangan.
+            **TUGAS ANDA:**
+            1. **Ekstrak Angka Utama**  
+            - Total Pendapatan JAN & FEB + growth (%)  
+            - Total HPP JAN & FEB + growth (%)  
+            - Total Biaya Operasional JAN & FEB + growth (%)  
+            2. **Analisis Margin**  
+            - Hitung dan bandingkan margin kotor (Revenue – HPP) untuk kedua periode.  
+            - Hitung dan bandingkan margin bersih (Margin Kotor – Biaya Operasional).  
+            3. **Identifikasi Penyimpangan**  
+            - Temukan akun biaya operasional (601–610) dengan perubahan common size tertinggi/terendah antara JAN–FEB.  
+            - Jelaskan kemungkinan penyebab (misalnya fluktuasi energi, marketing, amortisasi).  
+            4. **Rekomendasi**  
+            - Berikan 3 rekomendasi untuk meningkatkan profitabilitas (misalnya optimasi HPP, pengendalian biaya tertentu, alokasi budget).  
+            5. **Langkah Tindak Lanjut**  
+            - Saran milestone implementasi (1–2 bulan ke depan) untuk memperbaiki indikator keuangan.
 
-**FORMAT OUTPUT (Markdown):**
-- **Ringkasan Eksekutif:** 1 paragraf  
-- **Angka Utama & Margin:** Tabel atau poin  
-- **Penyimpangan & Penyebab:** Poin  
-- **Rekomendasi & Milestone:** Poin dengan garis waktu singkat  
+            **FORMAT OUTPUT (Markdown):**
+            - **Ringkasan Eksekutif:** 1 paragraf  
+            - **Angka Utama & Margin:** Tabel atau poin  
+            - **Penyimpangan & Penyebab:** Poin  
+            - **Rekomendasi & Milestone:** Poin dengan garis waktu singkat  
 
-Gunakan bahasa Indonesia formal dan profesional.
-PROMPT;
+            Gunakan bahasa Indonesia formal dan profesional.
+            PROMPT;
     }
     
     public function store(Request $request)
