@@ -5,19 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Tax Planning Report</title>
     <script src="https://cdn.tailwindcss.com"></script>
     @vite('resources/css/app.css')
     <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
     <!-- Google Font: Source Sans Pro -->
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
     <!-- Tempusdominus Bootstrap 4 -->
-    <link rel="stylesheet"
-        href="{{ asset('templates/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('templates/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
     <!-- Theme style -->
     <!-- overlayScrollbars -->
     <link rel="stylesheet" href="{{ asset('templates/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
@@ -41,14 +38,15 @@
         <div x-data="{ 
                 showSuccess: {{ session('success') ? 'true' : 'false' }},
                 showError: {{ session('error') ? 'true' : 'false' }}
-            }" x-init="setTimeout(() => showSuccess = false, 5000); setTimeout(() => showError = false, 5000);"
+            }"
+            x-init="setTimeout(() => showSuccess = false, 5000); setTimeout(() => showError = false, 5000);"
             class="fixed top-5 right-5 z-50 flex flex-col gap-3">
 
             <!-- Success Alert -->
             @if (session('success'))
             <div x-show="showSuccess" x-transition.opacity.scale.90
                 class="bg-green-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
-
+                
                 <!-- Icon -->
                 <span class="text-2xl">✅</span>
 
@@ -69,7 +67,7 @@
             @if (session('error'))
             <div x-show="showError" x-transition.opacity.scale.90
                 class="bg-red-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-3 w-[500px]">
-
+                
                 <!-- Icon -->
                 <span class="text-2xl">⚠️</span>
 
@@ -85,467 +83,393 @@
                 </button>
             </div>
             @endif
+
         </div>
         @endif
 
         <!-- Main Content -->
         <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
-            {{-- <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan Rekap Penjualan</h1> --}}
             <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Tax Planning Report</h1>
 
-            @if(empty($aiInsight))
-                <div class="my-6 text-center">
-                    <a href="{{ request()->fullUrlWithQuery(['generate_ai' => 'true']) }}"
-                    class="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-indigo-700 transition duration-300">
-                        Buat Analisis AI
-                    </a>
-                </div>
-            @endif
-
-            {{-- Bagian ini tidak berubah. Ia hanya akan tampil jika $aiInsight tidak kosong. --}}
-            @if(!empty($aiInsight))
-            <div class="ai-insight mt-4 p-4 bg-white rounded-lg shadow">
-                <h3 class="text-lg font-semibold mb-2">Analisis Penjualan</h3>
-                <div class="prose max-w-none">
-                    {!! \Illuminate\Support\Str::markdown($aiInsight) !!}
-                </div>
-            </div>
-            @endif
-            <div class="flex items-center justify-end transition-all duration-500 mt-8 mb-4 p-4">
+            <div class="flex items-center justify-end transition-all duration-500 mt-8 mb-4">
                 <!-- Search -->
                 <form method="GET" action="{{ route('taxplaning.index') }}" class="flex items-center gap-2">
                     <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
-                        <input type="month" name="search" placeholder="Search by MM / YYYY"
-                            value="{{ request('search') }}"
-                            class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
+                        <input type="month" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
                     </div>
 
-                    <button type="submit"
-                        class="bg-gradient-to-r font-medium from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm mr-2"
-                        aria-label="Search">
+                    <button type="submit" class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm mr-2" aria-label="Search">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                            <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                stroke-width="2">
-                                <path stroke-dasharray="40" stroke-dashoffset="40"
-                                    d="M10.76 13.24c-2.34 -2.34 -2.34 -6.14 0 -8.49c2.34 -2.34 6.14 -2.34 8.49 0c2.34 2.34 2.34 6.14 0 8.49c-2.34 2.34 -6.14 2.34 -8.49 0Z">
+                            <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                <path stroke-dasharray="40" stroke-dashoffset="40" d="M10.76 13.24c-2.34 -2.34 -2.34 -6.14 0 -8.49c2.34 -2.34 6.14 -2.34 8.49 0c2.34 2.34 2.34 6.14 0 8.49c-2.34 2.34 -6.14 2.34 -8.49 0Z">
                                     <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.5s" values="40;0" />
                                 </path>
                                 <path stroke-dasharray="12" stroke-dashoffset="12" d="M10.5 13.5l-7.5 7.5">
-                                    <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.5s" dur="0.2s"
-                                        values="12;0" />
+                                    <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.5s" dur="0.2s" values="12;0" />
                                 </path>
                             </g>
                         </svg>
                     </button>
                 </form>
-                {{-- <button
-                    class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm mr-2"
-                    data-modal-target="#addEventModal">
+                <button class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm mr-2" data-modal-target="#addEventModal">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                            stroke-width="2">
+                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
                             <path stroke-dasharray="64" stroke-dashoffset="64" d="M13 3l6 6v12h-14v-18h8">
                                 <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0" />
                             </path>
                             <path stroke-dasharray="14" stroke-dashoffset="14" stroke-width="1" d="M12.5 3v5.5h6.5">
-                                <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.7s" dur="0.2s"
-                                    values="14;0" />
+                                <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.7s" dur="0.2s" values="14;0" />
                             </path>
                             <path stroke-dasharray="8" stroke-dashoffset="8" d="M9 14h6">
-                                <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.9s" dur="0.2s"
-                                    values="8;0" />
+                                <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.9s" dur="0.2s" values="8;0" />
                             </path>
                             <path stroke-dasharray="8" stroke-dashoffset="8" d="M12 11v6">
-                                <animate fill="freeze" attributeName="stroke-dashoffset" begin="1.1s" dur="0.2s"
-                                    values="8;0" />
+                                <animate fill="freeze" attributeName="stroke-dashoffset" begin="1.1s" dur="0.2s" values="8;0" />
                             </path>
                         </g>
                     </svg>
-                </button> --}}
-                <button id="toggleFormButton"
-                    class="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-4 py-2 rounded shadow-md hover:shadow-lg transition duration-300 mr-2">
+                </button>
+                <button id="toggleFormButton" class="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-4 py-2 rounded shadow-md hover:shadow-lg transition duration-300 mr-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                            stroke-width="2">
-                            <path stroke-dasharray="64" stroke-dashoffset="64"
-                                d="M12 3c4.97 0 9 4.03 9 9c0 4.97 -4.03 9 -9 9c-4.97 0 -9 -4.03 -9 -9c0 -4.97 4.03 -9 9 -9Z">
+                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                            <path stroke-dasharray="64" stroke-dashoffset="64" d="M12 3c4.97 0 9 4.03 9 9c0 4.97 -4.03 9 -9 9c-4.97 0 -9 -4.03 -9 -9c0 -4.97 4.03 -9 9 -9Z">
                                 <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0" />
                             </path>
                             <path stroke-dasharray="6" stroke-dashoffset="6" d="M12 14l-3 -3M12 14l3 -3">
-                                <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.7s" dur="0.3s"
-                                    values="6;0" />
+                                <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.7s" dur="0.3s" values="6;0" />
                             </path>
                         </g>
                     </svg>
                 </button>
-
-                <button id="toggleChartButton"
-                    class="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-4 py-2 rounded shadow-md hover:shadow-lg transition duration-300 mr-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                            stroke-width="2">
-                            <path stroke-dasharray="64" stroke-dashoffset="64" d="M13 3l6 6v12h-14v-18h8">
-                                <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0" />
-                            </path>
-                            <path stroke-dasharray="14" stroke-dashoffset="14" stroke-width="1" d="M12.5 3v5.5h6.5">
-                                <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.7s" dur="0.2s"
-                                    values="14;0" />
-                            </path>
-                            <path stroke-dasharray="4" stroke-dashoffset="4" d="M9 17v-3">
-                                <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.9s" dur="0.2s"
-                                    values="4;0" />
-                            </path>
-                            <path stroke-dasharray="6" stroke-dashoffset="6" d="M12 17v-4">
-                                <animate fill="freeze" attributeName="stroke-dashoffset" begin="1.1s" dur="0.2s"
-                                    values="6;0" />
-                            </path>
-                            <path stroke-dasharray="6" stroke-dashoffset="6" d="M15 17v-5">
-                                <animate fill="freeze" attributeName="stroke-dashoffset" begin="1.3s" dur="0.2s"
-                                    values="6;0" />
-                            </path>
-                        </g>
-                    </svg>
-                </button>
-            <div x-data="syncAndModalManager()">
-
-    <button @click="runSync()" :disabled="isLoading"
-            class="bg-blue-600 text-white px-5 py-2 rounded-lg shadow hover:bg-blue-700 transition duration-300 flex items-center gap-2 disabled:bg-blue-400 disabled:cursor-wait">
-        
-        <svg x-show="isLoading" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
-        
-        <svg x-show="!isLoading" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-            <path fill="currentColor" d="M12 16.5A4.5 4.5 0 0 0 16.5 12A4.5 4.5 0 0 0 12 7.5A4.5 4.5 0 0 0 7.5 12A4.5 4.5 0 0 0 12 16.5M12 9A3 3 0 0 1 15 12A3 3 0 0 1 12 15A3 3 0 0 1 9 12A3 3 0 0 1 12 9m9-3h-2.1c-.4-1.2-.9-2.3-1.6-3.2L19 1l-2-2l-1.8 1.3C14.3.4 13.2.1 12 0c-1.2.1-2.3.4-3.2 1.3L7 1l-2 2l1.7 1.7c-.7.9-1.2 2-1.6 3.2H3v3c.1 1.2.4 2.3 1.3 3.2L3 18l2 2l1.8-1.7c.9.7 2 1.2 3.2 1.6v2.1h3v-2.1c1.2-.4 2.3-.9 3.2-1.6L17 21l2-2l-1.7-1.7c.7-.9 1.2-2 1.6-3.2V6M12 18a6 6 0 0 1-6-6H4.2c-.2 1.9.4 3.7 1.6 5.2L4 19l1 1l2-1.5c1.5 1.2 3.3 1.8 5.2 1.6V20h1.8v-1.8c1.9-.2 3.7-.8 5.2-2L20 19l1-1l-1.5-2c1.2-1.5 1.8-3.3 1.6-5.2H18a6 6 0 0 1-6 6Z"/>
-        </svg>
-        
-        <span x-text="isLoading ? 'Sinkronisasi...' : 'Sync Data dari API'"></span>
-    </button>
-
-    <div @keydown.escape.window="closeModal()" x-show="modal.isOpen" x-cloak
-         class="fixed inset-0 z-50 flex items-center justify-center p-4">
-
-        <div x-show="modal.isOpen" x-transition.opacity.duration.300ms @click="closeModal()"
-             class="fixed inset-0 bg-black bg-opacity-50"></div>
-
-        <div x-show="modal.isOpen" x-transition:enter="transition ease-out duration-300"
-             x-transition:enter-start="opacity-0 scale-90"
-             x-transition:enter-end="opacity-100 scale-100"
-             class="relative bg-white rounded-lg shadow-xl w-full max-w-md p-6 text-center">
-            
-            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full"
-                 :class="modal.type === 'success' ? 'bg-green-100' : 'bg-red-100'">
-                <svg x-show="modal.type === 'success'" class="h-6 w-6 text-green-600" ...></svg>
-                <svg x-show="modal.type === 'error'" class="h-6 w-6 text-red-600" ...></svg>
             </div>
 
-            <h3 class="mt-4 text-lg font-medium text-gray-900" x-text="modal.title"></h3>
-            <div class="mt-2">
-                <p class="text-sm text-gray-500" x-html="modal.message"></p>
-            </div>
-
-            <div class="mt-5">
-                <button @click="closeModal()" type="button"
-                        class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white focus:outline-none"
-                        :class="modal.type === 'success' ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'">
-                    OK
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-                {{-- <button id="btnSyncTax" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition">
-                    Sync Data dari API
-                </button>
-                <div id="syncStatus" class="mt-2 text-sm font-medium">
-                </div> --}}
-            </div>
-
-            <div id="formContainer" class="hidden">
+            <div id="formContainer" class="visible">
                 <div class="mx-auto bg-white p-6 rounded-lg shadow">
-                    <!-- Tambahkan Alpine.js jika belum ada -->
 
                     <!-- Event Table -->
-                    <div class="overflow-x-auto bg-white shadow-md">
-                        <table class="table-auto w-full border-collapse border border-gray-300" id="data-table">
-                            <thead class="bg-gray-200">
-                                <tr>
-                                    <th class="border border-gray-300 px-4 py-2 text-center">No</th>
-                                    <th class="border border-gray-300 px-4 py-2 text-center">Date</th>
-                                    <th class="border border-gray-300 px-4 py-2 text-center">Company</th>
-                                    <th class="border border-gray-300 px-4 py-2 text-center">Tax Planning</th>
-                                    <th class="border border-gray-300 px-4 py-2 text-center">Total Sales</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($rekappenjualans as $taxplaning)
-                                <tr class="hover:bg-gray-100">
-                                    <td class="border border-gray-300 px-4 py-2 text-center">{{ $loop->iteration }}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">{{
-                                        \Carbon\Carbon::parse($taxplaning->tanggal)->format('d M Y') }}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">{{
-                                        $taxplaning->nama_perusahaan }}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center"> {{
-                                        number_format($taxplaning->tax_planning, 0, ',', '.') }}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center"> {{
-                                        number_format($taxplaning->total_penjualan, 0, ',', '.') }}</td>
-                                </tr>
+                <div class="overflow-x-auto border-l-4 border-red-600 shadow-md rounded-sm">
+                    <table class="table-auto w-full border-collapse text-gray-700 text-sm border border-gray-300">
+                        <thead class="bg-gradient-to-r from-gray-200 to-gray-300 text-gray-900 font-semibold ">
+                            <tr class="font-sans">
+                                <th class="px-6 py-3 text-center border border-gray-300 " data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">Date</th>
+                                <th class="px-6 py-3 text-center border border-gray-300 " data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">Thumbnail</th>
+                                <th class="px-6 py-3 text-center border border-gray-300" data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">File Excel</th>
+                                <th class="px-6 py-3 text-center border border-gray-300 " data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">Description</th>
+                                <th class="px-6 py-3 text-center border border-gray-300" data-aos="fade-right"
+                                    data-aos-duration="400"
+                                    data-aos-easing="ease-out-sine">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($laporantaxplanings as $laporantaxplaning)
+                            <tr class="even:bg-gray-50 odd:bg-white hover:bg-gray-100 transition duration-300">
+                                <td class="px-6 py-4 text-center text-pretty border-b border border-gray-300" data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-out-sine">{{ $laporantaxplaning->tanggal_formatted }}</td>
+                                <td class="px-6 py-4 text-center text-pretty border-b overflow-hidden border border-gray-300" data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-out-sine">
+                                    <div class="relative hover:scale-[1.5] transition-transform duration-300">
+                                        @if ($laporantaxplaning->gambar)
+                                        <img src="{{ asset('images/accounting/taxplaning/' . $laporantaxplaning->gambar) }}" alt="Eror Image" class=" shadow-md hover:shadow-xl rounded-md transition-shadow duration-300 h-16 mx-auto object-cover cursor-pointer" onclick="openModal('{{ asset('images/accounting/taxplaning/' . $laporantaxplaning->gambar) }}')">
+                                        @else
+                                        <img src="{{ asset('images/no_image.png') }}" alt="Default Image" class=" shadow-md hover:shadow-xl rounded-md transition-shadow duration-300 h-16 mx-auto object-cover cursor-pointer" onclick="openModal('{{ asset('images/no_image.png') }}')">
+                                        @endif
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-center text-pretty border-b border border-gray-300" data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-out-sine">
+                                    @if ($laporantaxplaning->file_excel)
+                                    <a href="{{ asset('files/accounting/taxplaning/' . $laporantaxplaning->file_excel) }}" class="text-blue-600 underline hover:text-blue-800" download>
+                                        Unduh File Excel
+                                    </a>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 text-center text-pretty border-b border border-gray-300" data-aos="fade-right" data-aos-duration="400" data-aos-easing="ease-out-sine">{{ $laporantaxplaning->keterangan }}</td>
+                                <td class="px-6 py-8 text-center flex justify-center gap-2 border border-gray-300">
+                                    <!-- Edit Button -->
+                                    <button class="transition duration-300 ease-in-out transform hover:scale-125 flex items-center gap-2 p-2" data-modal-target="#editEventModal{{ $laporantaxplaning->id_taxplaning }}">
+                                        <i class="fa fa-pen text-red-600" data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out"></i>
+                                    </button>
+
+                                    <!-- Delete Form -->
+                                    <form method="POST" action="{{ route('taxplaning.destroy', $laporantaxplaning->id_taxplaning) }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="transition duration-300 ease-in-out transform hover:scale-125 flex items-center p-2" onclick="return confirm('Are you sure to delete?')">
+                                            <i class="fa fa-trash text-red-600" data-aos="fade-right" data-aos-duration="600" data-aos-easing="ease-in-out"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+
+                                <!-- Modal for Edit Event -->
+                                <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="editEventModal{{ $laporantaxplaning->id_taxplaning }}">
+                                    <div class="bg-white w-1/2 p-6 rounded-lg shadow-lg">
+                                            <h3 class="text-xl font-semibold mb-4">Edit Data</h3>
+                                        <form method="POST" action="{{ route('taxplaning.update', $laporantaxplaning->id_taxplaning) }}" enctype="multipart/form-data">
+                                            @csrf
+                                            @method('PUT')
+                                            <div class="space-y-4 max-h-[60vh] overflow-y-auto">
+                                                <div>
+                                                    <label for="tanggal" class="block text-sm font-medium">Date</label>
+                                                    <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $laporantaxplaning->tanggal }}" required>
+                                                </div>
+                                                
+                                               <!-- Input Thumbnail dengan Preview -->
+                                                <div>
+                                                    <label class="block text-sm font-medium">Thumbnail</label>
+                                                    <div id="dropzoneEdit{{ $laporantaxplaning->id_taxplaning }}" class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
+                                                        <div class="flex flex-col items-center justify-center pt-5 pb-6 text-center">
+                                                            <svg class="w-10 h-10 text-gray-400" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h16M3 12h16m-4-4l4 4m-4-4l4 4"></path>
+                                                            </svg>
+                                                            <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag file here</p>
+                                                            <p class="text-xs text-gray-500">PNG, JPG, JPEG (Maks 2MB)</p>
+                                                        </div>
+                                                        <input id="gambarEdit{{ $laporantaxplaning->id_taxplaning }}" type="file" name="gambar" class="hidden" accept="image/png, image/jpeg">
+                                                    </div>
+                                                    <!-- Preview Thumbnail -->
+                                                    <div id="filePreviewEdit{{ $laporantaxplaning->id_taxplaning }}" class="mt-3">
+                                                        <p class="text-sm font-medium">Thumbnail Saat Ini:</p>
+                                                        <div class="flex items-center gap-2 mt-2">
+                                                            <img id="previewImageEdit{{ $laporantaxplaning->id_taxplaning }}" src="{{ asset('images/accounting/taxplaning/' . $laporantaxplaning->gambar) }}" alt="Preview" class="w-20 h-20 object-cover rounded-lg">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Input File Excel -->
+                                                <div>
+                                                    <label class="block text-sm font-medium">File Excel</label>
+                                                    <div id="dropzoneExcelEdit{{ $laporantaxplaning->id_taxplaning }}" class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
+                                                        <div class="flex flex-col items-center justify-center pt-5 pb-6 text-center">
+                                                            <svg class="w-10 h-10 text-gray-400" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h16M3 12h16m-4-4l4 4m-4-4l4 4"></path>
+                                                            </svg>
+                                                            <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag file here</p>
+                                                            <p class="text-xs text-gray-500">Hanya file .xlsx, .xls (Maks 5MB)</p>
+                                                        </div>
+                                                        <input id="fileExcelEdit{{ $laporantaxplaning->id_taxplaning }}" type="file" name="file_excel" class="hidden" accept=".xlsx, .xls">
+                                                    </div>
+                                                    <!-- Preview File Excel -->
+                                                    <div class="mt-3">
+                                                        <p class="text-sm font-medium">File Saat Ini:</p>
+                                                        <a href="{{ asset('files/accounting/taxplaning/' . $laporantaxplaning->file_excel) }}" id="fileNameExcelEdit{{ $laporantaxplaning->id_taxplaning }}" class="text-blue-600 underline hover:text-blue-800">
+                                                            {{ basename($laporantaxplaning->file_excel) }}
+                                                        </a>
+                                                    </div>
+                                                </div>
+
+                                                <div>
+                                                    <label for="keterangan" class="block text-sm font-medium">Description</label>
+                                                    <textarea name="keterangan" class="w-full p-2 border rounded" rows="3" required>{{ $laporantaxplaning->keterangan }}</textarea>
+                                                </div>
+                                            </div>
+                                            <div class="mt-4 flex justify-end gap-2">
+                                                <button type="button" class="bg-red-600 text-white px-4 py-2 rounded" data-modal-close>Close</button>
+                                                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Update</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                                 @endforeach
                             </tbody>
                         </table>
-                    </div>
-                    <div class="flex justify-center items-center mt-2 mb-4 p-4 bg-gray-50 rounded-lg">
-                        <!-- Dropdown untuk memilih jumlah data per halaman -->
-                        <div class="flex items-center">
-                            <label for="perPage" class="mr-2 text-sm text-gray-600">Show</label>
-                            <select id="perPage"
-                                class="p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                onchange="changePerPage(this.value)">
-                                <option value="100" {{ request('per_page')==100 ? 'selected' : '' }}>5</option>
-                                <option value="12" {{ request('per_page')==12 || !request('per_page') ? 'selected' : ''
-                                    }}>12</option>
-                                <option value="24" {{ request('per_page')==24 ? 'selected' : '' }}>24</option>
-                            </select>
-                            <span class="ml-2 text-sm text-gray-600">data per page</span>
+                        <!-- Pagination -->
+                        <div class="flex justify-center items-center mt-2 mb-4 p-4 bg-gray-50 rounded-lg">
+                            <!-- Dropdown untuk memilih jumlah data per halaman -->
+                            <div class="flex items-center">
+                                <label for="perPage" class="mr-2 text-sm text-gray-600">Show</label>
+                                <select id="perPage" class="p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" onchange="changePerPage(this.value)">
+                                    <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
+                                    <option value="12" {{ request('per_page') == 12 || !request('per_page') ? 'selected' : '' }}>12</option>
+                                    <option value="24" {{ request('per_page') == 24 ? 'selected' : '' }}>24</option>
+                                </select>
+                                <span class="ml-2 text-sm text-gray-600">data per page</span>
+                            </div>
+                        </div>
+                        <div class="m-4">
+                            {{ $laporantaxplanings->links('pagination::tailwind') }}
                         </div>
                     </div>
-
-                    <div class="m-4">
-                        {{ $rekappenjualans->links('pagination::tailwind') }}
-                    </div>
                 </div>
-            </div>
-            <div id="formChart" class="visible">
-                <div class="flex flex-col mx-auto bg-white p-6 mt-4 rounded-lg shadow-xl border border-grey-500">
-                    <h1 class="text-4xl font-bold text-red-600 mb-4 font-montserrat text-start">Chart</h1>
-
-                    {{-- Ini adalah div chart Anda yang sudah ada --}}
-                    <div class="mt-6 self-center w-full h-auto flex justify-center">
-                        <canvas id="taxChart" class="max-h-96 w-full"></canvas>
-                    </div>
-
-                    {{-- TAMBAHKAN KODE PAGINASI DI BAWAH INI --}}
-                    @if ($totalPages > 1)
-                    <div class="mt-6 flex justify-center items-center space-x-2">
-                        {{-- Tombol Previous --}}
-                        <a href="{{ $chartPage > 1 ? request()->fullUrlWithQuery(['chart_page' => $chartPage - 1]) : '#' }}"
-                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 {{ $chartPage <= 1 ? 'opacity-50 cursor-not-allowed' : '' }}">
-                            Previous
-                        </a>
-
-                        {{-- Nomor Halaman --}}
-                        @for ($i = 1; $i <= $totalPages; $i++) <a
-                            href="{{ request()->fullUrlWithQuery(['chart_page' => $i]) }}"
-                            class="px-4 py-2 text-sm font-medium border rounded-md 
-                              {{ $i == $chartPage ? 'bg-blue-500 text-white border-blue-500' : 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50' }}">
-                            {{ $i }}
-                            </a>
-                            @endfor
-
-                            {{-- Tombol Next --}}
-                            <a href="{{ $chartPage < $totalPages ? request()->fullUrlWithQuery(['chart_page' => $chartPage + 1]) : '#' }}"
-                                class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 {{ $chartPage >= $totalPages ? 'opacity-50 cursor-not-allowed' : '' }}">
-                                Next
-                            </a>
-                    </div>
-                    @endif
-
-                    <div class="mt-6 flex justify-end">
-                        <button onclick="exportToPDF()"
-                            class="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition duration-300 ease-in-out">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                <mask id="lineMdCloudAltPrintFilledLoop0">
-                                    <g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"
-                                        stroke-width="2">
-                                        <path stroke-dasharray="64" stroke-dashoffset="64"
-                                            d="M7 19h11c2.21 0 4 -1.79 4 -4c0 -2.21 -1.79 -4 -4 -4h-1v-1c0 -2.76 -2.24 -5 -5 -5c-2.42 0 -4.44 1.72 -4.9 4h-0.1c-2.76 0 -5 2.24 -5 5c0 2.76 2.24 5 5 5Z">
-                                            <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s"
-                                                values="64;0" />
-                                            <set fill="freeze" attributeName="opacity" begin="0.7s" to="0" />
-                                        </path>
-                                        <g fill="#fff" stroke="none" opacity="0">
-                                            <circle cx="12" cy="10" r="6">
-                                                <animate attributeName="cx" begin="0.7s" dur="30s"
-                                                    repeatCount="indefinite" values="12;11;12;13;12" />
-                                            </circle>
-                                            <rect width="9" height="8" x="8" y="12" />
-                                            <rect width="15" height="12" x="1" y="8" rx="6">
-                                                <animate attributeName="x" begin="0.7s" dur="21s"
-                                                    repeatCount="indefinite" values="1;0;1;2;1" />
-                                            </rect>
-                                            <rect width="13" height="10" x="10" y="10" rx="5">
-                                                <animate attributeName="x" begin="0.7s" dur="17s"
-                                                    repeatCount="indefinite" values="10;9;10;11;10" />
-                                            </rect>
-                                            <set fill="freeze" attributeName="opacity" begin="0.7s" to="1" />
-                                        </g>
-                                        <g fill="#000" fill-opacity="0" stroke="none">
-                                            <circle cx="12" cy="10" r="4">
-                                                <animate attributeName="cx" begin="0.7s" dur="30s"
-                                                    repeatCount="indefinite" values="12;11;12;13;12" />
-                                            </circle>
-                                            <rect width="9" height="6" x="8" y="12" />
-                                            <rect width="11" height="8" x="3" y="10" rx="4">
-                                                <animate attributeName="x" begin="0.7s" dur="21s"
-                                                    repeatCount="indefinite" values="3;2;3;4;3" />
-                                            </rect>
-                                            <rect width="9" height="6" x="12" y="12" rx="3">
-                                                <animate attributeName="x" begin="0.7s" dur="17s"
-                                                    repeatCount="indefinite" values="12;11;12;13;12" />
-                                            </rect>
-                                            <set fill="freeze" attributeName="fill-opacity" begin="0.7s" to="1" />
-                                            <animate fill="freeze" attributeName="opacity" begin="0.7s" dur="0.5s"
-                                                values="1;0" />
-                                        </g>
-                                        <g stroke="none">
-                                            <path fill="#fff" d="M6 11h12v0h-12z">
-                                                <animate fill="freeze" attributeName="d" begin="1.3s" dur="0.22s"
-                                                    values="M6 11h12v0h-12z;M6 11h12v11h-12z" />
-                                            </path>
-                                            <path fill="#000" d="M8 13h8v0h-8z">
-                                                <animate fill="freeze" attributeName="d" begin="1.34s" dur="0.14s"
-                                                    values="M8 13h8v0h-8z;M8 13h8v7h-8z" />
-                                            </path>
-                                            <path fill="#fff" fill-opacity="0"
-                                                d="M9 12h6v1H9zM9 14h6v1H9zM9 16h6v1H9zM9 18h6v1H9z">
-                                                <animate fill="freeze" attributeName="fill-opacity" begin="1.4s"
-                                                    dur="0.1s" values="0;1" />
-                                                <animateMotion begin="1.5s" calcMode="linear" dur="1.5s" path="M0 0v2"
-                                                    repeatCount="indefinite" />
-                                            </path>
-                                        </g>
+                <div x-data="{ open: false }" class="flex justify-end max-w-md ml-auto p-4">
+                    <!-- Tombol untuk membuka modal -->
+                    <button @click="open = true" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24">
+                            <mask id="lineMdCloudAltPrintFilledLoop0">
+                                <g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                    <path stroke-dasharray="64" stroke-dashoffset="64" d="M7 19h11c2.21 0 4 -1.79 4 -4c0 -2.21 -1.79 -4 -4 -4h-1v-1c0 -2.76 -2.24 -5 -5 -5c-2.42 0 -4.44 1.72 -4.9 4h-0.1c-2.76 0 -5 2.24 -5 5c0 2.76 2.24 5 5 5Z">
+                                        <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0" />
+                                        <set fill="freeze" attributeName="opacity" begin="0.7s" to="0" />
+                                    </path>
+                                    <g fill="#fff" stroke="none" opacity="0">
+                                        <circle cx="12" cy="10" r="6">
+                                            <animate attributeName="cx" begin="0.7s" dur="30s" repeatCount="indefinite" values="12;11;12;13;12" />
+                                        </circle>
+                                        <rect width="9" height="8" x="8" y="12" />
+                                        <rect width="15" height="12" x="1" y="8" rx="6">
+                                            <animate attributeName="x" begin="0.7s" dur="21s" repeatCount="indefinite" values="1;0;1;2;1" />
+                                        </rect>
+                                        <rect width="13" height="10" x="10" y="10" rx="5">
+                                            <animate attributeName="x" begin="0.7s" dur="17s" repeatCount="indefinite" values="10;9;10;11;10" />
+                                        </rect>
+                                        <set fill="freeze" attributeName="opacity" begin="0.7s" to="1" />
                                     </g>
-                                </mask>
-                                <rect width="24" height="24" fill="currentColor"
-                                    mask="url(#lineMdCloudAltPrintFilledLoop0)" />
-                            </svg>
-                        </button>
+                                    <g fill="#000" fill-opacity="0" stroke="none">
+                                        <circle cx="12" cy="10" r="4">
+                                            <animate attributeName="cx" begin="0.7s" dur="30s" repeatCount="indefinite" values="12;11;12;13;12" />
+                                        </circle>
+                                        <rect width="9" height="6" x="8" y="12" />
+                                        <rect width="11" height="8" x="3" y="10" rx="4">
+                                            <animate attributeName="x" begin="0.7s" dur="21s" repeatCount="indefinite" values="3;2;3;4;3" />
+                                        </rect>
+                                        <rect width="9" height="6" x="12" y="12" rx="3">
+                                            <animate attributeName="x" begin="0.7s" dur="17s" repeatCount="indefinite" values="12;11;12;13;12" />
+                                        </rect>
+                                        <set fill="freeze" attributeName="fill-opacity" begin="0.7s" to="1" />
+                                        <animate fill="freeze" attributeName="opacity" begin="0.7s" dur="0.5s" values="1;0" />
+                                    </g>
+                                    <g stroke="none">
+                                        <path fill="#fff" d="M6 11h12v0h-12z">
+                                            <animate fill="freeze" attributeName="d" begin="1.3s" dur="0.22s" values="M6 11h12v0h-12z;M6 11h12v11h-12z" />
+                                        </path>
+                                        <path fill="#000" d="M8 13h8v0h-8z">
+                                            <animate fill="freeze" attributeName="d" begin="1.34s" dur="0.14s" values="M8 13h8v0h-8z;M8 13h8v7h-8z" />
+                                        </path>
+                                        <path fill="#fff" fill-opacity="0" d="M9 12h6v1H9zM9 14h6v1H9zM9 16h6v1H9zM9 18h6v1H9z">
+                                            <animate fill="freeze" attributeName="fill-opacity" begin="1.4s" dur="0.1s" values="0;1" />
+                                            <animateMotion begin="1.5s" calcMode="linear" dur="1.5s" path="M0 0v2" repeatCount="indefinite" />
+                                        </path>
+                                    </g>
+                                </g>
+                            </mask>
+                            <rect width="24" height="24" fill="currentColor" mask="url(#lineMdCloudAltPrintFilledLoop0)" />
+                        </svg>
+                    </button>
+
+                    <!-- Modal -->
+                    <div x-show="open" x-cloak class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
+                        <div class="bg-white p-6 rounded-lg w-96 relative">
+                            <!-- Tombol close -->
+                            <button @click="open = false" class="absolute top-2 right-2 text-gray-600 hover:text-gray-900">
+                                ✖
+                            </button>
+
+                            <h2 class="text-xl font-semibold text-red-600 mb-4 text-center">Export Laporan</h2>
+
+                            <form action="{{ route('taxplaning.exportPDF') }}" method="POST">
+                                @csrf
+                                <label for="tanggal" class="block text-gray-700 font-medium mb-2 text-center">Choose Date:</label>
+                                <input type="date" id="tanggal" name="tanggal" required class="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-red-500">
+
+                                <button type="submit" class="w-full mt-3 bg-red-600 text-white py-2 rounded hover:bg-red-700 transition">
+                                    Export PDF
+                                </button>
+                            </form>
+
+                            @if(session('error'))
+                            <p class="mt-3 text-sm text-red-600 text-center">{{ session('error') }}</p>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Modal untuk Add Event -->
+            <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">
+                <div class="bg-white w-1/2 p-6 rounded-lg shadow-lg"> 
+                    <h3 class="text-xl font-semibold mb-4">Add New Data</h3>
+                    <form method="POST" action="{{ route('taxplaning.store') }}" enctype="multipart/form-data">
+                        @csrf
+                        <div class="space-y-4 max-h-[60vh] overflow-y-auto">
+                            <div>
+                                <label for="tanggal" class="block text-sm font-medium">Date</label>
+                                <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
+                            </div>
+                            
+                            <!-- Input Thumbnail dengan Drag & Drop -->
+                            <div>
+                                <label class="block text-sm font-medium">Thumbnail</label>
+                                <div id="dropzone" class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
+                                    <div class="flex flex-col items-center justify-center pt-5 pb-6 text-center">
+                                        <svg class="w-10 h-10 text-gray-400" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h16M3 12h16m-4-4l4 4m-4-4l4 4"></path>
+                                        </svg>
+                                        <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag file here</p>
+                                        <p class="text-xs text-gray-500">PNG, JPG, JPEG (Maks 2MB)</p>
+                                    </div>
+                                    <input id="gambar" type="file" name="gambar" class="hidden" accept="image/png, image/jpeg">
+                                </div>
+                                <!-- Preview -->
+                                <div id="filePreview" class="mt-3 hidden">
+                                    <p class="text-sm font-medium">File choosen:</p>
+                                    <div class="flex items-center gap-2 mt-2">
+                                        <img id="previewImage" src="" alt="Preview" class="w-20 h-20 object-cover rounded-lg hidden">
+                                        <span id="fileName" class="text-gray-600 text-sm"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Input File Excel dengan Drag & Drop -->
+                            <div>
+                                <label class="block text-sm font-medium">File Excel</label>
+                                <div id="dropzoneExcel" class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
+                                    <div class="flex flex-col items-center justify-center pt-5 pb-6 text-center">
+                                        <svg class="w-10 h-10 text-gray-400" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h16M3 12h16m-4-4l4 4m-4-4l4 4"></path>
+                                        </svg>
+                                        <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag file here</p>
+                                        <p class="text-xs text-gray-500">Hanya file .xlsx, .xls (Maks 5MB)</p>
+                                    </div>
+                                    <input id="fileExcel" type="file" name="file_excel" class="hidden" accept=".xlsx, .xls">
+                                </div>
+                                <!-- Preview -->
+                                <div id="filePreviewExcel" class="mt-3 hidden">
+                                    <p class="text-sm font-medium">File choosen:</p>
+                                    <span id="fileNameExcel" class="text-gray-600 text-sm"></span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="keterangan" class="block text-sm font-medium">Description</label>
+                                <textarea name="keterangan" class="w-full p-2 border rounded" rows="3" required></textarea>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex justify-end gap-2">
+                            <button type="button" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600" data-modal-close>Close</button>
+                            <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Add</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- modal for image -->
+            <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-70 hidden justify-center items-center z-50">
+                <div class="relative">
+                    <img id="modalImage" src="" alt="Full Image" class=" max-w-full max-h-[90vh] rounded-md shadow-lg">
+                    <button onclick="closeModal()" class="absolute top-2 right-2 bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white p-3 rounded-full shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm">✖</button>
+                </div>
+            </div>
+
 </body>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-{{-- <script>
-document.getElementById('btnSyncTax').addEventListener('click', async function() {
-    const btn   = this;
-    const status = document.getElementById('syncStatus');
-    const token  = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-    btn.disabled = true;
-    btn.textContent = '⏳ Sinkronisasi...';
-    status.textContent = '';
-
-    try {
-        const res = await fetch("{{ route('accounting.taxplaning.fetchApi') }}", {
-        // const res = await fetch("/accounting/taxplaning/fetch-api", {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': token,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-        });
-
-        const data = await res.json();
-        if (res.ok && data.success) {
-            status.textContent = '✓ Sukses: ' + data.message;
-        } else {
-            status.textContent = '❌ Gagal: ' + (data.message || 'Server error');
-        }
-    } catch (err) {
-        console.error(err);
-        status.textContent = '❌ Error jaringan';
-    } finally {
-        btn.disabled = false;
-        btn.textContent = '🔄 Sync Data dari API';
-    }
-});
-</script> --}}
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <script>
-    function syncAndModalManager() {
-        return {
-            // State untuk tombol
-            isLoading: false,
-
-            // State untuk modal (dijadikan satu objek agar rapi)
-            modal: {
-                isOpen: false,
-                type: 'success',
-                title: '',
-                message: ''
-            },
-
-            // Method utama yang dipanggil tombol
-            async runSync() {
-                this.isLoading = true;
-                const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-                try {
-                    const res = await fetch("{{ route('accounting.taxplaning.fetchApi') }}", {
-                        method: 'POST',
-                        headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
-                    });
-                    const data = await res.json();
-                    
-                    if (res.ok && data.success) {
-                        // Langsung panggil method untuk menampilkan modal sukses
-                        this.showModal('success', data.message);
-                        setTimeout(() => window.location.reload(), 2000);
-                    } else {
-                        // Langsung panggil method untuk menampilkan modal error
-                        this.showModal('error', data.message || 'Terjadi kesalahan di server.');
-                    }
-                } catch (err) {
-                    this.showModal('error', 'Gagal terhubung ke server. Periksa koneksi Anda.');
-                } finally {
-                    this.isLoading = false;
-                }
-            },
-
-            // Method untuk menampilkan modal
-            showModal(type, message) {
-                this.modal.type = type;
-                this.modal.title = type === 'success' ? 'Sinkronisasi Berhasil!' : 'Terjadi Kesalahan!';
-                this.modal.message = message;
-                this.modal.isOpen = true;
-            },
-
-            // Method untuk menutup modal
-            closeModal() {
-                this.modal.isOpen = false;
-            }
-        }
-    }
-</script>
-<script>
-    // Variabel ini akan berisi SEMUA data chart untuk keperluan ekspor
-    var chartDataForExport = @json($chartDataForExport);
-    var allTableData = @json($allTableDataForExport);
-</script>
-<script>
-    //toogle form
-        const toggleFormButton = document.getElementById('toggleFormButton');
+       //toogle form
+       const toggleFormButton = document.getElementById('toggleFormButton');
         const formContainer = document.getElementById('formContainer');
 
         toggleFormButton.addEventListener('click', () => {
-        formContainer.classList.toggle('hidden');
+            formContainer.classList.toggle('hidden');
         });
 
-        const toggleChartButton = document.getElementById('toggleChartButton');
-        const formChart = document.getElementById('formChart');
-
-        toggleChartButton.addEventListener('click', () => {
-        formChart.classList.toggle('hidden');
-        });
-
-    //chart
-    const chartCanvas = document.getElementById('chart');
-// Mengatur tombol untuk membuka modal add
-    // document.querySelector('[data-modal-target="#addEventModal"]').addEventListener('click', function() {
-    //     const modal = document.querySelector('#addEventModal');
-    //     modal.classList.remove('hidden');
-    // });
+    // Mengatur tombol untuk membuka modal add
+    document.querySelector('[data-modal-target="#addEventModal"]').addEventListener('click', function() {
+        const modal = document.querySelector('#addEventModal');
+        modal.classList.remove('hidden');
+    });
     // Mengatur tombol untuk membuka modal edit
     document.querySelectorAll('[data-modal-target]').forEach(button => {
         button.addEventListener('click', function() {
@@ -564,229 +488,232 @@ document.getElementById('btnSyncTax').addEventListener('click', async function()
             modal.classList.add('hidden'); // Menyembunyikan modal
         });
     });
-   
-    var chartData = @json($chartData);
-
-    var ctx = document.getElementById('taxChart').getContext('2d');
-
-    var barChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: chartData.labels, // Label tanggal
-            datasets: chartData.datasets, // Data total penjualan
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: false, // Sembunyikan legenda
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(tooltipItem) {
-                            let value = tooltipItem.raw; // Ambil data nilai
-                            return tooltipItem.dataset.label + ' : ' + 'Rp ' + value.toLocaleString(); // Format angka
-                        },
-                    },
-                },
-            },
-            scales: {
-                x: {
-                    title: {
-                        display: false, // Sembunyikan label sumbu X
-                    },
-                },
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: false, // Sembunyikan label sumbu Y
-                    },
-                    ticks: {
-                        callback: function(value) {
-                            return 'Rp ' + value.toLocaleString(); // Format angka
-                        },
-                    },
-                },
-            },
-            layout: {
-                padding: {
-                    top: 50 // Tambahkan padding atas agar angka tidak terpotong
-                },
-            },
-        },
-        plugins: [{
-            afterDatasetsDraw: function(chart) {
-                var ctx = chart.ctx;
-                chart.data.datasets.forEach((dataset, i) => {
-                    var meta = chart.getDatasetMeta(i);
-                    meta.data.forEach((bar, index) => {
-                        var value = dataset.data[index];
-                        var textY = bar.y - 10; // Beri jarak lebih jauh agar angka tidak terpotong
-                        if (textY < 20) textY = 20; // Pastikan angka tidak keluar area chart
-                        ctx.fillStyle = 'black'; // Warna teks
-                        ctx.font = 'bold 15px sans-serif'; // Ukuran teks
-                        ctx.textAlign = 'center';
-                        ctx.fillText('Rp ' + value.toLocaleString(), bar.x, textY); // Tampilkan di atas bar
-                    });
-                });
-            }
-        }]
-    });
-
-// // JavaScript Function
-// async function exportToPDF() {
-//     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-//     if (!csrfToken) {
-//         alert('CSRF token tidak ditemukan. Pastikan meta tag CSRF disertakan.');
-//         return;
-//     }
-
-//     // Ambil data dari tabel
-//     const items = Array.from(document.querySelectorAll('#data-table tr')).map(row => {
-//         const cells = row.querySelectorAll('td');
-//         return {
-//             tanggal: cells[0]?.innerText.trim() || '',
-//             nama_perusahaan: cells[1]?.innerText.trim() || '',
-//             tax_planning: cells[2]?.innerText.trim() || '',
-//             total_penjualan: cells[3]?.innerText.trim() || '',
-//         };
-//     });
-
-//     const tableContent = items
-//         .filter(item => item.tanggal && item.nama_perusahaan && item.tax_planning && item.total_penjualan)
-//         .map(item => `
-//             <tr>
-//                 <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.tanggal}</td>
-//                 <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.nama_perusahaan}</td>
-//                 <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.tax_planning}</td>
-//                 <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.total_penjualan}</td>
-//             </tr>
-//         `).join('');
-
-//     const pdfTable = tableContent;
-
-//     const chartCanvas = document.querySelector('#taxChart');
-//     if (!chartCanvas) {
-//         alert('Elemen canvas grafik tidak ditemukan.');
-//         return;
-//     }
-
-//     const chartBase64 = chartCanvas.toDataURL();
-
-//     try {
-//         const response = await fetch('/accounting/taxplaning/export-pdf', {
-//             method: 'POST',
-//             headers: {
-//                 'X-CSRF-TOKEN': csrfToken,
-//                 'Content-Type': 'application/json',
-//             },
-//             body: JSON.stringify({
-//                 table: pdfTable,
-//                 chart: chartBase64,
-//             }),
-//         });
-
-//         if (response.ok) {
-//             const blob = await response.blob();
-//             const url = window.URL.createObjectURL(blob);
-//             const a = document.createElement('a');
-//             a.href = url;
-//             a.download = 'Laporan_rekap_penjualan.pdf';
-//         document.body.appendChild(a);
-//             a.click();
-//             document.body.removeChild(a);
-//         } else {
-//             alert('Gagal mengekspor PDF.');
-//         }
-//     } catch (error) {
-//         console.error('Error exporting to PDF:', error);
-//         alert('Terjadi kesalahan saat mengekspor PDF.');
-//     }
-// }
-
-// Ganti seluruh fungsi lama Anda dengan yang ini
-async function exportToPDF() {
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-    if (!csrfToken) return alert('CSRF token tidak ditemukan.');
-
-    // Render chart lengkap ke canvas
-    const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = 1600; tempCanvas.height = 800;
-    const tempCtx = tempCanvas.getContext('2d');
-    const tempChart = new Chart(tempCtx, {
-        type: 'bar',
-        data: chartDataForExport,
-        options: {
-            responsive: false,
-            animation: { duration: 0 },
-            plugins: {
-                title: { display: true, text: 'Laporan Rekap Penjualan', font: { size: 20 } },
-                legend: { display: true }
-            }
-        }
-    });
-    await new Promise(r => setTimeout(r, 500));
-    const chartBase64 = tempCanvas.toDataURL('image/png');
-    tempChart.destroy();
-
-    // Siapkan array <tr> … </tr>
-    const tableRows = allTableData.map(item => {
-        const d = new Date(item.tanggal).toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' });
-        const tax   = Number(item.tax_planning).toLocaleString('id-ID');
-        const sales = Number(item.total_penjualan).toLocaleString('id-ID');
-        return `
-          <tr>
-            <td style="border:1px solid #000;padding:8px;text-align:center;">${d}</td>
-            <td style="border:1px solid #000;padding:8px;">${item.nama_perusahaan}</td>
-            <td style="border:1px solid #000;padding:8px;text-align:right;">${tax}</td>
-            <td style="border:1px solid #000;padding:8px;text-align:right;">${sales}</td>
-          </tr>`;
-    });
-
-    try {
-        const response = await fetch("{{ route('accounting.taxplaning.exportPDF') }}", {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': csrfToken,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                table: tableRows,
-                chart: chartBase64,
-            }),
-        });
-        if (!response.ok) throw new Error('Gagal mengekspor PDF.');
-        const blob = await response.blob();
-        const url  = URL.createObjectURL(blob);
-        const a    = document.createElement('a');
-        a.href = url; a.download = 'Laporan_tax_planning.pdf';
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-    } catch (err) {
-        console.error(err);
-        alert(err.message || 'Terjadi kesalahan saat mengekspor PDF.');
+    //modal img
+    function openModal(imageSrc) {
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        modalImage.src = imageSrc;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
     }
-}
 
-function changePerPage(value) {
+    function closeModal() {
+        const modal = document.getElementById('imageModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
+    function changePerPage(value) {
     const url = new URL(window.location.href);
     url.searchParams.set('per_page', value);
     window.location.href = url.toString();
-}
-
-function changePerPage(value) {
-    const url = new URL(window.location.href);
-    const searchParams = new URLSearchParams(url.search);
-    
-    searchParams.set('per_page', value);
-    if (!searchParams.has('page')) {
-        searchParams.set('page', 1);
     }
-    
-    window.location.href = url.pathname + '?' + searchParams.toString();
-}
+
+    function changePerPage(value) {
+        const url = new URL(window.location.href);
+        const searchParams = new URLSearchParams(url.search);
+        
+        searchParams.set('per_page', value);
+        if (!searchParams.has('page')) {
+            searchParams.set('page', 1);
+        }
+        
+        window.location.href = url.pathname + '?' + searchParams.toString();
+    }
+
+    //dropzone for file
+document.addEventListener("DOMContentLoaded", function () {
+        const dropzone = document.getElementById("dropzone");
+        const fileInput = document.getElementById("gambar");
+        const filePreview = document.getElementById("filePreview");
+        const previewImage = document.getElementById("previewImage");
+        const fileName = document.getElementById("fileName");
+
+        // Fungsi untuk menampilkan preview file
+        function showPreview(file) {
+            filePreview.classList.remove("hidden");
+            fileName.textContent = file.name;
+
+            // Jika file adalah gambar, tampilkan preview
+            if (file.type.startsWith("image/")) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewImage.src = e.target.result;
+                    previewImage.classList.remove("hidden");
+                };
+                reader.readAsDataURL(file);
+            } else {
+                previewImage.classList.add("hidden");
+            }
+        }
+
+        // Ketika input file berubah (file dipilih dari explorer)
+        fileInput.addEventListener("change", function () {
+            if (fileInput.files.length > 0) {
+                showPreview(fileInput.files[0]);
+            }
+        });
+
+        // Drag & Drop Event
+        dropzone.addEventListener("dragover", function (e) {
+            e.preventDefault();
+            dropzone.classList.add("border-blue-500");
+        });
+
+        dropzone.addEventListener("dragleave", function () {
+            dropzone.classList.remove("border-blue-500");
+        });
+
+        dropzone.addEventListener("drop", function (e) {
+            e.preventDefault();
+            dropzone.classList.remove("border-blue-500");
+
+            if (e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+                showPreview(fileInput.files[0]);
+            }
+        });
+
+        // Klik area dropzone untuk memilih file
+        dropzone.addEventListener("click", function () {
+            fileInput.click();
+        });
+    });
+
+    //dropzone for file excel
+    document.addEventListener("DOMContentLoaded", function () {
+    const dropzone = document.getElementById("dropzoneExcel");
+    const fileInput = document.getElementById("fileExcel");
+    const filePreview = document.getElementById("filePreviewExcel");
+    const fileName = document.getElementById("fileNameExcel");
+
+    if (!dropzone || !fileInput || !filePreview || !fileName) {
+        console.error("Elemen dropzone atau input file tidak ditemukan.");
+        return;
+    }
+
+    function showPreview(file) {
+        filePreview.classList.remove("hidden");
+        fileName.textContent = file.name;
+    }
+
+    fileInput.addEventListener("change", function () {
+        if (fileInput.files.length > 0) {
+            showPreview(fileInput.files[0]);
+        }
+    });
+
+    dropzone.addEventListener("dragover", function (e) {
+        e.preventDefault();
+        dropzone.classList.add("border-blue-500");
+    });
+
+    dropzone.addEventListener("dragleave", function () {
+        dropzone.classList.remove("border-blue-500");
+    });
+
+    dropzone.addEventListener("drop", function (e) {
+        e.preventDefault();
+        dropzone.classList.remove("border-blue-500");
+
+        if (e.dataTransfer.files.length > 0) {
+            fileInput.files = e.dataTransfer.files;
+            showPreview(fileInput.files[0]);
+        }
+    });
+
+    dropzone.addEventListener("click", function () {
+        fileInput.click();
+    });
+});
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll("[id^='editEventModal']").forEach(modal => {
+        const id = modal.id.replace("editEventModal", "");
+        
+        const imageInput = document.getElementById(`gambarEdit${id}`);
+        const imagePreview = document.getElementById(`previewImageEdit${id}`);
+        const fileExcelInput = document.getElementById(`fileExcelEdit${id}`);
+        const fileExcelName = document.getElementById(`fileNameExcelEdit${id}`);
+        const dropzoneImage = document.getElementById(`dropzoneEdit${id}`);
+        const dropzoneExcel = document.getElementById(`dropzoneExcelEdit${id}`);
+
+        function showImagePreview(file) {
+            if (file && file.type.startsWith("image/")) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.classList.remove("hidden");
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function showFileName(file) {
+            if (file) {
+                fileExcelName.textContent = file.name;
+                fileExcelName.href = "#";
+            }
+        }
+
+        imageInput.addEventListener("change", function () {
+            if (imageInput.files.length > 0) {
+                showImagePreview(imageInput.files[0]);
+            }
+        });
+
+        fileExcelInput.addEventListener("change", function () {
+            if (fileExcelInput.files.length > 0) {
+                showFileName(fileExcelInput.files[0]);
+            }
+        });
+
+        dropzoneImage.addEventListener("dragover", function (e) {
+            e.preventDefault();
+            dropzoneImage.classList.add("border-blue-500");
+        });
+
+        dropzoneImage.addEventListener("dragleave", function () {
+            dropzoneImage.classList.remove("border-blue-500");
+        });
+
+        dropzoneImage.addEventListener("drop", function (e) {
+            e.preventDefault();
+            dropzoneImage.classList.remove("border-blue-500");
+
+            if (e.dataTransfer.files.length > 0) {
+                imageInput.files = e.dataTransfer.files;
+                showImagePreview(imageInput.files[0]);
+            }
+        });
+
+        dropzoneExcel.addEventListener("dragover", function (e) {
+            e.preventDefault();
+            dropzoneExcel.classList.add("border-blue-500");
+        });
+
+        dropzoneExcel.addEventListener("dragleave", function () {
+            dropzoneExcel.classList.remove("border-blue-500");
+        });
+
+        dropzoneExcel.addEventListener("drop", function (e) {
+            e.preventDefault();
+            dropzoneExcel.classList.remove("border-blue-500");
+
+            if (e.dataTransfer.files.length > 0) {
+                fileExcelInput.files = e.dataTransfer.files;
+                showFileName(fileExcelInput.files[0]);
+            }
+        });
+
+        dropzoneImage.addEventListener("click", function () {
+            imageInput.click();
+        });
+
+        dropzoneExcel.addEventListener("click", function () {
+            fileExcelInput.click();
+        });
+    });
+});
 
 </script>
-
 </html>
