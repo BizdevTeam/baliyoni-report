@@ -157,6 +157,7 @@ class ExportLaporanAll extends Controller
             $dataTiktok = $this->safeExport(fn() => $this->exportTiktok(request()));
             $dataInstagram = $this->safeExport(fn() => $this->exportInstagram(request()));
             $dataBizdev = $this->safeExport(fn() => $this->exportBizdev(request()));
+            $dataBizdev1 = $this->safeExport(fn() => $this->exportBizdev1(request()));
 
     
             return view('exports.all-laporan', compact(
@@ -1802,6 +1803,7 @@ public function exportIJASAGambar(Request $request)
                     'Gambar' => (!empty($item->gambar) && file_exists($imagePath))
                         ? asset('images/it/laporanbizdevgambar/' . $item->gambar)
                         : asset('images/no-image.png'),
+
                 ];
             });
 
@@ -1810,7 +1812,52 @@ public function exportIJASAGambar(Request $request)
             ];
 
         } catch (\Throwable $th) {
-            Log::error('Error exporting (func ExLapAll exportBizdev): ' . $th->getMessage());
+            Log::error('Error exporting (func ExLapAll exportBizdev Bag. Kendala): ' . $th->getMessage());
+            return 'Error: ' . $th->getMessage();
+        }
+    }
+    public function exportBizdev1(Request $request)
+    {
+        try {
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+
+        $instance = new self($startMonth, $endMonth);
+    
+        // Bangun query berdasarkan data constructor
+        $query = LaporanBizdevGambar::query();
+
+            if (isset($instance->startDate) && isset($instance->endDate)) {
+                // Kedua bulan diisi: filter rentang tanggal
+                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+            } elseif (isset($instance->month) && isset($instance->year)) {
+                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
+                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            }
+
+        $rekapBizdev = $query
+        ->orderBy('tanggal','asc')
+        ->get();
+
+        if ($rekapBizdev->isEmpty()) {
+            return 'Data tidak ditemukan.';
+        }
+
+            // Format data dengan path gambar
+            $formattedData = $rekapBizdev->map(function ($item) {
+                return [
+                    'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
+                    'Kendala' => $item->kendala,
+                ];
+            });
+
+            return [
+                'rekap' => $formattedData,
+            ];
+
+        } catch (\Throwable $th) {
+            Log::error('Error exporting (func ExLapAll exportBizdev Bag. Kendala): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }

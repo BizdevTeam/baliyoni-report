@@ -1115,6 +1115,49 @@
      </div>
      @endforeach
 
+      <div class="page-break"></div>
+         <!-- Export Page 17 -->
+         <!-- === Page 17 === -->
+         <div class="page">
+         <!-- buat header disini  -->
+         <div>
+            <img src={{ "images/HEADER.png" }} alt="">
+        </div>
+
+        <div class="flex justify-center items-center p-6">
+            <!-- Tabel Data untuk ekspor PDF -->
+            <div class="">
+                <h2 class="text-center font-serif items-center">Tabel Data</h2>
+                <table id="rekapTable" class="dataTable">
+                    <thead>
+                        <tr>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
+                            <th class="border border-black p-1 text-center text-[10px] font-serif">Kendala</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (empty($dataBizdev1['rekap']) || count($dataBizdev1['rekap']) === 0)
+                        <tr>
+                            <td colspan="5" class="border border-black p-1 text-center text-[10px] font-serif">Maaf data pada bulan ini tidak ada</td>
+                        </tr>
+                        @else
+                        @foreach($dataBizdev1['rekap'] as $bizdev)
+                        <tr>
+                            <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $bizdev['Tanggal'] }}</td>
+                            <td class="border border-black p-1 content-html text-[10px] align-top text-justify font-serif">{!! $bizdev['Kendala'] !!}</td>
+                       </tr>
+                        @endforeach
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+        </div>  
+              <!-- Sticky Footer -->
+              <div class="border-t text-center pt-4 z-50 bg-white">
+             <p class="text-sm font-serif mt-2">Laporan IT - Laporan Bizdev</p>
+            </div>
+        </div>
+
     <!-- === Export PDF HRGA === -->
     
             <!-- === Page Break 17 === -->
