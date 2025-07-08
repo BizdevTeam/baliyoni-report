@@ -127,6 +127,8 @@ class ExportLaporanAll extends Controller
             $dataExportRekapPendapatanASP = $this->safeExport(fn() => $this->exportRekapPendapatanASP(request()));
             $dataExportRekapPiutangASP = $this->safeExport(fn() => $this->exportRekapPiutangASP(request()));
             $dataLaporanPengiriman = $this->safeExport(fn() => $this->exportLaporanPengiriman(request()));
+            Log::info('Exporting Laporan dataExportRekapPendapatanASP: ' . json_encode($dataExportRekapPendapatanASP));
+            Log::info('Exporting Laporan dataExportRekapPiutangASP: ' . json_encode($dataExportRekapPiutangASP));
 
             // === Untuk divisi HRGA ===
             $dataPTBOS = $this->safeExport(fn() => $this->exportPTBOS(request()));
@@ -136,6 +138,7 @@ class ExportLaporanAll extends Controller
             $dataLaporanCuti = $this->safeExport(fn() => $this->exportCuti(request()));
             $dataLaporanIzin = $this->safeExport(fn() => $this->exportIzin(request()));
             $dataLaporanTerlambat = $this->safeExport(fn() => $this->exportTerlambat(request()));
+            Log::info('Exporting Laporan dataLaporanTerlambat: ' . json_encode($dataLaporanTerlambat));
 
             // === Untuk divisi Accounting ===
             $dataKHPS = $this->safeExport(fn() => $this->exportKHPS(request()));
