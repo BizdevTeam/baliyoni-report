@@ -28,7 +28,7 @@ use App\Models\LaporanSPITI;
 use App\Models\LaporanStok;
 use App\Models\LaporanTaxPlaning;
 use App\Models\LaporanTerlambat;
-use App\Models\RekapPendapatanServisASP;
+use App\Models\RekapPendapatanServisAsp;
 use App\Models\RekapPenjualan;
 use App\Models\RekapPenjualanPerusahaan;
 use App\Models\RekapPiutangServisAsp;
