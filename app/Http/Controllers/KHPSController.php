@@ -302,6 +302,36 @@ private function generateFinancialAndStockInsight(array $data): string
             return 'Terjadi kesalahan saat menghubungi layanan AI: ' . $e->getMessage();
         }
     }
+    public function store(Request $request)
+    {
+        try {
+            $validatedData = $request->validate([
+                'tanggal' => 'required|date',
+                'kas' => 'required|integer|min:0',
+                'hutang' => 'required|integer|min:0',
+                'piutang' => 'required|integer|min:0',
+                'stok' => 'required|integer|min:0'
+            ]);
+            $errorMessage = '';
+            if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
+                return redirect()->back()->with('error', $errorMessage);
+            }
+
+            // Cek kombinasi unik date dan perusahaan
+            $exists = KasHutangPiutang::where('tanggal', $validatedData['tanggal'])->exists();
+    
+            if ($exists) {
+                return redirect()->back()->with('error', 'Data sudah ada.');
+            }
+    
+            KasHutangPiutang::create($validatedData);
+    
+            return redirect()->route('khps.index')->with('success', 'Data Berhasil Ditambahkan');
+        } catch (\Exception $e) {
+            Log::error('Error storing KHPS data: ' . $e->getMessage());
+            return redirect()->route('khps.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
+        }
+    }
     public function update(Request $request, KasHutangPiutang $khp)
     {
         try {
