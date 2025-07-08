@@ -198,7 +198,7 @@ class ExportLaporanAll extends Controller
             ->with('year', $this->year);
     
         } catch (\Throwable $th) {
-            Log::error('Error exporting all laporan (exp new): ' . $th->getMessage());
+            Log::error('Error exporting all laporan (func ExLapAll exportAll): ' . $th->getMessage());
             return back()->withErrors($th->getMessage());
         }
     }    
@@ -259,7 +259,7 @@ class ExportLaporanAll extends Controller
             ];
     
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func ExLapAll exportRekapPenjualan): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -323,7 +323,7 @@ class ExportLaporanAll extends Controller
             ];
 
         } catch (\Throwable $th) {
-            Log::error('Error exporting  (exp new): ' . $th->getMessage());
+            Log::error('Error exporting  (func ExLapAll exportRekapPenjualanPerusahaan): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -385,7 +385,7 @@ class ExportLaporanAll extends Controller
             ];
 
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func ExLapAll exportLaporanPaketAdministrasi): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -449,7 +449,7 @@ class ExportLaporanAll extends Controller
         ];
 
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func ExLapAll exportStatusPaket): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -513,7 +513,7 @@ class ExportLaporanAll extends Controller
             ];
 
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func ExLapAll exportLaporanPerInstansi): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -579,7 +579,7 @@ class ExportLaporanAll extends Controller
             ];
 
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func ExLapAll exportLaporanHolding): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -644,7 +644,7 @@ class ExportLaporanAll extends Controller
             ];
 
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func ExLapAll exportLaporanStok): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -708,7 +708,7 @@ class ExportLaporanAll extends Controller
             ];
 
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func ExLapAll exportLaporanPembelianOutlet): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -772,7 +772,7 @@ class ExportLaporanAll extends Controller
             ];
 
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func ExLapAll exportLaporanNegosiasi): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -847,7 +847,7 @@ class ExportLaporanAll extends Controller
             ];
 
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func ExLapAll exportRekapPendapatanASP): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -920,7 +920,7 @@ class ExportLaporanAll extends Controller
             ];
 
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func ExLapAll exportRekapPiutangASP): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -1008,7 +1008,7 @@ class ExportLaporanAll extends Controller
         ];
 
     } catch (\Throwable $th) {
-        Log::error('Error exporting pengiriman: ' . $th->getMessage());
+        Log::error('Error exporting (exportLaporanPengiriman): ' . $th->getMessage());
         return 'Error: ' . $th->getMessage();
     }
 }
@@ -1059,7 +1059,7 @@ class ExportLaporanAll extends Controller
         ];
 
     } catch (\Throwable $th) {
-        Log::error('Error exporting  (exp new): ' . $th->getMessage());
+        Log::error('Error exporting  (func ExLapAll exportPTBOS): ' . $th->getMessage());
         return 'Error: ' . $th->getMessage();
     }
 }
@@ -1108,7 +1108,7 @@ class ExportLaporanAll extends Controller
         ];
 
     } catch (\Throwable $th) {
-        Log::error('Error exporting  (exp new): ' . $th->getMessage());
+        Log::error('Error exporting  (func ExLapAll exportIJASA): ' . $th->getMessage());
         return 'Error: ' . $th->getMessage();
     }
 }
@@ -1158,7 +1158,7 @@ public function exportIJASAGambar(Request $request)
         ];
 
     } catch (\Throwable $th) {
-        Log::error('Error exporting (exp HRGA): ' . $th->getMessage());
+        Log::error('Error exporting (func ExLapAll exportIJASAGambar): ' . $th->getMessage());
         return 'Error: ' . $th->getMessage();
     }
 }
@@ -1223,7 +1223,7 @@ public function exportIJASAGambar(Request $request)
         ];
 
     } catch (\Throwable $th) {
-        Log::error('Error exporting  (exp new): ' . $th->getMessage());
+        Log::error('Error exporting  (func ExLapAll exportSakit): ' . $th->getMessage());
         return 'Error: ' . $th->getMessage();
     }
 }
@@ -1290,7 +1290,7 @@ public function exportIJASAGambar(Request $request)
         ];
 
     } catch (\Throwable $th) {
-        Log::error('Error exporting  (exp new): ' . $th->getMessage());
+        Log::error('Error exporting  (func ExLapAll exportCuti): ' . $th->getMessage());
         return 'Error: ' . $th->getMessage();
     }
 }
@@ -1355,7 +1355,7 @@ public function exportIJASAGambar(Request $request)
         ];
 
     } catch (\Throwable $th) {
-        Log::error('Error exporting  (exp new): ' . $th->getMessage());
+        Log::error('Error exporting  (func ExLapAll exportIzin): ' . $th->getMessage());
         return 'Error: ' . $th->getMessage();
     }
 }
@@ -1420,7 +1420,7 @@ public function exportIJASAGambar(Request $request)
         ];
 
     } catch (\Throwable $th) {
-        Log::error('Error exporting  (exp new): ' . $th->getMessage());
+        Log::error('Error exporting  (func ExLapAll exportTerlambat): ' . $th->getMessage());
         return 'Error: ' . $th->getMessage();
     }
 }
@@ -1469,7 +1469,7 @@ public function exportIJASAGambar(Request $request)
             ];
 
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp HRGA): ' . $th->getMessage());
+            Log::error('Error exporting (func ExLapAll exportLabaRugi): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -1518,7 +1518,7 @@ public function exportIJASAGambar(Request $request)
             ];
 
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp HRGA): ' . $th->getMessage());
+            Log::error('Error exporting (func ExLapAll exportNeraca): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -1567,7 +1567,7 @@ public function exportIJASAGambar(Request $request)
             ];
 
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp HRGA): ' . $th->getMessage());
+            Log::error('Error exporting (func ExLapAll exportRasio): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -1616,7 +1616,7 @@ public function exportIJASAGambar(Request $request)
             ];
 
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp HRGA): ' . $th->getMessage());
+            Log::error('Error exporting (func ExLapAll exportPPn): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -1665,7 +1665,7 @@ public function exportIJASAGambar(Request $request)
             ];
 
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp HRGA): ' . $th->getMessage());
+            Log::error('Error exporting (func ExLapAll exportTaxPlanning): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -1714,7 +1714,7 @@ public function exportIJASAGambar(Request $request)
             ];
 
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp HRGA): ' . $th->getMessage());
+            Log::error('Error exporting (func ExLapAll exportTiktok): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -1762,7 +1762,7 @@ public function exportIJASAGambar(Request $request)
             ];
 
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp HRGA): ' . $th->getMessage());
+            Log::error('Error exporting (func ExLapAll exportInstagram): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -1810,7 +1810,7 @@ public function exportIJASAGambar(Request $request)
             ];
 
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp HRGA): ' . $th->getMessage());
+            Log::error('Error exporting (func ExLapAll exportBizdev): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -1883,7 +1883,7 @@ public function exportIJASAGambar(Request $request)
         ];
 
     } catch (\Throwable $th) {
-        Log::error('Error exporting (exp new): ' . $th->getMessage());
+        Log::error('Error exporting (func ExLapAll exportKHPS): ' . $th->getMessage());
         return 'Error: ' . $th->getMessage();
     }
 }
@@ -1949,7 +1949,7 @@ public function exportIJASAGambar(Request $request)
         ];
 
     } catch (\Throwable $th) {
-        Log::error('Error exporting (exp new): ' . $th->getMessage());
+        Log::error('Error exporting (func ExLapAll exportArusKas): ' . $th->getMessage());
         return 'Error: ' . $th->getMessage();
     }
 }
@@ -1997,7 +1997,7 @@ public function exportIJASAGambar(Request $request)
             ];
     
         } catch (\Throwable $th) {
-            Log::error('Error exporting  (exp new): ' . $th->getMessage());
+            Log::error('Error exporting  (func ExLapAll exportLaporanSPI): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -2045,7 +2045,7 @@ public function exportIJASAGambar(Request $request)
         ];
 
     } catch (\Throwable $th) {
-        Log::error('Error exporting: ' . $th->getMessage());
+        Log::error('Error exporting (func ExLapAll exportLaporanSPIIT): ' . $th->getMessage());
         return 'Error: ' . $th->getMessage();
     }
 }

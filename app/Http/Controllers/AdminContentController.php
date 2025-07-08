@@ -33,6 +33,7 @@ use App\Models\RekapPenjualan;
 use App\Models\RekapPenjualanPerusahaan;
 use App\Models\RekapPiutangServisASP;
 use App\Models\StatusPaket;
+use App\Models\TaxPlanning;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -203,7 +204,7 @@ class AdminContentController extends Controller
             $dataRasio = $this->safeView(fn() => $this->exportRasio($request));
             $dataPPn = $this->safeView(fn() => $this->exportPPn($request));
             $dataArusKas = $this->safeView(fn() => $this->exportArusKas($request));
-            $dataTaxPlanning = $this->safeView(fn() => $this->exportTaxPlanning($request));
+            $dataTaxPlanningReport = $this->safeView(fn() => $this->exportTaxPlanning($request));
 
             // === Untuk divisi SPI ===
             $dataLaporanSPI = $this->safeView(fn() => $this->exportLaporanSPI($request));
@@ -213,7 +214,6 @@ class AdminContentController extends Controller
             $dataTiktok = $this->safeView(fn() => $this->exportTiktok($request));
             $dataInstagram = $this->safeView(fn() => $this->exportInstagram($request));
             $dataBizdev = $this->safeView(fn() => $this->exportBizdev($request));
-
 
 
             return view('components.content', compact(
@@ -253,7 +253,7 @@ class AdminContentController extends Controller
                 'dataNeraca',
                 'dataRasio',
                 'dataPPn',
-                'dataTaxPlanning',
+                'dataTaxPlanningReport',
                 'dataTiktok',
                 'dataInstagram',
                 'dataBizdev',
@@ -266,7 +266,7 @@ class AdminContentController extends Controller
                 ->with('year', $this->year)
                 ->with('filtered', $this->useFilter);
         } catch (\Throwable $th) {
-            Log::error('Error exporting all laporan (exp new): ' . $th->getMessage());
+            Log::error('Error exporting all laporan (func adminContent): ' . $th->getMessage());
             return back()->withErrors($th->getMessage());
         }
     }
@@ -330,7 +330,7 @@ class AdminContentController extends Controller
                 'chart' => $chartData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func exportRekapPenjualan): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -391,7 +391,7 @@ class AdminContentController extends Controller
                 'chart' => $chartData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting  (exp new): ' . $th->getMessage());
+            Log::error('Error exporting  (func exportRekapPenjualanPerusahaan): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -447,7 +447,7 @@ class AdminContentController extends Controller
             ];
 
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func viewTotalRekapPenjualanPerusahaan): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -505,7 +505,7 @@ class AdminContentController extends Controller
                 'chart' => $chartData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (exportLaporanPaketAdministrasi): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -562,7 +562,7 @@ class AdminContentController extends Controller
                 'chart' => $chartData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func ChartTotalLaporanPaketAdministrasi): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -623,7 +623,7 @@ class AdminContentController extends Controller
                 'chart' => $chartData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func exportStatusPaket): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -679,7 +679,7 @@ class AdminContentController extends Controller
                 'chart' => $chartData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func ChartTotalStatusPaket): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -740,7 +740,7 @@ class AdminContentController extends Controller
                 'chart' => $chartData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func exportLaporanPerInstansi): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -795,7 +795,7 @@ class AdminContentController extends Controller
                 'chart' => $chartData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func ChartTotalInstansi): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -857,7 +857,7 @@ class AdminContentController extends Controller
                 'chart' => $chartData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func exportLaporanHolding): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -912,7 +912,7 @@ class AdminContentController extends Controller
                 'chart' => $chartData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func ChartTotalHolding): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -974,7 +974,7 @@ class AdminContentController extends Controller
                 'chart' => $chartData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func exportLaporanStok): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -1034,7 +1034,7 @@ class AdminContentController extends Controller
                 'chart' => $chartData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func exportLaporanPembelianOutlet): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -1095,7 +1095,7 @@ class AdminContentController extends Controller
                 'chart' => $chartData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func exportLaporanNegosiasi): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -1166,7 +1166,7 @@ class AdminContentController extends Controller
                 'chart' => $chartData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func exportRekapPendapatanASP): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -1225,7 +1225,7 @@ class AdminContentController extends Controller
                 'chart' => $chartData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func ChartTotalPendapatanASP): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -1294,7 +1294,7 @@ class AdminContentController extends Controller
                 'chart' => $chartData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func exportRekapPiutangASP): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -1353,7 +1353,7 @@ class AdminContentController extends Controller
                 'chart' => $chartData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func ChartTotalPiutangASP): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -1436,7 +1436,7 @@ class AdminContentController extends Controller
                 'chart' => $chartData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting pengiriman: ' . $th->getMessage());
+            Log::error('Error exporting (func exportLaporanPengiriman): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -1484,7 +1484,7 @@ class AdminContentController extends Controller
                 'rekap' => $formattedData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting  (exp new): ' . $th->getMessage());
+            Log::error('Error exporting  (func exportPTBOS): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -1529,7 +1529,7 @@ class AdminContentController extends Controller
                 'rekap' => $formattedData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting  (exp new): ' . $th->getMessage());
+            Log::error('Error exporting  (func exportIJASA): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -1576,7 +1576,7 @@ class AdminContentController extends Controller
                 'rekap' => $formattedData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp HRGA): ' . $th->getMessage());
+            Log::error('Error exporting (func exportIJASAGambar): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -1637,7 +1637,7 @@ class AdminContentController extends Controller
                 'chart' => $chartData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting  (exp new): ' . $th->getMessage());
+            Log::error('Error exporting  (func exportSakit): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -1694,7 +1694,7 @@ class AdminContentController extends Controller
                 'chart' => $chartData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func ChartTotalSakit): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -1756,7 +1756,7 @@ class AdminContentController extends Controller
                 'chart' => $chartData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting  (exp new): ' . $th->getMessage());
+            Log::error('Error exporting  (func exportCuti): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -1813,7 +1813,7 @@ class AdminContentController extends Controller
                 'chart' => $chartData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func ChartTotalCuti): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -1876,7 +1876,7 @@ class AdminContentController extends Controller
                 'chart' => $chartData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting  (exp new): ' . $th->getMessage());
+            Log::error('Error exporting  (func exportIzin): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -1934,7 +1934,7 @@ class AdminContentController extends Controller
                 'chart' => $chartData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func ChartTotalIzin): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -1996,7 +1996,7 @@ class AdminContentController extends Controller
                 'chart' => $chartData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting  (exp new): ' . $th->getMessage());
+            Log::error('Error exporting  (func exportTerlambat): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -2054,7 +2054,7 @@ class AdminContentController extends Controller
                 'chart' => $chartData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func ChartTotalTerlambat): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -2102,7 +2102,7 @@ class AdminContentController extends Controller
                 'rekap' => $formattedData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp HRGA): ' . $th->getMessage());
+            Log::error('Error exporting (func exportLabaRugi): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -2149,7 +2149,7 @@ class AdminContentController extends Controller
                 'rekap' => $formattedData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp HRGA): ' . $th->getMessage());
+            Log::error('Error exporting (func exportNeraca): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -2196,7 +2196,7 @@ class AdminContentController extends Controller
                 'rekap' => $formattedData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp HRGA): ' . $th->getMessage());
+            Log::error('Error exporting (func exportRasio): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -2242,56 +2242,56 @@ class AdminContentController extends Controller
                 'rekap' => $formattedData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp HRGA): ' . $th->getMessage());
+            Log::error('Error exporting (func exportPPn): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
 
     // Export untuk divisi taxplanning
-    public function exportTaxPlanning(Request $request)
-    {
-        try {
-            $startMonth = $request->input('start_month'); // format Y-m
-            $endMonth = $request->input('end_month');     // format Y-m
+    // public function exportTaxPlanning(Request $request)
+    // {
+    //     try {
+    //         $startMonth = $request->input('start_month'); // format Y-m
+    //         $endMonth = $request->input('end_month');     // format Y-m
 
-            $instance = new self($startMonth, $endMonth);
+    //         $instance = new self($startMonth, $endMonth);
 
-            // Bangun query berdasarkan data constructor
-            $query = LaporanTaxPlaning::query();
+    //         // Bangun query berdasarkan data constructor
+    //         $query = LaporanTaxPlaning::query();
 
-            if ($request->has('filter')) {
-                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
-            }
-            $query = $instance->applyDateFilter($query);
+    //         if ($request->has('filter')) {
+    //             $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
+    //         }
+    //         $query = $instance->applyDateFilter($query);
 
-            $rekapTaxPlanning = $query
-                ->orderBy('tanggal', 'asc')
-                ->get();
+    //         $rekapTaxPlanning = $query
+    //             ->orderBy('tanggal', 'asc')
+    //             ->get();
 
-            if ($rekapTaxPlanning->isEmpty()) {
-                return 'Data tidak ditemukan.';
-            }
+    //         if ($rekapTaxPlanning->isEmpty()) {
+    //             return 'Data tidak ditemukan.';
+    //         }
 
-            // Format data dengan path gambar
-            $formattedData = $rekapTaxPlanning->map(function ($item) {
-                $imagePath = public_path('images/accounting/taxplaning/' . $item->gambar);
-                return [
-                    'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
-                    'Gambar' => (!empty($item->gambar) && file_exists($imagePath))
-                        ? asset('images/accounting/taxplaning/' . $item->gambar)
-                        : asset('images/no-image.png'),
-                    'Keterangan' => $item->keterangan,
-                ];
-            });
+    //         // Format data dengan path gambar
+    //         $formattedData = $rekapTaxPlanning->map(function ($item) {
+    //             $imagePath = public_path('images/accounting/taxplaning/' . $item->gambar);
+    //             return [
+    //                 'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
+    //                 'Gambar' => (!empty($item->gambar) && file_exists($imagePath))
+    //                     ? asset('images/accounting/taxplaning/' . $item->gambar)
+    //                     : asset('images/no-image.png'),
+    //                 'Keterangan' => $item->keterangan,
+    //             ];
+    //         });
 
-            return [
-                'rekap' => $formattedData,
-            ];
-        } catch (\Throwable $th) {
-            Log::error('Error exporting (exp HRGA): ' . $th->getMessage());
-            return 'Error: ' . $th->getMessage();
-        }
-    }
+    //         return [
+    //             'rekap' => $formattedData,
+    //         ];
+    //     } catch (\Throwable $th) {
+    //         Log::error('Error exporting (exp HRGA): ' . $th->getMessage());
+    //         return 'Error: ' . $th->getMessage();
+    //     }
+    // }
 
     // Export untuk divisi tiktok
     public function exportTiktok(Request $request)
@@ -2335,7 +2335,7 @@ class AdminContentController extends Controller
                 'rekap' => $formattedData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp HRGA): ' . $th->getMessage());
+            Log::error('Error exporting (exportTiktok): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -2380,7 +2380,7 @@ class AdminContentController extends Controller
                 'rekap' => $formattedData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp HRGA): ' . $th->getMessage());
+            Log::error('Error exporting (func exportInstagram): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -2425,7 +2425,7 @@ class AdminContentController extends Controller
                 'rekap' => $formattedData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp HRGA): ' . $th->getMessage());
+            Log::error('Error exporting (func exportBizdev): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -2494,7 +2494,7 @@ class AdminContentController extends Controller
                 'chart' => $chartData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func exportKHPS): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -2555,7 +2555,7 @@ class AdminContentController extends Controller
                 'chart' => $chartData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting (exp new): ' . $th->getMessage());
+            Log::error('Error exporting (func exportArusKas): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -2599,7 +2599,7 @@ class AdminContentController extends Controller
                 'rekap' => $formattedData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting  (exp new): ' . $th->getMessage());
+            Log::error('Error exporting  (func exportLaporanSPI): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
@@ -2642,8 +2642,72 @@ class AdminContentController extends Controller
                 'rekap' => $formattedData,
             ];
         } catch (\Throwable $th) {
-            Log::error('Error exporting: ' . $th->getMessage());
+            Log::error('Error exporting (exportLaporanSPIIT): ' . $th->getMessage());
+            return 'Error: ' . $th->getMessage();
+        }
+    }
+    public function exportTaxPlanning(Request $request)
+{
+     try {
+    $search = $request->input('search');
+    $startMonth = $request->input('start_month');
+    $endMonth = $request->input('end_month');
+
+    $query = TaxPlanning::query();
+
+    // Filter berdasarkan tanggal jika ada search
+    if ($search) {
+        $query->where('tanggal', 'LIKE', "%$search%");
+    }
+
+    // Filter berdasarkan range bulan-tahun jika keduanya diisi
+    if ($startMonth && $endMonth) {
+        try {
+            $startDate = \Carbon\Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+            $endDate = \Carbon\Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+            $query->whereBetween('tanggal', [$startDate, $endDate]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Format tanggal tidak valid. Gunakan format Y-m.'], 400);
+        }
+    }
+
+    $allData = $query->get();
+
+    $groupedByCompany = $allData->groupBy('nama_perusahaan');
+
+    $companyNames = $groupedByCompany->keys()->toArray();
+
+    $taxPlanningData = [];
+    $totalPenjualanData = [];
+
+    foreach ($companyNames as $companyName) {
+        $companyItems = $groupedByCompany[$companyName];
+        $taxPlanningData[] = $companyItems->sum('tax_planning');
+        $totalPenjualanData[] = $companyItems->sum('total_penjualan');
+    }
+
+    $chartData = [
+        'labels' => $companyNames,
+        'datasets' => [
+            [
+                'label' => 'Total Tax Planning',
+                'data' => $taxPlanningData,
+                'backgroundColor' => 'rgba(54, 162, 235, 0.7)',
+            ],
+            [
+                'label' => 'Total Sales',
+                'data' => $totalPenjualanData,
+                'backgroundColor' => 'rgba(255, 159, 64, 0.7)',
+            ],
+        ],
+    ];
+        return [
+                    'chart' => $chartData
+                ];
+                } catch (\Throwable $th) {
+            Log::error('Error exporting (func exportTaxPlanning): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
     }
 }
+
