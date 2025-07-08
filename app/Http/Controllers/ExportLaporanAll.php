@@ -31,7 +31,7 @@ use App\Models\LaporanTerlambat;
 use App\Models\RekapPendapatanServisASP;
 use App\Models\RekapPenjualan;
 use App\Models\RekapPenjualanPerusahaan;
-use App\Models\RekapPiutangServisASP;
+use App\Models\RekapPiutangServisAsp;
 use App\Models\StatusPaket;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -786,7 +786,7 @@ class ExportLaporanAll extends Controller
         $instance = new self($startMonth, $endMonth);
     
         // Bangun query berdasarkan data constructor
-        $query = RekapPendapatanServisASP::query();
+        $query = RekapPendapatanServisAsp::query();
 
             if (isset($instance->startDate) && isset($instance->endDate)) {
                 // Kedua bulan diisi: filter rentang tanggal
@@ -859,7 +859,7 @@ class ExportLaporanAll extends Controller
         $instance = new self($startMonth, $endMonth);
     
         // Bangun query berdasarkan data constructor
-        $query = RekapPiutangServisASP::query();
+        $query = RekapPiutangServisAsp::query();
 
             if (isset($instance->startDate) && isset($instance->endDate)) {
                 // Kedua bulan diisi: filter rentang tanggal

@@ -229,7 +229,7 @@ PROMPT;
             }
 
             // Cek kombinasi unik date dan perusahaan
-            $exists = RekapPiutangServisASP::where('tanggal', $validatedData['tanggal'])
+            $exists = RekapPiutangServisAsp::where('tanggal', $validatedData['tanggal'])
                 ->where('pelaksana', $validatedData['pelaksana'])
                 ->exists();
 
@@ -298,7 +298,7 @@ PROMPT;
                 ->withInput();
 
             // Cek kombinasi unik date dan perusahaan
-            $exists = RekapPiutangServisASP::where('tanggal', $validatedData['tanggal'])
+            $exists = RekapPiutangServisAsp::where('tanggal', $validatedData['tanggal'])
                 ->where('pelaksana', $validatedData['pelaksana'])
                 ->exists();
 

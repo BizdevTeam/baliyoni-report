@@ -31,7 +31,7 @@ use App\Models\LaporanTerlambat;
 use App\Models\RekapPendapatanServisASP;
 use App\Models\RekapPenjualan;
 use App\Models\RekapPenjualanPerusahaan;
-use App\Models\RekapPiutangServisASP;
+use App\Models\RekapPiutangServisAsp;
 use App\Models\StatusPaket;
 use App\Models\TaxPlanning;
 use Carbon\Carbon;
@@ -1110,7 +1110,7 @@ class AdminContentController extends Controller
             $instance = new self($startMonth, $endMonth);
 
             // Bangun query berdasarkan data constructor
-            $query = RekapPendapatanServisASP::query();
+            $query = RekapPendapatanServisAsp::query();
 
             if ($request->has('filter')) {
                 $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
@@ -1238,7 +1238,7 @@ class AdminContentController extends Controller
             $instance = new self($startMonth, $endMonth);
 
             // Bangun query berdasarkan data constructor
-            $query = RekapPiutangServisASP::query();
+            $query = RekapPiutangServisAsp::query();
 
             if ($request->has('filter')) {
                 $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);

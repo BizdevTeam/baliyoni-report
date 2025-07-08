@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class RekapPiutangServisASP extends Model
+class RekapPiutangServisAsp extends Model
 {
     use HasFactory;
     protected $table = 'rekap_piutang_servis_a_s_p_s'; // Nama tabel
