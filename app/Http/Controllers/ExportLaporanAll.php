@@ -190,6 +190,7 @@ class ExportLaporanAll extends Controller
                 'dataTiktok',
                 'dataInstagram',
                 'dataBizdev',
+                'dataBizdev1',
                 'dataPTBOS',
                 'dataIJASA',
                 'dataIJASAGambar',
