@@ -504,12 +504,12 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if (empty($dataTaxPlanning['rekap']) || count($dataTaxPlanning['rekap']) === 0)
+                                @if (empty($dataTaxPlanningReport['rekap']) || count($dataTaxPlanningReport['rekap']) === 0)
                                 <tr>
                                     <td colspan="3" class="border border-gray-300 p-1 text-center font-serif">Maaf data pada bulan ini tidak ada</td>
                                 </tr>
                                 @else
-                                @foreach($dataTaxPlanning['rekap'] as $TaxPlanning)
+                                @foreach($dataTaxPlanningReport['rekap'] as $TaxPlanning)
                                 <tr>
                                     <td class="border border-gray-300 px-4 py-2 p-1 text-center font-serif">{{ $TaxPlanning['Tanggal'] }}</td>
                                     <td class="flex border border-gray-300 px-4 py-2 p-1 items-center justify-center font-serif"><img class="items-center justify-center cursor-pointer h-20 w-20 object-cover block mx-auto" src="{{ $TaxPlanning['Gambar'] }}" alt=""></td>
@@ -530,7 +530,21 @@
                     <a href="{{ route("taxplaning.index") }}" class="text-red-600 font-semibold hover:underline">Tax Planning Report →</a>
                 </div>
             </div>
-            @endif
+            <!-- LAPORAN TAX PLANNING -->
+                {{-- <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+                <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
+                Tax Planning Report
+                </h1>
+
+                <div class="bg-white shadow-md rounded-lg p-6">
+                    <canvas id="tax" data-chart='@json($dataTaxPlanningReport["chart"])'></canvas>
+                </div>
+
+                <div class="flex justify-end mt-4">
+                    <a href="{{ route("taxplaning.index") }}" class="text-red-600 font-semibold hover:underline">Tax Planning Report →</a>
+                </div>
+            </div> --}}
+            @endif 
             <!-- END ACCOUNTING -->
 
             <!-- IT -->
@@ -1013,11 +1027,6 @@
         </div>
         @endif
 
-
-
-
-
-
         <x-floating-popover />
 
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -1369,7 +1378,7 @@
 
         </script>
 
-        <script>
+        {{-- <script>
             document.addEventListener("DOMContentLoaded", function() {
                 document.querySelectorAll(".chart-group").forEach(group => {
                     const select = group.querySelector(".chart-select");
@@ -1385,7 +1394,81 @@
                 });
             });
 
-        </script>
+            var chartData = @json($dataTaxPlanningReport["chart"]);
+
+            var ctx = document.getElementById('tax').getContext('2d');
+
+            var barChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: chartData.labels,
+                    datasets: chartData.datasets,
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true, // tampilkan legenda karena ada 2 dataset
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let value = context.raw;
+                                    return context.dataset.label + ' : Rp ' + value.toLocaleString();
+                                },
+                            },
+                        },
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: false,
+                            },
+                            ticks: {
+                                autoSkip: false,
+                                maxRotation: 90,
+                                minRotation: 45,
+                            },
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'Rp ' + value.toLocaleString();
+                                },
+                            },
+                        },
+                    },
+                    layout: {
+                        padding: {
+                            top: 50,
+                        },
+                    },
+                },
+                plugins: [{
+                    id: 'customDataLabels',
+                    afterDatasetsDraw(chart) {
+                        const {ctx} = chart;
+                        chart.data.datasets.forEach((dataset, i) => {
+                            const meta = chart.getDatasetMeta(i);
+                            meta.data.forEach((bar, index) => {
+                                const value = dataset.data[index];
+                                let textY = bar.y - 10;
+                                if (textY < 20) textY = 20;
+                                ctx.save();
+                                ctx.fillStyle = 'black';
+                                ctx.font = 'bold 12px sans-serif';
+                                ctx.textAlign = 'center';
+                                ctx.fillText('Rp ' + value.toLocaleString(), bar.x, textY);
+                                ctx.restore();
+                            });
+                        });
+                    }
+                }]
+            });
+
+        </script> --}}
 
 
         <!-- Modal Loader -->
