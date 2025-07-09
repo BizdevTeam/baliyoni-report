@@ -2248,50 +2248,50 @@ class AdminContentController extends Controller
     }
 
     // Export untuk divisi taxplanning
-    // public function exportTaxPlanning(Request $request)
-    // {
-    //     try {
-    //         $startMonth = $request->input('start_month'); // format Y-m
-    //         $endMonth = $request->input('end_month');     // format Y-m
+    public function exportTaxPlanning(Request $request)
+    {
+        try {
+            $startMonth = $request->input('start_month'); // format Y-m
+            $endMonth = $request->input('end_month');     // format Y-m
 
-    //         $instance = new self($startMonth, $endMonth);
+            $instance = new self($startMonth, $endMonth);
 
-    //         // Bangun query berdasarkan data constructor
-    //         $query = LaporanTaxPlaning::query();
+            // Bangun query berdasarkan data constructor
+            $query = LaporanTaxPlaning::query();
 
-    //         if ($request->has('filter')) {
-    //             $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
-    //         }
-    //         $query = $instance->applyDateFilter($query);
+            if ($request->has('filter')) {
+                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
+            }
+            $query = $instance->applyDateFilter($query);
 
-    //         $rekapTaxPlanning = $query
-    //             ->orderBy('tanggal', 'asc')
-    //             ->get();
+            $rekapTaxPlanning = $query
+                ->orderBy('tanggal', 'asc')
+                ->get();
 
-    //         if ($rekapTaxPlanning->isEmpty()) {
-    //             return 'Data tidak ditemukan.';
-    //         }
+            if ($rekapTaxPlanning->isEmpty()) {
+                return 'Data tidak ditemukan.';
+            }
 
-    //         // Format data dengan path gambar
-    //         $formattedData = $rekapTaxPlanning->map(function ($item) {
-    //             $imagePath = public_path('images/accounting/taxplaning/' . $item->gambar);
-    //             return [
-    //                 'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
-    //                 'Gambar' => (!empty($item->gambar) && file_exists($imagePath))
-    //                     ? asset('images/accounting/taxplaning/' . $item->gambar)
-    //                     : asset('images/no-image.png'),
-    //                 'Keterangan' => $item->keterangan,
-    //             ];
-    //         });
+            // Format data dengan path gambar
+            $formattedData = $rekapTaxPlanning->map(function ($item) {
+                $imagePath = public_path('images/accounting/taxplaning/' . $item->gambar);
+                return [
+                    'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
+                    'Gambar' => (!empty($item->gambar) && file_exists($imagePath))
+                        ? asset('images/accounting/taxplaning/' . $item->gambar)
+                        : asset('images/no-image.png'),
+                    'Keterangan' => $item->keterangan,
+                ];
+            });
 
-    //         return [
-    //             'rekap' => $formattedData,
-    //         ];
-    //     } catch (\Throwable $th) {
-    //         Log::error('Error exporting (exp HRGA): ' . $th->getMessage());
-    //         return 'Error: ' . $th->getMessage();
-    //     }
-    // }
+            return [
+                'rekap' => $formattedData,
+            ];
+        } catch (\Throwable $th) {
+            Log::error('Error exporting (exp HRGA): ' . $th->getMessage());
+            return 'Error: ' . $th->getMessage();
+        }
+    }
 
     // Export untuk divisi tiktok
     public function exportTiktok(Request $request)
@@ -2646,68 +2646,68 @@ class AdminContentController extends Controller
             return 'Error: ' . $th->getMessage();
         }
     }
-    public function exportTaxPlanning(Request $request)
-{
-     try {
-    $search = $request->input('search');
-    $startMonth = $request->input('start_month');
-    $endMonth = $request->input('end_month');
+//     public function exportTaxPlanning(Request $request)
+// {
+//      try {
+//     $search = $request->input('search');
+//     $startMonth = $request->input('start_month');
+//     $endMonth = $request->input('end_month');
 
-    $query = TaxPlanning::query();
+//     $query = TaxPlanning::query();
 
-    // Filter berdasarkan tanggal jika ada search
-    if ($search) {
-        $query->where('tanggal', 'LIKE', "%$search%");
-    }
+//     // Filter berdasarkan tanggal jika ada search
+//     if ($search) {
+//         $query->where('tanggal', 'LIKE', "%$search%");
+//     }
 
-    // Filter berdasarkan range bulan-tahun jika keduanya diisi
-    if ($startMonth && $endMonth) {
-        try {
-            $startDate = \Carbon\Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
-            $endDate = \Carbon\Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
-            $query->whereBetween('tanggal', [$startDate, $endDate]);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Format tanggal tidak valid. Gunakan format Y-m.'], 400);
-        }
-    }
+//     // Filter berdasarkan range bulan-tahun jika keduanya diisi
+//     if ($startMonth && $endMonth) {
+//         try {
+//             $startDate = \Carbon\Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
+//             $endDate = \Carbon\Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
+//             $query->whereBetween('tanggal', [$startDate, $endDate]);
+//         } catch (\Exception $e) {
+//             return response()->json(['error' => 'Format tanggal tidak valid. Gunakan format Y-m.'], 400);
+//         }
+//     }
 
-    $allData = $query->get();
+//     $allData = $query->get();
 
-    $groupedByCompany = $allData->groupBy('nama_perusahaan');
+//     $groupedByCompany = $allData->groupBy('nama_perusahaan');
 
-    $companyNames = $groupedByCompany->keys()->toArray();
+//     $companyNames = $groupedByCompany->keys()->toArray();
 
-    $taxPlanningData = [];
-    $totalPenjualanData = [];
+//     $taxPlanningData = [];
+//     $totalPenjualanData = [];
 
-    foreach ($companyNames as $companyName) {
-        $companyItems = $groupedByCompany[$companyName];
-        $taxPlanningData[] = $companyItems->sum('tax_planning');
-        $totalPenjualanData[] = $companyItems->sum('total_penjualan');
-    }
+//     foreach ($companyNames as $companyName) {
+//         $companyItems = $groupedByCompany[$companyName];
+//         $taxPlanningData[] = $companyItems->sum('tax_planning');
+//         $totalPenjualanData[] = $companyItems->sum('total_penjualan');
+//     }
 
-    $chartData = [
-        'labels' => $companyNames,
-        'datasets' => [
-            [
-                'label' => 'Total Tax Planning',
-                'data' => $taxPlanningData,
-                'backgroundColor' => 'rgba(54, 162, 235, 0.7)',
-            ],
-            [
-                'label' => 'Total Sales',
-                'data' => $totalPenjualanData,
-                'backgroundColor' => 'rgba(255, 159, 64, 0.7)',
-            ],
-        ],
-    ];
-        return [
-                    'chart' => $chartData
-                ];
-                } catch (\Throwable $th) {
-            Log::error('Error exporting (func exportTaxPlanning): ' . $th->getMessage());
-            return 'Error: ' . $th->getMessage();
-        }
-    }
+//     $chartData = [
+//         'labels' => $companyNames,
+//         'datasets' => [
+//             [
+//                 'label' => 'Total Tax Planning',
+//                 'data' => $taxPlanningData,
+//                 'backgroundColor' => 'rgba(54, 162, 235, 0.7)',
+//             ],
+//             [
+//                 'label' => 'Total Sales',
+//                 'data' => $totalPenjualanData,
+//                 'backgroundColor' => 'rgba(255, 159, 64, 0.7)',
+//             ],
+//         ],
+//     ];
+//         return [
+//                     'chart' => $chartData
+//                 ];
+//                 } catch (\Throwable $th) {
+//             Log::error('Error exporting (func exportTaxPlanning): ' . $th->getMessage());
+//             return 'Error: ' . $th->getMessage();
+//         }
+//     }
 }
 
