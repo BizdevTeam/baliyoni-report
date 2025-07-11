@@ -209,10 +209,12 @@ class KHPSController extends Controller
             'stok' => $totalStok,
             'periode_analisis' => $search ? "untuk tanggal yang mengandung '$search'" : "dari semua data yang ditampilkan",
         ];
+        $aiInsight = null;
 
-        // Call the AI analysis function with the correctly formatted data
-        $aiInsight = $this->generateFinancialAndStockInsight($dataForAI);
-        // --- End Corrected AI Insight Generation ---
+    // 2. Hanya jalankan fungsi AI jika request memiliki parameter 'generate_ai'.
+    if ($request->has('generate_ai')) {
+        $aiInsight = $this->generateFinancialAndStockInsight($kashutangpiutangstoks, $chartData);
+    }
 
         return view('accounting.khps', compact('kashutangpiutangstoks', 'chartData', 'aiInsight'));
     }
