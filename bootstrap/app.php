@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth' => Authenticate::class,
             'guest' => RedirectIfAuthenticated::class, 
             'UserAccess' => \App\Http\Middleware\UserAccess::class, 
+            'superadmin' => \App\Http\Middleware\IsSuperAdmin::class,
         ]);
         
         // // Updated to include StartSession in the 'web' middleware group

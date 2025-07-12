@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\AdminController;
@@ -325,6 +326,7 @@ Route::get('/adminak/chart-data', [ArusKasController::class, 'showChart'])->name
 Route::get('/adminptbos', [LaporanPtBosController::class, 'adminView'])->name('adminptbos.admin');
 Route::get('/adminijasa', [LaporanIjasaController::class, 'adminView'])->name('adminijasa.admin');
 Route::get('/adminbizdev', [LaporanBizdevController::class, 'adminView'])->name('adminbizdev.admin');
+Route::get('/admin/laporan-paket-administrasi', [LaporanPaketAdministrasiController::class, 'index'])->name('admin.laporan.paket.administrasi');
 
 // routes/web.php or routes/admin.php
 
@@ -361,19 +363,34 @@ Route::middleware(['guest'])->group(function () {
 });
 
 
+Route::middleware(['auth', 'superadmin'])->prefix('admin')->name('admin.')->group(function () {
+    
+    // Rute untuk menampilkan halaman utama (daftar, form tambah/edit)
+    Route::get('users', [UserController::class, 'index'])->name('users.index');
+    
+    // Rute untuk menyimpan user baru
+    Route::post('users', [UserController::class, 'store'])->name('users.store');
+    
+    // Rute untuk memperbarui user
+    Route::put('users/{user}', [UserController::class, 'update'])->name('users.update');
+    
+    // Rute untuk menghapus user
+    Route::delete('users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+
+});
 
 
 // Authenticated routes
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin/app', [AdminController::class, 'index'])->name('layouts.app')->middleware('UserAccess:superadmin');
-    Route::get('/admin/laporan-paket-administrasi', [LaporanPaketAdministrasiController::class, 'index'])->name('admin.laporan.paket.administrasi');
-    Route::get('/admin/marketing', [AdminController::class, 'marketing'])->name('layouts.marketing')->middleware('UserAccess:marketing');
-    Route::get('/admin/it', [AdminController::class, 'it'])->name('layouts.it')->middleware('UserAccess:it');
-    Route::get('/admin/accounting', [AdminController::class, 'accounting'])->name('layouts.accounting')->middleware('UserAccess:accounting');
-    Route::get('/admin/procurement', [AdminController::class, 'procurement'])->name('layouts.procurement')->middleware('UserAccess:procurement');
-    Route::get('/admin/hrga', [AdminController::class, 'hrga'])->name('layouts.hrga')->middleware('UserAccess:hrga');
-    Route::get('/admin/spi', [AdminController::class, 'spi'])->name('layouts.spi')->middleware('UserAccess:spi');
-    Route::get('/admin/support', [AdminController::class, 'support'])->name('layouts.support')->middleware('UserAccess:support');
+    //route mengarahkan ke halaman masing masing user
+    Route::get('/admin/app', [AdminController::class, 'marketing'])->name('layouts.app')->middleware('UserAccess:marketing');
+    Route::get('/admin/app', [AdminController::class, 'it'])->name('layouts.app')->middleware('UserAccess:it');
+    Route::get('/admin/app', [AdminController::class, 'accounting'])->name('layouts.app')->middleware('UserAccess:accounting');
+    Route::get('/admin/app', [AdminController::class, 'procurement'])->name('layouts.app')->middleware('UserAccess:procurement');
+    Route::get('/admin/app', [AdminController::class, 'hrga'])->name('layouts.app')->middleware('UserAccess:hrga');
+    Route::get('/admin/app', [AdminController::class, 'spi'])->name('layouts.app')->middleware('UserAccess:spi');
+    Route::get('/admin/app', [AdminController::class, 'support'])->name('layouts.app')->middleware('UserAccess:support');
     Route::get('/logout', [SessionController::class, 'logout'])->name('logout');
 
 });
