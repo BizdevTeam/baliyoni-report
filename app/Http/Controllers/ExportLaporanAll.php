@@ -91,120 +91,455 @@ class ExportLaporanAll extends Controller
         }
     }
 
-    public function exportAll() {
-        try {
-            // Helper function untuk default chart kosong
-            $emptyChart = [
-                'labels' => [],
-                'datasets' => [
-                    [
-                        'label' => 'Total Penjualan',
-                        'data' => [],
-                        'backgroundColor' => [],
-                    ]
-                ]
-            ];
+    // public function exportAll(Request $request) {
+    //     try {
+    //         $selectedReports = $request->input('reports', []);
+    //         // Helper function untuk default chart kosong
+    //         $emptyChart = [
+    //             'labels' => [],
+    //             'datasets' => [
+    //                 [
+    //                     'label' => 'Total Penjualan',
+    //                     'data' => [],
+    //                     'backgroundColor' => [],
+    //                 ]
+    //             ]
+    //         ];
+
+    //         $emptyData = ['rekap' => [], 'chart' => $emptyChart];
     
-            // === Untuk divisi Marketing ===
-            $dataExportLaporanPenjualan = $this->safeExport(fn() => $this->exportRekapPenjualan(request()));
+    //         // // === Untuk divisi Marketing ===
+    //         // $dataExportLaporanPenjualan = $this->safeExport(fn() => $this->exportRekapPenjualan(request()));
 
-            $dataExportLaporanPenjualanPerusahaan = $this->safeExport(fn() => $this->exportRekapPenjualanPerusahaan(request()));
+    //         // $dataExportLaporanPenjualanPerusahaan = $this->safeExport(fn() => $this->exportRekapPenjualanPerusahaan(request()));
 
-            $dataExportLaporanPaketAdministrasi = $this->safeExport(fn() => $this->exportLaporanPaketAdministrasi(request()));
+    //         // $dataExportLaporanPaketAdministrasi = $this->safeExport(fn() => $this->exportLaporanPaketAdministrasi(request()));
 
-            $dataExportStatusPaket = $this->safeExport(fn() => $this->exportStatusPaket(request()));
+    //         // $dataExportStatusPaket = $this->safeExport(fn() => $this->exportStatusPaket(request()));
 
-            $dataExportLaporanPerInstansi = $this->safeExport(fn() => $this->exportLaporanPerInstansi(request()));
+    //         // $dataExportLaporanPerInstansi = $this->safeExport(fn() => $this->exportLaporanPerInstansi(request()));
     
-            // === Untuk divisi Procurement ===
-            $dataExportLaporanHolding = $this->safeExport(fn() => $this->exportLaporanHolding(request())); 
-            $dataExportLaporanStok = $this->safeExport(fn() => $this->exportLaporanStok(request())); 
-            $dataExportLaporanPembelianOutlet = 
-            $this->safeExport(fn() => $this->exportLaporanPembelianOutlet(request())); 
-            $dataExportLaporanNegosiasi = $this->safeExport(fn() => $this->exportLaporanNegosiasi(request()));
+    //         // // === Untuk divisi Procurement ===
+    //         // $dataExportLaporanHolding = $this->safeExport(fn() => $this->exportLaporanHolding(request())); 
+    //         // $dataExportLaporanStok = $this->safeExport(fn() => $this->exportLaporanStok(request())); 
+    //         // $dataExportLaporanPembelianOutlet = 
+    //         // $this->safeExport(fn() => $this->exportLaporanPembelianOutlet(request())); 
+    //         // $dataExportLaporanNegosiasi = $this->safeExport(fn() => $this->exportLaporanNegosiasi(request()));
 
-            // === Untuk divisi Supports ===
-            $dataExportRekapPendapatanASP = $this->safeExport(fn() => $this->exportRekapPendapatanASP(request()));
-            $dataExportRekapPiutangASP = $this->safeExport(fn() => $this->exportRekapPiutangASP(request()));
-            $dataLaporanPengiriman = $this->safeExport(fn() => $this->exportLaporanPengiriman(request()));
-            Log::info('Exporting Laporan dataExportRekapPendapatanASP: ' . json_encode($dataExportRekapPendapatanASP));
-            Log::info('Exporting Laporan dataExportRekapPiutangASP: ' . json_encode($dataExportRekapPiutangASP));
+    //         // // === Untuk divisi Supports ===
+    //         // $dataExportRekapPendapatanASP = $this->safeExport(fn() => $this->exportRekapPendapatanASP(request()));
+    //         // $dataExportRekapPiutangASP = $this->safeExport(fn() => $this->exportRekapPiutangASP(request()));
+    //         // $dataLaporanPengiriman = $this->safeExport(fn() => $this->exportLaporanPengiriman(request()));
+    //         // // Log::info('Exporting Laporan dataExportRekapPendapatanASP: ' . json_encode($dataExportRekapPendapatanASP));
+    //         // // Log::info('Exporting Laporan dataExportRekapPiutangASP: ' . json_encode($dataExportRekapPiutangASP));
 
-            // === Untuk divisi HRGA ===
-            $dataPTBOS = $this->safeExport(fn() => $this->exportPTBOS(request()));
-            $dataIJASA = $this->safeExport(fn() => $this->exportIJASA(request()));
-            $dataIJASAGambar = $this->safeExport(fn() => $this->exportIJASAGambar(request()));
-            $dataLaporanSakit = $this->safeExport(fn() => $this->exportSakit(request()));
-            $dataLaporanCuti = $this->safeExport(fn() => $this->exportCuti(request()));
-            $dataLaporanIzin = $this->safeExport(fn() => $this->exportIzin(request()));
-            $dataLaporanTerlambat = $this->safeExport(fn() => $this->exportTerlambat(request()));
-            Log::info('Exporting Laporan dataLaporanTerlambat: ' . json_encode($dataLaporanTerlambat));
+    //         // // === Untuk divisi HRGA ===
+    //         // $dataPTBOS = $this->safeExport(fn() => $this->exportPTBOS(request()));
+    //         // $dataIJASA = $this->safeExport(fn() => $this->exportIJASA(request()));
+    //         // $dataIJASAGambar = $this->safeExport(fn() => $this->exportIJASAGambar(request()));
+    //         // $dataLaporanSakit = $this->safeExport(fn() => $this->exportSakit(request()));
+    //         // $dataLaporanCuti = $this->safeExport(fn() => $this->exportCuti(request()));
+    //         // $dataLaporanIzin = $this->safeExport(fn() => $this->exportIzin(request()));
+    //         // $dataLaporanTerlambat = $this->safeExport(fn() => $this->exportTerlambat(request()));
+    //         // // Log::info('Exporting Laporan dataLaporanTerlambat: ' . json_encode($dataLaporanTerlambat));
 
-            // === Untuk divisi Accounting ===
-            $dataKHPS = $this->safeExport(fn() => $this->exportKHPS(request()));
-            $dataLabaRugi = $this->safeExport(fn() => $this->exportLabaRugi(request()));
-            $dataNeraca = $this ->safeExport(fn() => $this->exportNeraca(request()));
-            $dataRasio = $this->safeExport(fn() => $this->exportRasio(request()));
-            $dataPPn = $this->safeExport(fn() => $this->exportPPn(request()));
-            $dataArusKas = $this->safeExport(fn() => $this->exportArusKas(request()));
-            $dataTaxPlanning = $this->safeExport(fn() => $this->exportTaxPlanning(request()));
+    //         // // === Untuk divisi Accounting ===
+    //         // $dataKHPS = $this->safeExport(fn() => $this->exportKHPS(request()));
+    //         // $dataLabaRugi = $this->safeExport(fn() => $this->exportLabaRugi(request()));
+    //         // $dataNeraca = $this ->safeExport(fn() => $this->exportNeraca(request()));
+    //         // $dataRasio = $this->safeExport(fn() => $this->exportRasio(request()));
+    //         // $dataPPn = $this->safeExport(fn() => $this->exportPPn(request()));
+    //         // $dataArusKas = $this->safeExport(fn() => $this->exportArusKas(request()));
+    //         // $dataTaxPlanning = $this->safeExport(fn() => $this->exportTaxPlanning(request()));
 
-            // === Untuk divisi SPI ===
-            $dataLaporanSPI = $this->safeExport(fn() => $this->exportLaporanSPI(request()));
-            $dataLaporanSPIIT = $this->safeExport(fn() => $this->exportLaporanSPIIT(request()));
+    //         // // === Untuk divisi SPI ===
+    //         // $dataLaporanSPI = $this->safeExport(fn() => $this->exportLaporanSPI(request()));
+    //         // $dataLaporanSPIIT = $this->safeExport(fn() => $this->exportLaporanSPIIT(request()));
 
-            // IT
-            $dataTiktok = $this->safeExport(fn() => $this->exportTiktok(request()));
-            $dataInstagram = $this->safeExport(fn() => $this->exportInstagram(request()));
-            $dataBizdev = $this->safeExport(fn() => $this->exportBizdev(request()));
-            $dataBizdev1 = $this->safeExport(fn() => $this->exportBizdev1(request()));
+    //         // // IT
+    //         // $dataTiktok = $this->safeExport(fn() => $this->exportTiktok(request()));
+    //         // $dataInstagram = $this->safeExport(fn() => $this->exportInstagram(request()));
+    //         // $dataBizdev = $this->safeExport(fn() => $this->exportBizdev(request()));
+    //         // $dataBizdev1 = $this->safeExport(fn() => $this->exportBizdev1(request()));
 
-    
-            return view('exports.all-laporan', compact(
-                'dataExportLaporanPenjualan',
-                'dataExportLaporanPenjualanPerusahaan',
-                'dataExportLaporanPaketAdministrasi',
-                'dataExportStatusPaket',
-                'dataExportLaporanPerInstansi',
-                'dataExportLaporanHolding',
-                'dataExportLaporanStok',
-                'dataExportLaporanPembelianOutlet',
-                'dataExportLaporanNegosiasi',
-                'dataExportRekapPendapatanASP',
-                'dataExportRekapPiutangASP',
-                'dataLaporanPengiriman',
-                'dataLaporanSakit',
-                'dataLaporanCuti',
-                'dataLaporanIzin',
-                'dataLaporanTerlambat',
-                'dataKHPS',
-                'dataArusKas',
-                'dataLaporanSPI',
-                'dataLaporanSPIIT',
-                'dataArusKas',
-                'dataLabaRugi',
-                'dataNeraca',
-                'dataRasio',
-                'dataPPn',
-                'dataTaxPlanning',
-                'dataTiktok',
-                'dataInstagram',
-                'dataBizdev',
-                'dataBizdev1',
-                'dataPTBOS',
-                'dataIJASA',
-                'dataIJASAGambar',
+    //     //     return view('exports.all-laporan', compact(
+    //     //         'dataExportLaporanPenjualan',
+    //     //         'dataExportLaporanPenjualanPerusahaan',
+    //     //         'dataExportLaporanPaketAdministrasi',
+    //     //         'dataExportStatusPaket',
+    //     //         'dataExportLaporanPerInstansi',
+    //     //         'dataExportLaporanHolding',
+    //     //         'dataExportLaporanStok',
+    //     //         'dataExportLaporanPembelianOutlet',
+    //     //         'dataExportLaporanNegosiasi',
+    //     //         'dataExportRekapPendapatanASP',
+    //     //         'dataExportRekapPiutangASP',
+    //     //         'dataLaporanPengiriman',
+    //     //         'dataLaporanSakit',
+    //     //         'dataLaporanCuti',
+    //     //         'dataLaporanIzin',
+    //     //         'dataLaporanTerlambat',
+    //     //         'dataKHPS',
+    //     //         'dataArusKas',
+    //     //         'dataLaporanSPI',
+    //     //         'dataLaporanSPIIT',
+    //     //         'dataArusKas',
+    //     //         'dataLabaRugi',
+    //     //         'dataNeraca',
+    //     //         'dataRasio',
+    //     //         'dataPPn',
+    //     //         'dataTaxPlanning',
+    //     //         'dataTiktok',
+    //     //         'dataInstagram',
+    //     //         'dataBizdev',
+    //     //         'dataBizdev1',
+    //     //         'dataPTBOS',
+    //     //         'dataIJASA',
+    //     //         'dataIJASAGambar',
                 
-            ))
-            ->with('month', $this->month)
-            ->with('year', $this->year);
+    //     //     ))
+    //     //     ->with('month', $this->month)
+    //     //     ->with('year', $this->year);
     
-        } catch (\Throwable $th) {
-            Log::error('Error exporting all laporan (func ExLapAll exportAll): ' . $th->getMessage());
-            return back()->withErrors($th->getMessage());
-        }
-    }    
+    //     // } catch (\Throwable $th) {
+    //     //     Log::error('Error exporting all laporan (func ExLapAll exportAll): ' . $th->getMessage());
+    //     //     return back()->withErrors($th->getMessage());
+    //     // }
+    //     // Inisialisasi semua variabel data dengan struktur kosong
+    //     $dataExportLaporanPenjualan = $emptyData;
+    //     $dataExportLaporanPenjualanPerusahaan = $emptyData;
+    //     $dataExportLaporanPaketAdministrasi = $emptyData;
+    //     $dataExportStatusPaket = $emptyData;
+    //     $dataExportLaporanPerInstansi = $emptyData;
+    //     $dataExportLaporanHolding = $emptyData;
+    //     $dataExportLaporanStok = $emptyData;
+    //     $dataExportLaporanPembelianOutlet = $emptyData;
+    //     $dataExportLaporanNegosiasi = $emptyData;
+    //     $dataExportRekapPendapatanASP = $emptyData;
+    //     $dataExportRekapPiutangASP = $emptyData;
+    //     $dataLaporanPengiriman = $emptyData;
+    //     $dataPTBOS = $emptyData;
+    //     $dataIJASA = $emptyData;
+    //     $dataIJASAGambar = $emptyData;
+    //     $dataLaporanSakit = $emptyData;
+    //     $dataLaporanCuti = $emptyData;
+    //     $dataLaporanIzin = $emptyData;
+    //     $dataLaporanTerlambat = $emptyData;
+    //     $dataKHPS = $emptyData;
+    //     $dataLabaRugi = $emptyData;
+    //     $dataNeraca = $emptyData;
+    //     $dataRasio = $emptyData;
+    //     $dataPPn = $emptyData;
+    //     $dataArusKas = $emptyData;
+    //     $dataTaxPlanning = $emptyData;
+    //     $dataLaporanSPI = $emptyData;
+    //     $dataLaporanSPIIT = $emptyData;
+    //     $dataTiktok = $emptyData;
+    //     $dataInstagram = $emptyData;
+    //     $dataBizdev = $emptyData;
+    //     $dataBizdev1 = $emptyData;
 
+    //     // === Proses ekspor berdasarkan laporan yang dipilih ===
+
+    //     // Marketing
+    //     if (in_array('penjualan', $selectedReports)) $dataExportLaporanPenjualan = $this->safeExport(fn() => $this->exportRekapPenjualan($request));
+    //     if (in_array('penjualan_perusahaan', $selectedReports)) $dataExportLaporanPenjualanPerusahaan = $this->safeExport(fn() => $this->exportRekapPenjualanPerusahaan($request));
+    //     if (in_array('paket_admin', $selectedReports)) $dataExportLaporanPaketAdministrasi = $this->safeExport(fn() => $this->exportLaporanPaketAdministrasi($request));
+    //     if (in_array('status_paket', $selectedReports)) $dataExportStatusPaket = $this->safeExport(fn() => $this->exportStatusPaket($request));
+    //     if (in_array('per_instansi', $selectedReports)) $dataExportLaporanPerInstansi = $this->safeExport(fn() => $this->exportLaporanPerInstansi($request));
+
+    //     // Procurement
+    //     if (in_array('holding', $selectedReports)) $dataExportLaporanHolding = $this->safeExport(fn() => $this->exportLaporanHolding($request));
+    //     if (in_array('stok', $selectedReports)) $dataExportLaporanStok = $this->safeExport(fn() => $this->exportLaporanStok($request));
+    //     if (in_array('pembelian_outlet', $selectedReports)) $dataExportLaporanPembelianOutlet = $this->safeExport(fn() => $this->exportLaporanPembelianOutlet($request));
+    //     if (in_array('negosiasi', $selectedReports)) $dataExportLaporanNegosiasi = $this->safeExport(fn() => $this->exportLaporanNegosiasi($request));
+
+    //     // Supports
+    //     if (in_array('pendapatan_asp', $selectedReports)) $dataExportRekapPendapatanASP = $this->safeExport(fn() => $this->exportRekapPendapatanASP($request));
+    //     if (in_array('piutang_asp', $selectedReports)) $dataExportRekapPiutangASP = $this->safeExport(fn() => $this->exportRekapPiutangASP($request));
+    //     if (in_array('pengiriman', $selectedReports)) $dataLaporanPengiriman = $this->safeExport(fn() => $this->exportLaporanPengiriman($request));
+
+    //     // HRGA
+    //     if (in_array('ptbos', $selectedReports)) $dataPTBOS = $this->safeExport(fn() => $this->exportPTBOS($request));
+    //     if (in_array('ijasa', $selectedReports)) $dataIJASA = $this->safeExport(fn() => $this->exportIJASA($request));
+    //     if (in_array('ijasagambar', $selectedReports)) $dataIJASAGambar = $this->safeExport(fn() => $this->exportIJASAGambar($request));
+    //     if (in_array('sakit', $selectedReports)) $dataLaporanSakit = $this->safeExport(fn() => $this->exportSakit($request));
+    //     if (in_array('cuti', $selectedReports)) $dataLaporanCuti = $this->safeExport(fn() => $this->exportCuti($request));
+    //     if (in_array('izin', $selectedReports)) $dataLaporanIzin = $this->safeExport(fn() => $this->exportIzin($request));
+    //     if (in_array('terlambat', $selectedReports)) $dataLaporanTerlambat = $this->safeExport(fn() => $this->exportTerlambat($request));
+
+    //     // Accounting
+    //     if (in_array('khps', $selectedReports)) $dataKHPS = $this->safeExport(fn() => $this->exportKHPS($request));
+    //     if (in_array('laba_rugi', $selectedReports)) $dataLabaRugi = $this->safeExport(fn() => $this->exportLabaRugi($request));
+    //     if (in_array('neraca', $selectedReports)) $dataNeraca = $this->safeExport(fn() => $this->exportNeraca($request));
+    //     if (in_array('rasio', $selectedReports)) $dataRasio = $this->safeExport(fn() => $this->exportRasio($request));
+    //     if (in_array('ppn', $selectedReports)) $dataPPn = $this->safeExport(fn() => $this->exportPPn($request));
+    //     if (in_array('arus_kas', $selectedReports)) $dataArusKas = $this->safeExport(fn() => $this->exportArusKas($request));
+    //     if (in_array('taxplanning', $selectedReports)) $dataTaxPlanning = $this->safeExport(fn() => $this->exportTaxPlanning($request));
+
+    //     // SPI
+    //     if (in_array('spi', $selectedReports)) $dataLaporanSPI = $this->safeExport(fn() => $this->exportLaporanSPI($request));
+    //     if (in_array('spiit', $selectedReports)) $dataLaporanSPIIT = $this->safeExport(fn() => $this->exportLaporanSPIIT($request));
+
+    //     // IT
+    //     if (in_array('tiktok', $selectedReports)) $dataTiktok = $this->safeExport(fn() => $this->exportTiktok($request));
+    //     if (in_array('instagram', $selectedReports)) $dataInstagram = $this->safeExport(fn() => $this->exportInstagram($request));
+    //     if (in_array('bizdev', $selectedReports)) $dataBizdev = $this->safeExport(fn() => $this->exportBizdev($request));
+    //     if (in_array('bizdev1', $selectedReports)) $dataBizdev1 = $this->safeExport(fn() => $this->exportBizdev1($request));
+
+
+    //     return view('exports.export', compact(
+    //         'dataExportLaporanPenjualan', 'dataExportLaporanPenjualanPerusahaan', 'dataExportLaporanPaketAdministrasi',
+    //         'dataExportStatusPaket', 'dataExportLaporanPerInstansi', 'dataExportLaporanHolding', 'dataExportLaporanStok',
+    //         'dataExportLaporanPembelianOutlet', 'dataExportLaporanNegosiasi', 'dataExportRekapPendapatanASP',
+    //         'dataExportRekapPiutangASP', 'dataLaporanPengiriman', 'dataLaporanSakit', 'dataLaporanCuti', 'dataLaporanIzin',
+    //         'dataLaporanTerlambat', 'dataKHPS', 'dataArusKas', 'dataLaporanSPI', 'dataLaporanSPIIT', 'dataLabaRugi',
+    //         'dataNeraca', 'dataRasio', 'dataPPn', 'dataTaxPlanning', 'dataTiktok', 'dataInstagram', 'dataBizdev',
+    //         'dataBizdev1', 'dataPTBOS', 'dataIJASA', 'dataIJASAGambar'
+    //     ))
+    //     ->with('month', $this->month)
+    //     ->with('year', $this->year);
+
+    // } catch (\Throwable $th) {
+    //     Log::error('Error exporting all laporan (func ExLapAll exportAll): ' . $th->getMessage());
+    //     return back()->withErrors('Terjadi kesalahan saat mengekspor laporan: ' . $th->getMessage());
+    // }
+    // }
+
+    // public function exportAll(Request $request)
+    // {
+    //     try {
+    //         // 1. Get the list of reports selected by the user
+    //         $selectedReports = $request->input('reports', []);
+
+    //         // 2. Prepare all export data as empty arrays initially
+    //         $emptyData = [];
+    //         $dataExportLaporanPenjualan               = $emptyData;
+    //         $dataExportLaporanPenjualanPerusahaan     = $emptyData;
+    //         $dataExportLaporanPaketAdministrasi       = $emptyData;
+    //         $dataExportStatusPaket                    = $emptyData;
+    //         $dataExportLaporanPerInstansi             = $emptyData;
+    //         $dataExportLaporanHolding                 = $emptyData;
+    //         $dataExportLaporanStok                    = $emptyData;
+    //         $dataExportLaporanPembelianOutlet         = $emptyData;
+    //         $dataExportLaporanNegosiasi               = $emptyData;
+    //         $dataExportRekapPendapatanASP             = $emptyData;
+    //         $dataExportRekapPiutangASP                = $emptyData;
+    //         $dataLaporanPengiriman                    = $emptyData;
+    //         $dataPTBOS                                = $emptyData;
+    //         $dataIJASA                                = $emptyData;
+    //         $dataIJASAGambar                          = $emptyData;
+    //         $dataLaporanSakit                         = $emptyData;
+    //         $dataLaporanCuti                          = $emptyData;
+    //         $dataLaporanIzin                          = $emptyData;
+    //         $dataLaporanTerlambat                     = $emptyData;
+    //         $dataKHPS                                 = $emptyData;
+    //         $dataLabaRugi                             = $emptyData;
+    //         $dataNeraca                               = $emptyData;
+    //         $dataRasio                                = $emptyData;
+    //         $dataPPn                                  = $emptyData;
+    //         $dataArusKas                              = $emptyData;
+    //         $dataTaxPlanning                          = $emptyData;
+    //         $dataLaporanSPI                           = $emptyData;
+    //         $dataLaporanSPIIT                         = $emptyData;
+    //         $dataTiktok                               = $emptyData;
+    //         $dataInstagram                            = $emptyData;
+    //         $dataBizdev                               = $emptyData;
+    //         $dataBizdev1                              = $emptyData;
+
+    //         // 3. Only call the export function if the report was selected
+    //         // Marketing
+    //         if (in_array('penjualan', $selectedReports))               $dataExportLaporanPenjualan           = $this->safeExport(fn() => $this->exportRekapPenjualan($request));
+    //         if (in_array('penjualan_perusahaan', $selectedReports))   $dataExportLaporanPenjualanPerusahaan = $this->safeExport(fn() => $this->exportRekapPenjualanPerusahaan($request));
+    //         if (in_array('paket_admin', $selectedReports))           $dataExportLaporanPaketAdministrasi   = $this->safeExport(fn() => $this->exportLaporanPaketAdministrasi($request));
+    //         if (in_array('status_paket', $selectedReports))          $dataExportStatusPaket                = $this->safeExport(fn() => $this->exportStatusPaket($request));
+    //         if (in_array('per_instansi', $selectedReports))          $dataExportLaporanPerInstansi         = $this->safeExport(fn() => $this->exportLaporanPerInstansi($request));
+
+    //         // Procurement
+    //         if (in_array('holding', $selectedReports))               $dataExportLaporanHolding             = $this->safeExport(fn() => $this->exportLaporanHolding($request));
+    //         if (in_array('stok', $selectedReports))                  $dataExportLaporanStok                = $this->safeExport(fn() => $this->exportLaporanStok($request));
+    //         if (in_array('pembelian_outlet', $selectedReports))      $dataExportLaporanPembelianOutlet     = $this->safeExport(fn() => $this->exportLaporanPembelianOutlet($request));
+    //         if (in_array('negosiasi', $selectedReports))             $dataExportLaporanNegosiasi           = $this->safeExport(fn() => $this->exportLaporanNegosiasi($request));
+
+    //         // Supports
+    //         if (in_array('pendapatan_asp', $selectedReports))        $dataExportRekapPendapatanASP         = $this->safeExport(fn() => $this->exportRekapPendapatanASP($request));
+    //         if (in_array('piutang_asp', $selectedReports))           $dataExportRekapPiutangASP            = $this->safeExport(fn() => $this->exportRekapPiutangASP($request));
+    //         if (in_array('pengiriman', $selectedReports))            $dataLaporanPengiriman                = $this->safeExport(fn() => $this->exportLaporanPengiriman($request));
+
+    //         // HRGA
+    //         if (in_array('ptbos', $selectedReports))                 $dataPTBOS                            = $this->safeExport(fn() => $this->exportPTBOS($request));
+    //         if (in_array('ijasa', $selectedReports))                 $dataIJASA                            = $this->safeExport(fn() => $this->exportIJASA($request));
+    //         if (in_array('ijasagambar', $selectedReports))           $dataIJASAGambar                      = $this->safeExport(fn() => $this->exportIJASAGambar($request));
+    //         if (in_array('sakit', $selectedReports))                 $dataLaporanSakit                     = $this->safeExport(fn() => $this->exportSakit($request));
+    //         if (in_array('cuti', $selectedReports))                  $dataLaporanCuti                      = $this->safeExport(fn() => $this->exportCuti($request));
+    //         if (in_array('izin', $selectedReports))                  $dataLaporanIzin                      = $this->safeExport(fn() => $this->exportIzin($request));
+    //         if (in_array('terlambat', $selectedReports))             $dataLaporanTerlambat                 = $this->safeExport(fn() => $this->exportTerlambat($request));
+
+    //         // Accounting
+    //         if (in_array('khps', $selectedReports))                  $dataKHPS                             = $this->safeExport(fn() => $this->exportKHPS($request));
+    //         if (in_array('laba_rugi', $selectedReports))             $dataLabaRugi                         = $this->safeExport(fn() => $this->exportLabaRugi($request));
+    //         if (in_array('neraca', $selectedReports))                $dataNeraca                           = $this->safeExport(fn() => $this->exportNeraca($request));
+    //         if (in_array('rasio', $selectedReports))                 $dataRasio                            = $this->safeExport(fn() => $this->exportRasio($request));
+    //         if (in_array('ppn', $selectedReports))                   $dataPPn                              = $this->safeExport(fn() => $this->exportPPn($request));
+    //         if (in_array('arus_kas', $selectedReports))              $dataArusKas                          = $this->safeExport(fn() => $this->exportArusKas($request));
+    //         if (in_array('taxplanning', $selectedReports))           $dataTaxPlanning                      = $this->safeExport(fn() => $this->exportTaxPlanning($request));
+
+    //         // SPI
+    //         if (in_array('spi', $selectedReports))                   $dataLaporanSPI                       = $this->safeExport(fn() => $this->exportLaporanSPI($request));
+    //         if (in_array('spiit', $selectedReports))                 $dataLaporanSPIIT                     = $this->safeExport(fn() => $this->exportLaporanSPIIT($request));
+
+    //         // IT
+    //         if (in_array('tiktok', $selectedReports))                $dataTiktok                           = $this->safeExport(fn() => $this->exportTiktok($request));
+    //         if (in_array('instagram', $selectedReports))             $dataInstagram                        = $this->safeExport(fn() => $this->exportInstagram($request));
+    //         if (in_array('bizdev', $selectedReports))                $dataBizdev                           = $this->safeExport(fn() => $this->exportBizdev($request));
+    //         if (in_array('bizdev1', $selectedReports))               $dataBizdev1                          = $this->safeExport(fn() => $this->exportBizdev1($request));
+
+    //         // 4. Return the view with all data variables and the list of selected reports
+    //         return view('exports.export', compact(
+    //             'dataExportLaporanPenjualan',
+    //             'dataExportLaporanPenjualanPerusahaan',
+    //             'dataExportLaporanPaketAdministrasi',
+    //             'dataExportStatusPaket',
+    //             'dataExportLaporanPerInstansi',
+    //             'dataExportLaporanHolding',
+    //             'dataExportLaporanStok',
+    //             'dataExportLaporanPembelianOutlet',
+    //             'dataExportLaporanNegosiasi',
+    //             'dataExportRekapPendapatanASP',
+    //             'dataExportRekapPiutangASP',
+    //             'dataLaporanPengiriman',
+    //             'dataPTBOS',
+    //             'dataIJASA',
+    //             'dataIJASAGambar',
+    //             'dataLaporanSakit',
+    //             'dataLaporanCuti',
+    //             'dataLaporanIzin',
+    //             'dataLaporanTerlambat',
+    //             'dataKHPS',
+    //             'dataLabaRugi',
+    //             'dataNeraca',
+    //             'dataRasio',
+    //             'dataPPn',
+    //             'dataArusKas',
+    //             'dataTaxPlanning',
+    //             'dataLaporanSPI',
+    //             'dataLaporanSPIIT',
+    //             'dataTiktok',
+    //             'dataInstagram',
+    //             'dataBizdev',
+    //             'dataBizdev1',
+    //             'selectedReports' // Pass the selected reports array to the view
+    //         ))
+    //         ->with('month', $this->month)
+    //         ->with('year',  $this->year);
+
+    //     } catch (\Throwable $e) {
+    //         Log::error('Error exporting all reports: ' . $e->getMessage());
+    //         return back()->withErrors('Terjadi kesalahan saat mengekspor laporan: ' . $e->getMessage());
+    //     }
+    // }
+
+    // Main entry: runs only selected exports, passes to view
+    public function exportAll(Request $request)
+    {
+        // read range & selected report keys
+        $start = $request->input('start_month');
+        $end   = $request->input('end_month');
+        (new self($start, $end)); // init constructor
+
+        $selected = $request->input('reports', []);
+        $empty    = ['rekap'=>[], 'chart'=>['labels'=>[], 'datasets'=>[]]];
+
+        // prepare variables for each possible report
+        $data = array_fill_keys($selected, $empty);
+
+        // Marketing
+        if (in_array('penjualan',               $selected))
+            $data['penjualan']             = $this->safeExport(fn() => $this->exportRekapPenjualan($request));
+        if (in_array('penjualan_perusahaan',    $selected))
+            $data['penjualan_perusahaan']  = $this->safeExport(fn() => $this->exportRekapPenjualanPerusahaan($request));
+        if (in_array('paket_admin',             $selected))
+            $data['paket_admin']           = $this->safeExport(fn() => $this->exportLaporanPaketAdministrasi($request));
+        if (in_array('status_paket',            $selected))
+            $data['status_paket']          = $this->safeExport(fn() => $this->exportStatusPaket($request));
+        if (in_array('per_instansi',            $selected))
+            $data['per_instansi']          = $this->safeExport(fn() => $this->exportLaporanPerInstansi($request));
+
+        // Procurement
+        if (in_array('holding',                 $selected))
+            $data['holding']                = $this->safeExport(fn() => $this->exportLaporanHolding($request));
+        if (in_array('stok',                    $selected))
+            $data['stok']                   = $this->safeExport(fn() => $this->exportLaporanStok($request));
+        if (in_array('pembelian_outlet',        $selected))
+            $data['pembelian_outlet']       = $this->safeExport(fn() => $this->exportLaporanPembelianOutlet($request));
+        if (in_array('negosiasi',               $selected))
+            $data['negosiasi']              = $this->safeExport(fn() => $this->exportLaporanNegosiasi($request));
+
+        // Supports
+        if (in_array('pendapatan_asp',          $selected))
+            $data['pendapatan_asp']          = $this->safeExport(fn() => $this->exportRekapPendapatanASP($request));
+        if (in_array('piutang_asp',             $selected))
+            $data['piutang_asp']             = $this->safeExport(fn() => $this->exportRekapPiutangASP($request));
+        if (in_array('pengiriman',              $selected))
+            $data['pengiriman']              = $this->safeExport(fn() => $this->exportLaporanPengiriman($request));
+
+        // HRGA
+        if (in_array('ptbos',                   $selected))
+            $data['ptbos']                   = $this->safeExport(fn() => $this->exportPTBOS($request));
+        if (in_array('ijasa',                   $selected))
+            $data['ijasa']                   = $this->safeExport(fn() => $this->exportIJASA($request));
+        if (in_array('ijasagambar',             $selected))
+            $data['ijasagambar']             = $this->safeExport(fn() => $this->exportIJASAGambar($request));
+        if (in_array('sakit',                   $selected))
+            $data['sakit']                   = $this->safeExport(fn() => $this->exportSakit($request));
+        if (in_array('cuti',                    $selected))
+            $data['cuti']                    = $this->safeExport(fn() => $this->exportCuti($request));
+        if (in_array('izin',                    $selected))
+            $data['izin']                    = $this->safeExport(fn() => $this->exportIzin($request));
+        if (in_array('terlambat',               $selected))
+            $data['terlambat']               = $this->safeExport(fn() => $this->exportTerlambat($request));
+
+        // Accounting
+        if (in_array('khps',                    $selected))
+            $data['khps']                    = $this->safeExport(fn() => $this->exportKHPS($request));
+        if (in_array('laba_rugi',               $selected))
+            $data['laba_rugi']               = $this->safeExport(fn() => $this->exportLabaRugi($request));
+        if (in_array('neraca',                  $selected))
+            $data['neraca']                  = $this->safeExport(fn() => $this->exportNeraca($request));
+        if (in_array('rasio',                   $selected))
+            $data['rasio']                   = $this->safeExport(fn() => $this->exportRasio($request));
+        if (in_array('ppn',                     $selected))
+            $data['ppn']                     = $this->safeExport(fn() => $this->exportPPn($request));
+        if (in_array('arus_kas',                $selected))
+            $data['arus_kas']                = $this->safeExport(fn() => $this->exportArusKas($request));
+        if (in_array('taxplanning',             $selected))
+            $data['taxplanning']             = $this->safeExport(fn() => $this->exportTaxPlanning($request));
+
+        // SPI
+        if (in_array('spi',                     $selected))
+            $data['spi']                     = $this->safeExport(fn() => $this->exportLaporanSPI($request));
+        if (in_array('spiit',                   $selected))
+            $data['spiit']                   = $this->safeExport(fn() => $this->exportLaporanSPIIT($request));
+
+        // IT
+        if (in_array('tiktok',                  $selected))
+            $data['tiktok']                  = $this->safeExport(fn() => $this->exportTiktok($request));
+        if (in_array('instagram',               $selected))
+            $data['instagram']               = $this->safeExport(fn() => $this->exportInstagram($request));
+        if (in_array('bizdev',                  $selected))
+            $data['bizdev']                  = $this->safeExport(fn() => $this->exportBizdev($request));
+        if (in_array('bizdev1',                 $selected))
+            $data['bizdev1']                 = $this->safeExport(fn() => $this->exportBizdev1($request));
+
+        // render the view with only those data keys
+        return view('exports.export', [
+            'data'            => $data,
+            'selectedReports' => $selected,
+            'month'           => $this->month,
+            'year'            => $this->year,
+        ]);
+    }
+    
     public function exportRekapPenjualan(Request $request) 
     {
         try {
@@ -215,16 +550,13 @@ class ExportLaporanAll extends Controller
             $query = RekapPenjualan::query();
     
             if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
                 $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
             } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
                 $search = sprintf('%04d-%02d', $instance->year, $instance->month);
                 $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
             }
     
             $rekapPenjualan = $query->orderBy('tanggal', 'asc')->get();
-            // dd($instance->startDate ?? null, $instance->endDate ?? null); // Untuk debug
     
             if ($rekapPenjualan->isEmpty()) {
                 return 'Data tidak ditemukan.';
@@ -275,10 +607,8 @@ class ExportLaporanAll extends Controller
         $query = RekapPenjualanPerusahaan::query();
 
             if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
                 $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
             } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
                 $search = sprintf('%04d-%02d', $instance->year, $instance->month);
                 $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
             }
@@ -299,7 +629,6 @@ class ExportLaporanAll extends Controller
                 ];
             });
 
-            // Siapkan data untuk chart
             $labels = $rekapPenjualanPerusahaan->map(function ($item) {
                 $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
                 return $item->perusahaan->nama_perusahaan.' - ' . $formattedDate;
@@ -338,10 +667,8 @@ class ExportLaporanAll extends Controller
         $query = LaporanPaketAdministrasi::query();
 
             if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
                 $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
             } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
                 $search = sprintf('%04d-%02d', $instance->year, $instance->month);
                 $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
             }
@@ -361,7 +688,6 @@ class ExportLaporanAll extends Controller
                 ];
             });
         
-            // Siapkan data untuk chart
             $labels = $rekapLaporanPaketAdministrasi->map(function ($item) {
                 $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
                 return $item->website.' - ' . $formattedDate;
@@ -374,7 +700,7 @@ class ExportLaporanAll extends Controller
                 'labels' => $labels,
                 'datasets' => [
                     [
-                        'label' => 'Total Penjualan',
+                        'label' => 'Total Paket',
                         'data' => $data,
                         'backgroundColor' => $backgroundColors,
                     ],
@@ -398,14 +724,11 @@ class ExportLaporanAll extends Controller
 
         $instance = new self($startMonth, $endMonth);
     
-        // Bangun query berdasarkan data constructor
         $query = StatusPaket::query();
 
             if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
                 $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
             } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
                 $search = sprintf('%04d-%02d', $instance->year, $instance->month);
                 $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
             }
@@ -425,7 +748,6 @@ class ExportLaporanAll extends Controller
                     'Total Paket' => number_format($item->total_paket, 0, ',', '.'),
                 ];
             });
-        // Siapkan data untuk chart
         $labels = $rekapStatusPaket->map(function ($item) {
             $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
             return $item->status.' - ' . $formattedDate;
@@ -438,7 +760,7 @@ class ExportLaporanAll extends Controller
             'labels' => $labels,
             'datasets' => [
                 [
-                    'label' => 'Total Penjualan',
+                    'label' => 'Total Paket',
                     'data' => $data,
                     'backgroundColor' => $backgroundColors,
                 ],
@@ -462,14 +784,11 @@ class ExportLaporanAll extends Controller
 
         $instance = new self($startMonth, $endMonth);
     
-        // Bangun query berdasarkan data constructor
         $query = LaporanPerInstansi::query();
 
             if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
                 $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
             } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
                 $search = sprintf('%04d-%02d', $instance->year, $instance->month);
                 $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
             }
@@ -489,7 +808,6 @@ class ExportLaporanAll extends Controller
                     'Nilai' => 'Rp ' .  number_format($item->nilai, 0, ',', '.'),
                 ];
             });
-            // Siapkan data untuk chart
             $labels = $rekapLaporanPerInstansi->map(function ($item) {
                 $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
                 return $item->instansi.' - ' . $formattedDate;
@@ -502,7 +820,7 @@ class ExportLaporanAll extends Controller
                 'labels' => $labels,
                 'datasets' => [
                     [
-                        'label' => 'Total Penjualan',
+                        'label' => 'Nilai',
                         'data' => $data,
                         'backgroundColor' => $backgroundColors,
                     ],
@@ -527,14 +845,11 @@ class ExportLaporanAll extends Controller
         $endMonth = $request->input('end_month');     // format Y-m
         $instance = new self($startMonth, $endMonth);
     
-        // Bangun query berdasarkan data constructor
         $query = LaporanHolding::query();
 
             if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
                 $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
             } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
                 $search = sprintf('%04d-%02d', $instance->year, $instance->month);
                 $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
             }
@@ -554,7 +869,6 @@ class ExportLaporanAll extends Controller
                     'Nilai' => 'Rp ' .  number_format($item->nilai, 0, ',', '.'),
                 ];
             });
-            // Siapkan data untuk chart
             $labels = $rekapLaporanHolding->map(function ($item) {
                 $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
                 return $item->perusahaan->nama_perusahaan.' - ' . $formattedDate;
@@ -568,7 +882,7 @@ class ExportLaporanAll extends Controller
                 'labels' => $labels,
                 'datasets' => [
                     [
-                        'label' => 'Total Penjualan',
+                        'label' => 'Nilai',
                         'data' => $data,
                         'backgroundColor' => $backgroundColors,
                     ],
@@ -593,14 +907,11 @@ class ExportLaporanAll extends Controller
 
         $instance = new self($startMonth, $endMonth);
     
-        // Bangun query berdasarkan data constructor
         $query = LaporanStok::query();
 
             if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
                 $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
             } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
                 $search = sprintf('%04d-%02d', $instance->year, $instance->month);
                 $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
             }
@@ -619,10 +930,8 @@ class ExportLaporanAll extends Controller
                     'Stok' => 'Rp ' .  number_format($item->stok, 0, ',', '.'),
                 ];
             });
-            // Siapkan data untuk chart
             $labels = $rekapLaporanStok->map(function ($item) {
-                $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
-                return $formattedDate;
+                return \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
             })->toArray();
 
             $data = $rekapLaporanStok->pluck('stok')->toArray();
@@ -633,7 +942,7 @@ class ExportLaporanAll extends Controller
                 'labels' => $labels,
                 'datasets' => [
                     [
-                        'label' => 'Total Penjualan',
+                        'label' => 'Stok',
                         'data' => $data,
                         'backgroundColor' => $backgroundColors,
                     ],
@@ -658,14 +967,11 @@ class ExportLaporanAll extends Controller
 
         $instance = new self($startMonth, $endMonth);
     
-        // Bangun query berdasarkan data constructor
         $query = LaporanOutlet::query();
 
             if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
                 $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
             } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
                 $search = sprintf('%04d-%02d', $instance->year, $instance->month);
                 $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
             }
@@ -683,10 +989,8 @@ class ExportLaporanAll extends Controller
                     'Total' => 'Rp ' .  number_format($item->total_pembelian, 0, ',', '.'),
                 ];
             });
-            // Siapkan data untuk chart
             $labels = $rekapLaporanPembelianOutlet->map(function ($item) {
-                $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
-                return $formattedDate;
+                return \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
             })->toArray();
 
             $data = $rekapLaporanPembelianOutlet->pluck('total_pembelian')->toArray();
@@ -697,7 +1001,7 @@ class ExportLaporanAll extends Controller
                 'labels' => $labels,
                 'datasets' => [
                     [
-                        'label' => 'Total Penjualan',
+                        'label' => 'Total Pembelian',
                         'data' => $data,
                         'backgroundColor' => $backgroundColors,
                     ],
@@ -721,14 +1025,11 @@ class ExportLaporanAll extends Controller
         $endMonth = $request->input('end_month');     // format Y-m
         $instance = new self($startMonth, $endMonth);
     
-        // Bangun query berdasarkan data constructor
         $query = LaporanNegosiasi::query();
 
             if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
                 $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
             } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
                 $search = sprintf('%04d-%02d', $instance->year, $instance->month);
                 $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
             }
@@ -747,10 +1048,8 @@ class ExportLaporanAll extends Controller
                     'Total' => 'Rp ' .  number_format($item->total_negosiasi, 0, ',', '.'),
                 ];
             });
-            // Siapkan data untuk chart
             $labels = $rekapLaporanNegosiasi->map(function ($item) {
-                $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
-                return $formattedDate;
+                return \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
             })->toArray();
 
             $data = $rekapLaporanNegosiasi->pluck('total_negosiasi')->toArray();
@@ -761,7 +1060,7 @@ class ExportLaporanAll extends Controller
                 'labels' => $labels,
                 'datasets' => [
                     [
-                        'label' => 'Total Penjualan',
+                        'label' => 'Total Negosiasi',
                         'data' => $data,
                         'backgroundColor' => $backgroundColors,
                     ],
@@ -787,14 +1086,11 @@ class ExportLaporanAll extends Controller
 
         $instance = new self($startMonth, $endMonth);
     
-        // Bangun query berdasarkan data constructor
         $query = RekapPendapatanServisAsp::query();
 
             if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
                 $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
             } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
                 $search = sprintf('%04d-%02d', $instance->year, $instance->month);
                 $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
             }
@@ -823,11 +1119,10 @@ class ExportLaporanAll extends Controller
                     'Nilai' => 'Rp ' .  number_format($item->nilai_pendapatan, 0, ',', '.'),
                 ];
             });
-            // Siapkan data untuk chart
             $labels = $rekapPendapatanASP->map(function ($item) {
                 return $item->pelaksana . ' ('. 'Rp'. ' ' . number_format($item->nilai_pendapatan) . ')';
             })->toArray();    
-            $data = $rekapPendapatanASP->pluck('nilai_pendapatan')->toArray(); // Nilai pendapatan
+            $data = $rekapPendapatanASP->pluck('nilai_pendapatan')->toArray();
         
 
             $backgroundColors = $rekapPendapatanASP->map(fn($item) => $pelaksanaColors[$item->pelaksana] ?? 'rgba(0, 0, 0, 0.7)')->toArray();
@@ -836,7 +1131,7 @@ class ExportLaporanAll extends Controller
                 'labels' => $labels,
                 'datasets' => [
                     [
-                        'label' => 'Total Penjualan',
+                        'label' => 'Nilai Pendapatan',
                         'data' => $data,
                         'backgroundColor' => $backgroundColors,
                     ],
@@ -860,14 +1155,11 @@ class ExportLaporanAll extends Controller
         $endMonth = $request->input('end_month');     // format Y-m
         $instance = new self($startMonth, $endMonth);
     
-        // Bangun query berdasarkan data constructor
         $query = RekapPiutangServisAsp::query();
 
             if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
                 $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
             } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
                 $search = sprintf('%04d-%02d', $instance->year, $instance->month);
                 $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
             }
@@ -896,11 +1188,10 @@ class ExportLaporanAll extends Controller
                     'Nilai' => 'Rp ' .  number_format($item->nilai_piutang, 0, ',', '.'),
                 ];
             });
-            // Siapkan data untuk chart
             $labels = $rekapPiutangServisASP->map(function ($item) {
                 return $item->pelaksana . ' ('. 'Rp'. ' ' . number_format($item->nilai_piutang) . ')';
             })->toArray();    
-            $data = $rekapPiutangServisASP->pluck('nilai_piutang')->toArray(); // Nilai pendapatan
+            $data = $rekapPiutangServisASP->pluck('nilai_piutang')->toArray();
         
 
             $backgroundColors = $rekapPiutangServisASP->map(fn($item) => $pelaksanaColors[$item->pelaksana] ?? 'rgba(0, 0, 0, 0.7)')->toArray();
@@ -909,7 +1200,7 @@ class ExportLaporanAll extends Controller
                 'labels' => $labels,
                 'datasets' => [
                     [
-                        'label' => 'Total Penjualan',
+                        'label' => 'Nilai Piutang',
                         'data' => $data,
                         'backgroundColor' => $backgroundColors,
                     ],
@@ -935,14 +1226,11 @@ class ExportLaporanAll extends Controller
 
         $instance = new self($startMonth, $endMonth);
     
-        // Bangun query berdasarkan data constructor
         $query = LaporanDetrans::query();
 
             if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
                 $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
             } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
                 $search = sprintf('%04d-%02d', $instance->year, $instance->month);
                 $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
             }
@@ -955,7 +1243,6 @@ class ExportLaporanAll extends Controller
             return 'Data tidak ditemukan.';
         }
 
-        // Format data untuk tabel
         $formattedData = $rekapPengiriman->map(function ($item) {
             return [
                 'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
@@ -964,7 +1251,6 @@ class ExportLaporanAll extends Controller
             ];
         });
 
-        // Ambil semua bulan unik yang muncul di data
         $months = $rekapPengiriman
             ->sortBy('tanggal')
             ->map(fn($item) => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F - Y'))
@@ -972,21 +1258,18 @@ class ExportLaporanAll extends Controller
             ->values()
             ->toArray();
 
-        // Group data berdasarkan pelaksana dan bulan
         $groupedData = [];
         foreach ($rekapPengiriman as $item) {
             $bulan = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F - Y');
             $groupedData[$item->pelaksana][$bulan][] = $item->total_pengiriman;
         }
 
-        // Warna khusus per pelaksana
         $colorMap = [
             'Pengiriman Daerah Bali (SAMITRA)' => 'rgba(255, 0, 0, 0.7)',
             'Pengiriman Luar Daerah (DETRANS)' => 'rgba(0, 0, 0, 0.7)',
         ];
         $defaultColor = 'rgba(128, 128, 128, 0.7)';
 
-        // Siapkan datasets chart
         $datasets = collect($groupedData)->map(function ($monthData, $pelaksana) use ($months, $colorMap, $defaultColor) {
             $data = collect($months)->map(function ($month) use ($monthData) {
                 return isset($monthData[$month]) ? array_sum($monthData[$month]) : 0;
@@ -1023,14 +1306,11 @@ class ExportLaporanAll extends Controller
 
         $instance = new self($startMonth, $endMonth);
     
-        // Bangun query berdasarkan data constructor
         $query = LaporanPtBos::query();
 
             if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
                 $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
             } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
                 $search = sprintf('%04d-%02d', $instance->year, $instance->month);
                 $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
             }
@@ -1065,7 +1345,6 @@ class ExportLaporanAll extends Controller
         return 'Error: ' . $th->getMessage();
     }
 }
-    // Export untuk divisi HRGA
     public function exportIJASA(Request $request) {
     try {
         $startMonth = $request->input('start_month'); // format Y-m
@@ -1073,14 +1352,11 @@ class ExportLaporanAll extends Controller
 
         $instance = new self($startMonth, $endMonth);
     
-        // Bangun query berdasarkan data constructor
         $query = LaporanIjasa::query();
 
         if (isset($instance->startDate) && isset($instance->endDate)) {
-            // Kedua bulan diisi: filter rentang tanggal
             $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
         } elseif (isset($instance->month) && isset($instance->year)) {
-            // Hanya satu bulan diisi: filter berdasarkan bulan dan tahun
             $query->whereYear('tanggal', $instance->year)
                 ->whereMonth('tanggal', $instance->month);
         }
@@ -1115,7 +1391,6 @@ class ExportLaporanAll extends Controller
     }
 }
 
-// Export untuk divisi tiktok
 public function exportIJASAGambar(Request $request)
 {
     try {
@@ -1124,14 +1399,11 @@ public function exportIJASAGambar(Request $request)
 
         $instance = new self($startMonth, $endMonth);
     
-        // Bangun query berdasarkan data constructor
         $query = IjasaGambar::query();
 
             if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
                 $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
             } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
                 $search = sprintf('%04d-%02d', $instance->year, $instance->month);
                 $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
             }
@@ -1144,8 +1416,6 @@ public function exportIJASAGambar(Request $request)
             return 'Data tidak ditemukan.';
         }
 
-
-        // Format data dengan path gambar
         $formattedData = $ijasaGambar->map(function ($item) {
         $imagePath = public_path('images/hrga/ijasagambar/' . $item->gambar);
             return [
@@ -1165,21 +1435,17 @@ public function exportIJASAGambar(Request $request)
     }
 }
 
-    // Export untuk divisi HRGA
     public function exportSakit(Request $request) {
     try {
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
         $instance = new self($startMonth, $endMonth);
     
-        // Bangun query berdasarkan data constructor
         $query = LaporanSakit::query();
 
             if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
                 $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
             } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
                 $search = sprintf('%04d-%02d', $instance->year, $instance->month);
                 $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
             }
@@ -1200,9 +1466,8 @@ public function exportIJASAGambar(Request $request)
             ];
         });
 
-        // Siapkan data untuk chart
         $labels = $rekapSakit->map(function ($item) {
-            return \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
+            return $item->nama;
         })->toArray();
 
         $data = $rekapSakit->pluck('total_sakit')->toArray();
@@ -1212,7 +1477,7 @@ public function exportIJASAGambar(Request $request)
             'labels' => $labels,
             'datasets' => [
                 [
-                    'label' => 'Total Cuti',
+                    'label' => 'Total Sakit',
                     'data' => $data,
                     'backgroundColor' => $backgroundColors,
                 ],
@@ -1230,7 +1495,6 @@ public function exportIJASAGambar(Request $request)
     }
 }
 
-    // Export untuk divisi HRGA
     public function exportCuti(Request $request) {
     try {
         $startMonth = $request->input('start_month'); // format Y-m
@@ -1238,14 +1502,11 @@ public function exportIJASAGambar(Request $request)
 
         $instance = new self($startMonth, $endMonth);
     
-        // Bangun query berdasarkan data constructor
         $query = LaporanCuti::query();
 
             if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
                 $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
             } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
                 $search = sprintf('%04d-%02d', $instance->year, $instance->month);
                 $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
             }
@@ -1267,9 +1528,8 @@ public function exportIJASAGambar(Request $request)
             ];
         });
 
-        // Siapkan data untuk chart
         $labels = $rekapCuti->map(function ($item) {
-            return \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
+            return $item->nama;
         })->toArray();
 
         $data = $rekapCuti->pluck('total_cuti')->toArray();
@@ -1296,21 +1556,17 @@ public function exportIJASAGambar(Request $request)
         return 'Error: ' . $th->getMessage();
     }
 }
-    // Export untuk divisi HRGA
     public function exportIzin(Request $request) {
     try {
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
         $instance = new self($startMonth, $endMonth);
     
-        // Bangun query berdasarkan data constructor
         $query = LaporanIzin::query();
 
             if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
                 $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
             } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
                 $search = sprintf('%04d-%02d', $instance->year, $instance->month);
                 $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
             }
@@ -1332,9 +1588,8 @@ public function exportIJASAGambar(Request $request)
             ];
         });
 
-        // Siapkan data untuk chart
         $labels = $rekapIzin->map(function ($item) {
-            return \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
+            return $item->nama;
         })->toArray();
 
         $data = $rekapIzin->pluck('total_izin')->toArray();
@@ -1344,7 +1599,7 @@ public function exportIJASAGambar(Request $request)
             'labels' => $labels,
             'datasets' => [
                 [
-                    'label' => 'Total Cuti',
+                    'label' => 'Total Izin',
                     'data' => $data,
                     'backgroundColor' => $backgroundColors,
                 ],
@@ -1361,21 +1616,17 @@ public function exportIJASAGambar(Request $request)
         return 'Error: ' . $th->getMessage();
     }
 }
-    // Export untuk divisi HRGA
     public function exportTerlambat(Request $request) {
     try {
         $startMonth = $request->input('start_month'); // format Y-m
         $endMonth = $request->input('end_month');     // format Y-m
         $instance = new self($startMonth, $endMonth);
     
-        // Bangun query berdasarkan data constructor
         $query = LaporanTerlambat::query();
 
             if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
                 $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
             } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
                 $search = sprintf('%04d-%02d', $instance->year, $instance->month);
                 $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
             }
@@ -1397,9 +1648,8 @@ public function exportIJASAGambar(Request $request)
             ];
         });
 
-        // Siapkan data untuk chart
         $labels = $rekapTerlambat->map(function ($item) {
-            return \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
+            return $item->nama;
         })->toArray();
 
         $data = $rekapTerlambat->pluck('total_terlambat')->toArray();
@@ -1409,7 +1659,7 @@ public function exportIJASAGambar(Request $request)
             'labels' => $labels,
             'datasets' => [
                 [
-                    'label' => 'Total Cuti',
+                    'label' => 'Total Terlambat',
                     'data' => $data,
                     'backgroundColor' => $backgroundColors,
                 ],
@@ -1427,7 +1677,6 @@ public function exportIJASAGambar(Request $request)
     }
 }
 
-    // Export untuk divisi laba rugi
     public function exportLabaRugi(Request $request)
     {
         try {
@@ -1435,14 +1684,11 @@ public function exportIJASAGambar(Request $request)
         $endMonth = $request->input('end_month');     // format Y-m
         $instance = new self($startMonth, $endMonth);
     
-        // Bangun query berdasarkan data constructor
         $query = LaporanLabaRugi::query();
 
             if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
                 $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
             } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
                 $search = sprintf('%04d-%02d', $instance->year, $instance->month);
                 $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
             }
@@ -1455,8 +1701,6 @@ public function exportIJASAGambar(Request $request)
             return 'Data tidak ditemukan.';
         }
 
-
-            // Format data dengan path gambar
             $formattedData = $rekapLabaRugi->map(function ($item) {
             $imagePath = public_path('images/accounting/labarugi/' . $item->gambar);
                 return [
@@ -1476,7 +1720,6 @@ public function exportIJASAGambar(Request $request)
         }
     }
 
-    // Export untuk divisi laba rugi
     public function exportNeraca(Request $request)
     {
         try {
@@ -1485,14 +1728,11 @@ public function exportIJASAGambar(Request $request)
 
         $instance = new self($startMonth, $endMonth);
     
-        // Bangun query berdasarkan data constructor
         $query = LaporanNeraca::query();
 
             if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
                 $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
             } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
                 $search = sprintf('%04d-%02d', $instance->year, $instance->month);
                 $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
             }
@@ -1505,7 +1745,6 @@ public function exportIJASAGambar(Request $request)
             return 'Data tidak ditemukan.';
         }
 
-            // Format data dengan path gambar
             $formattedData = $rekapNeraca->map(function ($item) {
             $imagePath = public_path('images/accounting/neraca/' . $item->gambar);
                 return [
@@ -1525,7 +1764,6 @@ public function exportIJASAGambar(Request $request)
         }
     }
 
-    // Export untuk divisi laba rugi
     public function exportRasio(Request $request)
     {
         try {
@@ -1534,14 +1772,11 @@ public function exportIJASAGambar(Request $request)
 
         $instance = new self($startMonth, $endMonth);
     
-        // Bangun query berdasarkan data constructor
         $query = LaporanRasio::query();
 
             if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
                 $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
             } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
                 $search = sprintf('%04d-%02d', $instance->year, $instance->month);
                 $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
             }
@@ -1554,7 +1789,6 @@ public function exportIJASAGambar(Request $request)
             return 'Data tidak ditemukan.';
         }
 
-            // Format data dengan path gambar
             $formattedData = $rekapRasio->map(function ($item) {
             $imagePath = public_path('images/accounting/rasio/' . $item->gambar);
                 return [
@@ -1574,7 +1808,6 @@ public function exportIJASAGambar(Request $request)
         }
     }
 
-    // Export untuk divisi laba rugi
     public function exportPPn(Request $request)
     {
         try {
@@ -1583,14 +1816,11 @@ public function exportIJASAGambar(Request $request)
 
         $instance = new self($startMonth, $endMonth);
     
-        // Bangun query berdasarkan data constructor
         $query = LaporanPpn::query();
 
             if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
                 $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
             } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
                 $search = sprintf('%04d-%02d', $instance->year, $instance->month);
                 $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
             }
@@ -1603,7 +1833,6 @@ public function exportIJASAGambar(Request $request)
             return 'Data tidak ditemukan.';
         }
 
-            // Format data dengan path gambar
             $formattedData = $rekapPPn->map(function ($item) {
             $imagePath = public_path('images/accounting/ppn/' . $item->thumbnail);
                 return [
@@ -1623,7 +1852,6 @@ public function exportIJASAGambar(Request $request)
         }
     }
 
-    // Export untuk divisi taxplanning
     public function exportTaxPlanning(Request $request)
     {
         try {
@@ -1632,14 +1860,11 @@ public function exportIJASAGambar(Request $request)
 
         $instance = new self($startMonth, $endMonth);
     
-        // Bangun query berdasarkan data constructor
         $query = LaporanTaxPlaning::query();
 
             if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
                 $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
             } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
                 $search = sprintf('%04d-%02d', $instance->year, $instance->month);
                 $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
             }
@@ -1652,7 +1877,6 @@ public function exportIJASAGambar(Request $request)
             return 'Data tidak ditemukan.';
         }
 
-            // Format data dengan path gambar
             $formattedData = $rekapTaxPlanning->map(function ($item) {
             $imagePath = public_path('images/accounting/taxplaning/' . $item->gambar);
                 return [
@@ -1672,7 +1896,6 @@ public function exportIJASAGambar(Request $request)
         }
     }
 
-    // Export untuk divisi tiktok
     public function exportTiktok(Request $request)
     {
         try {
@@ -1681,14 +1904,11 @@ public function exportIJASAGambar(Request $request)
 
         $instance = new self($startMonth, $endMonth);
     
-        // Bangun query berdasarkan data constructor
         $query = ItMultimediaTiktok::query();
 
             if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
                 $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
             } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
                 $search = sprintf('%04d-%02d', $instance->year, $instance->month);
                 $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
             }
@@ -1701,7 +1921,6 @@ public function exportIJASAGambar(Request $request)
             return 'Data tidak ditemukan.';
         }
 
-            // Format data dengan path gambar
             $formattedData = $rekapTiktok->map(function ($item) {
             $imagePath = public_path('images/it/multimediatiktok/' . $item->gambar);
                 return [
@@ -1720,7 +1939,6 @@ public function exportIJASAGambar(Request $request)
             return 'Error: ' . $th->getMessage();
         }
     }
-    // Export untuk divisi instagram
     public function exportInstagram(Request $request)
     {
         try {
@@ -1729,14 +1947,11 @@ public function exportIJASAGambar(Request $request)
 
         $instance = new self($startMonth, $endMonth);
     
-        // Bangun query berdasarkan data constructor
         $query = ItMultimediaInstagram::query();
 
             if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
                 $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
             } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
                 $search = sprintf('%04d-%02d', $instance->year, $instance->month);
                 $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
             }
@@ -1749,7 +1964,6 @@ public function exportIJASAGambar(Request $request)
             return 'Data tidak ditemukan.';
         }
 
-            // Format data dengan path gambar
             $formattedData = $rekapInstagram->map(function ($item) {
             $imagePath = public_path('images/it/multimediainstagram/' . $item->gambar);
                 return [
@@ -1768,7 +1982,6 @@ public function exportIJASAGambar(Request $request)
             return 'Error: ' . $th->getMessage();
         }
     }
-    // Export untuk divisi instagram
     public function exportBizdev(Request $request)
     {
         try {
@@ -1777,14 +1990,11 @@ public function exportIJASAGambar(Request $request)
 
         $instance = new self($startMonth, $endMonth);
     
-        // Bangun query berdasarkan data constructor
         $query = LaporanBizdevGambar::query();
 
             if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
                 $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
             } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
                 $search = sprintf('%04d-%02d', $instance->year, $instance->month);
                 $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
             }
@@ -1797,7 +2007,6 @@ public function exportIJASAGambar(Request $request)
             return 'Data tidak ditemukan.';
         }
 
-            // Format data dengan path gambar
             $formattedData = $rekapBizdev->map(function ($item) {
             $imagePath = public_path('images/it/laporanbizdevgambar/' . $item->gambar);
                 return [
@@ -1825,14 +2034,11 @@ public function exportIJASAGambar(Request $request)
 
         $instance = new self($startMonth, $endMonth);
     
-        // Bangun query berdasarkan data constructor
         $query = LaporanBizdevGambar::query();
 
             if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
                 $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
             } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
                 $search = sprintf('%04d-%02d', $instance->year, $instance->month);
                 $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
             }
@@ -1845,7 +2051,6 @@ public function exportIJASAGambar(Request $request)
             return 'Data tidak ditemukan.';
         }
 
-            // Format data dengan path gambar
             $formattedData = $rekapBizdev->map(function ($item) {
                 return [
                     'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
@@ -1870,14 +2075,11 @@ public function exportIJASAGambar(Request $request)
 
         $instance = new self($startMonth, $endMonth);
     
-        // Bangun query berdasarkan data constructor
         $query = KasHutangPiutang::query();
 
             if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
                 $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
             } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
                 $search = sprintf('%04d-%02d', $instance->year, $instance->month);
                 $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
             }
@@ -1900,137 +2102,173 @@ public function exportIJASAGambar(Request $request)
             ];
         });
         $totalKas = $rekapKHPS->sum('kas');
-        $totalHutang = $rekapKHPS->sum('hutang');
-        $totalPiutang = $rekapKHPS->sum('piutang');
-        $totalStok = $rekapKHPS->sum('stok');
+            $totalHutang = $rekapKHPS->sum('hutang');
+            $totalPiutang = $rekapKHPS->sum('piutang');
+            $totalStok = $rekapKHPS->sum('stok');
 
-        $formattedKas = number_format($totalKas, 0, ',', '.');
-        $formattedHutang = number_format($totalHutang, 0, ',', '.');
-        $formattedPiutang = number_format($totalPiutang, 0, ',', '.');
-        $formattedStok = number_format($totalStok, 0, ',', '.');
+            $formattedKas = number_format($totalKas, 0, ',', '.');
+            $formattedHutang = number_format($totalHutang, 0, ',', '.');
+            $formattedPiutang = number_format($totalPiutang, 0, ',', '.');
+            $formattedStok = number_format($totalStok, 0, ',', '.');
 
-        $chartData = [
-            'labels' => [
-                "Kas : Rp $formattedKas",
-                "Hutang : Rp $formattedHutang",
-                "Piutang : Rp $formattedPiutang",
-                "Stok : Rp $formattedStok",
-            ],
-            'datasets' => [
-                [
-                    'data' => [$totalKas, $totalHutang, $totalPiutang, $totalStok],
-                    'backgroundColor' => ['#FF6384', '#36A2EB', '#FFCE56', '#2ab952'], // Warna untuk pie chart
-                    'hoverBackgroundColor' => ['#FF4757', '#3B8BEB', '#FFD700', '#00a623'],
+            $chartData = [
+                'labels' => [
+                    "Kas : Rp $formattedKas",
+                    "Hutang : Rp $formattedHutang",
+                    "Piutang : Rp $formattedPiutang",
+                    "Stok : Rp $formattedStok",
                 ],
-            ],
-        ];
-
-        return [
-            'rekap' => $formattedData,
-            'chart' => $chartData,
-        ];
-
-    } catch (\Throwable $th) {
-        Log::error('Error exporting (func ExLapAll exportKHPS): ' . $th->getMessage());
-        return 'Error: ' . $th->getMessage();
-    }
-}
-
-    public function exportArusKas(Request $request) {
-    try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
-
-        $instance = new self($startMonth, $endMonth);
-    
-        // Bangun query berdasarkan data constructor
-        $query = ArusKas::query();
-
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            }
-
-        $rekapArusKas = $query
-        ->orderBy('tanggal','asc')
-        ->get();
-
-        if ($rekapArusKas->isEmpty()) {
-            return 'Data tidak ditemukan.';
-        }
-
-        $formattedData = $rekapArusKas->map(function ($item) {
-            return [
-                'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
-                'Masuk' => 'Rp ' .  number_format($item->kas_masuk, 0, ',', '.'),
-                'Keluar' => 'Rp ' .  number_format($item->kas_keluar, 0, ',', '.'),
+                'datasets' => [
+                    [
+                        'data' => [$totalKas, $totalHutang, $totalPiutang, $totalStok],
+                        'backgroundColor' => ['#FF6384', '#36A2EB', '#FFCE56', '#2ab952'],
+                        'hoverBackgroundColor' => ['#FF4757', '#3B8BEB', '#FFD700', '#00a623'],
+                    ],
+                ],
             ];
-        });
-        $kasMasuk = $rekapArusKas->sum('kas_masuk');
-        $kasKeluar = $rekapArusKas->sum('kas_keluar');
 
-        $formattedKasMasuk = number_format($kasMasuk, 0, ',', '.');
-        $formattedKasKeluar = number_format($kasKeluar, 0, ',', '.');
+            return [
+                'rekap' => $formattedData,
+                'chart' => $chartData,
+            ];
 
-        $chartData = [
-            'labels' => [
-                "Kas : Rp $formattedKasMasuk",
-                "Keluar : Rp $formattedKasKeluar",
-
-            ],
-            'datasets' => [
-                [
-                    'data' => [$kasMasuk, $kasKeluar],
-                    'backgroundColor' => ['#1c64f2', '#ff2323'],
-                    'hoverBackgroundColor' => ['#2b6cb0', '#dc2626'],
-                ],
-            ],
-        ];
-
-        return [
-            'rekap' => $formattedData,
-            'chart' => $chartData,
-        ];
-
-    } catch (\Throwable $th) {
-        Log::error('Error exporting (func ExLapAll exportArusKas): ' . $th->getMessage());
-        return 'Error: ' . $th->getMessage();
+        } catch (\Throwable $th) {
+            Log::error('Error exporting (func ExLapAll exportKHPS): ' . $th->getMessage());
+            return 'Error: ' . $th->getMessage();
+        }
     }
-}
-    //Laporan SPI
-    // Export untuk divisi HRGA
-    public function exportLaporanSPI(Request $request) {
+
+        public function exportArusKas(Request $request) {
         try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
+            $startMonth = $request->input('start_month'); // format Y-m
+            $endMonth = $request->input('end_month');     // format Y-m
 
-        $instance = new self($startMonth, $endMonth);
-    
-        // Bangun query berdasarkan data constructor
-        $query = LaporanSPI::query();
+            $instance = new self($startMonth, $endMonth);
+        
+            $query = ArusKas::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+                if (isset($instance->startDate) && isset($instance->endDate)) {
+                    $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+                } elseif (isset($instance->month) && isset($instance->year)) {
+                    $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                    $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+                }
+
+            $rekapArusKas = $query
+            ->orderBy('tanggal','asc')
+            ->get();
+
+            if ($rekapArusKas->isEmpty()) {
+                return 'Data tidak ditemukan.';
             }
 
-        $laporanSPI = $query
-        ->orderBy('tanggal','asc')
-        ->get();
+            $formattedData = $rekapArusKas->map(function ($item) {
+                return [
+                    'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
+                    'Masuk' => 'Rp ' .  number_format($item->kas_masuk, 0, ',', '.'),
+                    'Keluar' => 'Rp ' .  number_format($item->kas_keluar, 0, ',', '.'),
+                ];
+            });
+            $kasMasuk = $rekapArusKas->sum('kas_masuk');
+            $kasKeluar = $rekapArusKas->sum('kas_keluar');
 
-        if ($laporanSPI->isEmpty()) {
-            return 'Data tidak ditemukan.';
+            $formattedKasMasuk = number_format($kasMasuk, 0, ',', '.');
+            $formattedKasKeluar = number_format($kasKeluar, 0, ',', '.');
+
+            $chartData = [
+                'labels' => [
+                    "Kas Masuk : Rp $formattedKasMasuk",
+                    "Kas Keluar : Rp $formattedKasKeluar",
+
+                ],
+                'datasets' => [
+                    [
+                        'data' => [$kasMasuk, $kasKeluar],
+                        'backgroundColor' => ['#1c64f2', '#ff2323'],
+                        'hoverBackgroundColor' => ['#2b6cb0', '#dc2626'],
+                    ],
+                ],
+            ];
+
+            return [
+                'rekap' => $formattedData,
+                'chart' => $chartData,
+            ];
+
+        } catch (\Throwable $th) {
+            Log::error('Error exporting (func ExLapAll exportArusKas): ' . $th->getMessage());
+            return 'Error: ' . $th->getMessage();
         }
-    
-            $formattedData =  $laporanSPI->map(function ($item) {
+    }
+        public function exportLaporanSPI(Request $request) {
+            try {
+            $startMonth = $request->input('start_month'); // format Y-m
+            $endMonth = $request->input('end_month');     // format Y-m
+
+            $instance = new self($startMonth, $endMonth);
+        
+            $query = LaporanSPI::query();
+
+                if (isset($instance->startDate) && isset($instance->endDate)) {
+                    $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+                } elseif (isset($instance->month) && isset($instance->year)) {
+                    $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                    $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+                }
+
+            $laporanSPI = $query
+            ->orderBy('tanggal','asc')
+            ->get();
+
+            if ($laporanSPI->isEmpty()) {
+                return 'Data tidak ditemukan.';
+            }
+        
+                $formattedData =  $laporanSPI->map(function ($item) {
+                    return [
+                        'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
+                        'Aspek' => $item->aspek,
+                        'Masalah' => $item->masalah,
+                        'Solusi' => $item->solusi,
+                        'Implementasi' => $item->implementasi,
+                    ];
+                });
+        
+                return [
+                    'rekap' => $formattedData,
+                ];
+        
+            } catch (\Throwable $th) {
+                Log::error('Error exporting  (func ExLapAll exportLaporanSPI): ' . $th->getMessage());
+                return 'Error: ' . $th->getMessage();
+            }
+        }
+        public function exportLaporanSPIIT(Request $request)
+    {
+        try {
+            $startMonth = $request->input('start_month'); // format Y-m
+            $endMonth = $request->input('end_month');     // format Y-m
+
+            $instance = new self($startMonth, $endMonth);
+        
+            $query = LaporanSPITI::query();
+
+                if (isset($instance->startDate) && isset($instance->endDate)) {
+                    $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
+                } elseif (isset($instance->month) && isset($instance->year)) {
+                    $search = sprintf('%04d-%02d', $instance->year, $instance->month);
+                    $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+                }
+
+            $laporanSPIIT = $query
+            ->orderBy('tanggal','asc')
+            ->get();
+
+            if ($laporanSPIIT->isEmpty()) {
+                return 'Data tidak ditemukan.';
+            }
+
+            $formattedData = $laporanSPIIT->map(function ($item) {
                 return [
                     'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
                     'Aspek' => $item->aspek,
@@ -2039,63 +2277,14 @@ public function exportIJASAGambar(Request $request)
                     'Implementasi' => $item->implementasi,
                 ];
             });
-    
+
             return [
                 'rekap' => $formattedData,
             ];
-    
+
         } catch (\Throwable $th) {
-            Log::error('Error exporting  (func ExLapAll exportLaporanSPI): ' . $th->getMessage());
+            Log::error('Error exporting (func ExLapAll exportLaporanSPIIT): ' . $th->getMessage());
             return 'Error: ' . $th->getMessage();
         }
-    }
-    // Export untuk divisi HRGA
-    public function exportLaporanSPIIT(Request $request)
-{
-    try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
-
-        $instance = new self($startMonth, $endMonth);
-    
-        // Bangun query berdasarkan data constructor
-        $query = LaporanSPITI::query();
-
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                // Kedua bulan diisi: filter rentang tanggal
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                // Hanya satu bulan diisi: filter satu bulan dengan LIKE
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            }
-
-        $laporanSPIIT = $query
-        ->orderBy('tanggal','asc')
-        ->get();
-
-        if ($laporanSPIIT->isEmpty()) {
-            return 'Data tidak ditemukan.';
-        }
-
-        $formattedData = $laporanSPIIT->map(function ($item) {
-            return [
-                'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
-                'Aspek' => $item->aspek,
-                'Masalah' => $item->masalah,
-                'Solusi' => $item->solusi,
-                'Implementasi' => $item->implementasi,
-            ];
-        });
-
-        return [
-            'rekap' => $formattedData,
-        ];
-
-    } catch (\Throwable $th) {
-        Log::error('Error exporting (func ExLapAll exportLaporanSPIIT): ' . $th->getMessage());
-        return 'Error: ' . $th->getMessage();
-    }
-}
-
+    }    
 }

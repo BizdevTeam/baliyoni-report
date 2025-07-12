@@ -388,29 +388,43 @@
         <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
             <h1 class="text-2xl font-bold text-center text-red-600 mb-6">Laporan Tax Planning</h1>
             <div class="bg-white shadow-md rounded-lg p-6">
-                <div class="max-w-[600px] md:max-w-none mx-auto md:mx-0 overflow-x-auto"> <!-- Container pembatas dan scroll -->
-                    <table id="admintaxplanning" class="table-auto w-full border-collapse border border-gray-300 min-w-[600px] md:min-w-full">
-                        <thead>
-                            <tr>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">File</th>
-                                <th class="border border-gray-300 px-4 py-2 text-center">Keterangan</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="flex justify-end mt-4">
-                    <a href="{{ route('taxplaning.index') }}" class="flex text-red-600 content-end end-0 text-end font-semibold hover:underline">Laporan Tax Planning →</a>
-                </div>
+                <canvas id="chartp" class="w-full h-96"></canvas>
             </div>
-                  <!-- Modal Gambar -->
-                  <div id="imageModal" class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-80 hidden z-50">
-                    <img id="modalImage" class="mx-auto my-auto object-center max-w-full max-h-[90vh] rounded-lg shadow-lg z-50">
-                </div>
-             </div>
-             @endif
+
+            <div class="flex justify-end mt-4">
+                <a href="{{ route("rekappenjualan.index") }}" class="text-red-600 font-semibold hover:underline">Sales Recap Chart →</a>
+            </div>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
+            <h1 class="text-2xl font-bold text-center text-red-600">
+                Grafik Laporan Rekap Penjualan Perusahaan                                                                                                                  
+            </h1>
+            
+            <!-- Dropdown untuk memilih chart -->
+            <div class="mb-2 flex justify-end">
+                <select id="chartSelect" class="p-2 border border-gray-300 rounded">
+                    <option value="chartpp">Chart Biasa</option>
+                    <option value="chartpptotal">Chart Total</option>
+                </select>
+            </div>
+            
+            <!-- Container untuk Chart Biasa -->
+            <div id="chartpContainer" class="bg-white shadow-md rounded-lg p-6">
+                <canvas id="chartpp" class="w-full h-96"></canvas>
+            </div>
+            
+            <!-- Container untuk Chart PP, disembunyikan secara default -->
+            <div id="chartpptotalContainer" class="bg-white shadow-md rounded-lg p-6 mt-10 hidden">
+                <canvas id="chartpptotal" class="w-full h-96"></canvas>
+            </div>
+            
+            <div class="flex justify-end mt-4">
+                <a href="{{ route('rekappenjualanperusahaan.index') }}" class="text-red-600 font-semibold hover:underline">
+                    Laporan Rekap Penjualan Perusahaan →
+                </a>
+            </div>
+        </div>
 
         <!-- IT: Tampil untuk Superadmin & IT -->
         @if(in_array(Auth::user()->role, ['superadmin', 'it']))
