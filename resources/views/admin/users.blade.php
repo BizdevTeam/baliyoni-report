@@ -39,7 +39,7 @@
 
         {{-- Konten Utama --}}
        <div id="admincontent" class="p-4 sm:p-6 lg:p-8">
-            <h1 class="flex text-3xl font-bold text-gray-800 justify-center mt-4 mb-8">Manajemen User</h1>
+            <h1 class="flex text-3xl font-bold text-gray-800 justify-center mt-12 mb-8">Manajemen User</h1>
 
             <div class="bg-white p-6 rounded-lg shadow-lg">
                 <div class="flex flex-col sm:flex-row items-center justify-between mb-4">

@@ -239,10 +239,12 @@
 </div>
 <div id="formChart" class="visible">
 <div class="flex flex-col mx-auto bg-white p-6 mt-4 rounded-lg shadow-xl border border-grey-500">
-<h1 class="text-4xl font-bold text-red-600 mb-4 font-montserrat text-start">Chart</h1>
+<h1 class="text-2xl font-bold text-red-600 mb-2 mx-auto font-montserrat text-start">Sales Recap by Company Chart</h1>
 
-<div class="mt-6 self-center w-full h-auto flex justify-center">
-    <canvas id="chart"></canvas>
+<div class="mt-6 self-center w-full h-96 flex justify-center">
+    <div class="w-full h-96 overflow-y-auto overflow-x-hidden" style="max-height: 24rem;">
+        <canvas id="chart" style="min-width:600px; min-height:400px;"></canvas>
+    </div>
 </div>
 
 <div class="mt-6 flex justify-end">
@@ -385,14 +387,21 @@
 
     var ctx = document.getElementById('chart').getContext('2d');
 
-    var barChart = new Chart(ctx, {
+    var horizontalBarChart = new Chart(ctx, {
+        // Tipe chart tetap 'bar'
         type: 'bar',
         data: {
-            labels: chartData.labels, // Label tanggal
-            datasets: chartData.datasets, // Data total penjualan
+            labels: chartData.labels,
+            datasets: chartData.datasets,
         },
         options: {
+            // --- PERUBAHAN UTAMA ---
+            // Mengubah sumbu utama menjadi sumbu Y
+            indexAxis: 'y',
+            // ---------------------
+
             responsive: true,
+            maintainAspectRatio: false, // Memungkinkan chart menyesuaikan tinggi
             plugins: {
                 legend: {
                     display: false, // Sembunyikan legenda
@@ -400,51 +409,77 @@
                 tooltip: {
                     callbacks: {
                         label: function(tooltipItem) {
-                            let value = tooltipItem.raw; // Ambil data nilai
-                            return tooltipItem.dataset.text + ' : ' + 'Rp ' + value.toLocaleString(); // Format angka
+                            let value = tooltipItem.raw;
+                            // Menggunakan tooltipItem.dataset.label yang lebih standar
+                            return tooltipItem.dataset.label + ': ' + 'Rp ' + value.toLocaleString('id-ID');
                         },
                     },
                 },
             },
             scales: {
+                // Konfigurasi sumbu X (sekarang menjadi sumbu NILAI)
                 x: {
-                    title: {
-                        display: false, // Sembunyikan label sumbu X
-                    },
-                },
-                y: {
                     beginAtZero: true,
                     title: {
-                        display: false, // Sembunyikan label sumbu Y
+                        display: false,
                     },
                     ticks: {
+                        // Format angka pada sumbu nilai
                         callback: function(value) {
-                            return 'Rp ' + value.toLocaleString(); // Format angka
+                            if (value >= 1000000) {
+                                return 'Rp ' + (value / 1000000) + ' Jt';
+                            }
+                            return 'Rp ' + value.toLocaleString('id-ID');
                         },
+                    },
+                },
+                // Konfigurasi sumbu Y (sekarang menjadi sumbu KATEGORI)
+                y: {
+                    title: {
+                        display: false,
                     },
                 },
             },
             layout: {
                 padding: {
-                    top: 50 // Tambahkan padding atas agar angka tidak terpotong
+                    // Beri ruang di kanan untuk label nilai
+                    right: 80,
+                    left: 20
                 },
             },
         },
         plugins: [{
+            // Plugin custom untuk menampilkan nilai di ujung setiap bar
+            id: 'custom_data_labels_horizontal',
             afterDatasetsDraw: function(chart) {
-                var ctx = chart.ctx;
-                chart.data.datasets.forEach((dataset, i) => {
-                    var meta = chart.getDatasetMeta(i);
+                const { ctx, data, chartArea: { top, bottom, left, right }, scales: { x, y } } = chart;
+                
+                ctx.save();
+                ctx.font = 'bold 14px sans-serif';
+                ctx.fillStyle = 'black';
+                ctx.textBaseline = 'middle';
+
+                data.datasets.forEach((dataset, i) => {
+                    const meta = chart.getDatasetMeta(i);
+                    // Pastikan dataset adalah bar dan terlihat
+                    if (meta.type !== 'bar' || !meta.visible) {
+                        return;
+                    }
+
                     meta.data.forEach((bar, index) => {
-                        var value = dataset.data[index];
-                        var textY = bar.y - 10; // Beri jarak lebih jauh agar angka tidak terpotong
-                        if (textY < 20) textY = 20; // Pastikan angka tidak keluar area chart
-                        ctx.fillStyle = 'black'; // Warna teks
-                        ctx.font = 'bold 15px sans-serif'; // Ukuran teks
-                        ctx.textAlign = 'center';
-                        ctx.fillText('Rp ' + value.toLocaleString(), bar.x, textY); // Tampilkan di atas bar
+                        const value = dataset.data[index];
+                        
+                        // Posisi teks di sebelah kanan bar
+                        const textPositionX = bar.x + 8;
+                        
+                        // Atur perataan teks
+                        ctx.textAlign = 'left';
+                        
+                        // Tampilkan teks
+                        ctx.fillText('Rp ' + value.toLocaleString('id-ID'), textPositionX, bar.y);
                     });
                 });
+                ctx.restore();
             }
         }]
     });
