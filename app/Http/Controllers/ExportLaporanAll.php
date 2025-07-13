@@ -36,6 +36,8 @@ use App\Models\StatusPaket;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+
 
 class ExportLaporanAll extends Controller
 {
@@ -43,26 +45,40 @@ class ExportLaporanAll extends Controller
     private $year;
     private $startDate;
     private $endDate;
+    private $useFilter = false;
+
     
-    public function __construct($startMonth = null, $endMonth = null)
+    public function __construct()
     {
-        if ($startMonth && $endMonth) {
-            $this->startDate = \Carbon\Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
-            $this->endDate = \Carbon\Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
-        } elseif ($startMonth) {
-            $date = \Carbon\Carbon::createFromFormat('Y-m', $startMonth);
-            $this->month = $date->month;
-            $this->year = $date->year;
-        } elseif ($endMonth) {
-            $date = \Carbon\Carbon::createFromFormat('Y-m', $endMonth);
-            $this->month = $date->month;
-            $this->year = $date->year;
-        } else {
-            $date = \Carbon\Carbon::now();
-            $this->month = $date->month;
-            $this->year = $date->year;
-        }
+        // Set default date to current month and year if no filters are applied later
+        $date = Carbon::now();
+        $this->month = $date->month;
+        $this->year = $date->year;
     }
+    
+    private function applyDateFilter($query, $tanggalColumn = 'tanggal')
+    {
+        // Only apply filter if the flag is explicitly set to true
+        if (!$this->useFilter) {
+            return $query;
+        }
+    
+        if (isset($this->startDate) && isset($this->endDate)) {
+            // Filter a date range. Using DB::raw to handle potential VARCHAR date columns.
+            // NOTE: For better performance, it's highly recommended to change the column type to DATE or DATETIME in your database.
+            $query->whereBetween(
+                DB::raw("STR_TO_DATE($tanggalColumn, '%Y-%m-%d')"),
+                [$this->startDate->format('Y-m-d'), $this->endDate->format('Y-m-d')]
+            );
+        } elseif (isset($this->month) && isset($this->year)) {
+            // Filter for a single month.
+            $search = sprintf('%04d-%02d', $this->year, $this->month);
+            $query->whereRaw("DATE_FORMAT(STR_TO_DATE($tanggalColumn, '%Y-%m-%d'), '%Y-%m') = ?", [$search]);
+        }
+    
+        return $query;
+    }
+
     // Fungsi generate warna random
     public function getRandomRGBA()
     {
@@ -87,365 +103,33 @@ class ExportLaporanAll extends Controller
             $result = $callback();
             return is_array($result) ? $result : ['rekap' => [], 'chart' => $emptyChart];
         } catch (\Throwable $e) {
+            Log::error('Error during safeExport execution: ' . $e->getMessage());
             return ['rekap' => [], 'chart' => $emptyChart];
         }
     }
 
-    // public function exportAll(Request $request) {
-    //     try {
-    //         $selectedReports = $request->input('reports', []);
-    //         // Helper function untuk default chart kosong
-    //         $emptyChart = [
-    //             'labels' => [],
-    //             'datasets' => [
-    //                 [
-    //                     'label' => 'Total Penjualan',
-    //                     'data' => [],
-    //                     'backgroundColor' => [],
-    //                 ]
-    //             ]
-    //         ];
-
-    //         $emptyData = ['rekap' => [], 'chart' => $emptyChart];
-    
-    //         // // === Untuk divisi Marketing ===
-    //         // $dataExportLaporanPenjualan = $this->safeExport(fn() => $this->exportRekapPenjualan(request()));
-
-    //         // $dataExportLaporanPenjualanPerusahaan = $this->safeExport(fn() => $this->exportRekapPenjualanPerusahaan(request()));
-
-    //         // $dataExportLaporanPaketAdministrasi = $this->safeExport(fn() => $this->exportLaporanPaketAdministrasi(request()));
-
-    //         // $dataExportStatusPaket = $this->safeExport(fn() => $this->exportStatusPaket(request()));
-
-    //         // $dataExportLaporanPerInstansi = $this->safeExport(fn() => $this->exportLaporanPerInstansi(request()));
-    
-    //         // // === Untuk divisi Procurement ===
-    //         // $dataExportLaporanHolding = $this->safeExport(fn() => $this->exportLaporanHolding(request())); 
-    //         // $dataExportLaporanStok = $this->safeExport(fn() => $this->exportLaporanStok(request())); 
-    //         // $dataExportLaporanPembelianOutlet = 
-    //         // $this->safeExport(fn() => $this->exportLaporanPembelianOutlet(request())); 
-    //         // $dataExportLaporanNegosiasi = $this->safeExport(fn() => $this->exportLaporanNegosiasi(request()));
-
-    //         // // === Untuk divisi Supports ===
-    //         // $dataExportRekapPendapatanASP = $this->safeExport(fn() => $this->exportRekapPendapatanASP(request()));
-    //         // $dataExportRekapPiutangASP = $this->safeExport(fn() => $this->exportRekapPiutangASP(request()));
-    //         // $dataLaporanPengiriman = $this->safeExport(fn() => $this->exportLaporanPengiriman(request()));
-    //         // // Log::info('Exporting Laporan dataExportRekapPendapatanASP: ' . json_encode($dataExportRekapPendapatanASP));
-    //         // // Log::info('Exporting Laporan dataExportRekapPiutangASP: ' . json_encode($dataExportRekapPiutangASP));
-
-    //         // // === Untuk divisi HRGA ===
-    //         // $dataPTBOS = $this->safeExport(fn() => $this->exportPTBOS(request()));
-    //         // $dataIJASA = $this->safeExport(fn() => $this->exportIJASA(request()));
-    //         // $dataIJASAGambar = $this->safeExport(fn() => $this->exportIJASAGambar(request()));
-    //         // $dataLaporanSakit = $this->safeExport(fn() => $this->exportSakit(request()));
-    //         // $dataLaporanCuti = $this->safeExport(fn() => $this->exportCuti(request()));
-    //         // $dataLaporanIzin = $this->safeExport(fn() => $this->exportIzin(request()));
-    //         // $dataLaporanTerlambat = $this->safeExport(fn() => $this->exportTerlambat(request()));
-    //         // // Log::info('Exporting Laporan dataLaporanTerlambat: ' . json_encode($dataLaporanTerlambat));
-
-    //         // // === Untuk divisi Accounting ===
-    //         // $dataKHPS = $this->safeExport(fn() => $this->exportKHPS(request()));
-    //         // $dataLabaRugi = $this->safeExport(fn() => $this->exportLabaRugi(request()));
-    //         // $dataNeraca = $this ->safeExport(fn() => $this->exportNeraca(request()));
-    //         // $dataRasio = $this->safeExport(fn() => $this->exportRasio(request()));
-    //         // $dataPPn = $this->safeExport(fn() => $this->exportPPn(request()));
-    //         // $dataArusKas = $this->safeExport(fn() => $this->exportArusKas(request()));
-    //         // $dataTaxPlanning = $this->safeExport(fn() => $this->exportTaxPlanning(request()));
-
-    //         // // === Untuk divisi SPI ===
-    //         // $dataLaporanSPI = $this->safeExport(fn() => $this->exportLaporanSPI(request()));
-    //         // $dataLaporanSPIIT = $this->safeExport(fn() => $this->exportLaporanSPIIT(request()));
-
-    //         // // IT
-    //         // $dataTiktok = $this->safeExport(fn() => $this->exportTiktok(request()));
-    //         // $dataInstagram = $this->safeExport(fn() => $this->exportInstagram(request()));
-    //         // $dataBizdev = $this->safeExport(fn() => $this->exportBizdev(request()));
-    //         // $dataBizdev1 = $this->safeExport(fn() => $this->exportBizdev1(request()));
-
-    //     //     return view('exports.all-laporan', compact(
-    //     //         'dataExportLaporanPenjualan',
-    //     //         'dataExportLaporanPenjualanPerusahaan',
-    //     //         'dataExportLaporanPaketAdministrasi',
-    //     //         'dataExportStatusPaket',
-    //     //         'dataExportLaporanPerInstansi',
-    //     //         'dataExportLaporanHolding',
-    //     //         'dataExportLaporanStok',
-    //     //         'dataExportLaporanPembelianOutlet',
-    //     //         'dataExportLaporanNegosiasi',
-    //     //         'dataExportRekapPendapatanASP',
-    //     //         'dataExportRekapPiutangASP',
-    //     //         'dataLaporanPengiriman',
-    //     //         'dataLaporanSakit',
-    //     //         'dataLaporanCuti',
-    //     //         'dataLaporanIzin',
-    //     //         'dataLaporanTerlambat',
-    //     //         'dataKHPS',
-    //     //         'dataArusKas',
-    //     //         'dataLaporanSPI',
-    //     //         'dataLaporanSPIIT',
-    //     //         'dataArusKas',
-    //     //         'dataLabaRugi',
-    //     //         'dataNeraca',
-    //     //         'dataRasio',
-    //     //         'dataPPn',
-    //     //         'dataTaxPlanning',
-    //     //         'dataTiktok',
-    //     //         'dataInstagram',
-    //     //         'dataBizdev',
-    //     //         'dataBizdev1',
-    //     //         'dataPTBOS',
-    //     //         'dataIJASA',
-    //     //         'dataIJASAGambar',
-                
-    //     //     ))
-    //     //     ->with('month', $this->month)
-    //     //     ->with('year', $this->year);
-    
-    //     // } catch (\Throwable $th) {
-    //     //     Log::error('Error exporting all laporan (func ExLapAll exportAll): ' . $th->getMessage());
-    //     //     return back()->withErrors($th->getMessage());
-    //     // }
-    //     // Inisialisasi semua variabel data dengan struktur kosong
-    //     $dataExportLaporanPenjualan = $emptyData;
-    //     $dataExportLaporanPenjualanPerusahaan = $emptyData;
-    //     $dataExportLaporanPaketAdministrasi = $emptyData;
-    //     $dataExportStatusPaket = $emptyData;
-    //     $dataExportLaporanPerInstansi = $emptyData;
-    //     $dataExportLaporanHolding = $emptyData;
-    //     $dataExportLaporanStok = $emptyData;
-    //     $dataExportLaporanPembelianOutlet = $emptyData;
-    //     $dataExportLaporanNegosiasi = $emptyData;
-    //     $dataExportRekapPendapatanASP = $emptyData;
-    //     $dataExportRekapPiutangASP = $emptyData;
-    //     $dataLaporanPengiriman = $emptyData;
-    //     $dataPTBOS = $emptyData;
-    //     $dataIJASA = $emptyData;
-    //     $dataIJASAGambar = $emptyData;
-    //     $dataLaporanSakit = $emptyData;
-    //     $dataLaporanCuti = $emptyData;
-    //     $dataLaporanIzin = $emptyData;
-    //     $dataLaporanTerlambat = $emptyData;
-    //     $dataKHPS = $emptyData;
-    //     $dataLabaRugi = $emptyData;
-    //     $dataNeraca = $emptyData;
-    //     $dataRasio = $emptyData;
-    //     $dataPPn = $emptyData;
-    //     $dataArusKas = $emptyData;
-    //     $dataTaxPlanning = $emptyData;
-    //     $dataLaporanSPI = $emptyData;
-    //     $dataLaporanSPIIT = $emptyData;
-    //     $dataTiktok = $emptyData;
-    //     $dataInstagram = $emptyData;
-    //     $dataBizdev = $emptyData;
-    //     $dataBizdev1 = $emptyData;
-
-    //     // === Proses ekspor berdasarkan laporan yang dipilih ===
-
-    //     // Marketing
-    //     if (in_array('penjualan', $selectedReports)) $dataExportLaporanPenjualan = $this->safeExport(fn() => $this->exportRekapPenjualan($request));
-    //     if (in_array('penjualan_perusahaan', $selectedReports)) $dataExportLaporanPenjualanPerusahaan = $this->safeExport(fn() => $this->exportRekapPenjualanPerusahaan($request));
-    //     if (in_array('paket_admin', $selectedReports)) $dataExportLaporanPaketAdministrasi = $this->safeExport(fn() => $this->exportLaporanPaketAdministrasi($request));
-    //     if (in_array('status_paket', $selectedReports)) $dataExportStatusPaket = $this->safeExport(fn() => $this->exportStatusPaket($request));
-    //     if (in_array('per_instansi', $selectedReports)) $dataExportLaporanPerInstansi = $this->safeExport(fn() => $this->exportLaporanPerInstansi($request));
-
-    //     // Procurement
-    //     if (in_array('holding', $selectedReports)) $dataExportLaporanHolding = $this->safeExport(fn() => $this->exportLaporanHolding($request));
-    //     if (in_array('stok', $selectedReports)) $dataExportLaporanStok = $this->safeExport(fn() => $this->exportLaporanStok($request));
-    //     if (in_array('pembelian_outlet', $selectedReports)) $dataExportLaporanPembelianOutlet = $this->safeExport(fn() => $this->exportLaporanPembelianOutlet($request));
-    //     if (in_array('negosiasi', $selectedReports)) $dataExportLaporanNegosiasi = $this->safeExport(fn() => $this->exportLaporanNegosiasi($request));
-
-    //     // Supports
-    //     if (in_array('pendapatan_asp', $selectedReports)) $dataExportRekapPendapatanASP = $this->safeExport(fn() => $this->exportRekapPendapatanASP($request));
-    //     if (in_array('piutang_asp', $selectedReports)) $dataExportRekapPiutangASP = $this->safeExport(fn() => $this->exportRekapPiutangASP($request));
-    //     if (in_array('pengiriman', $selectedReports)) $dataLaporanPengiriman = $this->safeExport(fn() => $this->exportLaporanPengiriman($request));
-
-    //     // HRGA
-    //     if (in_array('ptbos', $selectedReports)) $dataPTBOS = $this->safeExport(fn() => $this->exportPTBOS($request));
-    //     if (in_array('ijasa', $selectedReports)) $dataIJASA = $this->safeExport(fn() => $this->exportIJASA($request));
-    //     if (in_array('ijasagambar', $selectedReports)) $dataIJASAGambar = $this->safeExport(fn() => $this->exportIJASAGambar($request));
-    //     if (in_array('sakit', $selectedReports)) $dataLaporanSakit = $this->safeExport(fn() => $this->exportSakit($request));
-    //     if (in_array('cuti', $selectedReports)) $dataLaporanCuti = $this->safeExport(fn() => $this->exportCuti($request));
-    //     if (in_array('izin', $selectedReports)) $dataLaporanIzin = $this->safeExport(fn() => $this->exportIzin($request));
-    //     if (in_array('terlambat', $selectedReports)) $dataLaporanTerlambat = $this->safeExport(fn() => $this->exportTerlambat($request));
-
-    //     // Accounting
-    //     if (in_array('khps', $selectedReports)) $dataKHPS = $this->safeExport(fn() => $this->exportKHPS($request));
-    //     if (in_array('laba_rugi', $selectedReports)) $dataLabaRugi = $this->safeExport(fn() => $this->exportLabaRugi($request));
-    //     if (in_array('neraca', $selectedReports)) $dataNeraca = $this->safeExport(fn() => $this->exportNeraca($request));
-    //     if (in_array('rasio', $selectedReports)) $dataRasio = $this->safeExport(fn() => $this->exportRasio($request));
-    //     if (in_array('ppn', $selectedReports)) $dataPPn = $this->safeExport(fn() => $this->exportPPn($request));
-    //     if (in_array('arus_kas', $selectedReports)) $dataArusKas = $this->safeExport(fn() => $this->exportArusKas($request));
-    //     if (in_array('taxplanning', $selectedReports)) $dataTaxPlanning = $this->safeExport(fn() => $this->exportTaxPlanning($request));
-
-    //     // SPI
-    //     if (in_array('spi', $selectedReports)) $dataLaporanSPI = $this->safeExport(fn() => $this->exportLaporanSPI($request));
-    //     if (in_array('spiit', $selectedReports)) $dataLaporanSPIIT = $this->safeExport(fn() => $this->exportLaporanSPIIT($request));
-
-    //     // IT
-    //     if (in_array('tiktok', $selectedReports)) $dataTiktok = $this->safeExport(fn() => $this->exportTiktok($request));
-    //     if (in_array('instagram', $selectedReports)) $dataInstagram = $this->safeExport(fn() => $this->exportInstagram($request));
-    //     if (in_array('bizdev', $selectedReports)) $dataBizdev = $this->safeExport(fn() => $this->exportBizdev($request));
-    //     if (in_array('bizdev1', $selectedReports)) $dataBizdev1 = $this->safeExport(fn() => $this->exportBizdev1($request));
-
-
-    //     return view('exports.export', compact(
-    //         'dataExportLaporanPenjualan', 'dataExportLaporanPenjualanPerusahaan', 'dataExportLaporanPaketAdministrasi',
-    //         'dataExportStatusPaket', 'dataExportLaporanPerInstansi', 'dataExportLaporanHolding', 'dataExportLaporanStok',
-    //         'dataExportLaporanPembelianOutlet', 'dataExportLaporanNegosiasi', 'dataExportRekapPendapatanASP',
-    //         'dataExportRekapPiutangASP', 'dataLaporanPengiriman', 'dataLaporanSakit', 'dataLaporanCuti', 'dataLaporanIzin',
-    //         'dataLaporanTerlambat', 'dataKHPS', 'dataArusKas', 'dataLaporanSPI', 'dataLaporanSPIIT', 'dataLabaRugi',
-    //         'dataNeraca', 'dataRasio', 'dataPPn', 'dataTaxPlanning', 'dataTiktok', 'dataInstagram', 'dataBizdev',
-    //         'dataBizdev1', 'dataPTBOS', 'dataIJASA', 'dataIJASAGambar'
-    //     ))
-    //     ->with('month', $this->month)
-    //     ->with('year', $this->year);
-
-    // } catch (\Throwable $th) {
-    //     Log::error('Error exporting all laporan (func ExLapAll exportAll): ' . $th->getMessage());
-    //     return back()->withErrors('Terjadi kesalahan saat mengekspor laporan: ' . $th->getMessage());
-    // }
-    // }
-
-    // public function exportAll(Request $request)
-    // {
-    //     try {
-    //         // 1. Get the list of reports selected by the user
-    //         $selectedReports = $request->input('reports', []);
-
-    //         // 2. Prepare all export data as empty arrays initially
-    //         $emptyData = [];
-    //         $dataExportLaporanPenjualan               = $emptyData;
-    //         $dataExportLaporanPenjualanPerusahaan     = $emptyData;
-    //         $dataExportLaporanPaketAdministrasi       = $emptyData;
-    //         $dataExportStatusPaket                    = $emptyData;
-    //         $dataExportLaporanPerInstansi             = $emptyData;
-    //         $dataExportLaporanHolding                 = $emptyData;
-    //         $dataExportLaporanStok                    = $emptyData;
-    //         $dataExportLaporanPembelianOutlet         = $emptyData;
-    //         $dataExportLaporanNegosiasi               = $emptyData;
-    //         $dataExportRekapPendapatanASP             = $emptyData;
-    //         $dataExportRekapPiutangASP                = $emptyData;
-    //         $dataLaporanPengiriman                    = $emptyData;
-    //         $dataPTBOS                                = $emptyData;
-    //         $dataIJASA                                = $emptyData;
-    //         $dataIJASAGambar                          = $emptyData;
-    //         $dataLaporanSakit                         = $emptyData;
-    //         $dataLaporanCuti                          = $emptyData;
-    //         $dataLaporanIzin                          = $emptyData;
-    //         $dataLaporanTerlambat                     = $emptyData;
-    //         $dataKHPS                                 = $emptyData;
-    //         $dataLabaRugi                             = $emptyData;
-    //         $dataNeraca                               = $emptyData;
-    //         $dataRasio                                = $emptyData;
-    //         $dataPPn                                  = $emptyData;
-    //         $dataArusKas                              = $emptyData;
-    //         $dataTaxPlanning                          = $emptyData;
-    //         $dataLaporanSPI                           = $emptyData;
-    //         $dataLaporanSPIIT                         = $emptyData;
-    //         $dataTiktok                               = $emptyData;
-    //         $dataInstagram                            = $emptyData;
-    //         $dataBizdev                               = $emptyData;
-    //         $dataBizdev1                              = $emptyData;
-
-    //         // 3. Only call the export function if the report was selected
-    //         // Marketing
-    //         if (in_array('penjualan', $selectedReports))               $dataExportLaporanPenjualan           = $this->safeExport(fn() => $this->exportRekapPenjualan($request));
-    //         if (in_array('penjualan_perusahaan', $selectedReports))   $dataExportLaporanPenjualanPerusahaan = $this->safeExport(fn() => $this->exportRekapPenjualanPerusahaan($request));
-    //         if (in_array('paket_admin', $selectedReports))           $dataExportLaporanPaketAdministrasi   = $this->safeExport(fn() => $this->exportLaporanPaketAdministrasi($request));
-    //         if (in_array('status_paket', $selectedReports))          $dataExportStatusPaket                = $this->safeExport(fn() => $this->exportStatusPaket($request));
-    //         if (in_array('per_instansi', $selectedReports))          $dataExportLaporanPerInstansi         = $this->safeExport(fn() => $this->exportLaporanPerInstansi($request));
-
-    //         // Procurement
-    //         if (in_array('holding', $selectedReports))               $dataExportLaporanHolding             = $this->safeExport(fn() => $this->exportLaporanHolding($request));
-    //         if (in_array('stok', $selectedReports))                  $dataExportLaporanStok                = $this->safeExport(fn() => $this->exportLaporanStok($request));
-    //         if (in_array('pembelian_outlet', $selectedReports))      $dataExportLaporanPembelianOutlet     = $this->safeExport(fn() => $this->exportLaporanPembelianOutlet($request));
-    //         if (in_array('negosiasi', $selectedReports))             $dataExportLaporanNegosiasi           = $this->safeExport(fn() => $this->exportLaporanNegosiasi($request));
-
-    //         // Supports
-    //         if (in_array('pendapatan_asp', $selectedReports))        $dataExportRekapPendapatanASP         = $this->safeExport(fn() => $this->exportRekapPendapatanASP($request));
-    //         if (in_array('piutang_asp', $selectedReports))           $dataExportRekapPiutangASP            = $this->safeExport(fn() => $this->exportRekapPiutangASP($request));
-    //         if (in_array('pengiriman', $selectedReports))            $dataLaporanPengiriman                = $this->safeExport(fn() => $this->exportLaporanPengiriman($request));
-
-    //         // HRGA
-    //         if (in_array('ptbos', $selectedReports))                 $dataPTBOS                            = $this->safeExport(fn() => $this->exportPTBOS($request));
-    //         if (in_array('ijasa', $selectedReports))                 $dataIJASA                            = $this->safeExport(fn() => $this->exportIJASA($request));
-    //         if (in_array('ijasagambar', $selectedReports))           $dataIJASAGambar                      = $this->safeExport(fn() => $this->exportIJASAGambar($request));
-    //         if (in_array('sakit', $selectedReports))                 $dataLaporanSakit                     = $this->safeExport(fn() => $this->exportSakit($request));
-    //         if (in_array('cuti', $selectedReports))                  $dataLaporanCuti                      = $this->safeExport(fn() => $this->exportCuti($request));
-    //         if (in_array('izin', $selectedReports))                  $dataLaporanIzin                      = $this->safeExport(fn() => $this->exportIzin($request));
-    //         if (in_array('terlambat', $selectedReports))             $dataLaporanTerlambat                 = $this->safeExport(fn() => $this->exportTerlambat($request));
-
-    //         // Accounting
-    //         if (in_array('khps', $selectedReports))                  $dataKHPS                             = $this->safeExport(fn() => $this->exportKHPS($request));
-    //         if (in_array('laba_rugi', $selectedReports))             $dataLabaRugi                         = $this->safeExport(fn() => $this->exportLabaRugi($request));
-    //         if (in_array('neraca', $selectedReports))                $dataNeraca                           = $this->safeExport(fn() => $this->exportNeraca($request));
-    //         if (in_array('rasio', $selectedReports))                 $dataRasio                            = $this->safeExport(fn() => $this->exportRasio($request));
-    //         if (in_array('ppn', $selectedReports))                   $dataPPn                              = $this->safeExport(fn() => $this->exportPPn($request));
-    //         if (in_array('arus_kas', $selectedReports))              $dataArusKas                          = $this->safeExport(fn() => $this->exportArusKas($request));
-    //         if (in_array('taxplanning', $selectedReports))           $dataTaxPlanning                      = $this->safeExport(fn() => $this->exportTaxPlanning($request));
-
-    //         // SPI
-    //         if (in_array('spi', $selectedReports))                   $dataLaporanSPI                       = $this->safeExport(fn() => $this->exportLaporanSPI($request));
-    //         if (in_array('spiit', $selectedReports))                 $dataLaporanSPIIT                     = $this->safeExport(fn() => $this->exportLaporanSPIIT($request));
-
-    //         // IT
-    //         if (in_array('tiktok', $selectedReports))                $dataTiktok                           = $this->safeExport(fn() => $this->exportTiktok($request));
-    //         if (in_array('instagram', $selectedReports))             $dataInstagram                        = $this->safeExport(fn() => $this->exportInstagram($request));
-    //         if (in_array('bizdev', $selectedReports))                $dataBizdev                           = $this->safeExport(fn() => $this->exportBizdev($request));
-    //         if (in_array('bizdev1', $selectedReports))               $dataBizdev1                          = $this->safeExport(fn() => $this->exportBizdev1($request));
-
-    //         // 4. Return the view with all data variables and the list of selected reports
-    //         return view('exports.export', compact(
-    //             'dataExportLaporanPenjualan',
-    //             'dataExportLaporanPenjualanPerusahaan',
-    //             'dataExportLaporanPaketAdministrasi',
-    //             'dataExportStatusPaket',
-    //             'dataExportLaporanPerInstansi',
-    //             'dataExportLaporanHolding',
-    //             'dataExportLaporanStok',
-    //             'dataExportLaporanPembelianOutlet',
-    //             'dataExportLaporanNegosiasi',
-    //             'dataExportRekapPendapatanASP',
-    //             'dataExportRekapPiutangASP',
-    //             'dataLaporanPengiriman',
-    //             'dataPTBOS',
-    //             'dataIJASA',
-    //             'dataIJASAGambar',
-    //             'dataLaporanSakit',
-    //             'dataLaporanCuti',
-    //             'dataLaporanIzin',
-    //             'dataLaporanTerlambat',
-    //             'dataKHPS',
-    //             'dataLabaRugi',
-    //             'dataNeraca',
-    //             'dataRasio',
-    //             'dataPPn',
-    //             'dataArusKas',
-    //             'dataTaxPlanning',
-    //             'dataLaporanSPI',
-    //             'dataLaporanSPIIT',
-    //             'dataTiktok',
-    //             'dataInstagram',
-    //             'dataBizdev',
-    //             'dataBizdev1',
-    //             'selectedReports' // Pass the selected reports array to the view
-    //         ))
-    //         ->with('month', $this->month)
-    //         ->with('year',  $this->year);
-
-    //     } catch (\Throwable $e) {
-    //         Log::error('Error exporting all reports: ' . $e->getMessage());
-    //         return back()->withErrors('Terjadi kesalahan saat mengekspor laporan: ' . $e->getMessage());
-    //     }
-    // }
-
-    // Main entry: runs only selected exports, passes to view
     public function exportAll(Request $request)
     {
-        // read range & selected report keys
+        // Read range from the request input
         $start = $request->input('start_month');
         $end   = $request->input('end_month');
-        (new self($start, $end)); // init constructor
+
+        // --- FIX: Initialize date properties on the CURRENT instance ($this) ---
+        if ($start && $end) {
+            // If both start and end month are provided, set up the date range filter.
+            $this->startDate = Carbon::createFromFormat('Y-m', $start)->startOfMonth();
+            $this->endDate = Carbon::createFromFormat('Y-m', $end)->endOfMonth();
+            $this->useFilter = true; // IMPORTANT: Set the flag to true
+            
+            // Also update month/year for display purposes, e.g., using the start date.
+            $this->month = $this->startDate->month;
+            $this->year = $this->startDate->year;
+
+        } else {
+            // If no range is provided, the default values from __construct() will be used.
+            $this->useFilter = false;
+        }
+        // --- END OF FIX ---
 
         $selected = $request->input('reports', []);
         $empty    = ['rekap'=>[], 'chart'=>['labels'=>[], 'datasets'=>[]]];
@@ -454,82 +138,50 @@ class ExportLaporanAll extends Controller
         $data = array_fill_keys($selected, $empty);
 
         // Marketing
-        if (in_array('penjualan',               $selected))
-            $data['penjualan']             = $this->safeExport(fn() => $this->exportRekapPenjualan($request));
-        if (in_array('penjualan_perusahaan',    $selected))
-            $data['penjualan_perusahaan']  = $this->safeExport(fn() => $this->exportRekapPenjualanPerusahaan($request));
-        if (in_array('paket_admin',             $selected))
-            $data['paket_admin']           = $this->safeExport(fn() => $this->exportLaporanPaketAdministrasi($request));
-        if (in_array('status_paket',            $selected))
-            $data['status_paket']          = $this->safeExport(fn() => $this->exportStatusPaket($request));
-        if (in_array('per_instansi',            $selected))
-            $data['per_instansi']          = $this->safeExport(fn() => $this->exportLaporanPerInstansi($request));
+        if (in_array('penjualan',               $selected)) $data['penjualan']             = $this->safeExport(fn() => $this->exportRekapPenjualan($request));
+        if (in_array('penjualan_perusahaan',    $selected)) $data['penjualan_perusahaan']  = $this->safeExport(fn() => $this->exportRekapPenjualanPerusahaan($request));
+        if (in_array('paket_admin',             $selected)) $data['paket_admin']           = $this->safeExport(fn() => $this->exportLaporanPaketAdministrasi($request));
+        if (in_array('status_paket',            $selected)) $data['status_paket']          = $this->safeExport(fn() => $this->exportStatusPaket($request));
+        if (in_array('per_instansi',            $selected)) $data['per_instansi']          = $this->safeExport(fn() => $this->exportLaporanPerInstansi($request));
 
         // Procurement
-        if (in_array('holding',                 $selected))
-            $data['holding']                = $this->safeExport(fn() => $this->exportLaporanHolding($request));
-        if (in_array('stok',                    $selected))
-            $data['stok']                   = $this->safeExport(fn() => $this->exportLaporanStok($request));
-        if (in_array('pembelian_outlet',        $selected))
-            $data['pembelian_outlet']       = $this->safeExport(fn() => $this->exportLaporanPembelianOutlet($request));
-        if (in_array('negosiasi',               $selected))
-            $data['negosiasi']              = $this->safeExport(fn() => $this->exportLaporanNegosiasi($request));
+        if (in_array('holding',                 $selected)) $data['holding']                = $this->safeExport(fn() => $this->exportLaporanHolding($request));
+        if (in_array('stok',                    $selected)) $data['stok']                   = $this->safeExport(fn() => $this->exportLaporanStok($request));
+        if (in_array('pembelian_outlet',        $selected)) $data['pembelian_outlet']       = $this->safeExport(fn() => $this->exportLaporanPembelianOutlet($request));
+        if (in_array('negosiasi',               $selected)) $data['negosiasi']              = $this->safeExport(fn() => $this->exportLaporanNegosiasi($request));
 
         // Supports
-        if (in_array('pendapatan_asp',          $selected))
-            $data['pendapatan_asp']          = $this->safeExport(fn() => $this->exportRekapPendapatanASP($request));
-        if (in_array('piutang_asp',             $selected))
-            $data['piutang_asp']             = $this->safeExport(fn() => $this->exportRekapPiutangASP($request));
-        if (in_array('pengiriman',              $selected))
-            $data['pengiriman']              = $this->safeExport(fn() => $this->exportLaporanPengiriman($request));
+        if (in_array('pendapatan_asp',          $selected)) $data['pendapatan_asp']          = $this->safeExport(fn() => $this->exportRekapPendapatanASP($request));
+        if (in_array('piutang_asp',             $selected)) $data['piutang_asp']             = $this->safeExport(fn() => $this->exportRekapPiutangASP($request));
+        if (in_array('pengiriman',              $selected)) $data['pengiriman']              = $this->safeExport(fn() => $this->exportLaporanPengiriman($request));
 
         // HRGA
-        if (in_array('ptbos',                   $selected))
-            $data['ptbos']                   = $this->safeExport(fn() => $this->exportPTBOS($request));
-        if (in_array('ijasa',                   $selected))
-            $data['ijasa']                   = $this->safeExport(fn() => $this->exportIJASA($request));
-        if (in_array('ijasagambar',             $selected))
-            $data['ijasagambar']             = $this->safeExport(fn() => $this->exportIJASAGambar($request));
-        if (in_array('sakit',                   $selected))
-            $data['sakit']                   = $this->safeExport(fn() => $this->exportSakit($request));
-        if (in_array('cuti',                    $selected))
-            $data['cuti']                    = $this->safeExport(fn() => $this->exportCuti($request));
-        if (in_array('izin',                    $selected))
-            $data['izin']                    = $this->safeExport(fn() => $this->exportIzin($request));
-        if (in_array('terlambat',               $selected))
-            $data['terlambat']               = $this->safeExport(fn() => $this->exportTerlambat($request));
+        if (in_array('ptbos',                   $selected)) $data['ptbos']                   = $this->safeExport(fn() => $this->exportPTBOS($request));
+        if (in_array('ijasa',                   $selected)) $data['ijasa']                   = $this->safeExport(fn() => $this->exportIJASA($request));
+        if (in_array('ijasagambar',             $selected)) $data['ijasagambar']             = $this->safeExport(fn() => $this->exportIJASAGambar($request));
+        if (in_array('sakit',                   $selected)) $data['sakit']                   = $this->safeExport(fn() => $this->exportSakit($request));
+        if (in_array('cuti',                    $selected)) $data['cuti']                    = $this->safeExport(fn() => $this->exportCuti($request));
+        if (in_array('izin',                    $selected)) $data['izin']                    = $this->safeExport(fn() => $this->exportIzin($request));
+        if (in_array('terlambat',               $selected)) $data['terlambat']               = $this->safeExport(fn() => $this->exportTerlambat($request));
 
         // Accounting
-        if (in_array('khps',                    $selected))
-            $data['khps']                    = $this->safeExport(fn() => $this->exportKHPS($request));
-        if (in_array('laba_rugi',               $selected))
-            $data['laba_rugi']               = $this->safeExport(fn() => $this->exportLabaRugi($request));
-        if (in_array('neraca',                  $selected))
-            $data['neraca']                  = $this->safeExport(fn() => $this->exportNeraca($request));
-        if (in_array('rasio',                   $selected))
-            $data['rasio']                   = $this->safeExport(fn() => $this->exportRasio($request));
-        if (in_array('ppn',                     $selected))
-            $data['ppn']                     = $this->safeExport(fn() => $this->exportPPn($request));
-        if (in_array('arus_kas',                $selected))
-            $data['arus_kas']                = $this->safeExport(fn() => $this->exportArusKas($request));
-        if (in_array('taxplanning',             $selected))
-            $data['taxplanning']             = $this->safeExport(fn() => $this->exportTaxPlanning($request));
+        if (in_array('khps',                    $selected)) $data['khps']                    = $this->safeExport(fn() => $this->exportKHPS($request));
+        if (in_array('laba_rugi',               $selected)) $data['laba_rugi']               = $this->safeExport(fn() => $this->exportLabaRugi($request));
+        if (in_array('neraca',                  $selected)) $data['neraca']                  = $this->safeExport(fn() => $this->exportNeraca($request));
+        if (in_array('rasio',                   $selected)) $data['rasio']                   = $this->safeExport(fn() => $this->exportRasio($request));
+        if (in_array('ppn',                     $selected)) $data['ppn']                     = $this->safeExport(fn() => $this->exportPPn($request));
+        if (in_array('arus_kas',                $selected)) $data['arus_kas']                = $this->safeExport(fn() => $this->exportArusKas($request));
+        if (in_array('taxplanning',             $selected)) $data['taxplanning']             = $this->safeExport(fn() => $this->exportTaxPlanning($request));
 
         // SPI
-        if (in_array('spi',                     $selected))
-            $data['spi']                     = $this->safeExport(fn() => $this->exportLaporanSPI($request));
-        if (in_array('spiit',                   $selected))
-            $data['spiit']                   = $this->safeExport(fn() => $this->exportLaporanSPIIT($request));
+        if (in_array('spi',                     $selected)) $data['spi']                     = $this->safeExport(fn() => $this->exportLaporanSPI($request));
+        if (in_array('spiit',                   $selected)) $data['spiit']                   = $this->safeExport(fn() => $this->exportLaporanSPIIT($request));
 
         // IT
-        if (in_array('tiktok',                  $selected))
-            $data['tiktok']                  = $this->safeExport(fn() => $this->exportTiktok($request));
-        if (in_array('instagram',               $selected))
-            $data['instagram']               = $this->safeExport(fn() => $this->exportInstagram($request));
-        if (in_array('bizdev',                  $selected))
-            $data['bizdev']                  = $this->safeExport(fn() => $this->exportBizdev($request));
-        if (in_array('bizdev1',                 $selected))
-            $data['bizdev1']                 = $this->safeExport(fn() => $this->exportBizdev1($request));
+        if (in_array('tiktok',                  $selected)) $data['tiktok']                  = $this->safeExport(fn() => $this->exportTiktok($request));
+        if (in_array('instagram',               $selected)) $data['instagram']               = $this->safeExport(fn() => $this->exportInstagram($request));
+        if (in_array('bizdev',                  $selected)) $data['bizdev']                  = $this->safeExport(fn() => $this->exportBizdev($request));
+        if (in_array('bizdev1',                 $selected)) $data['bizdev1']                 = $this->safeExport(fn() => $this->exportBizdev1($request));
 
         // render the view with only those data keys
         return view('exports.export', [
@@ -537,40 +189,33 @@ class ExportLaporanAll extends Controller
             'selectedReports' => $selected,
             'month'           => $this->month,
             'year'            => $this->year,
+            'startDate'       => $this->startDate ? $this->startDate->format('Y-m') : null,
+            'endDate'         => $this->endDate ? $this->endDate->format('Y-m') : null,
+            'isFiltered'      => $this->useFilter
         ]);
     }
     
     public function exportRekapPenjualan(Request $request) 
     {
         try {
-            $startMonth = $request->input('start_month'); // format Y-m
-            $endMonth = $request->input('end_month');     // format Y-m
-    
-            $instance = new self($startMonth, $endMonth);
             $query = RekapPenjualan::query();
-    
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            }
+            $this->applyDateFilter($query, 'tanggal');
     
             $rekapPenjualan = $query->orderBy('tanggal', 'asc')->get();
     
             if ($rekapPenjualan->isEmpty()) {
-                return 'Data tidak ditemukan.';
+                return ['rekap' => [], 'chart' => []];
             }
     
             $formattedData = $rekapPenjualan->map(function ($item) {
                 return [
-                    'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
+                    'Tanggal' => Carbon::parse($item->tanggal)->translatedFormat('F Y'),
                     'Total Penjualan' => 'Rp ' . number_format($item->total_penjualan, 0, ',', '.'),
                 ];
             });
     
             $labels = $rekapPenjualan->map(function ($item) {
-                return \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
+                return Carbon::parse($item->tanggal)->translatedFormat('F Y');
             })->toArray();
     
             $data = $rekapPenjualan->pluck('total_penjualan')->toArray();
@@ -578,40 +223,21 @@ class ExportLaporanAll extends Controller
     
             $chartData = [
                 'labels' => $labels,
-                'datasets' => [
-                    [
-                        'label' => 'Total Penjualan',
-                        'data' => $data,
-                        'backgroundColor' => $backgroundColors,
-                    ],
-                ],
+                'datasets' => [['label' => 'Total Penjualan', 'data' => $data, 'backgroundColor' => $backgroundColors]],
             ];
     
-            return [
-                'rekap' => $formattedData,
-                'chart' => $chartData,
-            ];
+            return ['rekap' => $formattedData, 'chart' => $chartData];
     
         } catch (\Throwable $th) {
             Log::error('Error exporting (func ExLapAll exportRekapPenjualan): ' . $th->getMessage());
-            return 'Error: ' . $th->getMessage();
+            return ['rekap' => [], 'chart' => []];
         }
     }
     
-    
     public function exportRekapPenjualanPerusahaan(Request $request) {
         try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
-        $instance = new self($startMonth, $endMonth);
         $query = RekapPenjualanPerusahaan::query();
-
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            }
+        $this->applyDateFilter($query, 'tanggal');
 
         $rekapPenjualanPerusahaan = $query
         ->orderBy('tanggal','asc')
@@ -661,17 +287,8 @@ class ExportLaporanAll extends Controller
      
     public function exportLaporanPaketAdministrasi(Request $request) {
         try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
-        $instance = new self($startMonth, $endMonth);
         $query = LaporanPaketAdministrasi::query();
-
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            }
+        $this->applyDateFilter($query, 'tanggal');
 
         $rekapLaporanPaketAdministrasi = $query
         ->orderBy('tanggal','asc')
@@ -719,19 +336,9 @@ class ExportLaporanAll extends Controller
     }
     public function exportStatusPaket(Request $request) {
         try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
-
-        $instance = new self($startMonth, $endMonth);
     
         $query = StatusPaket::query();
-
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            }
+        $this->applyDateFilter($query, 'tanggal');
 
         $rekapStatusPaket = $query
         ->orderBy('tanggal','asc')
@@ -779,19 +386,8 @@ class ExportLaporanAll extends Controller
     }
     public function exportLaporanPerInstansi(Request $request) {
         try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
-
-        $instance = new self($startMonth, $endMonth);
-    
         $query = LaporanPerInstansi::query();
-
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            }
+        $this->applyDateFilter($query, 'tanggal');
 
         $rekapLaporanPerInstansi = $query
         ->orderBy('tanggal','asc')
@@ -841,18 +437,9 @@ class ExportLaporanAll extends Controller
     // Export untuk divisi Procurement
     public function exportLaporanHolding(Request $request) {
         try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
-        $instance = new self($startMonth, $endMonth);
-    
-        $query = LaporanHolding::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            }
+        $query = LaporanHolding::query();
+        $this->applyDateFilter($query, 'tanggal');
 
         $rekapLaporanHolding = $query
         ->orderBy('tanggal','asc')
@@ -902,19 +489,9 @@ class ExportLaporanAll extends Controller
 
     public function exportLaporanStok(Request $request) {
         try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
-
-        $instance = new self($startMonth, $endMonth);
     
         $query = LaporanStok::query();
-
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            }
+        $this->applyDateFilter($query, 'tanggal');
 
         $rekapLaporanStok = $query
         ->orderBy('tanggal','asc')
@@ -962,19 +539,9 @@ class ExportLaporanAll extends Controller
 
     public function exportLaporanPembelianOutlet(Request $request) {
         try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
 
-        $instance = new self($startMonth, $endMonth);
-    
         $query = LaporanOutlet::query();
-
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            }
+        $this->applyDateFilter($query, 'tanggal');
 
         $rekapLaporanPembelianOutlet = $query
         ->orderBy('tanggal','asc')
@@ -1021,18 +588,9 @@ class ExportLaporanAll extends Controller
 
     public function exportLaporanNegosiasi(Request $request) {
         try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
-        $instance = new self($startMonth, $endMonth);
-    
-        $query = LaporanNegosiasi::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            }
+        $query = LaporanNegosiasi::query();
+        $this->applyDateFilter($query, 'tanggal');
 
         $rekapLaporanNegosiasi = $query
         ->orderBy('tanggal','asc')
@@ -1081,19 +639,9 @@ class ExportLaporanAll extends Controller
     // Export untuk divisi Supports
     public function exportRekapPendapatanASP(Request $request) {
         try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
 
-        $instance = new self($startMonth, $endMonth);
-    
         $query = RekapPendapatanServisAsp::query();
-
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            }
+        $this->applyDateFilter($query, 'tanggal');
 
         $rekapPendapatanASP = $query
         ->orderBy('tanggal','asc')
@@ -1151,18 +699,9 @@ class ExportLaporanAll extends Controller
 
     public function exportRekapPiutangASP(Request $request) {
         try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
-        $instance = new self($startMonth, $endMonth);
-    
-        $query = RekapPiutangServisAsp::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            }
+        $query = RekapPiutangServisAsp::query();
+        $this->applyDateFilter($query, 'tanggal');
 
         $rekapPiutangServisASP = $query
         ->orderBy('tanggal','asc')
@@ -1221,19 +760,9 @@ class ExportLaporanAll extends Controller
     public function exportLaporanPengiriman(Request $request)
 {
     try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
 
-        $instance = new self($startMonth, $endMonth);
-    
         $query = LaporanDetrans::query();
-
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            }
+        $this->applyDateFilter($query, 'tanggal');
 
         $rekapPengiriman = $query
         ->orderBy('tanggal','asc')
@@ -1301,19 +830,9 @@ class ExportLaporanAll extends Controller
     // Export untuk divisi HRGA
     public function exportPTBOS(Request $request) {
     try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
 
-        $instance = new self($startMonth, $endMonth);
-    
         $query = LaporanPtBos::query();
-
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            }
+        $this->applyDateFilter($query, 'tanggal');
 
         $rekapPTBOS = $query
         ->orderBy('tanggal','asc')
@@ -1347,19 +866,9 @@ class ExportLaporanAll extends Controller
 }
     public function exportIJASA(Request $request) {
     try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
 
-        $instance = new self($startMonth, $endMonth);
-    
         $query = LaporanIjasa::query();
-
-        if (isset($instance->startDate) && isset($instance->endDate)) {
-            $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-        } elseif (isset($instance->month) && isset($instance->year)) {
-            $query->whereYear('tanggal', $instance->year)
-                ->whereMonth('tanggal', $instance->month);
-        }
+        $this->applyDateFilter($query, 'tanggal');
 
         $rekapIJASA = $query
         ->orderBy('tanggal','asc')
@@ -1394,19 +903,9 @@ class ExportLaporanAll extends Controller
 public function exportIJASAGambar(Request $request)
 {
     try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
 
-        $instance = new self($startMonth, $endMonth);
-    
         $query = IjasaGambar::query();
-
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            }
+        $this->applyDateFilter($query, 'tanggal');
 
         $ijasaGambar = $query
         ->orderBy('tanggal','asc')
@@ -1437,18 +936,9 @@ public function exportIJASAGambar(Request $request)
 
     public function exportSakit(Request $request) {
     try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
-        $instance = new self($startMonth, $endMonth);
-    
-        $query = LaporanSakit::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            }
+        $query = LaporanSakit::query();
+        $this->applyDateFilter($query, 'tanggal');
 
         $rekapSakit = $query
         ->orderBy('tanggal','asc')
@@ -1497,19 +987,9 @@ public function exportIJASAGambar(Request $request)
 
     public function exportCuti(Request $request) {
     try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
-
-        $instance = new self($startMonth, $endMonth);
-    
+ 
         $query = LaporanCuti::query();
-
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            }
+        $this->applyDateFilter($query, 'tanggal');
 
         $rekapCuti = $query
         ->orderBy('tanggal','asc')
@@ -1558,18 +1038,9 @@ public function exportIJASAGambar(Request $request)
 }
     public function exportIzin(Request $request) {
     try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
-        $instance = new self($startMonth, $endMonth);
-    
-        $query = LaporanIzin::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            }
+        $query = LaporanIzin::query();
+        $this->applyDateFilter($query, 'tanggal');
 
         $rekapIzin = $query
         ->orderBy('tanggal','asc')
@@ -1618,18 +1089,9 @@ public function exportIJASAGambar(Request $request)
 }
     public function exportTerlambat(Request $request) {
     try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
-        $instance = new self($startMonth, $endMonth);
-    
-        $query = LaporanTerlambat::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            }
+        $query = LaporanTerlambat::query();
+        $this->applyDateFilter($query, 'tanggal');
 
         $rekapTerlambat = $query
         ->orderBy('tanggal','asc')
@@ -1680,18 +1142,9 @@ public function exportIJASAGambar(Request $request)
     public function exportLabaRugi(Request $request)
     {
         try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
-        $instance = new self($startMonth, $endMonth);
-    
-        $query = LaporanLabaRugi::query();
 
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            }
+        $query = LaporanLabaRugi::query();
+        $this->applyDateFilter($query, 'tanggal');
 
         $rekapLabaRugi = $query
         ->orderBy('tanggal','asc')
@@ -1723,19 +1176,9 @@ public function exportIJASAGambar(Request $request)
     public function exportNeraca(Request $request)
     {
         try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
 
-        $instance = new self($startMonth, $endMonth);
-    
         $query = LaporanNeraca::query();
-
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            }
+        $this->applyDateFilter($query, 'tanggal');
 
         $rekapNeraca = $query
         ->orderBy('tanggal','asc')
@@ -1767,19 +1210,9 @@ public function exportIJASAGambar(Request $request)
     public function exportRasio(Request $request)
     {
         try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
 
-        $instance = new self($startMonth, $endMonth);
-    
         $query = LaporanRasio::query();
-
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            }
+        $this->applyDateFilter($query, 'tanggal');
 
         $rekapRasio = $query
         ->orderBy('tanggal','asc')
@@ -1811,19 +1244,9 @@ public function exportIJASAGambar(Request $request)
     public function exportPPn(Request $request)
     {
         try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
 
-        $instance = new self($startMonth, $endMonth);
-    
         $query = LaporanPpn::query();
-
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            }
+        $this->applyDateFilter($query, 'tanggal');
 
         $rekapPPn = $query
         ->orderBy('tanggal','asc')
@@ -1855,19 +1278,9 @@ public function exportIJASAGambar(Request $request)
     public function exportTaxPlanning(Request $request)
     {
         try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
 
-        $instance = new self($startMonth, $endMonth);
-    
         $query = LaporanTaxPlaning::query();
-
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            }
+        $this->applyDateFilter($query, 'tanggal');
 
         $rekapTaxPlanning = $query
         ->orderBy('tanggal','asc')
@@ -1899,19 +1312,9 @@ public function exportIJASAGambar(Request $request)
     public function exportTiktok(Request $request)
     {
         try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
-
-        $instance = new self($startMonth, $endMonth);
     
         $query = ItMultimediaTiktok::query();
-
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            }
+        $this->applyDateFilter($query, 'tanggal');
 
         $rekapTiktok = $query
         ->orderBy('tanggal','asc')
@@ -1942,19 +1345,9 @@ public function exportIJASAGambar(Request $request)
     public function exportInstagram(Request $request)
     {
         try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
 
-        $instance = new self($startMonth, $endMonth);
-    
         $query = ItMultimediaInstagram::query();
-
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            }
+        $this->applyDateFilter($query, 'tanggal');
 
         $rekapInstagram = $query
         ->orderBy('tanggal','asc')
@@ -1985,19 +1378,9 @@ public function exportIJASAGambar(Request $request)
     public function exportBizdev(Request $request)
     {
         try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
 
-        $instance = new self($startMonth, $endMonth);
-    
         $query = LaporanBizdevGambar::query();
-
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            }
+        $this->applyDateFilter($query, 'tanggal');
 
         $rekapBizdev = $query
         ->orderBy('tanggal','asc')
@@ -2029,19 +1412,9 @@ public function exportIJASAGambar(Request $request)
     public function exportBizdev1(Request $request)
     {
         try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
 
-        $instance = new self($startMonth, $endMonth);
-    
         $query = LaporanBizdevGambar::query();
-
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            }
+        $this->applyDateFilter($query, 'tanggal');
 
         $rekapBizdev = $query
         ->orderBy('tanggal','asc')
@@ -2070,19 +1443,9 @@ public function exportIJASAGambar(Request $request)
 
     public function exportKHPS(Request $request) {
     try {
-        $startMonth = $request->input('start_month'); // format Y-m
-        $endMonth = $request->input('end_month');     // format Y-m
 
-        $instance = new self($startMonth, $endMonth);
-    
         $query = KasHutangPiutang::query();
-
-            if (isset($instance->startDate) && isset($instance->endDate)) {
-                $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-            } elseif (isset($instance->month) && isset($instance->year)) {
-                $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            }
+        $this->applyDateFilter($query, 'tanggal');
 
         $rekapKHPS = $query
         ->orderBy('tanggal','asc')
@@ -2140,19 +1503,9 @@ public function exportIJASAGambar(Request $request)
 
         public function exportArusKas(Request $request) {
         try {
-            $startMonth = $request->input('start_month'); // format Y-m
-            $endMonth = $request->input('end_month');     // format Y-m
 
-            $instance = new self($startMonth, $endMonth);
-        
             $query = ArusKas::query();
-
-                if (isset($instance->startDate) && isset($instance->endDate)) {
-                    $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-                } elseif (isset($instance->month) && isset($instance->year)) {
-                    $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                    $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-                }
+            $this->applyDateFilter($query, 'tanggal');
 
             $rekapArusKas = $query
             ->orderBy('tanggal','asc')
@@ -2202,19 +1555,9 @@ public function exportIJASAGambar(Request $request)
     }
         public function exportLaporanSPI(Request $request) {
             try {
-            $startMonth = $request->input('start_month'); // format Y-m
-            $endMonth = $request->input('end_month');     // format Y-m
 
-            $instance = new self($startMonth, $endMonth);
-        
             $query = LaporanSPI::query();
-
-                if (isset($instance->startDate) && isset($instance->endDate)) {
-                    $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-                } elseif (isset($instance->month) && isset($instance->year)) {
-                    $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                    $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-                }
+            $this->applyDateFilter($query, 'tanggal');
 
             $laporanSPI = $query
             ->orderBy('tanggal','asc')
@@ -2246,19 +1589,9 @@ public function exportIJASAGambar(Request $request)
         public function exportLaporanSPIIT(Request $request)
     {
         try {
-            $startMonth = $request->input('start_month'); // format Y-m
-            $endMonth = $request->input('end_month');     // format Y-m
 
-            $instance = new self($startMonth, $endMonth);
-        
             $query = LaporanSPITI::query();
-
-                if (isset($instance->startDate) && isset($instance->endDate)) {
-                    $query->whereBetween('tanggal', [$instance->startDate, $instance->endDate]);
-                } elseif (isset($instance->month) && isset($instance->year)) {
-                    $search = sprintf('%04d-%02d', $instance->year, $instance->month);
-                    $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-                }
+            $this->applyDateFilter($query, 'tanggal');
 
             $laporanSPIIT = $query
             ->orderBy('tanggal','asc')
