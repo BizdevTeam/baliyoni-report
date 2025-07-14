@@ -226,9 +226,9 @@
 <div class="flex flex-col mx-auto bg-white p-6 mt-4 rounded-lg shadow-xl border border-grey-500">
 <h1 class="text-2xl font-bold text-red-600 mb-2 mx-auto font-montserrat text-start">Stock Report Chart</h1>
 
-<div class="mt-6 self-center w-full h-96 flex justify-center">
-    <div class="w-full h-96 overflow-y-auto overflow-x-hidden" style="max-height: 24rem;">
-        <canvas id="chart" style="min-width:600px; min-height:400px;"></canvas>
+<div class="mt-6 self-center w-full flex justify-center">
+    <div id="chart-wrapper" class="w-full h-96 overflow-y-auto overflow-x-hidden" style="width: 100%;">
+        <canvas id="chart"></canvas>
     </div>
 </div>
 
@@ -369,124 +369,98 @@
     return 'Rp ' + value.toLocaleString('id-ID');
 }
 
+    function formatCurrency(v){
+        if(v>=1e9) return 'Rp '+(v/1e9).toFixed(1).replace('.',',')+' M';
+        if(v>=1e6) return 'Rp '+(v/1e6).toFixed(1).replace('.',',')+' Jt';
+        return 'Rp '+v.toLocaleString('id-ID');
+        }
+        const chartData = @json($chartData);
 
-// --- CONTOH DATA ---
-// Pastikan variabel ini ada sebelum kode chart dijalankan.
-// Di Laravel, ini biasanya: var chartData = @json($chartData);
-var chartData = {
-    labels: ['Produk A', 'Produk B', 'Produk C', 'Produk D', 'Produk E'],
-    datasets: [{
-        label: 'Penjualan',
-        data: [15000000, 8500000, 23000000, 1200000000, 780000],
-        backgroundColor: 'rgba(54, 162, 235, 0.6)',
-        borderColor: 'rgba(54, 162, 235, 1)',
-        borderWidth: 1,
-        // --- PERUBAHAN JARAK BAR ---
-        // Mengatur ketebalan setiap bar menjadi 25px
-        barThickness:35,
-        borderRadius: 10,
-        barPercentage: 1.0,
-        categoryPercentage: 1.0,
-    }]
-};
-// -----------------
+        // 2) hitung tinggi yang dibutuhkan
+        const barThickness = 25;
+        const barPadding   = 10;    // ruang atas & bawah
+        const perBarHeight = barThickness + barPadding*2; // 45px
+        const labelsCount  = chartData.labels.length;
+        const totalHeight  = labelsCount * perBarHeight;
 
+        // 3) apply ke wrapper, non-responsive height
+        const wrapper = document.getElementById('chart-wrapper');
+        wrapper.style.height = totalHeight+'px';
 
-var ctx = document.getElementById('chart').getContext('2d');
-
-var horizontalBarChart = new Chart(ctx, {
-    // Tipe chart tetap 'bar'
-    type: 'bar',
-    data: chartData,
-    options: {
-        // Mengubah sumbu utama menjadi sumbu Y untuk membuat horizontal bar chart
-        indexAxis: 'y',
-        responsive: true,
-        maintainAspectRatio: false, // Memungkinkan chart menyesuaikan tinggi
-        scales: {
-            // Konfigurasi sumbu X (sekarang menjadi sumbu NILAI)
+        // 4) inisialisasi Chart
+        const ctx = document.getElementById('chart').getContext('2d');
+        new Chart(ctx, {
+        type: 'bar',
+        data: chartData,
+        options: {
+            indexAxis: 'y',           // horizontal bar
+            responsive: true,
+            maintainAspectRatio: false, // pakai height container
+            datasets: {
+            bar: {
+                barThickness,        // tetap 25px
+                categoryPercentage: 1.0,
+                barPercentage:      1.0
+            }
+            },
+            layout: {
+            padding: {
+                left: 20,
+                right: 100,
+                top: 0,
+                bottom: 0
+            }
+            },
+            scales: {
             x: {
                 beginAtZero: true,
-                title: {
-                    display: false,
-                },
-                ticks: {
-                    // Menggunakan helper untuk format label sumbu
-                    callback: function(value) {
-                        return formatCurrency(value);
-                    },
-                },
+                ticks: { callback: v => formatCurrency(v) },
+                grid: { drawBorder: false }
             },
-            // Konfigurasi sumbu Y (sekarang menjadi sumbu KATEGORI)
             y: {
-                title: {
-                    display: false,
-                },
-                // Menghilangkan garis grid pada sumbu kategori agar lebih rapi
-                grid: {
-                    display: false
-                }
+                grid: { display: false },
+                title: { display: false }
+            }
             },
-        },
-        layout: {
-            padding: {
-                // Memberi ruang di kanan untuk label nilai agar tidak terpotong
-                right: 100,
-                left: 20
-            },
-        },
-        plugins: {
-            legend: {
-                display: false, // Sembunyikan legenda
-            },
+            plugins: {
+            legend: { display: false },
             tooltip: {
                 callbacks: {
-                    label: function(tooltipItem) {
-                        const value = tooltipItem.raw;
-                        const label = tooltipItem.dataset.label || '';
-                        // Menggunakan helper untuk format tooltip
-                        return label + ': ' + formatCurrency(value);
-                    },
-                },
-            },
+                label: ctx => {
+                    const val = ctx.raw;
+                    const lbl = ctx.dataset.label||'';
+                    return lbl + ': ' + formatCurrency(val);
+                }
+                }
+            }
+            }
         },
-    },
-    // Array untuk plugin kustom
-    plugins: [{
-        // Plugin custom untuk menampilkan nilai di ujung setiap bar
+        plugins: [{
         id: 'custom_data_labels_horizontal',
-        afterDatasetsDraw: function(chart) {
+        afterDatasetsDraw(chart) {
             const { ctx, data } = chart;
-
             ctx.save();
             ctx.font = 'bold 14px sans-serif';
             ctx.fillStyle = 'black';
             ctx.textBaseline = 'middle';
 
             data.datasets.forEach((dataset, i) => {
-                const meta = chart.getDatasetMeta(i);
-                // Pastikan dataset adalah bar dan terlihat
-                if (meta.type !== 'bar' || !meta.visible) {
-                    return;
-                }
+            const meta = chart.getDatasetMeta(i);
+            if (meta.type !== 'bar' || !meta.visible) return;
 
-                meta.data.forEach((bar, index) => {
-                    const value = dataset.data[index];
-
-                    // Posisi teks di sebelah kanan bar dengan sedikit jarak (padding)
-                    const textPositionX = bar.x + 8;
-
-                    // Atur perataan teks menjadi 'left' agar dimulai dari textPositionX
-                    ctx.textAlign = 'left';
-
-                    // Tampilkan teks yang sudah diformat oleh helper
-                    ctx.fillText(formatCurrency(value), textPositionX, bar.y);
-                });
+            meta.data.forEach((bar, index) => {
+                const value = dataset.data[index];
+                const xPos = bar.x + 8;
+                ctx.textAlign = 'left';
+                // raw data dengan "Rp " prefix
+                ctx.fillText('Rp ' + value.toLocaleString('id-ID'), xPos, bar.y);
             });
+            });
+
             ctx.restore();
-        }
-    }]
-});
+            }
+        }]
+    });
 
     async function exportToPDF() {
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
