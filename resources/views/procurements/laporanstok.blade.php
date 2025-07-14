@@ -356,106 +356,137 @@
         });
     });
    
-    var chartData = @json($chartData);
+    function formatCurrency(value) {
+    if (value >= 1000000000) {
+        // Format ke Miliar (M) dengan satu angka desimal
+        return 'Rp ' + (value / 1000000000).toFixed(1).replace('.', ',') + ' M';
+    }
+    if (value >= 1000000) {
+        // Format ke Juta (Jt) dengan satu angka desimal
+        return 'Rp ' + (value / 1000000).toFixed(1).replace('.', ',') + ' Jt';
+    }
+    // Untuk nilai di bawah 1 juta, gunakan format lokal IDR
+    return 'Rp ' + value.toLocaleString('id-ID');
+}
 
-    var ctx = document.getElementById('chart').getContext('2d');
 
-    var horizontalBarChart = new Chart(ctx, {
-        // Tipe chart tetap 'bar'
-        type: 'bar',
-        data: {
-            labels: chartData.labels,
-            datasets: chartData.datasets,
+// --- CONTOH DATA ---
+// Pastikan variabel ini ada sebelum kode chart dijalankan.
+// Di Laravel, ini biasanya: var chartData = @json($chartData);
+var chartData = {
+    labels: ['Produk A', 'Produk B', 'Produk C', 'Produk D', 'Produk E'],
+    datasets: [{
+        label: 'Penjualan',
+        data: [15000000, 8500000, 23000000, 1200000000, 780000],
+        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1,
+        // --- PERUBAHAN JARAK BAR ---
+        // Mengatur ketebalan setiap bar menjadi 25px
+        barThickness:35,
+        borderRadius: 10,
+        barPercentage: 1.0,
+        categoryPercentage: 1.0,
+    }]
+};
+// -----------------
+
+
+var ctx = document.getElementById('chart').getContext('2d');
+
+var horizontalBarChart = new Chart(ctx, {
+    // Tipe chart tetap 'bar'
+    type: 'bar',
+    data: chartData,
+    options: {
+        // Mengubah sumbu utama menjadi sumbu Y untuk membuat horizontal bar chart
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false, // Memungkinkan chart menyesuaikan tinggi
+        scales: {
+            // Konfigurasi sumbu X (sekarang menjadi sumbu NILAI)
+            x: {
+                beginAtZero: true,
+                title: {
+                    display: false,
+                },
+                ticks: {
+                    // Menggunakan helper untuk format label sumbu
+                    callback: function(value) {
+                        return formatCurrency(value);
+                    },
+                },
+            },
+            // Konfigurasi sumbu Y (sekarang menjadi sumbu KATEGORI)
+            y: {
+                title: {
+                    display: false,
+                },
+                // Menghilangkan garis grid pada sumbu kategori agar lebih rapi
+                grid: {
+                    display: false
+                }
+            },
         },
-        options: {
-            // --- PERUBAHAN UTAMA ---
-            // Mengubah sumbu utama menjadi sumbu Y
-            indexAxis: 'y',
-            // ---------------------
-
-            responsive: true,
-            maintainAspectRatio: false, // Memungkinkan chart menyesuaikan tinggi
-            plugins: {
-                legend: {
-                    display: false, // Sembunyikan legenda
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(tooltipItem) {
-                            let value = tooltipItem.raw;
-                            // Menggunakan tooltipItem.dataset.label yang lebih standar
-                            return tooltipItem.dataset.label + ': ' + 'Rp ' + value.toLocaleString('id-ID');
-                        },
-                    },
-                },
+        layout: {
+            padding: {
+                // Memberi ruang di kanan untuk label nilai agar tidak terpotong
+                right: 100,
+                left: 20
             },
-            scales: {
-                // Konfigurasi sumbu X (sekarang menjadi sumbu NILAI)
-                x: {
-                    beginAtZero: true,
-                    title: {
-                        display: false,
-                    },
-                    ticks: {
-                        // Format angka pada sumbu nilai
-                        callback: function(value) {
-                            if (value >= 1000000) {
-                                return 'Rp ' + (value / 1000000) + ' Jt';
-                            }
-                            return 'Rp ' + value.toLocaleString('id-ID');
-                        },
-                    },
-                },
-                // Konfigurasi sumbu Y (sekarang menjadi sumbu KATEGORI)
-                y: {
-                    title: {
-                        display: false,
-                    },
-                },
+        },
+        plugins: {
+            legend: {
+                display: false, // Sembunyikan legenda
             },
-            layout: {
-                padding: {
-                    // Beri ruang di kanan untuk label nilai
-                    right: 80,
-                    left: 20
+            tooltip: {
+                callbacks: {
+                    label: function(tooltipItem) {
+                        const value = tooltipItem.raw;
+                        const label = tooltipItem.dataset.label || '';
+                        // Menggunakan helper untuk format tooltip
+                        return label + ': ' + formatCurrency(value);
+                    },
                 },
             },
         },
-        plugins: [{
-            // Plugin custom untuk menampilkan nilai di ujung setiap bar
-            id: 'custom_data_labels_horizontal',
-            afterDatasetsDraw: function(chart) {
-                const { ctx, data, chartArea: { top, bottom, left, right }, scales: { x, y } } = chart;
-                
-                ctx.save();
-                ctx.font = 'bold 14px sans-serif';
-                ctx.fillStyle = 'black';
-                ctx.textBaseline = 'middle';
+    },
+    // Array untuk plugin kustom
+    plugins: [{
+        // Plugin custom untuk menampilkan nilai di ujung setiap bar
+        id: 'custom_data_labels_horizontal',
+        afterDatasetsDraw: function(chart) {
+            const { ctx, data } = chart;
 
-                data.datasets.forEach((dataset, i) => {
-                    const meta = chart.getDatasetMeta(i);
-                    // Pastikan dataset adalah bar dan terlihat
-                    if (meta.type !== 'bar' || !meta.visible) {
-                        return;
-                    }
+            ctx.save();
+            ctx.font = 'bold 14px sans-serif';
+            ctx.fillStyle = 'black';
+            ctx.textBaseline = 'middle';
 
-                    meta.data.forEach((bar, index) => {
-                        const value = dataset.data[index];
-                        
-                        // Posisi teks di sebelah kanan bar
-                        const textPositionX = bar.x + 8;
-                        
-                        // Atur perataan teks
-                        ctx.textAlign = 'left';
-                        
-                        // Tampilkan teks
-                        ctx.fillText('Rp ' + value.toLocaleString('id-ID'), textPositionX, bar.y);
-                    });
+            data.datasets.forEach((dataset, i) => {
+                const meta = chart.getDatasetMeta(i);
+                // Pastikan dataset adalah bar dan terlihat
+                if (meta.type !== 'bar' || !meta.visible) {
+                    return;
+                }
+
+                meta.data.forEach((bar, index) => {
+                    const value = dataset.data[index];
+
+                    // Posisi teks di sebelah kanan bar dengan sedikit jarak (padding)
+                    const textPositionX = bar.x + 8;
+
+                    // Atur perataan teks menjadi 'left' agar dimulai dari textPositionX
+                    ctx.textAlign = 'left';
+
+                    // Tampilkan teks yang sudah diformat oleh helper
+                    ctx.fillText(formatCurrency(value), textPositionX, bar.y);
                 });
-                ctx.restore();
-            }
-        }]
-    });
+            });
+            ctx.restore();
+        }
+    }]
+});
 
     async function exportToPDF() {
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
