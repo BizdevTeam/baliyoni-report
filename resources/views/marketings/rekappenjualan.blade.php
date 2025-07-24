@@ -451,10 +451,6 @@
             });
         }
 
-        /**
-         * Exports the chart and table data to a PDF.
-         * It sends the data to a server-side endpoint to generate the PDF.
-         */
         async function exportToPDF() {
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
             if (!csrfToken) {

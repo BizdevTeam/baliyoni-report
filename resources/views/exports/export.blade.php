@@ -814,7 +814,7 @@
                                     <thead>
                                         <tr>
                                             <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
-                                            <th class="border border-black p-1 text-center text-[10px] font-serif">Pelaksana</th>
+                                            <th class="border border-black p-1 text-center text-[10px] font-serif">Divisi</th>
                                             <th class="border border-black p-1 text-center text-[10px] font-serif">Total Sakit (Hari)</th>
                                         </tr>
                                     </thead>
@@ -822,7 +822,7 @@
                                         @forelse($reportData['rekap'] as $item)
                                             <tr>
                                                 <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Tanggal'] }}</td>
-                                                <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Nama'] }}</td>
+                                                <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Divisi'] }}</td>
                                                 <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Total'] }}</td>
                                             </tr>
                                         @empty
@@ -833,7 +833,7 @@
                             </div>
                             <div>
                                 <h2 class="text-center font-serif">Grafik Laporan</h2>
-                                <canvas class="chart-export-rp w-[700px] max-h-[500px]" data-chart='@json($reportData["chart"])'></canvas>
+                                <canvas class="chart-export-hrga w-[700px] max-h-[500px]" data-chart='@json($reportData["chart"])'></canvas>
                             </div>
                         </div>
                         <div class="border-t text-center pt-4"><p class="text-sm font-serif mt-2">Laporan HRGA - Laporan Sakit</p></div>
@@ -848,7 +848,7 @@
                                     <thead>
                                         <tr>
                                             <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
-                                            <th class="border border-black p-1 text-center text-[10px] font-serif">Pelaksana</th>
+                                            <th class="border border-black p-1 text-center text-[10px] font-serif">Divisi</th>
                                             <th class="border border-black p-1 text-center text-[10px] font-serif">Total Cuti (Hari)</th>
                                         </tr>
                                     </thead>
@@ -856,7 +856,7 @@
                                         @forelse($reportData['rekap'] as $item)
                                             <tr>
                                                 <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Tanggal'] }}</td>
-                                                <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Nama'] }}</td>
+                                                <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Divisi'] }}</td>
                                                 <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Total'] }}</td>
                                             </tr>
                                         @empty
@@ -867,7 +867,7 @@
                             </div>
                             <div>
                                 <h2 class="text-center font-serif">Grafik Laporan</h2>
-                                <canvas class="chart-export-rp w-[700px] max-h-[500px]" data-chart='@json($reportData["chart"])'></canvas>
+                                <canvas class="chart-export-hrga w-[700px] max-h-[500px]" data-chart='@json($reportData["chart"])'></canvas>
                             </div>
                         </div>
                         <div class="border-t text-center pt-4"><p class="text-sm font-serif mt-2">Laporan HRGA - Laporan Cuti</p></div>
@@ -882,7 +882,7 @@
                                     <thead>
                                         <tr>
                                             <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
-                                            <th class="border border-black p-1 text-center text-[10px] font-serif">Pelaksana</th>
+                                            <th class="border border-black p-1 text-center text-[10px] font-serif">Divisi</th>
                                             <th class="border border-black p-1 text-center text-[10px] font-serif">Total Izin (Hari)</th>
                                         </tr>
                                     </thead>
@@ -890,7 +890,7 @@
                                         @forelse($reportData['rekap'] as $item)
                                             <tr>
                                                 <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Tanggal'] }}</td>
-                                                <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Nama'] }}</td>
+                                                <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Divisi'] }}</td>
                                                 <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Total'] }}</td>
                                             </tr>
                                         @empty
@@ -901,7 +901,7 @@
                             </div>
                             <div>
                                 <h2 class="text-center font-serif">Grafik Laporan</h2>
-                                <canvas class="chart-export-rp w-[700px] max-h-[500px]" data-chart='@json($reportData["chart"])'></canvas>
+                                <canvas class="chart-export-hrga w-[700px] max-h-[500px]" data-chart='@json($reportData["chart"])'></canvas>
                             </div>
                         </div>
                         <div class="border-t text-center pt-4"><p class="text-sm font-serif mt-2">Laporan HRGA - Laporan Izin</p></div>
@@ -916,7 +916,7 @@
                                     <thead>
                                         <tr>
                                             <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
-                                            <th class="border border-black p-1 text-center text-[10px] font-serif">Pelaksana</th>
+                                            <th class="border border-black p-1 text-center text-[10px] font-serif">Divisi</th>
                                             <th class="border border-black p-1 text-center text-[10px] font-serif">Total Terlambat (Hari)</th>
                                         </tr>
                                     </thead>
@@ -924,7 +924,7 @@
                                         @forelse($reportData['rekap'] as $item)
                                             <tr>
                                                 <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Tanggal'] }}</td>
-                                                <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Nama'] }}</td>
+                                                <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Divisi'] }}</td>
                                                 <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Total'] }}</td>
                                             </tr>
                                         @empty
@@ -935,7 +935,7 @@
                             </div>
                             <div>
                                 <h2 class="text-center font-serif">Grafik Laporan</h2>
-                                <canvas class="chart-export-rp w-[700px] max-h-[500px]" data-chart='@json($reportData["chart"])'></canvas>
+                                <canvas class="chart-export-hrga w-[700px] max-h-[500px]" data-chart='@json($reportData["chart"])'></canvas>
                             </div>
                         </div>
                         <div class="border-t text-center pt-4"><p class="text-sm font-serif mt-2">Laporan HRGA - Laporan Terlambat</p></div>
@@ -1027,6 +1027,14 @@ document.addEventListener('DOMContentLoaded', function () {
         new Chart(canvas.getContext('2d'), {
             type: 'bar', data: chartData,
             options: { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { display: false } }, scales: { y: { ticks: { callback: value => new Intl.NumberFormat('id-ID').format(value) + ' Paket' } } } }
+        });
+    });
+    // Fungsi untuk grafik dengan format 'Paket'
+    document.querySelectorAll('.chart-export-hrga').forEach(canvas => {
+       const chartData = JSON.parse(canvas.dataset.chart);
+        new Chart(canvas.getContext('2d'), {
+            type: 'bar', data: chartData,
+            options: { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { display: false } }, scales: { y: { ticks: { callback: value => new Intl.NumberFormat('id-ID').format(value) + ' Kali' } } } }
         });
     });
 });

@@ -9,10 +9,12 @@ use App\Models\ItMultimediaTiktok;
 use App\Models\KasHutangPiutang;
 use App\Models\LaporanBizdevGambar;
 use App\Models\LaporanCuti;
+use App\Models\LaporanCutiDivisi;
 use App\Models\LaporanDetrans;
 use App\Models\LaporanHolding;
 use App\Models\LaporanIjasa;
 use App\Models\LaporanIzin;
+use App\Models\LaporanIzinDivisi;
 use App\Models\LaporanLabaRugi;
 use App\Models\LaporanNegosiasi;
 use App\Models\LaporanNeraca;
@@ -23,11 +25,13 @@ use App\Models\LaporanPpn;
 use App\Models\LaporanPtBos;
 use App\Models\LaporanRasio;
 use App\Models\LaporanSakit;
+use App\Models\LaporanSakitDivisi;
 use App\Models\LaporanSPI;
 use App\Models\LaporanSPITI;
 use App\Models\LaporanStok;
 use App\Models\LaporanTaxPlaning;
 use App\Models\LaporanTerlambat;
+use App\Models\LaporanTerlambatDivisi;
 use App\Models\RekapPendapatanServisAsp;
 use App\Models\RekapPenjualan;
 use App\Models\RekapPenjualanPerusahaan;
@@ -334,7 +338,6 @@ class AdminContentController extends Controller
             return 'Error: ' . $th->getMessage();
         }
     }
-
 
     public function exportRekapPenjualanPerusahaan(Request $request)
     {
@@ -1582,6 +1585,66 @@ class AdminContentController extends Controller
     }
 
     // Export untuk divisi HRGA
+    // public function exportSakit(Request $request)
+    // {
+    //     try {
+    //         $startMonth = $request->input('start_month'); // format Y-m
+    //         $endMonth = $request->input('end_month');     // format Y-m
+    //         $instance = new self($startMonth, $endMonth);
+
+    //         // Bangun query berdasarkan data constructor
+    //         $query = LaporanSakit::query();
+
+    //         if ($request->has('filter')) {
+    //             $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
+    //         }
+    //         $query = $instance->applyDateFilter($query);
+
+    //         $rekapSakit = $query
+    //             ->orderBy('tanggal', 'asc')
+    //             ->get();
+
+    //         if ($rekapSakit->isEmpty()) {
+    //             return 'Data tidak ditemukan.';
+    //         }
+
+    //         $formattedData =  $rekapSakit->map(function ($item) {
+    //             return [
+    //                 'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
+    //                 'Nama' => $item->nama,
+    //                 'Total' => number_format($item->total_sakit, 0, ',', '.'),
+    //             ];
+    //         });
+
+    //         // Siapkan data untuk chart
+    //         $labels = $rekapSakit->map(function($item) {
+    //             $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
+    //             return $item->nama. ' - ' .$formattedDate;
+    //         })->toArray();
+    //         $data = $rekapSakit->pluck('total_sakit')->toArray();
+    //         $backgroundColors = array_map(fn() => $this->getRandomRGBA(), $data);
+
+    //         $chartData = [
+    //             'labels' => $labels,
+    //             'datasets' => [
+    //                 [
+    //                     'label' => 'Total Cuti',
+    //                     'data' => $data,
+    //                     'backgroundColor' => $backgroundColors,
+    //                 ],
+    //             ],
+    //         ];
+
+    //         return [
+    //             'rekap' => $formattedData,
+    //             'chart' => $chartData,
+    //         ];
+    //     } catch (\Throwable $th) {
+    //         Log::error('Error exporting  (func exportSakit): ' . $th->getMessage());
+    //         return 'Error: ' . $th->getMessage();
+    //     }
+    // }
+
     public function exportSakit(Request $request)
     {
         try {
@@ -1590,7 +1653,7 @@ class AdminContentController extends Controller
             $instance = new self($startMonth, $endMonth);
 
             // Bangun query berdasarkan data constructor
-            $query = LaporanSakit::query();
+            $query = LaporanSakitDivisi::query();
 
             if ($request->has('filter')) {
                 $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
@@ -1608,7 +1671,7 @@ class AdminContentController extends Controller
             $formattedData =  $rekapSakit->map(function ($item) {
                 return [
                     'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
-                    'Nama' => $item->nama,
+                    'Divisi' => $item->divisi,
                     'Total' => number_format($item->total_sakit, 0, ',', '.'),
                 ];
             });
@@ -1616,7 +1679,7 @@ class AdminContentController extends Controller
             // Siapkan data untuk chart
             $labels = $rekapSakit->map(function($item) {
                 $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
-                return $item->nama. ' - ' .$formattedDate;
+                return $item->divisi. ' - ' .$formattedDate;
             })->toArray();
             $data = $rekapSakit->pluck('total_sakit')->toArray();
             $backgroundColors = array_map(fn() => $this->getRandomRGBA(), $data);
@@ -1625,7 +1688,7 @@ class AdminContentController extends Controller
                 'labels' => $labels,
                 'datasets' => [
                     [
-                        'label' => 'Total Cuti',
+                        'label' => 'Total Sakit',
                         'data' => $data,
                         'backgroundColor' => $backgroundColors,
                     ],
@@ -1644,62 +1707,126 @@ class AdminContentController extends Controller
 
     public function ChartTotalSakit(Request $request)
     {
-        try {
-            $startMonth = $request->input('start_month'); // format Y-m
-            $endMonth = $request->input('end_month');     // format Y-m
+       try {
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+        $instance = new self($startMonth, $endMonth);
 
-            $instance = new self($startMonth, $endMonth);
+        // Query: SUM(total_sakit) per divisi dalam rentang tanggal
+        $query = LaporanSakitDivisi::query()
+                ->select('divisi', DB::raw('SUM(total_sakit) as total_sakit_divisi') // Menjumlahkan total_sakit
+                )->groupBy('divisi'); // Mengelompokkan hasil berdasarkan kolom 'divisi'
 
-            if ($request->has('filter')) {
-                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
-            }
+            // 3. Terapkan filter tanggal yang sudah diinisialisasi
+            $this->applyDateFilter($query, 'tanggal');
 
-            $query = LaporanSakit::query();
-            $query = $instance->applyDateFilter($query);
+            // 4. Eksekusi query dan urutkan berdasarkan nama divisi
+            $rekapSakit = $query->orderBy('divisi', 'asc')->get();
 
-            $rekapSakit = $query
-                ->orderBy('tanggal', 'asc')
-                ->get();
-
+            // 5. Periksa jika data kosong
             if ($rekapSakit->isEmpty()) {
-                return 'Data tidak ditemukan.';
+                // Kembalikan struktur chart kosong jika tidak ada data
+                return [
+                    'chart' => [
+                        'labels' => [],
+                        'datasets' => [['label' => 'Total Sakit per Divisi', 'data' => [], 'backgroundColor' => []]]
+                    ]
+                ];
             }
 
-            $akumulasiData = [];
-            foreach ($rekapSakit as $item) {
-                $namaKey = $item->nama;
-
-                if (!isset($akumulasiData[$namaKey])) {
-                    $akumulasiData[$namaKey] = 0;
-                }
-                $akumulasiData[$namaKey] += $item->total_sakit;
-            }
-        
-            // Siapkan data untuk chart
-            $labels = array_keys($akumulasiData);
-            $data = array_values($akumulasiData);
+            // 6. Siapkan data untuk dikirim ke view (Chart.js)
+            $labels = $rekapSakit->pluck('divisi')->toArray();
+            $data = $rekapSakit->pluck('total_sakit_divisi')->toArray();
             $backgroundColors = array_map(fn() => $this->getRandomRGBA(), $data);
 
             $chartData = [
                 'labels' => $labels,
                 'datasets' => [
                     [
-                        'label' => 'Total Sakit per Bulan',
+                        'label' => 'Total Sakit', // Label untuk dataset
                         'data' => $data,
                         'backgroundColor' => $backgroundColors,
                     ],
                 ],
             ];
+
             return [
                 'chart' => $chartData,
             ];
+
         } catch (\Throwable $th) {
-            Log::error('Error exporting (func ChartTotalSakit): ' . $th->getMessage());
-            return 'Error: ' . $th->getMessage();
-        }
+            Log::error('Error generating ChartTotalSakit: ' . $th->getMessage());
+            // Kembalikan struktur chart kosong jika terjadi error
+            return [
+                'chart' => [
+                    'labels' => ['Error'],
+                    'datasets' => [['label' => 'Error', 'data' => [], 'backgroundColor' => ['#FF0000']]]
+                ]
+            ];
+        }  
     }
 
     // Export untuk divisi HRGA
+    // public function exportCuti(Request $request)
+    // {
+    //     try {
+    //         $startMonth = $request->input('start_month'); // format Y-m
+    //         $endMonth = $request->input('end_month');     // format Y-m
+
+    //         $instance = new self($startMonth, $endMonth);
+
+    //         // Bangun query berdasarkan data constructor
+    //         $query = LaporanCuti::query();
+
+    //         if ($request->has('filter')) {
+    //             $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
+    //         }
+    //         $query = $instance->applyDateFilter($query);
+
+    //         $rekapCuti = $query
+    //             ->orderBy('tanggal', 'asc')
+    //             ->get();
+
+    //         if ($rekapCuti->isEmpty()) {
+    //             return 'Data tidak ditemukan.';
+    //         }
+    //         $formattedData =  $rekapCuti->map(function ($item) {
+    //             return [
+    //                 'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
+    //                 'Nama' => $item->nama,
+    //                 'Total' => number_format($item->total_cuti, 0, ',', '.'),
+    //             ];
+    //         });
+
+    //         // Siapkan data untuk chart
+    //         $labels = $rekapCuti->map(function($item) {
+    //             $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
+    //             return $item->nama. ' - ' .$formattedDate;
+    //         })->toArray();
+
+    //         $data = $rekapCuti->pluck('total_cuti')->toArray();
+    //         $backgroundColors = array_map(fn() => $this->getRandomRGBA(), $data);
+
+    //         $chartData = [
+    //             'labels' => $labels,
+    //             'datasets' => [
+    //                 [
+    //                     'label' => 'Total Cuti',
+    //                     'data' => $data,
+    //                     'backgroundColor' => $backgroundColors,
+    //                 ],
+    //             ],
+    //         ];
+
+    //         return [
+    //             'rekap' => $formattedData,
+    //             'chart' => $chartData,
+    //         ];
+    //     } catch (\Throwable $th) {
+    //         Log::error('Error exporting  (func exportCuti): ' . $th->getMessage());
+    //         return 'Error: ' . $th->getMessage();
+    //     }
+    // }
     public function exportCuti(Request $request)
     {
         try {
@@ -1709,7 +1836,7 @@ class AdminContentController extends Controller
             $instance = new self($startMonth, $endMonth);
 
             // Bangun query berdasarkan data constructor
-            $query = LaporanCuti::query();
+            $query = LaporanCutiDivisi::query();
 
             if ($request->has('filter')) {
                 $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
@@ -1726,7 +1853,7 @@ class AdminContentController extends Controller
             $formattedData =  $rekapCuti->map(function ($item) {
                 return [
                     'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
-                    'Nama' => $item->nama,
+                    'Divisi' => $item->divisi,
                     'Total' => number_format($item->total_cuti, 0, ',', '.'),
                 ];
             });
@@ -1734,7 +1861,7 @@ class AdminContentController extends Controller
             // Siapkan data untuk chart
             $labels = $rekapCuti->map(function($item) {
                 $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
-                return $item->nama. ' - ' .$formattedDate;
+                return $item->divisi. ' - ' .$formattedDate;
             })->toArray();
 
             $data = $rekapCuti->pluck('total_cuti')->toArray();
@@ -1764,61 +1891,126 @@ class AdminContentController extends Controller
     public function ChartTotalCuti(Request $request)
     {
         try {
-            $startMonth = $request->input('start_month'); // format Y-m
-            $endMonth = $request->input('end_month');     // format Y-m
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+        $instance = new self($startMonth, $endMonth);
 
-            $instance = new self($startMonth, $endMonth);
+        // Query: SUM(total_sakit) per divisi dalam rentang tanggal
+        $query = LaporanCutiDivisi::query()
+                ->select('divisi', DB::raw('SUM(total_cuti) as total_cuti_divisi') // Menjumlahkan total_sakit
+                )->groupBy('divisi'); // Mengelompokkan hasil berdasarkan kolom 'divisi'
 
-            if ($request->has('filter')) {
-                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
-            }
+            // 3. Terapkan filter tanggal yang sudah diinisialisasi
+            $this->applyDateFilter($query, 'tanggal');
 
-            $query = LaporanCuti::query();
-            $query = $instance->applyDateFilter($query);
+            // 4. Eksekusi query dan urutkan berdasarkan nama divisi
+            $rekapCuti = $query->orderBy('divisi', 'asc')->get();
 
-            $rekapCuti = $query
-                ->orderBy('tanggal', 'asc')
-                ->get();
-
+            // 5. Periksa jika data kosong
             if ($rekapCuti->isEmpty()) {
-                return 'Data tidak ditemukan.';
+                // Kembalikan struktur chart kosong jika tidak ada data
+                return [
+                    'chart' => [
+                        'labels' => [],
+                        'datasets' => [['label' => 'Total Cuti per Divisi', 'data' => [], 'backgroundColor' => []]]
+                    ]
+                ];
             }
 
-            $akumulasiData = [];
-            foreach ($rekapCuti as $item) {
-                $namaKey = $item->nama;
-
-                if (!isset($akumulasiData[$namaKey])) {
-                    $akumulasiData[$namaKey] = 0;
-                }
-                $akumulasiData[$namaKey] += $item->total_cuti;
-            }        
-
-            // Siapkan data untuk chart
-            $labels = array_keys($akumulasiData);
-            $data = array_values($akumulasiData);
+            // 6. Siapkan data untuk dikirim ke view (Chart.js)
+            $labels = $rekapCuti->pluck('divisi')->toArray();
+            $data = $rekapCuti->pluck('total_cuti_divisi')->toArray();
             $backgroundColors = array_map(fn() => $this->getRandomRGBA(), $data);
 
             $chartData = [
                 'labels' => $labels,
                 'datasets' => [
                     [
-                        'label' => 'Total Cuti per Bulan',
+                        'label' => 'Total Cuti', // Label untuk dataset
                         'data' => $data,
                         'backgroundColor' => $backgroundColors,
                     ],
                 ],
             ];
+
             return [
                 'chart' => $chartData,
             ];
+
         } catch (\Throwable $th) {
-            Log::error('Error exporting (func ChartTotalCuti): ' . $th->getMessage());
-            return 'Error: ' . $th->getMessage();
-        }
+            Log::error('Error generating ChartTotalCuti: ' . $th->getMessage());
+            // Kembalikan struktur chart kosong jika terjadi error
+            return [
+                'chart' => [
+                    'labels' => ['Error'],
+                    'datasets' => [['label' => 'Error', 'data' => [], 'backgroundColor' => ['#FF0000']]]
+                ]
+            ];
+        }  
     }
 
     // Export untuk divisi HRGA
+    // public function exportIzin(Request $request)
+    // {
+    //     try {
+    //         $startMonth = $request->input('start_month'); // format Y-m
+    //         $endMonth = $request->input('end_month');     // format Y-m
+    //         $instance = new self($startMonth, $endMonth);
+
+    //         // Bangun query berdasarkan data constructor
+    //         $query = LaporanIzin::query();
+
+    //         if ($request->has('filter')) {
+    //             $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
+    //         }
+    //         $query = $instance->applyDateFilter($query);
+
+    //         $rekapIzin = $query
+    //             ->orderBy('tanggal', 'asc')
+    //             ->get();
+
+    //         if ($rekapIzin->isEmpty()) {
+    //             return 'Data tidak ditemukan.';
+    //         }
+
+
+    //         $formattedData =  $rekapIzin->map(function ($item) {
+    //             return [
+    //                 'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
+    //                 'Nama' => $item->nama,
+    //                 'Total' => number_format($item->total_izin, 0, ',', '.'),
+    //             ];
+    //         });
+
+    //         // Siapkan data untuk chart
+    //         $labels = $rekapIzin->map(function($item) {
+    //             $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
+    //             return $item->nama. ' - ' .$formattedDate;
+    //         })->toArray();
+
+    //         $data = $rekapIzin->pluck('total_izin')->toArray();
+    //         $backgroundColors = array_map(fn() => $this->getRandomRGBA(), $data);
+
+    //         $chartData = [
+    //             'labels' => $labels,
+    //             'datasets' => [
+    //                 [
+    //                     'label' => 'Total Cuti',
+    //                     'data' => $data,
+    //                     'backgroundColor' => $backgroundColors,
+    //                 ],
+    //             ],
+    //         ];
+
+    //         return [
+    //             'rekap' => $formattedData,
+    //             'chart' => $chartData,
+    //         ];
+    //     } catch (\Throwable $th) {
+    //         Log::error('Error exporting  (func exportIzin): ' . $th->getMessage());
+    //         return 'Error: ' . $th->getMessage();
+    //     }
+    // }
     public function exportIzin(Request $request)
     {
         try {
@@ -1827,7 +2019,7 @@ class AdminContentController extends Controller
             $instance = new self($startMonth, $endMonth);
 
             // Bangun query berdasarkan data constructor
-            $query = LaporanIzin::query();
+            $query = LaporanIzinDivisi::query();
 
             if ($request->has('filter')) {
                 $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
@@ -1842,11 +2034,10 @@ class AdminContentController extends Controller
                 return 'Data tidak ditemukan.';
             }
 
-
             $formattedData =  $rekapIzin->map(function ($item) {
                 return [
                     'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
-                    'Nama' => $item->nama,
+                    'Divisi' => $item->divisi,
                     'Total' => number_format($item->total_izin, 0, ',', '.'),
                 ];
             });
@@ -1854,7 +2045,7 @@ class AdminContentController extends Controller
             // Siapkan data untuk chart
             $labels = $rekapIzin->map(function($item) {
                 $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
-                return $item->nama. ' - ' .$formattedDate;
+                return $item->divisi. ' - ' .$formattedDate;
             })->toArray();
 
             $data = $rekapIzin->pluck('total_izin')->toArray();
@@ -1884,62 +2075,125 @@ class AdminContentController extends Controller
     public function ChartTotalIzin(Request $request)
     {
         try {
-            $startMonth = $request->input('start_month'); // format Y-m
-            $endMonth = $request->input('end_month');     // format Y-m
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+        $instance = new self($startMonth, $endMonth);
 
-            $instance = new self($startMonth, $endMonth);
+        // Query: SUM(total_sakit) per divisi dalam rentang tanggal
+        $query = LaporanIzinDivisi::query()
+                ->select('divisi', DB::raw('SUM(total_izin) as total_izin_divisi') // Menjumlahkan total_izin
+                )->groupBy('divisi'); // Mengelompokkan hasil berdasarkan kolom 'divisi'
 
-            if ($request->has('filter')) {
-                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
-            }
+            // 3. Terapkan filter tanggal yang sudah diinisialisasi
+            $this->applyDateFilter($query, 'tanggal');
 
-            $query = LaporanIzin::query();
-            $query = $instance->applyDateFilter($query);
+            // 4. Eksekusi query dan urutkan berdasarkan nama divisi
+            $rekapIzin = $query->orderBy('divisi', 'asc')->get();
 
-            $rekapIzin = $query
-                ->orderBy('tanggal', 'asc')
-                ->get();
-
+            // 5. Periksa jika data kosong
             if ($rekapIzin->isEmpty()) {
-                return 'Data tidak ditemukan.';
+                // Kembalikan struktur chart kosong jika tidak ada data
+                return [
+                    'chart' => [
+                        'labels' => [],
+                        'datasets' => [['label' => 'Total Izin per Divisi', 'data' => [], 'backgroundColor' => []]]
+                    ]
+                ];
             }
 
-            // Akumulasi total_sakit berdasarkan bulan
-            $akumulasiData = [];
-            foreach ($rekapIzin as $item) {
-                $namaKey = $item->nama;
-
-                if (!isset($akumulasiData[$namaKey])) {
-                    $akumulasiData[$namaKey] = 0;
-                }
-                $akumulasiData[$namaKey] += $item->total_izin;
-            }    
-
-            // Siapkan data untuk chart
-            $labels = array_keys($akumulasiData);
-            $data = array_values($akumulasiData);
+            // 6. Siapkan data untuk dikirim ke view (Chart.js)
+            $labels = $rekapIzin->pluck('divisi')->toArray();
+            $data = $rekapIzin->pluck('total_izin_divisi')->toArray();
             $backgroundColors = array_map(fn() => $this->getRandomRGBA(), $data);
 
             $chartData = [
                 'labels' => $labels,
                 'datasets' => [
                     [
-                        'label' => 'Total Izin per Bulan',
+                        'label' => 'Total Izin', // Label untuk dataset
                         'data' => $data,
                         'backgroundColor' => $backgroundColors,
                     ],
                 ],
             ];
+
             return [
                 'chart' => $chartData,
             ];
+
         } catch (\Throwable $th) {
-            Log::error('Error exporting (func ChartTotalIzin): ' . $th->getMessage());
-            return 'Error: ' . $th->getMessage();
-        }
+            Log::error('Error generating ChartTotalIzin: ' . $th->getMessage());
+            // Kembalikan struktur chart kosong jika terjadi error
+            return [
+                'chart' => [
+                    'labels' => ['Error'],
+                    'datasets' => [['label' => 'Error', 'data' => [], 'backgroundColor' => ['#FF0000']]]
+                ]
+            ];
+        }  
     }
 
     // Export untuk divisi HRGA
+    // public function exportTerlambat(Request $request)
+    // {
+    //     try {
+    //         $startMonth = $request->input('start_month'); // format Y-m
+    //         $endMonth = $request->input('end_month');     // format Y-m
+    //         $instance = new self($startMonth, $endMonth);
+
+    //         // Bangun query berdasarkan data constructor
+    //         $query = LaporanTerlambat::query();
+
+    //         if ($request->has('filter')) {
+    //             $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
+    //         }
+    //         $query = $instance->applyDateFilter($query);
+
+    //         $rekapTerlambat = $query
+    //             ->orderBy('tanggal', 'asc')
+    //             ->get();
+
+    //         if ($rekapTerlambat->isEmpty()) {
+    //             return 'Data tidak ditemukan.';
+    //         }
+
+
+    //         $formattedData =  $rekapTerlambat->map(function ($item) {
+    //             return [
+    //                 'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
+    //                 'Nama' => $item->nama,
+    //                 'Total' => number_format($item->total_terlambat, 0, ',', '.'),
+    //             ];
+    //         });
+
+    //         // Siapkan data untuk chart
+    //         $labels = $rekapTerlambat->map(function($item) {
+    //             $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
+    //             return $item->nama. ' - ' .$formattedDate;
+    //         })->toArray();
+    //         $data = $rekapTerlambat->pluck('total_terlambat')->toArray();
+    //         $backgroundColors = array_map(fn() => $this->getRandomRGBA(), $data);
+
+    //         $chartData = [
+    //             'labels' => $labels,
+    //             'datasets' => [
+    //                 [
+    //                     'label' => 'Total Cuti',
+    //                     'data' => $data,
+    //                     'backgroundColor' => $backgroundColors,
+    //                 ],
+    //             ],
+    //         ];
+
+    //         return [
+    //             'rekap' => $formattedData,
+    //             'chart' => $chartData,
+    //         ];
+    //     } catch (\Throwable $th) {
+    //         Log::error('Error exporting  (func exportTerlambat): ' . $th->getMessage());
+    //         return 'Error: ' . $th->getMessage();
+    //     }
+    // }
     public function exportTerlambat(Request $request)
     {
         try {
@@ -1948,7 +2202,7 @@ class AdminContentController extends Controller
             $instance = new self($startMonth, $endMonth);
 
             // Bangun query berdasarkan data constructor
-            $query = LaporanTerlambat::query();
+            $query = LaporanTerlambatDivisi::query();
 
             if ($request->has('filter')) {
                 $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
@@ -1963,11 +2217,10 @@ class AdminContentController extends Controller
                 return 'Data tidak ditemukan.';
             }
 
-
             $formattedData =  $rekapTerlambat->map(function ($item) {
                 return [
                     'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
-                    'Nama' => $item->nama,
+                    'Divisi' => $item->divisi,
                     'Total' => number_format($item->total_terlambat, 0, ',', '.'),
                 ];
             });
@@ -1975,7 +2228,7 @@ class AdminContentController extends Controller
             // Siapkan data untuk chart
             $labels = $rekapTerlambat->map(function($item) {
                 $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
-                return $item->nama. ' - ' .$formattedDate;
+                return $item->divisi. ' - ' .$formattedDate;
             })->toArray();
             $data = $rekapTerlambat->pluck('total_terlambat')->toArray();
             $backgroundColors = array_map(fn() => $this->getRandomRGBA(), $data);
@@ -2004,59 +2257,62 @@ class AdminContentController extends Controller
     public function ChartTotalTerlambat(Request $request)
     {
         try {
-            $startMonth = $request->input('start_month'); // format Y-m
-            $endMonth = $request->input('end_month');     // format Y-m
+        $startMonth = $request->input('start_month'); // format Y-m
+        $endMonth = $request->input('end_month');     // format Y-m
+        $instance = new self($startMonth, $endMonth);
 
-            $instance = new self($startMonth, $endMonth);
+        // Query: SUM(total_sakit) per divisi dalam rentang tanggal
+        $query = LaporanTerlambatDivisi::query()
+                ->select('divisi', DB::raw('SUM(total_terlambat) as total_terlambat_divisi') // Menjumlahkan total_izin
+                )->groupBy('divisi'); // Mengelompokkan hasil berdasarkan kolom 'divisi'
 
-            if ($request->has('filter')) {
-                $instance->useFilter = filter_var($request->input('filter'), FILTER_VALIDATE_BOOLEAN);
-            }
+            // 3. Terapkan filter tanggal yang sudah diinisialisasi
+            $this->applyDateFilter($query, 'tanggal');
 
-            $query = LaporanTerlambat::query();
-            $query = $instance->applyDateFilter($query);
+            // 4. Eksekusi query dan urutkan berdasarkan nama divisi
+            $rekapTerlambat = $query->orderBy('divisi', 'asc')->get();
 
-            $rekapTerlambat = $query
-                ->orderBy('tanggal', 'asc')
-                ->get();
-
+            // 5. Periksa jika data kosong
             if ($rekapTerlambat->isEmpty()) {
-                return 'Data tidak ditemukan.';
+                // Kembalikan struktur chart kosong jika tidak ada data
+                return [
+                    'chart' => [
+                        'labels' => [],
+                        'datasets' => [['label' => 'Total Terlambat per Divisi', 'data' => [], 'backgroundColor' => []]]
+                    ]
+                ];
             }
 
-            // Akumulasi total_terlambat berdasarkan nama dan bulan
-            $akumulasiData = [];
-            foreach ($rekapTerlambat as $item) {
-                $namaKey = $item->nama;
-
-                if (!isset($akumulasiData[$namaKey])) {
-                    $akumulasiData[$namaKey] = 0;
-                }
-                $akumulasiData[$namaKey] += $item->total_terlambat;
-            }
-
-            // Siapkan data untuk chart
-            $labels = array_keys($akumulasiData);
-            $data = array_values($akumulasiData);
+            // 6. Siapkan data untuk dikirim ke view (Chart.js)
+            $labels = $rekapTerlambat->pluck('divisi')->toArray();
+            $data = $rekapTerlambat->pluck('total_terlambat_divisi')->toArray();
             $backgroundColors = array_map(fn() => $this->getRandomRGBA(), $data);
 
             $chartData = [
                 'labels' => $labels,
                 'datasets' => [
                     [
-                        'label' => 'Total Terlambat per Bulan',
+                        'label' => 'Total Izin', // Label untuk dataset
                         'data' => $data,
                         'backgroundColor' => $backgroundColors,
                     ],
                 ],
             ];
+
             return [
                 'chart' => $chartData,
             ];
+
         } catch (\Throwable $th) {
-            Log::error('Error exporting (func ChartTotalTerlambat): ' . $th->getMessage());
-            return 'Error: ' . $th->getMessage();
-        }
+            Log::error('Error generating ChartTotalTerlambat: ' . $th->getMessage());
+            // Kembalikan struktur chart kosong jika terjadi error
+            return [
+                'chart' => [
+                    'labels' => ['Error'],
+                    'datasets' => [['label' => 'Error', 'data' => [], 'backgroundColor' => ['#FF0000']]]
+                ]
+            ];
+        }  
     }
 
     // Export untuk divisi laba rugi
