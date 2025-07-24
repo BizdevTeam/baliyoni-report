@@ -181,16 +181,26 @@
         </div>
 
             <!-- Chart Container -->
-             <div id="formChart" class="visible">
+            <div id="formChart" class="visible">
                 <div class="flex flex-col mx-auto bg-white p-6 mt-4 rounded-lg shadow-xl border border-grey-500">
+                    <div class="mb-2 flex justify-end">
+                        <select class="chart-select p-2 border border-gray-300 rounded">
+                            <option value="chart1">Chart Biasa</option>
+                            <option value="chart2">Chart Total</option>
+                        </select>
+                    </div>
                     <h1 class="text-2xl font-bold text-red-600 mb-2 mx-auto font-montserrat text-start">Purchase (Holding) Report Chart</h1>
                     <div class="mt-6 self-center w-full flex justify-center">
-                        <div id="chart-wrapper" class="w-full overflow-y-auto overflow-x-hidden">
-                            <canvas id="chart"></canvas>
+                        <div class="chart-container chart1 bg-white shadow-md rounded-lg p-6">
+                            <canvas class="chart-export-penjualan w-full h-96" data-axis="y" data-unit="Paket" data-format="currency"></canvas>
+                        </div>
+                        <!--ganti source datanya nanti-->
+                        <div class="chart-container chart2 bg-white shadow-md rounded-lg p-6 hidden">
+                            <canvas class="chart-export-penjualan w-full h-96" data-axis="y" data-unit="Paket" data-format="currency"></canvas>
                         </div>
                     </div>
                     <div class="mt-6 flex justify-end">
-                    <button onclick="exportToPDF()" class="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition duration-300 ease-in-out">
+                        <button onclick="exportToPDF()" class="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition duration-300 ease-in-out">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                                 <mask id="lineMdCloudAltPrintFilledLoop0">
                                     <g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
@@ -245,8 +255,9 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+            </div>
+            </div>
+
 
     <!-- Modal untuk Add Event -->
     <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">

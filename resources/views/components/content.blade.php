@@ -939,6 +939,7 @@
                         <div class="w-full h-96 overflow-y-auto overflow-x-hidden" style="max-height: 24rem;">
                             <canvas class="chart-export-hrga" style="min-width:600px; min-height:400px;" data-chart='@json($dataTotalSakit["chart"])'
                             data-unit="Kali"
+                            
                             ></canvas>
                         </div>
                     </div>
