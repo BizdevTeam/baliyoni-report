@@ -9,10 +9,12 @@ use App\Models\ItMultimediaTiktok;
 use App\Models\KasHutangPiutang;
 use App\Models\LaporanBizdevGambar;
 use App\Models\LaporanCuti;
+use App\Models\LaporanCutiDivisi;
 use App\Models\LaporanDetrans;
 use App\Models\LaporanHolding;
 use App\Models\LaporanIjasa;
 use App\Models\LaporanIzin;
+use App\Models\LaporanIzinDivisi;
 use App\Models\LaporanLabaRugi;
 use App\Models\LaporanNegosiasi;
 use App\Models\LaporanNeraca;
@@ -23,11 +25,13 @@ use App\Models\LaporanPpn;
 use App\Models\LaporanPtBos;
 use App\Models\LaporanRasio;
 use App\Models\LaporanSakit;
+use App\Models\LaporanSakitDivisi;
 use App\Models\LaporanSPI;
 use App\Models\LaporanSPITI;
 use App\Models\LaporanStok;
 use App\Models\LaporanTaxPlaning;
 use App\Models\LaporanTerlambat;
+use App\Models\LaporanTerlambatDivisi;
 use App\Models\RekapPendapatanServisAsp;
 use App\Models\RekapPenjualan;
 use App\Models\RekapPenjualanPerusahaan;
@@ -937,7 +941,7 @@ public function exportIJASAGambar(Request $request)
     public function exportSakit(Request $request) {
     try {
 
-        $query = LaporanSakit::query();
+        $query = LaporanSakitDivisi::query();
         $this->applyDateFilter($query, 'tanggal');
 
         $rekapSakit = $query
@@ -951,15 +955,16 @@ public function exportIJASAGambar(Request $request)
         $formattedData =  $rekapSakit->map(function ($item) {
             return [
                 'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
-                'Nama' => $item->nama,
+                'Divisi' => $item->divisi,
                 'Total' => number_format($item->total_sakit, 0, ',', '.'),
             ];
         });
 
-        $labels = $rekapSakit->map(function ($item) {
-            return $item->nama;
+        // Siapkan data untuk chart
+        $labels = $rekapSakit->map(function($item) {
+            $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
+            return $item->divisi. ' - ' .$formattedDate;
         })->toArray();
-
         $data = $rekapSakit->pluck('total_sakit')->toArray();
         $backgroundColors = array_map(fn() => $this->getRandomRGBA(), $data);
 
@@ -988,7 +993,7 @@ public function exportIJASAGambar(Request $request)
     public function exportCuti(Request $request) {
     try {
  
-        $query = LaporanCuti::query();
+        $query = LaporanCutiDivisi::query();
         $this->applyDateFilter($query, 'tanggal');
 
         $rekapCuti = $query
@@ -999,17 +1004,18 @@ public function exportIJASAGambar(Request $request)
             return 'Data tidak ditemukan.';
         }
 
-
         $formattedData =  $rekapCuti->map(function ($item) {
             return [
                 'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
-                'Nama' => $item->nama,
+                'Divisi' => $item->divisi,
                 'Total' => number_format($item->total_cuti, 0, ',', '.'),
             ];
         });
 
-        $labels = $rekapCuti->map(function ($item) {
-            return $item->nama;
+        // Siapkan data untuk chart
+        $labels = $rekapCuti->map(function($item) {
+            $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
+            return $item->divisi. ' - ' .$formattedDate;
         })->toArray();
 
         $data = $rekapCuti->pluck('total_cuti')->toArray();
@@ -1039,7 +1045,7 @@ public function exportIJASAGambar(Request $request)
     public function exportIzin(Request $request) {
     try {
 
-        $query = LaporanIzin::query();
+        $query = LaporanIzinDivisi::query();
         $this->applyDateFilter($query, 'tanggal');
 
         $rekapIzin = $query
@@ -1050,17 +1056,18 @@ public function exportIJASAGambar(Request $request)
             return 'Data tidak ditemukan.';
         }
 
-
         $formattedData =  $rekapIzin->map(function ($item) {
             return [
                 'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
-                'Nama' => $item->nama,
+                'Divisi' => $item->divisi,
                 'Total' => number_format($item->total_izin, 0, ',', '.'),
             ];
         });
 
-        $labels = $rekapIzin->map(function ($item) {
-            return $item->nama;
+        // Siapkan data untuk chart
+        $labels = $rekapIzin->map(function($item) {
+            $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
+            return $item->divisi. ' - ' .$formattedDate;
         })->toArray();
 
         $data = $rekapIzin->pluck('total_izin')->toArray();
@@ -1090,7 +1097,7 @@ public function exportIJASAGambar(Request $request)
     public function exportTerlambat(Request $request) {
     try {
 
-        $query = LaporanTerlambat::query();
+        $query = LaporanTerlambatDivisi::query();
         $this->applyDateFilter($query, 'tanggal');
 
         $rekapTerlambat = $query
@@ -1101,19 +1108,19 @@ public function exportIJASAGambar(Request $request)
             return 'Data tidak ditemukan.';
         }
 
-
         $formattedData =  $rekapTerlambat->map(function ($item) {
             return [
                 'Tanggal' => \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y'),
-                'Nama' => $item->nama,
+                'Divisi' => $item->divisi,
                 'Total' => number_format($item->total_terlambat, 0, ',', '.'),
             ];
         });
 
-        $labels = $rekapTerlambat->map(function ($item) {
-            return $item->nama;
+        // Siapkan data untuk chart
+        $labels = $rekapTerlambat->map(function($item) {
+            $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
+            return $item->divisi. ' - ' .$formattedDate;
         })->toArray();
-
         $data = $rekapTerlambat->pluck('total_terlambat')->toArray();
         $backgroundColors = array_map(fn() => $this->getRandomRGBA(), $data);
 
@@ -1136,8 +1143,8 @@ public function exportIJASAGambar(Request $request)
     } catch (\Throwable $th) {
         Log::error('Error exporting  (func ExLapAll exportTerlambat): ' . $th->getMessage());
         return 'Error: ' . $th->getMessage();
+        }
     }
-}
 
     public function exportLabaRugi(Request $request)
     {

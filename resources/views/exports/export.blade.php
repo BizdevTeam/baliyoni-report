@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Cetak Laporan Gabungan</title>
+    <title>Export All PDF</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -77,7 +77,6 @@
 </head>
 <body onload="window.print()">
 
-    {{-- Bagian ini hanya akan terlihat di halaman cetak --}}
     <div id="exportContent">
 
         @php $isFirstPage = true; @endphp
@@ -88,7 +87,6 @@
             @endif
             @php
                 $isFirstPage = false;
-                // Asumsikan controller mengirimkan data dalam array asosiatif $data
                 $reportData = $data[$reportKey] ?? ['rekap' => [], 'chart' => []];
             @endphp
 
@@ -121,7 +119,11 @@
                             </div>
                             <div>
                                 <h2 class="text-center font-serif">Grafik Laporan</h2>
-                                <canvas class="chart-export-rp w-[700px] max-h-[500px]" data-chart='@json($reportData["chart"])'></canvas>
+                                <canvas class="chart-export w-[700px] max-h-[500px]" 
+                                    data-chart='@json($reportData["chart"])'
+                                    data-chart-type="bar"
+                                    data-unit="Rp"
+                                    data-format="currency"></canvas>
                             </div>
                         </div>
                         <div class="border-t text-center pt-4"><p class="text-sm font-serif mt-2">Laporan Marketing - Laporan Rekap Penjualan</p></div>
@@ -155,7 +157,12 @@
                             </div>
                             <div>
                                 <h2 class="text-center font-serif">Grafik Laporan</h2>
-                                <canvas class="chart-export-rp w-[700px] max-h-[500px]" data-chart='@json($reportData["chart"])'></canvas>
+                                <canvas class="chart-export w-[700px] max-h-[500px]" 
+                                    data-chart='@json($reportData["chart"])'
+                                    data-chart-type="bar"
+                                    data-axis="y"
+                                    data-unit="Rp"
+                                    data-format="currency"></canvas>
                             </div>
                         </div>
                         <div class="border-t text-center pt-4"><p class="text-sm font-serif mt-2">Laporan Marketing - Laporan Rekap Penjualan Perusahaan</p></div>
@@ -189,7 +196,10 @@
                             </div>
                             <div>
                                 <h2 class="text-center font-serif">Grafik Laporan</h2>
-                                <canvas class="chart-export-paket w-[700px] max-h-[500px]" data-chart='@json($reportData["chart"])'></canvas>
+                                <canvas class="chart-export w-[700px] max-h-[500px]" 
+                                    data-chart='@json($reportData["chart"])'
+                                    data-chart-type="bar"
+                                    data-unit="Paket"></canvas>
                             </div>
                         </div>
                         <div class="border-t text-center pt-4"><p class="text-sm font-serif mt-2">Laporan Marketing - Laporan Paket Administrasi</p></div>
@@ -223,7 +233,11 @@
                             </div>
                             <div>
                                 <h2 class="text-center font-serif">Grafik Laporan</h2>
-                                <canvas class="chart-export-paket w-[700px] max-h-[500px]" data-chart='@json($reportData["chart"])'></canvas>
+                                <canvas class="chart-export w-[700px] max-h-[500px]" 
+                                    data-chart='@json($reportData["chart"])'
+                                    data-chart-type="bar"
+                                    data-axis="y"
+                                    data-unit="Paket"></canvas>
                             </div>
                         </div>
                         <div class="border-t text-center pt-4"><p class="text-sm font-serif mt-2">Laporan Marketing - Laporan Status Paket</p></div>
@@ -250,14 +264,19 @@
                                             <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Nilai'] }}</td>
                                         </tr>
                                         @empty
-                                        <tr><td colspan="2" class="border border-black p-1 text-center text-[10px] font-serif">Tidak ada data.</td></tr>
+                                        <tr><td colspan="3" class="border border-black p-1 text-center text-[10px] font-serif">Tidak ada data.</td></tr>
                                         @endforelse
                                     </tbody>
                                 </table>
                             </div>
                             <div>
                                 <h2 class="text-center font-serif">Grafik Laporan</h2>
-                                <canvas class="chart-export-rp w-[700px] max-h-[500px]" data-chart='@json($reportData["chart"])'></canvas>
+                                <canvas class="chart-export w-[700px] max-h-[500px]" 
+                                    data-chart='@json($reportData["chart"])'
+                                    data-chart-type="bar"
+                                    data-axis="y"
+                                    data-unit="Rp"
+                                    data-format="currency"></canvas>
                             </div>
                         </div>
                         <div class="border-t text-center pt-4"><p class="text-sm font-serif mt-2">Laporan Marketing - Laporan Per Instansi</p></div>
@@ -284,14 +303,19 @@
                                             <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Nilai'] }}</td>
                                         </tr>
                                         @empty
-                                        <tr><td colspan="2" class="border border-black p-1 text-center text-[10px] font-serif">Tidak ada data.</td></tr>
+                                        <tr><td colspan="3" class="border border-black p-1 text-center text-[10px] font-serif">Tidak ada data.</td></tr>
                                         @endforelse
                                     </tbody>
                                 </table>
                             </div>
                             <div>
                                 <h2 class="text-center font-serif">Grafik Laporan</h2>
-                                <canvas class="chart-export-rp w-[700px] max-h-[500px]" data-chart='@json($reportData["chart"])'></canvas>
+                                <canvas class="chart-export w-[700px] max-h-[500px]" 
+                                    data-chart='@json($reportData["chart"])'
+                                    data-chart-type="bar"
+                                    data-axis="y"
+                                    data-unit="Rp"
+                                    data-format="currency"></canvas>
                             </div>
                         </div>
                         <div class="border-t text-center pt-4"><p class="text-sm font-serif mt-2">Laporan Marketing - Laporan Holding</p></div>
@@ -323,7 +347,11 @@
                             </div>
                             <div>
                                 <h2 class="text-center font-serif">Grafik Laporan</h2>
-                                <canvas class="chart-export-rp w-[700px] max-h-[500px]" data-chart='@json($reportData["chart"])'></canvas>
+                                <canvas class="chart-export w-[700px] max-h-[500px]" 
+                                    data-chart='@json($reportData["chart"])'
+                                    data-chart-type="bar"
+                                    data-unit="Rp"
+                                    data-format="currency"></canvas>
                             </div>
                         </div>
                         <div class="border-t text-center pt-4"><p class="text-sm font-serif mt-2">Laporan Procurements - Laporan Stok</p></div>
@@ -338,7 +366,7 @@
                                     <thead>
                                         <tr>
                                             <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
-                                            <th class="border border-black p-1 text-center text-[10px] font-serif">Stok (Rp)</th>
+                                            <th class="border border-black p-1 text-center text-[10px] font-serif">Total (Rp)</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -355,7 +383,11 @@
                             </div>
                             <div>
                                 <h2 class="text-center font-serif">Grafik Laporan</h2>
-                                <canvas class="chart-export-rp w-[700px] max-h-[500px]" data-chart='@json($reportData["chart"])'></canvas>
+                                <canvas class="chart-export w-[700px] max-h-[500px]" 
+                                    data-chart='@json($reportData["chart"])'
+                                    data-chart-type="bar"
+                                    data-unit="Rp"
+                                    data-format="currency"></canvas>
                             </div>
                         </div>
                         <div class="border-t text-center pt-4"><p class="text-sm font-serif mt-2">Laporan Procurements - Laporan Pembelian Outlet</p></div>
@@ -370,7 +402,7 @@
                                     <thead>
                                         <tr>
                                             <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
-                                            <th class="border border-black p-1 text-center text-[10px] font-serif">Stok (Rp)</th>
+                                            <th class="border border-black p-1 text-center text-[10px] font-serif">Total (Rp)</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -387,7 +419,11 @@
                             </div>
                             <div>
                                 <h2 class="text-center font-serif">Grafik Laporan</h2>
-                                <canvas class="chart-export-rp w-[700px] max-h-[500px]" data-chart='@json($reportData["chart"])'></canvas>
+                                <canvas class="chart-export w-[700px] max-h-[500px]" 
+                                    data-chart='@json($reportData["chart"])'
+                                    data-chart-type="bar"
+                                    data-unit="Rp"
+                                    data-format="currency"></canvas>
                             </div>
                         </div>
                         <div class="border-t text-center pt-4"><p class="text-sm font-serif mt-2">Laporan Procurements - Laporan Negosiasi</p></div>
@@ -397,14 +433,13 @@
                         <div><img src="{{ asset('images/HEADER.png') }}" alt="Header" class="header-img"></div>
                         <div class="flex justify-between p-6">
                             <div class="w-1/2 pr-10">
-                                <h2 class="text-center font-serif">Tabel Data Negosiasi</h2>
+                                <h2 class="text-center font-serif">Tabel Data Rekap Pendapatan Servis ASP</h2>
                                 <table>
                                     <thead>
                                         <tr>
                                             <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
                                             <th class="border border-black p-1 text-center text-[10px] font-serif">Pelaksana</th>
                                             <th class="border border-black p-1 text-center text-[10px] font-serif">Nilai Pendapatan (Rp)</th>
-
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -415,14 +450,18 @@
                                             <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Nilai'] }}</td>
                                         </tr>
                                         @empty
-                                        <tr><td colspan="2" class="border border-black p-1 text-center text-[10px] font-serif">Tidak ada data.</td></tr>
+                                        <tr><td colspan="3" class="border border-black p-1 text-center text-[10px] font-serif">Tidak ada data.</td></tr>
                                         @endforelse
                                     </tbody>
                                 </table>
                             </div>
                             <div>
                                 <h2 class="text-center font-serif">Grafik Laporan</h2>
-                                <canvas class="chart-export-rp w-[700px] max-h-[500px]" data-chart='@json($reportData["chart"])'></canvas>
+                                <canvas class="chart-export w-[700px] max-h-[500px]" 
+                                    data-chart='@json($reportData["chart"])'
+                                    data-chart-type="pie"
+                                    data-unit="Rp"
+                                    data-format="currency"></canvas>
                             </div>
                         </div>
                         <div class="border-t text-center pt-4"><p class="text-sm font-serif mt-2">Laporan Supports - Laporan Rekap Pendapatan Servis ASP</p></div>
@@ -432,14 +471,13 @@
                         <div><img src="{{ asset('images/HEADER.png') }}" alt="Header" class="header-img"></div>
                         <div class="flex justify-between p-6">
                             <div class="w-1/2 pr-10">
-                                <h2 class="text-center font-serif">Tabel Data Negosiasi</h2>
+                                <h2 class="text-center font-serif">Tabel Data Rekap Piutang Servis ASP</h2>
                                 <table>
                                     <thead>
                                         <tr>
                                             <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
                                             <th class="border border-black p-1 text-center text-[10px] font-serif">Pelaksana</th>
-                                            <th class="border border-black p-1 text-center text-[10px] font-serif">Nilai Pendapatan (Rp)</th>
-
+                                            <th class="border border-black p-1 text-center text-[10px] font-serif">Nilai Piutang (Rp)</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -450,14 +488,18 @@
                                             <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Nilai'] }}</td>
                                         </tr>
                                         @empty
-                                        <tr><td colspan="2" class="border border-black p-1 text-center text-[10px] font-serif">Tidak ada data.</td></tr>
+                                        <tr><td colspan="3" class="border border-black p-1 text-center text-[10px] font-serif">Tidak ada data.</td></tr>
                                         @endforelse
                                     </tbody>
                                 </table>
                             </div>
                             <div>
                                 <h2 class="text-center font-serif">Grafik Laporan</h2>
-                                <canvas class="chart-export-rp w-[700px] max-h-[500px]" data-chart='@json($reportData["chart"])'></canvas>
+                                <canvas class="chart-export w-[700px] max-h-[500px]" 
+                                    data-chart='@json($reportData["chart"])'
+                                    data-chart-type="pie"
+                                    data-unit="Rp"
+                                    data-format="currency"></canvas>
                             </div>
                         </div>
                         <div class="border-t text-center pt-4"><p class="text-sm font-serif mt-2">Laporan Supports - Laporan Rekap Piutang Servis ASP</p></div>
@@ -467,14 +509,13 @@
                         <div><img src="{{ asset('images/HEADER.png') }}" alt="Header" class="header-img"></div>
                         <div class="flex justify-between p-6">
                             <div class="w-1/2 pr-10">
-                                <h2 class="text-center font-serif">Tabel Data Negosiasi</h2>
+                                <h2 class="text-center font-serif">Tabel Data Pengiriman</h2>
                                 <table>
                                     <thead>
                                         <tr>
                                             <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
                                             <th class="border border-black p-1 text-center text-[10px] font-serif">Pelaksana</th>
                                             <th class="border border-black p-1 text-center text-[10px] font-serif">Total Pengiriman (Rp)</th>
-
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -485,19 +526,23 @@
                                             <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Total'] }}</td>
                                         </tr>
                                         @empty
-                                        <tr><td colspan="2" class="border border-black p-1 text-center text-[10px] font-serif">Tidak ada data.</td></tr>
+                                        <tr><td colspan="3" class="border border-black p-1 text-center text-[10px] font-serif">Tidak ada data.</td></tr>
                                         @endforelse
                                     </tbody>
                                 </table>
                             </div>
                             <div>
                                 <h2 class="text-center font-serif">Grafik Laporan</h2>
-                                <canvas class="chart-export-rp w-[700px] max-h-[500px]" data-chart='@json($reportData["chart"])'></canvas>
+                                <canvas class="chart-export w-[700px] max-h-[500px]" 
+                                    data-chart='@json($reportData["chart"])'
+                                    data-chart-type="bar"
+                                    data-unit="Rp"
+                                    data-format="currency"></canvas>
                             </div>
                         </div>
                         <div class="border-t text-center pt-4"><p class="text-sm font-serif mt-2">Laporan Supports - Laporan Pengiriman</p></div>
                         @break
-
+                    
                         @case('laba_rugi')
                         <div><img src="{{ asset('images/HEADER.png') }}" alt="Header" class="header-img"></div>
                         <div class="flex justify-center p-6">
@@ -543,7 +588,7 @@
                         <div class="border-t text-center pt-4"><p class="text-sm font-serif mt-2">Laporan Accounting - Laporan Rasio</p></div>
                         @break
 
-                        @case('khps')
+                    @case('khps')
                         <div><img src="{{ asset('images/HEADER.png') }}" alt="Header" class="header-img"></div>
                         <div class="flex justify-between p-6">
                             <div class="w-1/2 pr-10">
@@ -568,20 +613,24 @@
                                             <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Stok'] }}</td>
                                         </tr>
                                         @empty
-                                        <tr><td colspan="2" class="border border-black p-1 text-center text-[10px] font-serif">Tidak ada data.</td></tr>
+                                        <tr><td colspan="5" class="border border-black p-1 text-center text-[10px] font-serif">Tidak ada data.</td></tr>
                                         @endforelse
                                     </tbody>
                                 </table>
                             </div>
                             <div>
                                 <h2 class="text-center font-serif">Grafik Laporan</h2>
-                                <canvas class="chart-export-rp w-[700px] max-h-[500px]" data-chart='@json($reportData["chart"])'></canvas>
+                                <canvas class="chart-export w-[700px] max-h-[500px]" 
+                                    data-chart='@json($reportData["chart"])'
+                                    data-chart-type="pie"
+                                    data-unit="Rp"
+                                    data-format="currency"></canvas>
                             </div>
                         </div>
                         <div class="border-t text-center pt-4"><p class="text-sm font-serif mt-2">Laporan Accounting - Laporan Kas Hutang Piutang Stok</p></div>
                         @break
 
-                        @case('arus_kas')
+                    @case('arus_kas')
                         <div><img src="{{ asset('images/HEADER.png') }}" alt="Header" class="header-img"></div>
                         <div class="flex justify-between p-6">
                             <div class="w-1/2 pr-10">
@@ -602,14 +651,18 @@
                                             <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Keluar'] }}</td>
                                         </tr>
                                         @empty
-                                        <tr><td colspan="2" class="border border-black p-1 text-center text-[10px] font-serif">Tidak ada data.</td></tr>
+                                        <tr><td colspan="3" class="border border-black p-1 text-center text-[10px] font-serif">Tidak ada data.</td></tr>
                                         @endforelse
                                     </tbody>
                                 </table>
                             </div>
                             <div>
                                 <h2 class="text-center font-serif">Grafik Laporan</h2>
-                                <canvas class="chart-export-rp w-[700px] max-h-[500px]" data-chart='@json($reportData["chart"])'></canvas>
+                                <canvas class="chart-export w-[700px] max-h-[500px]" 
+                                    data-chart='@json($reportData["chart"])'
+                                    data-chart-type="pie"
+                                    data-unit="Rp"
+                                    data-format="currency"></canvas>
                             </div>
                         </div>
                         <div class="border-t text-center pt-4"><p class="text-sm font-serif mt-2">Laporan Accounting - Laporan Arus Kas</p></div>
@@ -814,7 +867,7 @@
                                     <thead>
                                         <tr>
                                             <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
-                                            <th class="border border-black p-1 text-center text-[10px] font-serif">Pelaksana</th>
+                                            <th class="border border-black p-1 text-center text-[10px] font-serif">Divisi</th>
                                             <th class="border border-black p-1 text-center text-[10px] font-serif">Total Sakit (Hari)</th>
                                         </tr>
                                     </thead>
@@ -822,7 +875,7 @@
                                         @forelse($reportData['rekap'] as $item)
                                             <tr>
                                                 <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Tanggal'] }}</td>
-                                                <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Nama'] }}</td>
+                                                <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Divisi'] }}</td>
                                                 <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Total'] }}</td>
                                             </tr>
                                         @empty
@@ -833,7 +886,10 @@
                             </div>
                             <div>
                                 <h2 class="text-center font-serif">Grafik Laporan</h2>
-                                <canvas class="chart-export-rp w-[700px] max-h-[500px]" data-chart='@json($reportData["chart"])'></canvas>
+                                <canvas class="chart-export w-[700px] max-h-[500px]" 
+                                    data-chart='@json($reportData["chart"])'
+                                    data-chart-type="bar"
+                                    data-unit="Kali"></canvas>
                             </div>
                         </div>
                         <div class="border-t text-center pt-4"><p class="text-sm font-serif mt-2">Laporan HRGA - Laporan Sakit</p></div>
@@ -848,7 +904,7 @@
                                     <thead>
                                         <tr>
                                             <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
-                                            <th class="border border-black p-1 text-center text-[10px] font-serif">Pelaksana</th>
+                                            <th class="border border-black p-1 text-center text-[10px] font-serif">Divisi</th>
                                             <th class="border border-black p-1 text-center text-[10px] font-serif">Total Cuti (Hari)</th>
                                         </tr>
                                     </thead>
@@ -856,7 +912,7 @@
                                         @forelse($reportData['rekap'] as $item)
                                             <tr>
                                                 <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Tanggal'] }}</td>
-                                                <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Nama'] }}</td>
+                                                <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Divisi'] }}</td>
                                                 <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Total'] }}</td>
                                             </tr>
                                         @empty
@@ -867,7 +923,10 @@
                             </div>
                             <div>
                                 <h2 class="text-center font-serif">Grafik Laporan</h2>
-                                <canvas class="chart-export-rp w-[700px] max-h-[500px]" data-chart='@json($reportData["chart"])'></canvas>
+                                <canvas class="chart-export w-[700px] max-h-[500px]" 
+                                    data-chart='@json($reportData["chart"])'
+                                    data-chart-type="bar"
+                                    data-unit="Kali"></canvas>
                             </div>
                         </div>
                         <div class="border-t text-center pt-4"><p class="text-sm font-serif mt-2">Laporan HRGA - Laporan Cuti</p></div>
@@ -882,7 +941,7 @@
                                     <thead>
                                         <tr>
                                             <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
-                                            <th class="border border-black p-1 text-center text-[10px] font-serif">Pelaksana</th>
+                                            <th class="border border-black p-1 text-center text-[10px] font-serif">Divisi</th>
                                             <th class="border border-black p-1 text-center text-[10px] font-serif">Total Izin (Hari)</th>
                                         </tr>
                                     </thead>
@@ -890,7 +949,7 @@
                                         @forelse($reportData['rekap'] as $item)
                                             <tr>
                                                 <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Tanggal'] }}</td>
-                                                <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Nama'] }}</td>
+                                                <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Divisi'] }}</td>
                                                 <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Total'] }}</td>
                                             </tr>
                                         @empty
@@ -901,7 +960,10 @@
                             </div>
                             <div>
                                 <h2 class="text-center font-serif">Grafik Laporan</h2>
-                                <canvas class="chart-export-rp w-[700px] max-h-[500px]" data-chart='@json($reportData["chart"])'></canvas>
+                                <canvas class="chart-export w-[700px] max-h-[500px]" 
+                                    data-chart='@json($reportData["chart"])'
+                                    data-chart-type="bar"
+                                    data-unit="Kali"></canvas>
                             </div>
                         </div>
                         <div class="border-t text-center pt-4"><p class="text-sm font-serif mt-2">Laporan HRGA - Laporan Izin</p></div>
@@ -916,7 +978,7 @@
                                     <thead>
                                         <tr>
                                             <th class="border border-black p-1 text-center text-[10px] font-serif">Tanggal</th>
-                                            <th class="border border-black p-1 text-center text-[10px] font-serif">Pelaksana</th>
+                                            <th class="border border-black p-1 text-center text-[10px] font-serif">Divisi</th>
                                             <th class="border border-black p-1 text-center text-[10px] font-serif">Total Terlambat (Hari)</th>
                                         </tr>
                                     </thead>
@@ -924,7 +986,7 @@
                                         @forelse($reportData['rekap'] as $item)
                                             <tr>
                                                 <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Tanggal'] }}</td>
-                                                <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Nama'] }}</td>
+                                                <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Divisi'] }}</td>
                                                 <td class="border border-black p-1 text-center text-[10px] font-serif">{{ $item['Total'] }}</td>
                                             </tr>
                                         @empty
@@ -935,13 +997,16 @@
                             </div>
                             <div>
                                 <h2 class="text-center font-serif">Grafik Laporan</h2>
-                                <canvas class="chart-export-rp w-[700px] max-h-[500px]" data-chart='@json($reportData["chart"])'></canvas>
+                                <canvas class="chart-export w-[700px] max-h-[500px]" 
+                                    data-chart='@json($reportData["chart"])'
+                                    data-chart-type="bar"
+                                    data-unit="Kali"></canvas>
                             </div>
                         </div>
                         <div class="border-t text-center pt-4"><p class="text-sm font-serif mt-2">Laporan HRGA - Laporan Terlambat</p></div>
                         @break
 
-                    @case('spi')
+                        @case('spi')
                         <div><img src="{{ asset('images/HEADER.png') }}" alt="Header" class="header-img"></div>
                         <div class="p-6">
                             <h2 class="text-center font-serif items-center mb-4">Tabel Data SPI</h2>
@@ -1004,32 +1069,115 @@
                         </div>
                         <div class="border-t text-center pt-4"><p class="text-sm font-serif mt-2">Laporan SPI - Laporan SPI IT</p></div>
                         @break
-
                 @endswitch
             </div>
         @endforeach
     </div>
-    <script>
-// Skrip untuk merender grafik di halaman cetak
-document.addEventListener('DOMContentLoaded', function () {
-    // Fungsi untuk grafik dengan format 'Rp'
-    document.querySelectorAll('.chart-export-rp').forEach(canvas => {
-        const chartData = JSON.parse(canvas.dataset.chart);
-        new Chart(canvas.getContext('2d'), {
-            type: 'bar', data: chartData,
-            options: { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { display: false } }, scales: { y: { ticks: { callback: value => 'Rp ' + new Intl.NumberFormat('id-ID').format(value) } } } }
-        });
-    });
 
-    // Fungsi untuk grafik dengan format 'Paket'
-    document.querySelectorAll('.chart-export-paket').forEach(canvas => {
-       const chartData = JSON.parse(canvas.dataset.chart);
-        new Chart(canvas.getContext('2d'), {
-            type: 'bar', data: chartData,
-            options: { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { display: false } }, scales: { y: { ticks: { callback: value => new Intl.NumberFormat('id-ID').format(value) + ' Paket' } } } }
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const chartInstances = new Map();
+
+            function formatCurrency(value) {
+                if (typeof value !== 'number') return 'Rp 0';
+                return 'Rp ' + value.toLocaleString('id-ID');
+            }
+
+            function createChartConfig(canvas) {
+                const chartData = JSON.parse(canvas.dataset.chart || '{}');
+                if (!chartData.labels || !chartData.datasets) return null;
+
+                const chartType = canvas.dataset.chartType || 'bar';
+                const axis = canvas.dataset.axis || 'x';
+                const unit = canvas.dataset.unit || '';
+                const format = canvas.dataset.format;
+
+                const options = {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: false, // Nonaktifkan animasi untuk cetak
+                    layout: { padding: { top: 30, left: 10, right: 10, bottom: 10 } },
+                    plugins: {
+                        legend: {
+                            display: chartType === 'pie' || (chartData.datasets && chartData.datasets.length > 1),
+                            position: 'top',
+                        },
+                        title: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const rawValue = (chartType === 'pie') ? context.raw : (axis === 'y' ? context.parsed.x : context.parsed.y);
+                                    const label = context.dataset.label || context.label || '';
+                                    let formattedValue;
+
+                                    if (format === 'currency') {
+                                        formattedValue = formatCurrency(rawValue);
+                                    } else {
+                                        formattedValue = `${rawValue.toLocaleString('id-ID')} ${unit}`;
+                                    }
+                                    return `${label}: ${formattedValue}`.trim();
+                                }
+                            }
+                        }
+                    },
+                };
+
+                if (chartType === 'bar') {
+                    options.indexAxis = axis;
+                    options.scales = {
+                        x: {
+                            beginAtZero: true,
+                            grid: { display: axis === 'y' },
+                            ticks: {
+                                callback: (value, index) => (axis === 'y' ? chartData.labels[index] : (format === 'currency' ? formatCurrency(chartData.datasets[0].data[index]) : `${chartData.datasets[0].data[index]} ${unit}`))
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: { display: axis === 'x' },
+                            ticks: {
+                                callback: (value, index) => (axis === 'x' ? chartData.labels[index] : (format === 'currency' ? formatCurrency(chartData.datasets[0].data[index]) : `${chartData.datasets[0].data[index]} ${unit}`))
+                            }
+                        }
+                    };
+                    
+                    // Menyesuaikan callback ticks berdasarkan orientasi sumbu
+                    if (axis === 'y') { // Horizontal
+                        options.scales.x.ticks.callback = (value) => (format === 'currency' ? formatCurrency(value) : `${value} ${unit}`);
+                        options.scales.y.ticks.callback = (value, index) => chartData.labels[index];
+                    } else { // Vertical
+                        options.scales.y.ticks.callback = (value) => (format === 'currency' ? formatCurrency(value) : `${value} ${unit}`);
+                        options.scales.x.ticks.callback = (value, index) => chartData.labels[index];
+                    }
+                }
+
+                return {
+                    type: chartType,
+                    data: chartData,
+                    options: options,
+                };
+            }
+
+            function initializeChart(canvas) {
+                if (!canvas || !canvas.dataset.chart) return;
+                
+                if (Chart.getChart(canvas)) {
+                    Chart.getChart(canvas).destroy();
+                }
+
+                try {
+                    const config = createChartConfig(canvas);
+                    if (config) {
+                        new Chart(canvas.getContext('2d'), config);
+                    }
+                } catch (e) {
+                    console.error('Gagal membuat grafik:', e, canvas);
+                }
+            }
+
+            // Inisialisasi semua grafik di halaman
+            document.querySelectorAll('.chart-export').forEach(initializeChart);
         });
-    });
-});
-</script>
+    </script>
 </body>
 </html>

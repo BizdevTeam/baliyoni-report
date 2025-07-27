@@ -19,9 +19,18 @@
                 Sales Recap Chart
                 </h1>
 
-                <div class="bg-white shadow-md rounded-lg p-6">
+                {{-- <div class="bg-white shadow-md rounded-lg p-6">
                     <canvas class="chart-export w-full h-96" id="rekapChart" data-chart='@json($dataExportLaporanPenjualan["chart"])'></canvas>
-                </div>
+                </div> --}}
+                    <div class="chart-container chart1 self-center w-full h-96 flex justify-center bg-white">
+                        <div class="w-full h-96 overflow-y-auto overflow-x-hidden" style="max-height: 24rem;">
+                            <canvas class="chart-export-penjualan" style="min-width:600px; min-height:400px;" data-chart='@json(array_slice($dataExportLaporanPenjualan["chart"], 0, 12))' data-chart-type="bar"
+                                data-axis="x"
+                                data-unit="Rp"
+                                data-format="currency">></canvas>
+                        </div>
+                    </div>
+
 
                 <div class="flex justify-end mt-4">
                     <a href="{{ route("rekappenjualan.index") }}" class="text-red-600 font-semibold hover:underline">Sales Recap Chart →</a>
@@ -33,6 +42,7 @@
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
                     Sales Recap by Company
                 </h1>
+                
                 <div class="mb-2 flex justify-end">
                     <select class="chart-select p-2 border border-gray-300 rounded">
                         <option value="chart1">Chart Biasa</option>
@@ -40,13 +50,23 @@
                     </select>
                 </div>
 
-                <div class="chart-container chart1 bg-white shadow-md rounded-lg p-6">
-                    <canvas class="chart-export w-full h-96" data-chart='@json($dataExportLaporanPenjualanPerusahaan["chart"])'></canvas>
-                </div>
-                <!--ganti source datanya nanti-->
-                <div class="chart-container chart2 bg-white shadow-md rounded-lg p-6 hidden">
-                    <canvas class="chart-export w-full h-96" data-chart='@json($dataTotalLaporanPenjualanPerusahaan["chart"])'></canvas>
-                </div>
+                    <div class="chart-container chart1 self-center w-full h-96 flex justify-center bg-white">
+                        <div class="w-full h-96 overflow-y-auto overflow-x-hidden" style="max-height: 24rem;">
+                            <canvas class="chart-export-penjualan" style="min-width:600px; min-height:400px;" data-chart='@json(array_slice($dataExportLaporanPenjualanPerusahaan["chart"], 0, 12))' data-chart-type="bar"
+                                data-axis="y"
+                                data-unit="Rp"
+                                data-format="currency">></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-container chart2 self-center w-full h-96 flex justify-center bg-white">
+                        <div class="w-full h-96 overflow-y-auto overflow-x-hidden" style="max-height: 24rem;">
+                            <canvas class="chart-export-penjualan" style="min-width:600px; min-height:400px;" data-chart='@json($dataTotalLaporanPenjualanPerusahaan["chart"])'                         
+                            data-axis="y"
+                            data-unit="Rp"
+                            data-format="currency"></canvas>
+                        </div>
+                    </div>
 
                 <div class="flex justify-end mt-4">
                     <a href="{{ route("rekappenjualanperusahaan.index") }}" class="text-red-600 font-semibold hover:underline">Sales Recap by Company →</a>
@@ -66,11 +86,15 @@
                 </div>
 
                 <div class="chart-container chart1 bg-white shadow-md rounded-lg p-6">
-                    <canvas class="chart-export w-full h-96" data-chart='@json($dataExportLaporanPaketAdministrasi["chart"])'></canvas>
+                    <canvas class="chart-export-paket w-full h-96" data-chart='@json($dataExportLaporanPaketAdministrasi["chart"])'
+                    data-unit="Paket"
+                    ></canvas>
                 </div>
                 <!--ganti source datanya nanti-->
                 <div class="chart-container chart2 bg-white shadow-md rounded-lg p-6 hidden">
-                    <canvas class="chart-export w-full h-96" data-chart='@json($dataTotalLaporanPaketAdministrasi["chart"])'></canvas>
+                    <canvas class="chart-export-paket w-full h-96" data-chart='@json($dataTotalLaporanPaketAdministrasi["chart"])'
+                    data-unit="Paket"
+                    ></canvas>
                 </div>
 
                 <div class="flex justify-end mt-4">
@@ -91,11 +115,17 @@
                 </div>
 
                 <div class="chart-container chart1 bg-white shadow-md rounded-lg p-6">
-                    <canvas class="chart-export w-full h-96" data-chart='@json($dataExportStatusPaket["chart"])'></canvas>
+                    <canvas class="chart-export-packages w-full h-96" data-chart='@json($dataExportStatusPaket["chart"])' 
+                    data-axis="y"
+                    data-unit="Paket">
+                </canvas>
                 </div>
                 <!--ganti source datanya nanti-->
                 <div class="chart-container chart2 bg-white shadow-md rounded-lg p-6 hidden">
-                    <canvas class="chart-export w-full h-96" data-chart='@json($dataTotalStatusPaket["chart"])'></canvas>
+                    <canvas class="chart-export-packages w-full h-96" data-chart='@json($dataTotalStatusPaket["chart"])'
+                    data-axis="y"
+                    data-unit="Paket"
+                    ></canvas>
                 </div>
 
                 <div class="flex justify-end mt-4">
@@ -115,12 +145,21 @@
                     </select>
                 </div>
 
-                <div class="chart-container chart1 bg-white shadow-md rounded-lg p-6">
-                    <canvas class="chart-export w-full h-96" data-chart='@json($dataExportLaporanPerInstansi["chart"])'></canvas>
+                <div class="chart-container chart1 self-center w-full h-96 flex justify-center bg-white">
+                    <div class="w-full h-96 overflow-y-auto overflow-x-hidden" style="max-height: 24rem;">
+                        <canvas class="chart-export" style="min-width:600px; min-height:400px;" data-chart='@json(array_slice($dataExportLaporanPerInstansi["chart"], 0, 12))' data-chart-type="bar"
+                            data-axis="y"
+                            data-unit="Rp"
+                            data-format="currency"></canvas>
+                    </div>
                 </div>
                 <!--ganti source datanya nanti-->
                 <div class="chart-container chart2 bg-white shadow-md rounded-lg p-6 hidden">
-                    <canvas class="chart-export w-full h-96" data-chart='@json($dataTotalInstansi["chart"])'></canvas>
+                    <canvas class="chart-export w-full h-96" data-chart='@json($dataTotalInstansi["chart"])'
+                        data-axis="y"
+                        data-unit="Rp"
+                            data-format="currency">
+                    </canvas>
                 </div>
 
                 <div class="flex justify-end mt-4">
@@ -145,11 +184,19 @@
                 </div>
 
                 <div class="chart-container chart1 bg-white shadow-md rounded-lg p-6">
-                    <canvas class="chart-export w-full h-96" data-chart='@json($dataExportLaporanHolding["chart"])'></canvas>
+                    <canvas class="chart-export-penjualan w-full h-96" data-chart='@json($dataExportLaporanHolding["chart"])'
+                    data-axis="y"
+                    data-unit="Paket"
+                    data-format="currency"
+                    ></canvas>
                 </div>
                 <!--ganti source datanya nanti-->
                 <div class="chart-container chart2 bg-white shadow-md rounded-lg p-6 hidden">
-                    <canvas class="chart-export w-full h-96" data-chart='@json($dataTotalLaporanHolding["chart"])'></canvas>
+                    <canvas class="chart-export-penjualan w-full h-96" data-chart='@json($dataTotalLaporanHolding["chart"])'
+                    data-axis="y"
+                    data-unit="Paket"
+                    data-format="currency"
+                    ></canvas>
                 </div>
 
                 <div class="flex justify-end mt-4">
@@ -164,7 +211,10 @@
                 </h1>
 
                 <div class="bg-white shadow-md rounded-lg p-6">
-                    <canvas class="chart-export w-full h-96" id="rekapChart" data-chart='@json($dataExportLaporanStok["chart"])'></canvas>
+                    <canvas class="chart-export-penjualan w-full h-96" id="rekapChart" data-chart='@json($dataExportLaporanStok["chart"])'
+                    data-unit="Rp"
+                    data-format="currency"
+                    ></canvas>
                 </div>
 
                 <div class="flex justify-end mt-4">
@@ -179,7 +229,10 @@
                 </h1>
 
                 <div class="bg-white shadow-md rounded-lg p-6">
-                    <canvas class="chart-export w-full h-96" id="rekapChart" data-chart='@json($dataExportLaporanPembelianOutlet["chart"])'></canvas>
+                    <canvas class="chart-export w-full h-96" id="rekapChart" data-chart='@json($dataExportLaporanPembelianOutlet["chart"])'
+                    data-unit="Rp"
+                    data-format="currency"
+                    ></canvas>
                 </div>
 
                 <div class="flex justify-end mt-4">
@@ -194,7 +247,10 @@
                 </h1>
 
                 <div class="bg-white shadow-md rounded-lg p-6">
-                    <canvas class="chart-export w-full h-96" id="rekapChart" data-chart='@json($dataExportLaporanNegosiasi["chart"])'></canvas>
+                    <canvas class="chart-export w-full h-96" id="rekapChart" data-chart='@json($dataExportLaporanNegosiasi["chart"])'
+                    data-unit="Rp"
+                    data-format="currency"
+                    ></canvas>
                 </div>
 
                 <div class="flex justify-end mt-4">
@@ -218,11 +274,19 @@
                 </div>
 
                 <div class="chart-container chart1 bg-white shadow-md rounded-lg p-6">
-                    <canvas class="chart-export w-full h-96" data-chart='@json($dataExportRekapPendapatanASP["chart"])'></canvas>
+                    <canvas class="chart-export-penjualan w-full h-96" data-chart='@json($dataExportRekapPendapatanASP["chart"])'
+                    data-axis="y"
+                    data-unit="Rp"
+                    data-format="currency"
+                    ></canvas>
                 </div>
                 <!--ganti source datanya nanti-->
                 <div class="chart-container chart2 bg-white shadow-md rounded-lg p-6 hidden">
-                    <canvas class="chart-export w-full h-96" data-chart='@json($dataTotalRekapPendapatanASP["chart"])'></canvas>
+                    <canvas class="chart-export-penjualan w-full h-96" data-chart='@json($dataTotalRekapPendapatanASP["chart"])'
+                    data-axis="y"
+                    data-unit="Rp"
+                    data-format="currency"
+                    ></canvas>
                 </div>
 
                 <div class="flex justify-end mt-4">
@@ -242,11 +306,19 @@
                 </div>
 
                 <div class="chart-container chart1 bg-white shadow-md rounded-lg p-6">
-                    <canvas class="chart-export w-full h-96" data-chart='@json($dataExportRekapPiutangASP["chart"])'></canvas>
+                    <canvas class="chart-export-penjualan w-full h-96" data-chart='@json($dataExportRekapPiutangASP["chart"])'
+                        data-axis="y"
+                        data-unit="Rp"
+                        data-format="currency"
+                    ></canvas>
                 </div>
                 <!--ganti source datanya nanti-->
                 <div class="chart-container chart2 bg-white shadow-md rounded-lg p-6 hidden">
-                    <canvas class="chart-export w-full h-96" data-chart='@json($dataTotalRekapPiutangASP["chart"])'></canvas>
+                    <canvas class="chchart-export-penjualan w-full h-96" data-chart='@json($dataTotalRekapPiutangASP["chart"])'
+                        data-axis="y"
+                        data-unit="Rp"
+                        data-format="currency"
+                    ></canvas>
                 </div>
 
                 <div class="flex justify-end mt-4">
@@ -261,7 +333,10 @@
                 </h1>
 
                 <div class="bg-white shadow-md rounded-lg p-6">
-                    <canvas class="chart-export w-full h-96" id="rekapChart" data-chart='@json($dataLaporanPengiriman["chart"])'></canvas>
+                    <canvas class="chart-export w-full h-96" id="rekapChart" data-chart='@json($dataLaporanPengiriman["chart"])'
+                    data-unit="Rp"
+                    data-format="currency"
+                    ></canvas>
                 </div>
 
                 <div class="flex justify-end mt-4">
@@ -415,7 +490,11 @@
 
                 <div class="flex justify-center items-center bg-white shadow-md rounded-lg p-6">
                     <div class="w-[600px]">
-                        <canvas class="chart-export-pie" id="rekapChart" data-chart='@json($dataKHPS["chart"])'></canvas>
+                        <canvas class="w-[600px] chart-export-pie" id="rekapChart" data-chart='@json($dataKHPS["chart"])'
+                            data-chart-type="pie"
+                            data-unit="Rp"
+                            data-format="currency"
+                        ></canvas>
                     </div>
                 </div>
 
@@ -432,7 +511,11 @@
 
                 <div class="flex justify-center items-center bg-white shadow-md rounded-lg p-6">
                     <div class="w-[600px]">
-                        <canvas class="chart-export-pie" id="rekapChart" data-chart='@json($dataArusKas["chart"])'></canvas>
+                        <canvas class="w-[600px] chart-export-pie" id="rekapChart" data-chart='@json($dataArusKas["chart"])'
+                            data-chart-type="pie"
+                            data-unit="Rp"
+                            data-format="currency"
+                        ></canvas>
                     </div>
                 </div>
 
@@ -844,13 +927,22 @@
                     </select>
                 </div>
 
-                <div class="chart-container chart1 bg-white shadow-md rounded-lg p-6">
-                    <canvas class="chart-export-hrga w-full h-96" data-chart='@json($dataLaporanSakit["chart"])'></canvas>
-                </div>
-                <!--ganti source datanya nanti-->
-                <div class="chart-container chart2 bg-white shadow-md rounded-lg p-6 hidden">
-                    <canvas class="chart-export-hrga w-full h-96" data-chart='@json($dataTotalSakit["chart"])'></canvas>
-                </div>
+                    <div class="chart-container chart1 self-center w-full h-96 flex justify-center bg-white">
+                        <div class="w-full h-96 overflow-y-auto overflow-x-hidden" style="max-height: 24rem;">
+                            <canvas class="chart-export-hrga" style="min-width:600px; min-height:400px;" data-chart='@json(array_slice($dataLaporanSakit["chart"], 0, 12))'
+                            data-unit="Kali"
+                            ></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-container chart2 self-center w-full h-96 flex justify-center bg-white">
+                        <div class="w-full h-96 overflow-y-auto overflow-x-hidden" style="max-height: 24rem;">
+                            <canvas class="chart-export-hrga" style="min-width:600px; min-height:400px;" data-chart='@json($dataTotalSakit["chart"])'
+                            data-unit="Kali"
+                            
+                            ></canvas>
+                        </div>
+                    </div>
 
                 <div class="flex justify-end mt-4">
                     <a href="{{ route("laporansakit.index") }}" class="text-red-600 font-semibold hover:underline">Sick Leave Report →</a>
@@ -869,13 +961,21 @@
                     </select>
                 </div>
 
-                <div class="chart-container chart1 bg-white shadow-md rounded-lg p-6">
-                    <canvas class="chart-export-hrga w-full h-96" data-chart='@json($dataLaporanCuti["chart"])'></canvas>
-                </div>
+                <div class="chart-container chart1 self-center w-full h-96 flex justify-center bg-white">
+                        <div class="w-full h-96 overflow-y-auto overflow-x-hidden" style="max-height: 24rem;">
+                            <canvas class="chart-export-hrga" style="min-width:600px; min-height:400px;" data-chart='@json(array_slice($dataLaporanCuti["chart"], 0, 12))'
+                            data-unit="Kali"
+                            ></canvas>
+                        </div>
+                    </div>
                 <!--ganti source datanya nanti-->
-                <div class="chart-container chart2 bg-white shadow-md rounded-lg p-6 hidden">
-                    <canvas class="chart-export-hrga w-full h-96" data-chart='@json($dataTotalCuti["chart"])'></canvas>
-                </div>
+                <div class="chart-container chart2 self-center w-full h-96 flex justify-center bg-white">
+                        <div class="w-full h-96 overflow-y-auto overflow-x-hidden" style="max-height: 24rem;">
+                            <canvas class="chart-export-hrga" style="min-width:600px; min-height:400px;" data-chart='@json($dataTotalCuti["chart"])'
+                            data-unit="Kali"
+                            ></canvas>
+                        </div>
+                    </div>
 
                 <div class="flex justify-end mt-4">
                     <a href="{{ route("laporancuti.index") }}" class="text-red-600 font-semibold hover:underline">Annual Leave Report →</a>
@@ -894,13 +994,21 @@
                     </select>
                 </div>
 
-                <div class="chart-container chart1 bg-white shadow-md rounded-lg p-6">
-                    <canvas class="chart-export-hrga w-full h-96" data-chart='@json($dataLaporanIzin["chart"])'></canvas>
-                </div>
+                <div class="chart-container chart1 self-center w-full h-96 flex justify-center bg-white">
+                        <div class="w-full h-96 overflow-y-auto overflow-x-hidden" style="max-height: 24rem;">
+                            <canvas class="chart-export-hrga" style="min-width:600px; min-height:400px;" data-chart='@json(array_slice($dataLaporanIzin["chart"], 0, 12))'
+                            data-unit="Kali"
+                            ></canvas>
+                        </div>
+                    </div>
                 <!--ganti source datanya nanti-->
-                <div class="chart-container chart2 bg-white shadow-md rounded-lg p-6 hidden">
-                    <canvas class="chart-export-hrga w-full h-96" data-chart='@json($dataTotalIzin["chart"])'></canvas>
-                </div>
+                <div class="chart-container chart2 self-center w-full h-96 flex justify-center bg-white">
+                        <div class="w-full h-96 overflow-y-auto overflow-x-hidden" style="max-height: 24rem;">
+                            <canvas class="chart-export-hrga" style="min-width:600px; min-height:400px;" data-chart='@json($dataTotalIzin["chart"])'
+                            data-unit="Kali"
+                            ></canvas>
+                        </div>
+                    </div>
 
                 <div class="flex justify-end mt-4">
                     <a href="{{ route("laporanizin.index") }}" class="text-red-600 font-semibold hover:underline">Permission/Leave Report →</a>
@@ -919,13 +1027,21 @@
                     </select>
                 </div>
 
-                <div class="chart-container chart1 bg-white shadow-md rounded-lg p-6">
-                    <canvas class="chart-export-hrga w-full h-96" data-chart='@json($dataLaporanTerlambat["chart"])'></canvas>
-                </div>
+                <<div class="chart-container chart1 self-center w-full h-96 flex justify-center bg-white">
+                        <div class="w-full h-96 overflow-y-auto overflow-x-hidden" style="max-height: 24rem;">
+                            <canvas class="chart-export-hrga" style="min-width:600px; min-height:400px;" data-chart='@json(array_slice($dataLaporanTerlambat["chart"], 0, 12))'
+                            data-unit="Kali"
+                            ></canvas>
+                        </div>
+                    </div>
                 <!--ganti source datanya nanti-->
-                <div class="chart-container chart2 bg-white shadow-md rounded-lg p-6 hidden">
-                    <canvas class="chart-export-hrga w-full h-96" data-chart='@json($dataTotalTerlambat["chart"])'></canvas>
-                </div>
+                <div class="chart-container chart2 self-center w-full h-96 flex justify-center bg-white">
+                        <div class="w-full h-96 overflow-y-auto overflow-x-hidden" style="max-height: 24rem;">
+                            <canvas class="chart-export-hrga" style="min-width:600px; min-height:400px;" data-chart='@json($dataTotalTerlambat["chart"])'
+                            data-unit="Kali"
+                            ></canvas>
+                        </div>
+                    </div>
 
                 <div class="flex justify-end mt-4">
                     <a href="{{ route("laporanizin.index") }}" class="text-red-600 font-semibold hover:underline">Late Arrival Report →</a>
@@ -1049,428 +1165,215 @@
             });
 
         </script>
+        
         <script>
-            //function chart berisikan Rp
-            document.addEventListener('DOMContentLoaded', function() {
-                const chartCanvases = document.querySelectorAll('.chart-export');
+            document.addEventListener('DOMContentLoaded', () => {
 
-                chartCanvases.forEach((canvas) => {
-                    const chartData = JSON.parse(canvas.dataset.chart);
-                    const ctx = canvas.getContext('2d');
+            const chartInstances = new Map();
 
-                    new Chart(ctx, {
-                        type: 'bar'
-                        , data: {
-                            labels: chartData.labels
-                            , datasets: chartData.datasets.map((dataset) => ({
-                                ...dataset
-                            }))
-                        , }
-                        , options: {
-                            responsive: true
-                            , maintainAspectRatio: false
-                            , animation: false
-                            , transitions: {
-                                active: {
-                                    animation: {
-                                        duration: 0
-                                    }
-                                }
-                            }
-                            , layout: {
-                                padding: {
-                                    top: 50
-                                , }
-                            , }
-                            , plugins: {
-                                legend: {
-                                    display: false
-                                , }
-                                , title: {
-                                    display: false
-                                , }
-                                , tooltip: {
-                                    callbacks: {
-                                        label: function(tooltipItem) {
-                                            const value = tooltipItem.raw;
-                                            return tooltipItem.dataset.label + ' : Rp ' + new Intl.NumberFormat('id-ID').format(value);
-                                        }
-                                    , }
-                                , }
-                            , }
-                            , scales: {
-                                x: {
-                                    title: {
-                                        display: false
-                                    , }
-                                , }
-                                , y: {
-                                    beginAtZero: true
-                                    , title: {
-                                        display: false
-                                    , }
-                                    , ticks: {
-                                        callback: function(value) {
-                                            return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
-                                        }
-                                    , }
-                                , }
-                            , }
-                        , }
-                        , plugins: [{
-                            afterDatasetsDraw: function(chart) {
-                                const ctx = chart.ctx;
-                                chart.data.datasets.forEach((dataset, i) => {
-                                    const meta = chart.getDatasetMeta(i);
-                                    meta.data.forEach((bar, index) => {
-                                        const value = dataset.data[index];
-                                        let textY = bar.y - 10;
-                                        if (textY < 20) textY = 20;
-                                        ctx.fillStyle = 'black';
-                                        ctx.font = 'bold 8px sans-serif';
-                                        ctx.textAlign = 'center';
-                                        ctx.fillText('Rp ' + new Intl.NumberFormat('id-ID').format(value), bar.x, textY);
-                                    });
-                                });
-                            }
-                        , }, ]
-                    , });
-                });
-            });
+            function formatCurrency(value) {
+                // Memastikan nilai yang masuk adalah angka
+                if (typeof value !== 'number') {
+                    return 'Rp 0';
+                }
+                
+                // Menggunakan toLocaleString('id-ID') untuk mendapatkan format
+                // dengan titik sebagai pemisah ribuan.
+                return 'Rp ' + value.toLocaleString('id-ID');
+            }
 
-            //function chart berisikan Paket
-            document.addEventListener('DOMContentLoaded', function() {
-                const chartCanvases = document.querySelectorAll('.chart-export-paket');
+            function createChartConfig(canvas) {
+                const chartData = JSON.parse(canvas.dataset.chart || '{}');
+                const chartType = canvas.dataset.chartType || 'bar'; // Default to bar chart
+                const axis = canvas.dataset.axis || 'x'; // Default to vertical (x-axis for categories)
+                const unit = canvas.dataset.unit || '';
+                const format = canvas.dataset.format;
 
-                chartCanvases.forEach((canvas) => {
-                    const chartData = JSON.parse(canvas.dataset.chart);
-                    const ctx = canvas.getContext('2d');
-
-                    new Chart(ctx, {
-                        type: 'bar'
-                        , data: {
-                            labels: chartData.labels
-                            , datasets: chartData.datasets.map((dataset) => ({
-                                ...dataset
-                                , borderColor: dataset.backgroundColor.map((color) =>
-                                    color.replace('0.7', '1')
-                                )
-                                , borderWidth: 1
-                            , }))
-                        , }
-                        , options: {
-                            responsive: true
-                            , maintainAspectRatio: false
-                            , animation: false
-                            , transitions: {
-                                active: {
-                                    animation: {
-                                        duration: 0
-                                    }
-                                }
-                            }
-                            , layout: {
-                                padding: {
-                                    top: 50
-                                , }
-                            , }
-                            , plugins: {
-                                legend: {
-                                    display: false
-                                , }
-                                , title: {
-                                    display: false
-                                , }
-                                , tooltip: {
-                                    callbacks: {
-                                        label: function(tooltipItem) {
-                                            const value = tooltipItem.raw;
-                                            return tooltipItem.dataset.label + ' : Paket ' + new Intl.NumberFormat('id-ID').format(value);
-                                        }
-                                    , }
-                                , }
-                            , }
-                            , scales: {
-                                x: {
-                                    title: {
-                                        display: false
-                                    , }
-                                , }
-                                , y: {
-                                    beginAtZero: true
-                                    , title: {
-                                        display: false
-                                    , }
-                                    , ticks: {
-                                        callback: function(value) {
-                                            return 'Paket ' + new Intl.NumberFormat('id-ID').format(value);
-                                        }
-                                    , }
-                                , }
-                            , }
-                        , }
-                        , plugins: [{
-                            afterDatasetsDraw: function(chart) {
-                                const ctx = chart.ctx;
-                                chart.data.datasets.forEach((dataset, i) => {
-                                    const meta = chart.getDatasetMeta(i);
-                                    meta.data.forEach((bar, index) => {
-                                        const value = dataset.data[index];
-                                        let textY = bar.y - 10;
-                                        if (textY < 20) textY = 20;
-                                        ctx.fillStyle = 'black';
-                                        ctx.font = ' 8px sans-serif';
-                                        ctx.textAlign = 'center';
-                                        ctx.fillText(new Intl.NumberFormat('id-ID').format(value) + ' Paket ', bar.x, textY);
-                                    });
-                                });
-                            }
-                        , }, ]
-                    , });
-                });
-            });
-
-            //function chart untuk HRGA
-            document.addEventListener('DOMContentLoaded', function() {
-                const chartCanvases = document.querySelectorAll('.chart-export-hrga');
-
-                chartCanvases.forEach((canvas) => {
-                    const chartData = JSON.parse(canvas.dataset.chart);
-                    const ctx = canvas.getContext('2d');
-
-                    new Chart(ctx, {
-                        type: 'bar'
-                        , data: {
-                            labels: chartData.labels
-                            , datasets: chartData.datasets.map((dataset) => ({
-                                ...dataset
-                                , borderColor: dataset.backgroundColor.map((color) =>
-                                    color.replace('0.7', '1')
-                                )
-                                , borderWidth: 1
-                            , }))
-                        , }
-                        , options: {
-                            responsive: true
-                            , maintainAspectRatio: false
-                            , animation: false
-                            , transitions: {
-                                active: {
-                                    animation: {
-                                        duration: 0
-                                    }
-                                }
-                            }
-                            , layout: {
-                                padding: {
-                                    top: 50
-                                , }
-                            , }
-                            , plugins: {
-                                legend: {
-                                    display: false
-                                , }
-                                , title: {
-                                    display: false
-                                , }
-                                , tooltip: {
-                                    callbacks: {
-                                        label: function(tooltipItem) {
-                                            const value = tooltipItem.raw;
-                                            return tooltipItem.dataset.label + ' : Hari ' + new Intl.NumberFormat('id-ID').format(value);
-                                        }
-                                    , }
-                                , }
-                            , }
-                            , scales: {
-                                x: {
-                                    title: {
-                                        display: false
-                                    , }
-                                , }
-                                , y: {
-                                    beginAtZero: true
-                                    , title: {
-                                        display: false
-                                    , }
-                                    , ticks: {
-                                        callback: function(value) {
-                                            return 'Hari ' + new Intl.NumberFormat('id-ID').format(value);
-                                        }
-                                    , }
-                                , }
-                            , }
-                        , }
-                        , plugins: [{
-                            afterDatasetsDraw: function(chart) {
-                                const ctx = chart.ctx;
-                                chart.data.datasets.forEach((dataset, i) => {
-                                    const meta = chart.getDatasetMeta(i);
-                                    meta.data.forEach((bar, index) => {
-                                        const value = dataset.data[index];
-                                        let textY = bar.y - 10;
-                                        if (textY < 20) textY = 20;
-                                        ctx.fillStyle = 'black';
-                                        ctx.font = '8px sans-serif';
-                                        ctx.textAlign = 'center';
-                                        ctx.fillText(new Intl.NumberFormat('id-ID').format(value) + ' Hari ', bar.x, textY);
-                                    });
-                                });
-                            }
-                        , }, ]
-                    , });
-                });
-            });
-
-            // function chart untuk HRGA
-            document.addEventListener('DOMContentLoaded', function() {
-                const chartCanvases = document.querySelectorAll('.chart-export-pie');
-
-                chartCanvases.forEach((canvas) => {
-                    let chartData = JSON.parse(canvas.dataset.chart || '{}');
-
-                    // Cek jika data kosong, set dummy data
-                    if (
-                        !chartData.labels || !chartData.labels.length ||
-                        !chartData.datasets || !chartData.datasets.length ||
-                        !chartData.datasets[0].data || !chartData.datasets[0].data.length
-                    ) {
-                        chartData = {
-                            labels: ['Data Kosong']
-                            , datasets: [{
-                                data: [1]
-                                , backgroundColor: ['#e0e0e0'], // Warna abu-abu untuk menunjukkan kekosongan
-                            }]
-                        };
-                    }
-
-                    const ctx = canvas.getContext('2d');
-
-                    new Chart(ctx, {
-                        type: 'pie'
-                        , data: chartData
-                        , options: {
-                            responsive: true
-                            , animation: false
-                            , transitions: {
-                                active: {
-                                    animation: {
-                                        duration: 0
-                                    }
-                                }
-                            }
-                            , plugins: {
-                                legend: {
-                                    position: 'top'
-                                , }
-                                , tooltip: {
-                                    callbacks: {
-                                        label: function(tooltipItem) {
-                                            return tooltipItem.label + ': ' + tooltipItem.raw.toLocaleString();
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    });
-                });
-            });
-
-        </script>
-
-        {{-- <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                document.querySelectorAll(".chart-group").forEach(group => {
-                    const select = group.querySelector(".chart-select");
-                    const charts = group.querySelectorAll(".chart-container");
-
-                    select.addEventListener("change", function() {
-                        const selectedValue = this.value;
-
-                        charts.forEach(chart => {
-                            chart.classList.toggle("hidden", !chart.classList.contains(selectedValue));
-                        });
-                    });
-                });
-            });
-
-            var chartData = @json($dataTaxPlanningReport["chart"]);
-
-            var ctx = document.getElementById('tax').getContext('2d');
-
-            var barChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: chartData.labels,
-                    datasets: chartData.datasets,
-                },
-                options: {
+                // Base options applicable to all charts
+                const options = {
                     responsive: true,
+                    maintainAspectRatio: false,
+                    animation: false,
+                    layout: { padding: { top: 30, left: 10, right: 10, bottom: 10 } },
                     plugins: {
                         legend: {
-                            display: true, // tampilkan legenda karena ada 2 dataset
+                            display: chartType === 'pie', // Only show legend for pie charts
                             position: 'top',
+                        },
+                        title: {
+                            display: false,
                         },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    let value = context.raw;
-                                    return context.dataset.label + ' : Rp ' + value.toLocaleString();
-                                },
-                            },
-                        },
+                                    const rawValue = context.raw;
+                                    const label = context.dataset.label || context.label || '';
+                                    let formattedValue;
+
+                                    if (format === 'currency') {
+                                        formattedValue = formatCurrency(rawValue);
+                                    } else {
+                                        formattedValue = `${rawValue.toLocaleString('id-ID')} ${unit}`;
+                                    }
+                                    return `${label}: ${formattedValue}`.trim();
+                                }
+                            }
+                        }
                     },
-                    scales: {
+                };
+
+                if (chartType === 'bar') {
+                    options.indexAxis = axis; // 'x' for vertical, 'y' for horizontal
+                    options.scales = {
                         x: {
-                            title: {
-                                display: false,
+                            beginAtZero: true,
+                            grid: {
+                                display: axis === 'y', // Show grid lines for value axis
                             },
                             ticks: {
-                                autoSkip: false,
-                                maxRotation: 90,
-                                minRotation: 45,
-                            },
+                                callback: (value) => (axis === 'x' ? chartData.labels[value] : (format === 'currency' ? formatCurrency(value) : `${value} ${unit}`))
+                            }
                         },
                         y: {
                             beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return 'Rp ' + value.toLocaleString();
-                                },
+                            grid: {
+                                display: axis === 'x', // Show grid lines for value axis
                             },
-                        },
-                    },
-                    layout: {
-                        padding: {
-                            top: 50,
-                        },
-                    },
-                },
-                plugins: [{
-                    id: 'customDataLabels',
-                    afterDatasetsDraw(chart) {
-                        const {ctx} = chart;
-                        chart.data.datasets.forEach((dataset, i) => {
-                            const meta = chart.getDatasetMeta(i);
-                            meta.data.forEach((bar, index) => {
-                                const value = dataset.data[index];
-                                let textY = bar.y - 10;
-                                if (textY < 20) textY = 20;
-                                ctx.save();
-                                ctx.fillStyle = 'black';
-                                ctx.font = 'bold 12px sans-serif';
-                                ctx.textAlign = 'center';
-                                ctx.fillText('Rp ' + value.toLocaleString(), bar.x, textY);
-                                ctx.restore();
+                            ticks: {
+                                callback: (value) => (axis === 'y' ? chartData.labels[value] : (format === 'currency' ? formatCurrency(value) : `${value} ${unit}`))
+                            }
+                        }
+                    };
+
+                    // Add custom data labels plugin
+                    options.plugins.customDataLabels = {
+                        id: 'customDataLabels',
+                        afterDatasetsDraw: (chart) => {
+                            const { ctx } = chart;
+                            ctx.save();
+                            ctx.font = 'bold 10px sans-serif';
+                            ctx.fillStyle = 'black';
+                            ctx.textBaseline = 'middle';
+
+                            chart.data.datasets.forEach((dataset, i) => {
+                                const meta = chart.getDatasetMeta(i);
+                                if (!meta.hidden) {
+                                    meta.data.forEach((element, index) => {
+                                        const value = dataset.data[index];
+                                        const displayText = format === 'currency' ? formatCurrency(value) : `${value.toLocaleString('id-ID')} ${unit}`;
+                                        
+                                        if (axis === 'y') { // Horizontal bar
+                                            ctx.textAlign = 'left';
+                                            ctx.fillText(displayText, element.x + 5, element.y);
+                                        } else { // Vertical bar
+                                            ctx.textAlign = 'center';
+                                            ctx.fillText(displayText, element.x, element.y - 8);
+                                        }
+                                    });
+                                }
                             });
-                        });
-                    }
-                }]
+                            ctx.restore();
+                        }
+                    };
+                    options.plugins.legend.display = false; // Bar charts usually don't need a legend for this setup
+                }
+
+                return {
+                    type: chartType,
+                    data: chartData,
+                    options: options,
+                    plugins: chartType === 'bar' ? [options.plugins.customDataLabels] : []
+                };
+            }
+
+            function initializeChart(canvas) {
+                if (!canvas || chartInstances.has(canvas)) {
+                    return; // Don't initialize if it doesn't exist or is already initialized
+                }
+                
+                // Safety check: if a chart instance already exists for this canvas, destroy it.
+                if (Chart.getChart(canvas)) {
+                    Chart.getChart(canvas).destroy();
+                }
+
+                try {
+                    const config = createChartConfig(canvas);
+                    const chartInstance = new Chart(canvas.getContext('2d'), config);
+                    chartInstances.set(canvas, chartInstance); // Store the instance
+                } catch (e) {
+                    console.error('Failed to create chart:', e, canvas);
+                }
+            }
+
+
+            // --- Logic for Chart Groups with Dropdowns ---
+            document.querySelectorAll('.chart-group').forEach(group => {
+                const select = group.querySelector('.chart-select');
+                const containers = group.querySelectorAll('.chart-container');
+                
+                // Initialize all charts within this group first
+                containers.forEach(container => {
+                    initializeChart(container.querySelector('canvas'));
+                });
+
+                function updateChartDisplay() {
+                    const selectedValue = select.value;
+                    containers.forEach(container => {
+                        if (container.classList.contains(selectedValue)) {
+                            container.style.display = 'flex'; // Use flex as per your original style
+                            const canvas = container.querySelector('canvas');
+                            const chartInstance = chartInstances.get(canvas);
+                            if (chartInstance) {
+                                chartInstance.resize();
+                            }
+                        } else {
+                            container.style.display = 'none';
+                        }
+                    });
+                }
+
+                // Set initial display and add event listener
+                updateChartDisplay();
+                select.addEventListener('change', updateChartDisplay);
             });
 
-        </script> --}}
+            // --- Initialize any standalone charts (not in a group) ---
+            document.querySelectorAll('canvas[data-chart]').forEach(canvas => {
+                // The check `!chartInstances.has(canvas)` ensures we don't re-initialize charts in groups
+                if (!canvas.closest('.chart-group')) {
+                    initializeChart(canvas);
+                }
+            });
 
 
+            // =========================================================================
+            // SECTION: Image Modal (Vanilla JS)
+            // Replaces the previous jQuery logic for the image modal.
+            // =========================================================================
+            const imageModal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+
+            if (imageModal && modalImage) {
+                // Add click listener to all elements that should open the modal
+                document.querySelectorAll('.cursor-pointer[src]').forEach(img => {
+                    img.addEventListener('click', () => {
+                        modalImage.src = img.src;
+                        imageModal.style.display = 'flex'; // Or 'block', depending on your CSS
+                    });
+                });
+
+                // Close modal when clicking on the modal background (but not the image itself)
+                imageModal.addEventListener('click', (e) => {
+                    if (e.target.id !== 'modalImage') {
+                        imageModal.style.display = 'none';
+                    }
+                });
+            }
+
+        });
+
+        </script>
+        
         <!-- Modal Loader -->
         <script>
             let loadingStartTime;

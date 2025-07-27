@@ -256,25 +256,25 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route("laporansakit.index") }}" class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
+                            <a href="{{ route("laporansakitdivisi.index") }}" class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                                 <img src="{{ asset("icon/laporansakit.svg") }}" class="w-5 h-5">
                                 <span class="ml-2">Laporan Sakit</span>
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route("laporanizin.index") }}" class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
+                            <a href="{{ route("laporanizindivisi.index") }}" class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
                                 <img src="{{ asset("icon/laporanizin.svg") }}" class="w-5 h-5">
                                 <span class="ml-2">Laporan Izin</span>
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route("laporancuti.index") }}" class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
+                            <a href="{{ route("laporancutidivisi.index") }}" class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
                                 <img src="{{ asset("icon/laporancuti.svg") }}" class="w-5 h-5">
                                 <span class="ml-2">Laporan Cuti</span>
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route("laporanterlambat.index") }}" class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
+                            <a href="{{ route("laporanterlambatdivisi.index") }}" class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
                                 <img src="{{ asset("icon/laporanterlambat.svg") }}" class="w-5 h-5">
                                 <span class="ml-2">Laporan Terlambat</span>
                             </a>
@@ -626,25 +626,25 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route("laporansakit.index") }}" class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
+                            <a href="{{ route("laporansakitdivisi.index") }}" class="flex items-center px-3 py-2 text-gray-700 rounded-lg . transition">
                                 <img src="{{ asset("icon/laporansakit.svg") }}" class="w-5 h-5">
                                 <span class="ml-2">Laporan Sakit</span>
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route("laporanizin.index") }}" class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
+                            <a href="{{ route("laporanizindivisi.index") }}" class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
                                 <img src="{{ asset("icon/laporanizin.svg") }}" class="w-5 h-5">
                                 <span class="ml-2">Laporan Izin</span>
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route("laporancuti.index") }}" class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
+                            <a href="{{ route("laporancutidivisi.index") }}" class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
                                 <img src="{{ asset("icon/laporancuti.svg") }}" class="w-5 h-5">
                                 <span class="ml-2">Laporan Cuti</span>
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route("laporanterlambat.index") }}" class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
+                            <a href="{{ route("laporanterlambatdivisi.index") }}" class="flex items-center  px-3 py-2 text-gray-700 rounded-lg . transition">
                                 <img src="{{ asset("icon/laporanterlambat.svg") }}" class="w-5 h-5">
                                 <span class="ml-2">Laporan Terlambat</span>
                             </a>
@@ -760,3 +760,5 @@
     </div>
 </aside>
 @endif
+
+

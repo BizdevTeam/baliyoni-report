@@ -43,7 +43,10 @@ use App\Http\Controllers\LaporanBizdevGambarController;
 use App\Http\Controllers\IjasaGambarController;
 use App\Http\Controllers\PerusahaanController;
 use App\Http\Controllers\TaxPlanningController;
-use App\Models\RekapPenjualan;
+use App\Http\Controllers\LaporanSakitDivisiController;
+use App\Http\Controllers\LaporanCutiDivisiController;
+use App\Http\Controllers\LaporanIzinDivisiController;
+use App\Http\Controllers\LaporanTerlambatDivisiController;
 
 Route::middleware(['web'])->group(function () {
     // Accounting
@@ -240,6 +243,31 @@ Route::middleware(['web'])->group(function () {
         Route::post('laporansakit/export-pdf', [LaporanSakitController::class, 'exportPDF'])
         ->name('hrga.laporansakit.exportPDF');
         Route::delete('laporansakit/{rp}', [LaporanSakitController::class, 'destroy']);
+
+        Route::resource('laporansakitdivisi', LaporanSakitDivisiController::class);
+        Route::post('laporansakitdivisi/export-pdf', [LaporanSakitDivisiController::class, 'exportPDF'])
+        ->name('hrga.laporansakitdivisi.exportPDF');
+        Route::delete('laporansakitdivisi/{rp}', [LaporanSakitDivisiController::class, 'destroy']);
+
+        Route::resource('laporancutidivisi', LaporanCutiDivisiController::class);
+        Route::post('laporancutidivisi/export-pdf', [LaporanCutiDivisiController::class, 'exportPDF'])
+        ->name('hrga.laporancutidivisi.exportPDF');
+        Route::delete('laporancutidivisi/{rp}', [LaporanCutiDivisiController::class, 'destroy']);
+
+        Route::resource('laporancutidivisi', LaporanCutiDivisiController::class);
+        Route::post('laporancutidivisi/export-pdf', [LaporanCutiDivisiController::class, 'exportPDF'])
+        ->name('hrga.laporancutidivisi.exportPDF');
+        Route::delete('laporancutidivisi/{rp}', [LaporanCutiDivisiController::class, 'destroy']);
+
+        Route::resource('laporanizindivisi', LaporanIzinDivisiController::class);
+        Route::post('laporanizindivisi/export-pdf', [LaporanIzinDivisiController::class, 'exportPDF'])
+        ->name('hrga.laporanizindivisi.exportPDF');
+        Route::delete('laporanizindivisi/{rp}', [LaporanIzinDivisiController::class, 'destroy']);
+
+        Route::resource('laporanterlambatdivisi', LaporanTerlambatDivisiController::class);
+        Route::post('laporanterlambatdivisi/export-pdf', [LaporanTerlambatDivisiController::class, 'exportPDF'])
+        ->name('hrga.laporanterlambatdivisi.exportPDF');
+        Route::delete('laporanterlambatdivisi/{rp}', [LaporanTerlambatDivisiController::class, 'destroy']);
 
 
         Route::resource('laporanptbos', LaporanPtBosController::class);

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Cash Flow Statement</title>
+    <title>Annual Leave Report</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
@@ -26,13 +26,13 @@
 
         <!-- Navbar -->
         <x-navbar class="fixed top-0 left-64 right-0 h-16 bg-gray-800 text-white shadow z-20 flex items-center px-4" />
-        
+
         <!-- Wrapper Alert -->
         @if (session('success') || session('error'))
         <div x-data="{ 
-              showSuccess: {{ session('success') ? 'true' : 'false' }},
-              showError: {{ session('error') ? 'true' : 'false' }}
-           }" x-init="setTimeout(() => showSuccess = false, 5000); setTimeout(() => showError = false, 5000);" class="fixed top-5 right-5 z-50 flex flex-col gap-3">
+            showSuccess: {{ session('success') ? 'true' : 'false' }},
+            showError: {{ session('error') ? 'true' : 'false' }}
+         }" x-init="setTimeout(() => showSuccess = false, 3000); setTimeout(() => showError = false, 3000);" class="fixed top-5 right-5 z-50 flex flex-col gap-3">
 
             <!-- Success Alert -->
             @if (session('success'))
@@ -62,43 +62,26 @@
 
         <!-- Main Content -->
         <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
-            <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Cash Flow Statement</h1>
+            <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Annual Leave Report</h1>
             
-            @if(empty($aiInsight))
-            <div class="my-6 text-center">
-                <a href="{{ request()->fullUrlWithQuery(['generate_ai' => 'true']) }}" class="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-indigo-700 transition duration-300">
-                    Buat Analisis AI
-                </a>
-            </div>
-            @endif
-
-            @if(!empty($aiInsight))
-            <div class="ai-insight mt-4 p-4 bg-white rounded-lg shadow">
-                <h3 class="text-lg font-semibold mb-2">Analisis Arus Kas</h3>
-                <div class="prose max-w-none">
-                    {!! \Illuminate\Support\Str::markdown($aiInsight) !!}
-                </div>
-            </div>
-            @endif
-
             <div class="flex items-center justify-end transition-all duration-500 mt-8 mb-4">
                 <!-- Search -->
-                <form method="GET" action="{{ route('aruskas.index') }}" class="flex items-center gap-2">
+                <form method="GET" action="{{ route('laporancutidivisi.index') }}" class="flex items-center gap-2">
                     <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
                         <input type="month" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
                     </div>
                     <button type="submit" class="bg-gradient-to-r font-medium from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm mr-2" aria-label="Search">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="40" stroke-dashoffset="40" d="M10.76 13.24c-2.34 -2.34 -2.34 -6.14 0 -8.49c2.34 -2.34 6.14 -2.34 8.49 0c2.34 2.34 2.34 6.14 0 8.49c-2.34 2.34 -6.14 2.34 -8.49 0Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.5s" values="40;0" /></path><path stroke-dasharray="12" stroke-dashoffset="12" d="M10.5 13.5l-7.5 7.5"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.5s" dur="0.2s" values="12;0" /></path></g></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="40" stroke-dashoffset="40" d="M10.76 13.24c-2.34 -2.34 -2.34 -6.14 0 -8.49c2.34 -2.34 6.14 -2.34 8.49 0c2.34 2.34 2.34 6.14 0 8.49c-2.34 2.34 -6.14 2.34 -8.49 0Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.5s" values="40;0"/></path><path stroke-dasharray="12" stroke-dashoffset="12" d="M10.5 13.5l-7.5 7.5"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.5s" dur="0.2s" values="12;0"/></path></g></svg>
                     </button>
                 </form>
                 <button class="bg-gradient-to-r font-medium from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm mr-2" data-modal-target="#addEventModal">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="64" stroke-dashoffset="64" d="M13 3l6 6v12h-14v-18h8"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0" /></path><path stroke-dasharray="14" stroke-dashoffset="14" stroke-width="1" d="M12.5 3v5.5h6.5"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.7s" dur="0.2s" values="14;0" /></path><path stroke-dasharray="8" stroke-dashoffset="8" d="M9 14h6"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.9s" dur="0.2s" values="8;0" /></path><path stroke-dasharray="8" stroke-dashoffset="8" d="M12 11v6"><animate fill="freeze" attributeName="stroke-dashoffset" begin="1.1s" dur="0.2s" values="8;0" /></path></g></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="64" stroke-dashoffset="64" d="M13 3l6 6v12h-14v-18h8"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0"/></path><path stroke-dasharray="14" stroke-dashoffset="14" stroke-width="1" d="M12.5 3v5.5h6.5"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.7s" dur="0.2s" values="14;0"/></path><path stroke-dasharray="8" stroke-dashoffset="8" d="M9 14h6"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.9s" dur="0.2s" values="8;0"/></path><path stroke-dasharray="8" stroke-dashoffset="8" d="M12 11v6"><animate fill="freeze" attributeName="stroke-dashoffset" begin="1.1s" dur="0.2s" values="8;0"/></path></g></svg>
                 </button>
                 <button id="toggleFormButton" class="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-4 py-2 rounded shadow-md hover:shadow-lg transition duration-300 mr-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="64" stroke-dashoffset="64" d="M12 3c4.97 0 9 4.03 9 9c0 4.97 -4.03 9 -9 9c-4.97 0 -9 -4.03 -9 -9c0 -4.97 4.03 -9 9 -9Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0" /></path><path stroke-dasharray="6" stroke-dashoffset="6" d="M12 14l-3 -3M12 14l3 -3"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.7s" dur="0.3s" values="6;0" /></path></g></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="64" stroke-dashoffset="64" d="M12 3c4.97 0 9 4.03 9 9c0 4.97 -4.03 9 -9 9c-4.97 0 -9 -4.03 -9 -9c0 -4.97 4.03 -9 9 -9Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0"/></path><path stroke-dasharray="6" stroke-dashoffset="6" d="M12 14l-3 -3M12 14l3 -3"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.7s" dur="0.3s" values="6;0"/></path></g></svg>
                 </button>
                 <button id="toggleChartButton" class="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-4 py-2 rounded shadow-md hover:shadow-lg transition duration-300 mr-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="64" stroke-dashoffset="64" d="M13 3l6 6v12h-14v-18h8"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0" /></path><path stroke-dasharray="14" stroke-dashoffset="14" stroke-width="1" d="M12.5 3v5.5h6.5"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.7s" dur="0.2s" values="14;0" /></path><path stroke-dasharray="4" stroke-dashoffset="4" d="M9 17v-3"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.9s" dur="0.2s" values="4;0" /></path><path stroke-dasharray="6" stroke-dashoffset="6" d="M12 17v-4"><animate fill="freeze" attributeName="stroke-dashoffset" begin="1.1s" dur="0.2s" values="6;0" /></path><path stroke-dasharray="6" stroke-dashoffset="6" d="M15 17v-5"><animate fill="freeze" attributeName="stroke-dashoffset" begin="1.3s" dur="0.2s" values="6;0" /></path></g></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="64" stroke-dashoffset="64" d="M13 3l6 6v12h-14v-18h8"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0"/></path><path stroke-dasharray="14" stroke-dashoffset="14" stroke-width="1" d="M12.5 3v5.5h6.5"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.7s" dur="0.2s" values="14;0"/></path><path stroke-dasharray="4" stroke-dashoffset="4" d="M9 17v-3"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.9s" dur="0.2s" values="4;0"/></path><path stroke-dasharray="6" stroke-dashoffset="6" d="M12 17v-4"><animate fill="freeze" attributeName="stroke-dashoffset" begin="1.1s" dur="0.2s" values="6;0"/></path><path stroke-dasharray="6" stroke-dashoffset="6" d="M15 17v-5"><animate fill="freeze" attributeName="stroke-dashoffset" begin="1.3s" dur="0.2s" values="6;0"/></path></g></svg>
                 </button>
             </div>
 
@@ -109,23 +92,23 @@
                             <thead class="bg-gray-200">
                                 <tr>
                                     <th class="border border-gray-300 px-4 py-2 text-center">Date</th>
-                                    <th class="border border-gray-300 px-4 py-2 text-center">Cash In</th>
-                                    <th class="border border-gray-300 px-4 py-2 text-center">Cash Out</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-center">Division</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-center">Annual Leave Total</th>
                                     <th class="border border-gray-300 px-4 py-2 text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($aruskass as $aruskas)
+                                @foreach ($laporancutidivisis as $laporancutidivisi)
                                 <tr class="hover:bg-gray-100">
-                                    <td class="border border-gray-300 px-4 py-2 text-center">{{ $aruskas->tanggal_formatted }}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">{{ $aruskas->kas_masuk_formatted }}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">{{ $aruskas->kas_keluar_formatted }}</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporancutidivisi->tanggal_formatted }}</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporancutidivisi->divisi }}</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporancutidivisi->total_cuti }}</td>
                                     <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
-                                        <button class="bg-blue-500 text-white px-3 py-2 rounded" data-modal-target="#editEventModal{{ $aruskas->id_aruskas }}"><i class="fa fa-pen"></i> Edit</button>
-                                        <form method="POST" action="{{ route('aruskas.destroy', $aruskas->id_aruskas) }}">
+                                        <button class="bg-transparent text-red-600 px-3 py-2 rounded" data-modal-target="#editEventModal{{ $laporancutidivisi->id_laporan_cuti_divisi }}"><i class="fa fa-pen"></i></button>
+                                        <form method="POST" action="{{ route('laporancutidivisi.destroy', $laporancutidivisi->id_laporan_cuti_divisi) }}">
                                             @csrf
                                             @method('DELETE')
-                                            <button class="bg-red-600 text-white px-3 py-2 rounded" onclick="return confirm('Are you sure you want to delete?')"><i class="fa fa-trash"></i> Delete</button>
+                                            <button class="bg-transparent text-red-600 px-3 py-2 rounded" onclick="return confirm('Are you sure you want to delete?')"><i class="fa fa-trash"></i></button>
                                         </form>
                                     </td>
                                 </tr>
@@ -145,15 +128,15 @@
                         </div>
                     </div>
                     <div class="m-4">
-                        {{ $aruskass->withQueryString()->links('pagination::tailwind') }}
+                        {{ $laporancutidivisis->links('pagination::tailwind') }}
                     </div>
                 </div>
             </div>
-            
+
             <div id="formChart" class="visible">
                 <div class="flex flex-col mx-auto bg-white p-6 mt-4 rounded-lg shadow-xl border border-grey-500">
-                    <h1 class="text-2xl font-bold text-red-600 mb-4 font-montserrat text-center">Cash Flow Chart (Based on Table Data)</h1>
-                    <div class="mt-6 self-center w-full flex justify-center" style="height: 750px;">
+                    <h1 class="text-2xl font-bold text-red-600 mb-4 font-montserrat text-center">Annual Leave Report Chart</h1>
+                    <div class="mt-6 self-center w-full" style="height: 450px;">
                         <canvas id="chart"></canvas>
                     </div>
                     <div class="mt-6 flex justify-end">
@@ -165,25 +148,33 @@
             </div>
 
             <!-- Modals -->
-            @foreach ($aruskass as $aruskas)
-            <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="editEventModal{{ $aruskas->id_aruskas }}">
+            @foreach ($laporancutidivisis as $laporancutidivisi)
+            <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="editEventModal{{ $laporancutidivisi->id_laporan_cuti_divisi }}">
                 <div class="bg-white w-1/2 p-6 rounded shadow-lg">
                     <h3 class="text-xl font-semibold mb-4">Edit Data</h3>
-                    <form method="POST" action="{{ route('aruskas.update', $aruskas->id_aruskas) }}" enctype="multipart/form-data">
+                    <form method="POST" action="{{ route('laporancutidivisi.update', $laporancutidivisi->id_laporan_cuti_divisi) }}" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <div class="space-y-4">
                             <div>
                                 <label for="tanggal" class="block text-sm font-medium">Date</label>
-                                <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $aruskas->tanggal }}" required>
+                                <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $laporancutidivisi->tanggal }}" required>
                             </div>
                             <div>
-                                <label for="kas_masuk" class="block text-sm font-medium">Cash In</label>
-                                <input type="number" name="kas_masuk" class="w-full p-2 border rounded" value="{{ $aruskas->kas_masuk }}" required>
+                                <label for="divisi" class="block text-sm font-medium">Division</label>
+                                <select name="divisi" class="w-full p-2 border rounded" required>
+                                    <option value="Marketing" {{ $laporancutidivisi->divisi == 'Marketing' ? 'selected' : '' }}>Marketing</option>
+                                    <option value="Procurement" {{ $laporancutidivisi->divisi == 'Procurement' ? 'selected' : '' }}>Procurement</option>
+                                    <option value="Accounting" {{ $laporancutidivisi->divisi == 'Accounting' ? 'selected' : '' }}>Accounting</option>
+                                    <option value="IT" {{ $laporancutidivisi->divisi == 'IT' ? 'selected' : '' }}>IT</option>
+                                    <option value="HRGA" {{ $laporancutidivisi->divisi == 'HRGA' ? 'selected' : '' }}>HRGA</option>
+                                    <option value="Support" {{ $laporancutidivisi->divisi == 'Support' ? 'selected' : '' }}>Support</option>
+                                    <option value="SPI" {{ $laporancutidivisi->divisi == 'SPI' ? 'selected' : '' }}>SPI</option>
+                                </select>
                             </div>
                             <div>
-                                <label for="kas_keluar" class="block text-sm font-medium">Cash Out</label>
-                                <input type="number" name="kas_keluar" class="w-full p-2 border rounded" value="{{ $aruskas->kas_keluar }}" required>
+                                <label for="total_cuti" class="block text-sm font-medium">Annual Leave Total</label>
+                                <input type="number" name="total_cuti" class="w-full p-2 border rounded" value="{{ $laporancutidivisi->total_cuti }}" required>
                             </div>
                         </div>
                         <div class="mt-4 flex justify-end gap-2">
@@ -198,7 +189,7 @@
             <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">
                 <div class="bg-white w-1/2 p-6 rounded shadow-lg">
                     <h3 class="text-xl font-semibold mb-4">Add New Data</h3>
-                    <form method="POST" action="{{ route('aruskas.store') }}" enctype="multipart/form-data">
+                    <form method="POST" action="{{ route('laporancutidivisi.store') }}" enctype="multipart/form-data">
                         @csrf
                         <div class="space-y-4">
                             <div>
@@ -206,12 +197,20 @@
                                 <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
                             </div>
                             <div>
-                                <label for="kas_masuk" class="block text-sm font-medium">Cash In</label>
-                                <input type="number" name="kas_masuk" class="w-full p-2 border rounded" required>
+                                <label for="divisi" class="block text-sm font-medium">Division</label>
+                                <select name="divisi" class="w-full p-2 border rounded" required>
+                                    <option value="Marketing">Marketing</option>
+                                    <option value="Procurement">Procurement</option>
+                                    <option value="Accounting">Accounting</option>
+                                    <option value="IT">IT</option>
+                                    <option value="HRGA">HRGA</option>
+                                    <option value="Support">Support</option>
+                                    <option value="SPI">SPI</option>
+                                </select>
                             </div>
                             <div>
-                                <label for="kas_keluar" class="block text-sm font-medium">Cash Out</label>
-                                <input type="number" name="kas_keluar" class="w-full p-2 border rounded" required>
+                                <label for="total_cuti" class="block text-sm font-medium">Annual Leave Total</label>
+                                <input type="number" name="total_cuti" class="w-full p-2 border rounded" required>
                             </div>
                         </div>
                         <div class="mt-4 flex justify-end gap-2">
@@ -227,7 +226,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // --- DEKLARASI VARIABEL ---
+        // --- VARIABLE DECLARATIONS ---
         let myChart;
         const formContainer = document.getElementById('formContainer');
         const formChart = document.getElementById('formChart');
@@ -235,94 +234,146 @@
         const toggleChartButton = document.getElementById('toggleChartButton');
         const perPageSelect = document.getElementById('perPage');
         const exportPdfButton = document.getElementById('exportPdfButton');
-
-        // --- DEFINISI FUNGSI ---
+        
+        // --- FUNCTION DEFINITIONS ---
 
         /**
-         * Mengurai string mata uang (e.g., "Rp 1.234.567") menjadi angka.
-         * @param {string} currencyString String mata uang yang akan diurai.
-         * @returns {number} Nilai numerik.
+         * Generates a random RGBA color string, mimicking the PHP controller's logic.
+         * @param {number} opacity The opacity of the color (0 to 1).
+         * @returns {string} An RGBA color string.
          */
-        function parseCurrency(currencyString) {
-            if (typeof currencyString !== 'string') return 0;
-            // Menghapus semua karakter non-digit
-            const numberString = currencyString.replace(/[^0-9]/g, '');
-            return parseInt(numberString, 10) || 0;
+        function getRandomRGBA(opacity = 0.7) {
+            const r = Math.floor(Math.random() * 256);
+            const g = Math.floor(Math.random() * 256);
+            const b = Math.floor(Math.random() * 256);
+            return `rgba(${r}, ${g}, ${b}, ${opacity})`;
         }
 
         /**
-         * Merender grafik pie yang merangkum total kas masuk dan keluar
-         * dari data yang terlihat di tabel.
+         * Renders a vertical bar chart. The data for the chart is dynamically
+         * generated from the currently visible rows in the HTML table, ensuring
+         * it reflects the paginated data. Each bar gets a random color.
          */
         function renderChart() {
             const tableRows = document.querySelectorAll('#data-table tbody tr');
-            let totalKasMasuk = 0;
-            let totalKasKeluar = 0;
+            const labels = [];
+            const dataValues = [];
+            const backgroundColors = [];
 
-            // Mengagregasi data dari baris tabel yang terlihat
+            // Aggregate data from the visible table rows
             tableRows.forEach(row => {
                 const cells = row.querySelectorAll('td');
                 if (cells.length > 2) {
-                    totalKasMasuk += parseCurrency(cells[1].innerText);
-                    totalKasKeluar += parseCurrency(cells[2].innerText);
+                    const date = new Date(cells[0].innerText.trim()).toLocaleDateString('en-GB', {
+                        month: 'long',
+                        year: 'numeric'
+                    });
+                    const division = cells[1].innerText.trim();
+                    const sickDays = parseInt(cells[2].innerText.trim(), 10);
+
+                    if (!isNaN(sickDays)) {
+                        labels.push(`${division} - ${date}`);
+                        dataValues.push(sickDays);
+                        backgroundColors.push(getRandomRGBA()); // Generate a random color for each bar
+                    }
                 }
             });
 
             const chartData = {
-                labels: [
-                    `Cash In: Rp ${totalKasMasuk.toLocaleString('id-ID')}`,
-                    `Cash Out: Rp ${totalKasKeluar.toLocaleString('id-ID')}`
-                ],
+                labels: labels,
                 datasets: [{
-                    data: [totalKasMasuk, totalKasKeluar],
-                    backgroundColor: ['#1c64f2', '#ff2323'],
-                    hoverBackgroundColor: ['#2b6cb0', '#dc2626'],
-                }],
+                    label: 'Total Sick Days',
+                    text: 'Total Kali Sakit', // As per controller logic for tooltip
+                    data: dataValues,
+                    backgroundColor: backgroundColors,
+                }]
             };
 
             const ctx = document.getElementById('chart')?.getContext('2d');
-            if (!ctx) return;
+            if (!ctx) {
+                console.error('Chart canvas element not found.');
+                return;
+            };
 
             if (myChart) {
                 myChart.destroy();
             }
 
             myChart = new Chart(ctx, {
-                type: 'pie',
-                data: chartData,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                            labels: {
-                                font: {
-                                    size: 16
-                                }
+            type: 'bar',
+            data: chartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                layout: { padding: { top: 30, left: 10, right: 10, bottom: 10 } },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let value = context.raw;
+                                let label = context.dataset.text || 'Total Sick Days';
+                                return `${label}: ${value} Kali`;
                             }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    if (context.parsed !== null) {
-                                        label += `Rp ${context.parsed.toLocaleString('id-ID')}`;
-                                    }
-                                    return label;
-                                }
+                        }
+                    },
+                    custom_data_labels_vertical: {
+                        // Plugin ini dideklarasikan secara terpisah di bawah
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: {
+                            autoSkip: true,
+                            maxRotation: 25,
+                            minRotation: 25,
+                            padding: 10,
+                            font: {
+                                size: 10,
+                                family: 'Source Sans Pro, sans-serif',
+                                weight: '600',
+                                lineHeight: 1.2
                             }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Total Sick Days'
                         }
                     }
                 }
-            });
-        }
+            },
+            plugins: [{
+                id: 'custom_data_labels_vertical',
+                afterDatasetsDraw(chart) {
+                    const { ctx, data } = chart;
+                    ctx.save();
+                    ctx.font = 'bold 12px sans-serif';
+                    ctx.fillStyle = 'black';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'bottom';
+                    data.datasets.forEach((dataset, i) => {
+                        const meta = chart.getDatasetMeta(i);
+                        if (meta.type !== 'bar' || !meta.visible) return;
+                        meta.data.forEach((bar, index) => {
+                            const value = dataset.data[index];
+                            ctx.fillText(value + ' Kali'.toLocaleString('id-ID'), bar.x, bar.y - 5);
+                        });
+                    });
+                    ctx.restore();
+                }
+            }]
+        });
+    }
+
 
         /**
-         * Mengekspor tampilan saat ini (tabel dan grafik) ke PDF.
+         * Exports the current view (table and chart) to a PDF.
          */
         async function exportToPDF() {
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
@@ -335,8 +386,8 @@
                 const cells = row.querySelectorAll('td');
                 return {
                     tanggal: cells[0]?.innerText.trim() || '',
-                    kas_masuk: cells[1]?.innerText.trim() || '',
-                    kas_keluar: cells[2]?.innerText.trim() || '',
+                    divisi: cells[1]?.innerText.trim() || '',
+                    total_cuti: cells[2]?.innerText.trim() || '',
                 };
             });
 
@@ -344,8 +395,8 @@
                 .map(item => `
                     <tr>
                         <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.tanggal}</td>
-                        <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.kas_masuk}</td>
-                        <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.kas_keluar}</td>
+                        <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.divisi}</td>
+                        <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.total_cuti}</td>
                     </tr>
                 `).join('');
 
@@ -357,7 +408,7 @@
             const chartBase64 = chartCanvas.toDataURL('image/png');
 
             try {
-                const response = await fetch('/accounting/aruskas/export-pdf', {
+                const response = await fetch('/hrga/laporancutidivisi/export-pdf', {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': csrfToken,
@@ -374,7 +425,7 @@
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = 'laporan_aruskas.pdf';
+                    a.download = 'laporancutidivisi.pdf';
                     document.body.appendChild(a);
                     a.click();
                     window.URL.revokeObjectURL(url);
@@ -388,17 +439,17 @@
         }
 
         /**
-         * Mengubah jumlah item per halaman dan memuat ulang halaman.
+         * Changes the number of items per page and reloads the page.
          */
         function changePerPage(value) {
             const url = new URL(window.location.href);
             url.searchParams.set('per_page', value);
-            url.searchParams.set('page', 1); // Selalu kembali ke halaman pertama saat mengubah item per halaman
+            url.searchParams.set('page', 1);
             window.location.href = url.toString();
         }
 
         /**
-         * Menginisialisasi semua fungsionalitas modal (buka/tutup).
+         * Initializes all modal open/close functionality.
          */
         function initializeModals() {
             document.querySelectorAll('[data-modal-target]').forEach(button => {
@@ -421,8 +472,8 @@
         if (perPageSelect) perPageSelect.addEventListener('change', (e) => changePerPage(e.target.value));
         if (exportPdfButton) exportPdfButton.addEventListener('click', exportToPDF);
 
-        // --- INISIALISASI ---
-        renderChart(); // Render grafik berdasarkan data tabel awal
+        // --- INITIALIZATION ---
+        renderChart();
         initializeModals();
     });
 </script>
