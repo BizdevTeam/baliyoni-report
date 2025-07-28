@@ -136,23 +136,30 @@ class AdminContentController extends Controller
     public function adminContent(Request $request)
     {
         try {
-            // --- LOGIKA FILTER TERPUSAT ---
+           // --- CENTRALIZED FILTER LOGIC ---
             $start = $request->input('start_month');
             $end = $request->input('end_month');
 
             if ($start && $end) {
-                // Jika rentang tanggal diberikan, atur properti filter.
+                // If a date range is provided, set the filter properties.
                 $this->startDate = Carbon::createFromFormat('Y-m', $start)->startOfMonth();
                 $this->endDate = Carbon::createFromFormat('Y-m', $end)->endOfMonth();
-                $this->useFilter = true; // Aktifkan flag filter
-                
-                // Perbarui bulan/tahun untuk tujuan tampilan.
+                $this->useFilter = true; // Activate the filter flag
+
+                // Update month/year for display purposes.
                 $this->month = $this->startDate->month;
                 $this->year = $this->startDate->year;
             } else {
-                // Jika tidak ada rentang, gunakan default dari constructor.
-                $this->useFilter = false;
-            }
+                // If no range is provided, default to the last 3 months (current + 2 previous).
+                $now = Carbon::now();
+                $this->endDate = $now->copy()->endOfMonth();
+                $this->startDate = $now->copy()->subMonths(2)->startOfMonth();
+                $this->useFilter = true; // Always use the filter for the default view.
+
+                // Set month/year for display purposes to the current month/year.
+                $this->month = $now->month;
+                $this->year = $now->year;
+            }   
             // --- AKHIR LOGIKA FILTER ---
 
             // === Untuk divisi Marketing ===

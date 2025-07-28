@@ -188,6 +188,7 @@ class LaporanHoldingController extends Controller
                 'backgroundColor' => array_map(fn() => $this->getRandomRGBA(), $data),
             ]],
         ];
+         $chartTotalData = $this->getChartTotalData($allHoldingReports);
 
         $aiInsight = null;
         if ($request->has('generate_ai')) {
@@ -196,13 +197,36 @@ class LaporanHoldingController extends Controller
             $aiInsight = $this->generateHoldingInsight($allHoldingReports, $chartData);
         }
 
-        return view('procurements.laporanholding', compact('laporanholdings', 'chartData', 'perusahaans', 'aiInsight'))
+        return view('procurements.laporanholding', compact('laporanholdings', 'chartData', 'perusahaans', 'aiInsight','chartTotalData'))
             ->with('search', $search)
             ->with('perPage', $perPage);
     }
-    /**
-     * [FIX] Nama fungsi dan parameter diubah agar sesuai konteks.
-     */
+
+    private function getChartTotalData($reports)
+    {
+        if ($reports->isEmpty()) {
+            return [
+                'labels' => [],
+                'datasets' => [],
+            ];
+        }
+
+        $akumulasiData = $reports->groupBy('perusahaan.nama_perusahaan')->map(fn($items) => $items->sum('nilai'));
+        
+        $labels = $akumulasiData->keys()->toArray();
+        $data = $akumulasiData->values()->toArray();
+        $backgroundColors = array_map(fn() => $this->getRandomRGBA(), $data);
+
+        return [
+            'labels' => $labels,
+            'datasets' => [[
+                'label' => 'Total Nilai',
+                'data' => $data,
+                'backgroundColor' => $backgroundColors,
+            ]],
+        ];
+    }
+    
     private function generateHoldingInsight($reportData, $chartData): string
     {
         $apiKey = config('services.gemini.api_key');

@@ -32,8 +32,8 @@
         <!-- Wrapper Alert -->
         @if (session('success') || session('error'))
         <div x-data="{ 
-                showSuccess: {{ session('success') ? 'true' : 'false' }},
-                showError: {{ session('error') ? 'true' : 'false' }}
+                 showSuccess: {{ session('success') ? 'true' : 'false' }},
+                 showError: {{ session('error') ? 'true' : 'false' }}
              }"
              x-init="setTimeout(() => showSuccess = false, 3000); setTimeout(() => showError = false, 3000);"
              class="fixed top-5 right-5 z-50 flex flex-col gap-3">
@@ -125,138 +125,89 @@
     
             <!-- Tabel Data -->
             <div id="formContainer" class="hidden">
-            <div class="overflow-x-auto bg-white shadow-md">
-                <table class="table-auto w-full border-collapse border border-gray-300" id="data-table">
-                    <thead class="bg-gray-200">
-                        <tr>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Date</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Company</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Holding Value</th>
-                            <th class="border border-gray-300 px-4 py-2 text-center">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($laporanholdings as $laporanholding)
-                            <tr class="hover:bg-gray-100">
-                                <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanholding->tanggal_formatted }}</td>
-                                <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanholding->perusahaan->nama_perusahaan }}</td>
-                                <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanholding->nilai_formatted }}</td>
-                                <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
-                                    <button class="text-red-600 bg-transparent px-3 py-2 rounded" data-modal-target="#editEventModal{{ $laporanholding->id }}">
-                                        <i class="fa fa-pen"></i>
-                                    </button>
-                                    <form method="POST" action="{{ route('laporanholding.destroy', $laporanholding->id) }}">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-600 bg-transparent px-3 py-2 rounded" onclick="return confirm('Are you sure to delete?')">
-                                            <i class="fa fa-trash"></i>
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @empty
+                <div class="overflow-x-auto bg-white shadow-md">
+                    <table class="table-auto w-full border-collapse border border-gray-300" id="data-table">
+                        <thead class="bg-gray-200">
                             <tr>
-                                <td colspan="4" class="text-center py-4 border border-gray-300">No data available.</td>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Date</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Company</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Holding Value</th>
+                                <th class="border border-gray-300 px-4 py-2 text-center">Action</th>
                             </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-            <!-- Kontrol Paginasi -->
-            <div class="flex justify-center items-center mt-2 mb-4 p-4 bg-gray-50 rounded-lg">
-                <div class="flex items-center">
-                    <label for="perPage" class="mr-2 text-sm text-gray-600">Show</label>
-                    <select id="perPage" class="p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" onchange="changePerPage(this.value)">
-                        <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
-                        <option value="12" {{ request('per_page') == 12 || !request('per_page') ? 'selected' : '' }}>12</option>
-                        <option value="24" {{ request('per_page') == 24 ? 'selected' : '' }}>24</option>
-                    </select>
-                    <span class="ml-2 text-sm text-gray-600">data per page</span>
+                        </thead>
+                        <tbody>
+                            @forelse ($laporanholdings as $laporanholding)
+                                <tr class="hover:bg-gray-100">
+                                    <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanholding->tanggal_formatted }}</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanholding->perusahaan->nama_perusahaan }}</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanholding->nilai_formatted }}</td>
+                                    <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
+                                        <button class="text-red-600 bg-transparent px-3 py-2 rounded" data-modal-target="#editEventModal{{ $laporanholding->id }}">
+                                            <i class="fa fa-pen"></i>
+                                        </button>
+                                        <form method="POST" action="{{ route('laporanholding.destroy', $laporanholding->id) }}">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-600 bg-transparent px-3 py-2 rounded" onclick="return confirm('Are you sure to delete?')">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 border border-gray-300">No data available.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Kontrol Paginasi -->
+                <div class="flex justify-center items-center mt-2 mb-4 p-4 bg-gray-50 rounded-lg">
+                    <div class="flex items-center">
+                        <label for="perPage" class="mr-2 text-sm text-gray-600">Show</label>
+                        <select id="perPage" class="p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" onchange="changePerPage(this.value)">
+                            <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
+                            <option value="12" {{ request('per_page') == 12 || !request('per_page') ? 'selected' : '' }}>12</option>
+                            <option value="24" {{ request('per_page') == 24 ? 'selected' : '' }}>24</option>
+                        </select>
+                        <span class="ml-2 text-sm text-gray-600">data per page</span>
+                    </div>
+                </div>
+                <div class="m-4">
+                    {{ $laporanholdings->withQueryString()->links('pagination::tailwind') }}
                 </div>
             </div>
-            <div class="m-4">
-                {{-- Menambahkan withQueryString() untuk menjaga parameter filter saat paginasi --}}
-                {{ $laporanholdings->withQueryString()->links('pagination::tailwind') }}
-            </div>
-        </div>
 
             <!-- Chart Container -->
             <div id="formChart" class="visible">
-                <div class="flex flex-col mx-auto bg-white p-6 mt-4 rounded-lg shadow-xl border border-grey-500">
-                    <div class="mb-2 flex justify-end">
+                <div class="flex flex-col mx-auto bg-white p-6 mt-4 rounded-lg shadow-xl border border-grey-500 chart-group">
+                    <div class="mb-4 flex justify-between items-center">
+                        <h1 class="text-2xl font-bold text-red-600 font-montserrat">Purchase (Holding) Report Chart</h1>
                         <select class="chart-select p-2 border border-gray-300 rounded">
                             <option value="chart1">Chart Biasa</option>
                             <option value="chart2">Chart Total</option>
                         </select>
                     </div>
-                    <h1 class="text-2xl font-bold text-red-600 mb-2 mx-auto font-montserrat text-start">Purchase (Holding) Report Chart</h1>
-                    <div class="mt-6 self-center w-full flex justify-center">
-                        <div class="chart-container chart1 bg-white shadow-md rounded-lg p-6">
-                            <canvas class="chart-export-penjualan w-full h-96" data-axis="y" data-unit="Paket" data-format="currency"></canvas>
+                    
+                    <div class="mt-6 self-center w-full relative" style="height: 450px;">
+                        <div class="chart-container chart1 w-full h-full">
+                            <canvas id="chartBiasa" class="chart-canvas" data-axis="y" data-unit="Rp" data-format="currency"></canvas>
                         </div>
-                        <!--ganti source datanya nanti-->
-                        <div class="chart-container chart2 bg-white shadow-md rounded-lg p-6 hidden">
-                            <canvas class="chart-export-penjualan w-full h-96" data-axis="y" data-unit="Paket" data-format="currency"></canvas>
+                        <div class="chart-container chart2 hidden w-full h-full">
+                            <canvas id="chartTotal" class="chart-canvas" data-axis="y" data-unit="Rp" data-format="currency"></canvas>
                         </div>
                     </div>
+                    
                     <div class="mt-6 flex justify-end">
                         <button onclick="exportToPDF()" class="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition duration-300 ease-in-out">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                <mask id="lineMdCloudAltPrintFilledLoop0">
-                                    <g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-                                        <path stroke-dasharray="64" stroke-dashoffset="64" d="M7 19h11c2.21 0 4 -1.79 4 -4c0 -2.21 -1.79 -4 -4 -4h-1v-1c0 -2.76 -2.24 -5 -5 -5c-2.42 0 -4.44 1.72 -4.9 4h-0.1c-2.76 0 -5 2.24 -5 5c0 2.76 2.24 5 5 5Z">
-                                            <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0" />
-                                            <set fill="freeze" attributeName="opacity" begin="0.7s" to="0" />
-                                        </path>
-                                        <g fill="#fff" stroke="none" opacity="0">
-                                            <circle cx="12" cy="10" r="6">
-                                                <animate attributeName="cx" begin="0.7s" dur="30s" repeatCount="indefinite" values="12;11;12;13;12" />
-                                            </circle>
-                                            <rect width="9" height="8" x="8" y="12" />
-                                            <rect width="15" height="12" x="1" y="8" rx="6">
-                                                <animate attributeName="x" begin="0.7s" dur="21s" repeatCount="indefinite" values="1;0;1;2;1" />
-                                            </rect>
-                                            <rect width="13" height="10" x="10" y="10" rx="5">
-                                                <animate attributeName="x" begin="0.7s" dur="17s" repeatCount="indefinite" values="10;9;10;11;10" />
-                                            </rect>
-                                            <set fill="freeze" attributeName="opacity" begin="0.7s" to="1" />
-                                        </g>
-                                        <g fill="#000" fill-opacity="0" stroke="none">
-                                            <circle cx="12" cy="10" r="4">
-                                                <animate attributeName="cx" begin="0.7s" dur="30s" repeatCount="indefinite" values="12;11;12;13;12" />
-                                            </circle>
-                                            <rect width="9" height="6" x="8" y="12" />
-                                            <rect width="11" height="8" x="3" y="10" rx="4">
-                                                <animate attributeName="x" begin="0.7s" dur="21s" repeatCount="indefinite" values="3;2;3;4;3" />
-                                            </rect>
-                                            <rect width="9" height="6" x="12" y="12" rx="3">
-                                                <animate attributeName="x" begin="0.7s" dur="17s" repeatCount="indefinite" values="12;11;12;13;12" />
-                                            </rect>
-                                            <set fill="freeze" attributeName="fill-opacity" begin="0.7s" to="1" />
-                                            <animate fill="freeze" attributeName="opacity" begin="0.7s" dur="0.5s" values="1;0" />
-                                        </g>
-                                        <g stroke="none">
-                                            <path fill="#fff" d="M6 11h12v0h-12z">
-                                                <animate fill="freeze" attributeName="d" begin="1.3s" dur="0.22s" values="M6 11h12v0h-12z;M6 11h12v11h-12z" />
-                                            </path>
-                                            <path fill="#000" d="M8 13h8v0h-8z">
-                                                <animate fill="freeze" attributeName="d" begin="1.34s" dur="0.14s" values="M8 13h8v0h-8z;M8 13h8v7h-8z" />
-                                            </path>
-                                            <path fill="#fff" fill-opacity="0" d="M9 12h6v1H9zM9 14h6v1H9zM9 16h6v1H9zM9 18h6v1H9z">
-                                                <animate fill="freeze" attributeName="fill-opacity" begin="1.4s" dur="0.1s" values="0;1" />
-                                                <animateMotion begin="1.5s" calcMode="linear" dur="1.5s" path="M0 0v2" repeatCount="indefinite" />
-                                            </path>
-                                        </g>
-                                    </g>
-                                </mask>
-                                <rect width="24" height="24" fill="currentColor" mask="url(#lineMdCloudAltPrintFilledLoop0)" />
-                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><mask id="lineMdCloudAltPrintFilledLoop0"><g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="64" stroke-dashoffset="64" d="M7 19h11c2.21 0 4 -1.79 4 -4c0 -2.21 -1.79 -4 -4 -4h-1v-1c0 -2.76 -2.24 -5 -5 -5c-2.42 0 -4.44 1.72 -4.9 4h-0.1c-2.76 0 -5 2.24 -5 5c0 2.76 2.24 5 5 5Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0" /><set fill="freeze" attributeName="opacity" begin="0.7s" to="0" /></path><g fill="#fff" stroke="none" opacity="0"><circle cx="12" cy="10" r="6"><animate attributeName="cx" begin="0.7s" dur="30s" repeatCount="indefinite" values="12;11;12;13;12" /></circle><rect width="9" height="8" x="8" y="12" /><rect width="15" height="12" x="1" y="8" rx="6"><animate attributeName="x" begin="0.7s" dur="21s" repeatCount="indefinite" values="1;0;1;2;1" /></rect><rect width="13" height="10" x="10" y="10" rx="5"><animate attributeName="x" begin="0.7s" dur="17s" repeatCount="indefinite" values="10;9;10;11;10" /></rect><set fill="freeze" attributeName="opacity" begin="0.7s" to="1" /></g><g fill="#000" fill-opacity="0" stroke="none"><circle cx="12" cy="10" r="4"><animate attributeName="cx" begin="0.7s" dur="30s" repeatCount="indefinite" values="12;11;12;13;12" /></circle><rect width="9" height="6" x="8" y="12" /><rect width="11" height="8" x="3" y="10" rx="4"><animate attributeName="x" begin="0.7s" dur="21s" repeatCount="indefinite" values="3;2;3;4;3" /></rect><rect width="9" height="6" x="12" y="12" rx="3"><animate attributeName="x" begin="0.7s" dur="17s" repeatCount="indefinite" values="12;11;12;13;12" /></rect><set fill="freeze" attributeName="fill-opacity" begin="0.7s" to="1" /><animate fill="freeze" attributeName="opacity" begin="0.7s" dur="0.5s" values="1;0" /></g><g stroke="none"><path fill="#fff" d="M6 11h12v0h-12z"><animate fill="freeze" attributeName="d" begin="1.3s" dur="0.22s" values="M6 11h12v0h-12z;M6 11h12v11h-12z" /></path><path fill="#000" d="M8 13h8v0h-8z"><animate fill="freeze" attributeName="d" begin="1.34s" dur="0.14s" values="M8 13h8v0h-8z;M8 13h8v7h-8z" /></path><path fill="#fff" fill-opacity="0" d="M9 12h6v1H9zM9 14h6v1H9zM9 16h6v1H9zM9 18h6v1H9z"><animate fill="freeze" attributeName="fill-opacity" begin="1.4s" dur="0.1s" values="0;1" /><animateMotion begin="1.5s" calcMode="linear" dur="1.5s" path="M0 0v2" repeatCount="indefinite" /></path></g></g></mask><rect width="24" height="24" fill="currentColor" mask="url(#lineMdCloudAltPrintFilledLoop0)" /></svg>
                         </button>
                     </div>
                 </div>
             </div>
-            </div>
-            </div>
+        </div>
+    </div>
 
 
     <!-- Modal untuk Add Event -->
@@ -278,8 +229,8 @@
                                     {{ $perusahaan->nama_perusahaan }}
                                 </option>
                             @endforeach
-                        </select>         
-                    </div>     
+                        </select>        
+                    </div>      
                     <div>
                         <label for="nilai" class="block text-sm font-medium">Holding Value</label>
                         <input type="number" name="nilai" class="w-full p-2 border rounded" required>
@@ -313,10 +264,10 @@
                             <option value="{{ $perusahaan->id }}" 
                                 {{ $laporanholding->perusahaan_id == $perusahaan->id ? 'selected' : '' }}>
                                 {{ $perusahaan->nama_perusahaan }}
-                            </option>                                                
+                            </option>                                                                 
                             @endforeach
-                        </select>                                                                                  
-                    </div>     
+                        </select>                                                                       
+                    </div>      
                     <div>
                         <label for="nilai" class="block text-sm font-medium">Holding Value</label>
                         <input type="number" name="nilai" class="w-full p-2 border rounded" value="{{ $laporanholding->nilai }}" required>
@@ -337,155 +288,238 @@
 document.addEventListener('DOMContentLoaded', function () {
     
     //======================================================================
-    // LOGIKA UTAMA: SINKRONISASI CHART DENGAN TABEL
+    // LOGIKA UTAMA: SINKRONISASI CHART
     //======================================================================
-    let myChart; // Variabel untuk menyimpan instance chart
+    const chartInstances = new Map();
 
-    // 1. Helper untuk format mata uang
     function formatCurrency(value) {
-        if (value >= 1e9) return 'Rp ' + (value / 1e9).toFixed(1).replace('.', ',') + ' M';
-        if (value >= 1e6) return 'Rp ' + (value / 1e6).toFixed(1).replace('.', ',') + ' Jt';
+        if (typeof value !== 'number') return 'Rp 0';
         return 'Rp ' + value.toLocaleString('id-ID');
     }
 
-    // Fungsi untuk membuat atau memperbarui chart
-    function renderChart() {
-        // 2. Baca data langsung dari tabel HTML yang terlihat
+    function parseCurrency(currencyString) {
+        if (typeof currencyString !== 'string') return 0;
+        return parseInt(currencyString.replace(/[^0-9]/g, ''), 10) || 0;
+    }
+
+    function getRandomRGBA(opacity = 0.7) {
+        const r = Math.floor(Math.random() * 256);
+        const g = Math.floor(Math.random() * 256);
+        const b = Math.floor(Math.random() * 256);
+        return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    }
+
+    const dataLabelsPlugin = {
+        id: 'customDataLabelsOnBars',
+        afterDatasetsDraw(chart) {
+            const { ctx, data, config } = chart;
+            const chartType = config.type;
+            const axis = config.options.indexAxis;
+            if (chartType !== 'bar') return;
+
+            ctx.save();
+            ctx.font = 'bold 12px Arial';
+            ctx.fillStyle = 'black';
+            data.datasets.forEach((dataset, i) => {
+                const meta = chart.getDatasetMeta(i);
+                if (!meta.hidden) {
+                    meta.data.forEach((element, index) => {
+                        const value = dataset.data[index];
+                        const formattedValue = formatCurrency(value);
+                        let xPos, yPos;
+                        if (axis === 'y') {
+                            ctx.textAlign = 'left';
+                            ctx.textBaseline = 'middle';
+                            xPos = element.x + 8;
+                            yPos = element.y;
+                            const textWidth = ctx.measureText(formattedValue).width;
+                            if (xPos + textWidth > chart.chartArea.right) {
+                                xPos = element.x - 8;
+                                ctx.textAlign = 'right';
+                                ctx.fillStyle = 'white';
+                            } else {
+                                ctx.fillStyle = 'black';
+                            }
+                        } else {
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'bottom';
+                            xPos = element.x;
+                            yPos = element.y - 5;
+                        }
+                        ctx.fillText(formattedValue, xPos, yPos);
+                    });
+                }
+            });
+            ctx.restore();
+        }
+    };
+
+    function createOrUpdateChart(canvas, chartData) {
+        if (!canvas) return;
+        const chartType = 'bar'; // Both charts are bar charts
+        const axis = canvas.dataset.axis || 'x';
+        const unit = canvas.dataset.unit || '';
+        const format = canvas.dataset.format;
+        
+        const config = {
+            type: chartType,
+            data: chartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: axis,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const rawValue = axis === 'y' ? context.parsed.x : context.parsed.y;
+                                const label = context.dataset.label || '';
+                                let formattedValue = format === 'currency' ? formatCurrency(rawValue) : `${(rawValue || 0).toLocaleString('id-ID')} ${unit}`;
+                                return `${label}: ${formattedValue}`.trim();
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: (value, index) => (axis === 'y' ? (format === 'currency' ? formatCurrency(value) : `${value} ${unit}`) : chartData.labels[index])
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: (value, index) => (axis === 'x' ? (format === 'currency' ? formatCurrency(value) : `${value} ${unit}`) : chartData.labels[index])
+                        }
+                    }
+                }
+            },
+            plugins: [dataLabelsPlugin]
+        };
+
+        if (chartInstances.has(canvas)) {
+            chartInstances.get(canvas).destroy();
+        }
+        chartInstances.set(canvas, new Chart(canvas.getContext('2d'), config));
+    }
+
+    function renderChartsFromTable() {
         const tableRows = document.querySelectorAll('#data-table tbody tr');
-        const labels = [];
-        const dataValues = [];
-        const backgroundColors = [];
+        
+        // --- Data for Chart 1 (Biasa) ---
+        const labelsBiasa = [];
+        const dataBiasa = [];
+        const colorsBiasa = [];
 
         tableRows.forEach(row => {
             const cells = row.querySelectorAll('td');
-            if (cells.length > 1) {
-                const companyName = cells[1].innerText.trim();
-                const valueString = cells[2].innerText.trim();
-                const numericValue = parseInt(valueString.replace(/[^0-9]/g, ''), 10);
-
-                labels.push(companyName);
-                dataValues.push(numericValue);
-                backgroundColors.push(`rgba(${Math.floor(Math.random() * 200)}, ${Math.floor(Math.random() * 200)}, ${Math.floor(Math.random() * 200)}, 0.6)`);
+            if (cells.length > 2) {
+                const date = cells[0].innerText.trim();
+                const company = cells[1].innerText.trim();
+                const value = parseCurrency(cells[2].innerText.trim());
+                labelsBiasa.push(`${company} - ${date}`);
+                dataBiasa.push(value);
+                colorsBiasa.push(getRandomRGBA());
             }
         });
 
-        const chartDataFromTable = {
-            labels: labels,
+        const chartDataBiasa = {
+            labels: labelsBiasa,
             datasets: [{
                 label: 'Holding Value',
-                data: dataValues,
-                backgroundColor: backgroundColors,
-                borderWidth: 1,
-                borderRadius: 5
+                text: 'Holding Value',
+                data: dataBiasa,
+                backgroundColor: colorsBiasa,
             }]
         };
+        createOrUpdateChart(document.getElementById('chartBiasa'), chartDataBiasa);
 
-        // 4. Hitung tinggi canvas
-        const barThickness = 35;
-        const barPadding = 15;
-        const perBarHeight = barThickness + barPadding;
-        const labelsCount = labels.length > 0 ? labels.length : 1;
-        const totalHeight = labelsCount * perBarHeight;
-
-        // [PERBAIKAN] Tetapkan tinggi minimal untuk mencegah bar terlalu tebal saat data sedikit
-        const minHeight = 200; // Tinggi minimal dalam piksel, bisa disesuaikan
-        const finalHeight = Math.max(totalHeight, minHeight);
-
-        // 3) Apply ke wrapper
-        const wrapper = document.getElementById('chart-wrapper');
-        wrapper.style.height = finalHeight + 'px';
-
-
-        const ctx = document.getElementById('chart').getContext('2d');
-
-        // Hancurkan chart lama jika ada, sebelum membuat yang baru
-        if (myChart) {
-            myChart.destroy();
-        }
-
-        // 5. Inisialisasi Chart baru
-        myChart = new Chart(ctx, {
-            type: 'bar',
-            data: chartDataFromTable,
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: false,
-                datasets: { bar: { barThickness: barThickness, categoryPercentage: 1.0, barPercentage: 1.0 }},
-                layout: { padding: { left: 20, right: 120, top: 10, bottom: 10 } },
-                scales: {
-                    x: { beginAtZero: true, ticks: { callback: v => formatCurrency(v) }, grid: { drawBorder: false } },
-                    y: { grid: { display: false }, title: { display: false } }
-                },
-                plugins: {
-                    legend: { display: false },
-                    tooltip: { callbacks: { label: ctx => `${ctx.dataset.label || ''}: ${formatCurrency(ctx.raw)}` } }
-                }
-            },
-            plugins: [{
-                id: 'custom_data_labels_horizontal',
-                afterDatasetsDraw(chart) {
-                    const { ctx, data } = chart;
-                    ctx.save();
-                    ctx.font = 'bold 14px sans-serif';
-                    ctx.fillStyle = 'black';
-                    ctx.textBaseline = 'middle';
-                    ctx.textAlign = 'left';
-
-                    data.datasets.forEach((dataset, i) => {
-                        const meta = chart.getDatasetMeta(i);
-                        if (meta.type !== 'bar' || !meta.visible) return;
-                        meta.data.forEach((bar, index) => {
-                            const value = dataset.data[index];
-                            const xPos = bar.x + 8;
-                            ctx.fillText('Rp ' + value.toLocaleString('id-ID'), xPos, bar.y);
-                        });
-                    });
-                    ctx.restore();
+        // --- Data for Chart 2 (Total) ---
+        const aggregatedData = {};
+        tableRows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if (cells.length > 2) {
+                const company = cells[1].innerText.trim();
+                const value = parseCurrency(cells[2].innerText.trim());
+                if (aggregatedData[company]) {
+                    aggregatedData[company] += value;
+                } else {
+                    aggregatedData[company] = value;
                 }
             }
-        ]
         });
-    }
 
-    // Panggil fungsi renderChart saat halaman pertama kali dimuat
-    renderChart();
+        const labelsTotal = Object.keys(aggregatedData);
+        const dataTotal = Object.values(aggregatedData);
+        const colorsTotal = labelsTotal.map(() => getRandomRGBA());
+
+        const chartDataTotal = {
+            labels: labelsTotal,
+            datasets: [{
+                label: 'Total Holding Value',
+                text: 'Total Holding Value',
+                data: dataTotal,
+                backgroundColor: colorsTotal,
+            }]
+        };
+        createOrUpdateChart(document.getElementById('chartTotal'), chartDataTotal);
+    }
+    
+    // Inisialisasi dan kelola grup chart
+    document.querySelectorAll('.chart-group').forEach(group => {
+        const select = group.querySelector('.chart-select');
+        const containers = group.querySelectorAll('.chart-container');
+        
+        function updateChartDisplay() {
+            const selectedValue = select.value;
+            containers.forEach(container => {
+                container.classList.toggle('hidden', !container.classList.contains(selectedValue));
+                if (!container.classList.contains('hidden')) {
+                    const chartInstance = chartInstances.get(container.querySelector('.chart-canvas'));
+                    if(chartInstance) setTimeout(() => chartInstance.resize(), 50); 
+                }
+            });
+        }
+
+        select.addEventListener('change', updateChartDisplay);
+        updateChartDisplay();
+    });
 
     //======================================================================
-    // FUNGSI-FUNGSI BANTUAN (MODAL, TOGGLE)
+    // FUNGSI-FUNGSI BANTUAN (MODAL, TOGGLE, DLL)
     //======================================================================
     
     document.getElementById('toggleChartButton').addEventListener('click', () => {
         document.getElementById('formChart').classList.toggle('hidden');
     });
 
-    const toggleFormButton = document.getElementById('toggleFormButton');
-    const formContainer = document.querySelector('#formContainer');
-
-    if (toggleFormButton && formContainer) {
-        toggleFormButton.addEventListener('click', () => {
-            formContainer.classList.toggle('hidden');
-        });
-    }
+    document.getElementById('toggleFormButton').addEventListener('click', () => {
+        document.getElementById('formContainer').classList.toggle('hidden');
+    });
 
     document.querySelectorAll('[data-modal-target]').forEach(button => {
         button.addEventListener('click', function() {
-            const modalId = this.getAttribute('data-modal-target');
-            const modal = document.querySelector(modalId);
+            const modal = document.querySelector(this.getAttribute('data-modal-target'));
             if (modal) modal.classList.remove('hidden');
         });
     });
+
     document.querySelectorAll('[data-modal-close]').forEach(button => {
         button.addEventListener('click', function() {
             this.closest('.fixed.z-50').classList.add('hidden');
         });
     });
+
+    // --- INISIALISASI ---
+    renderChartsFromTable(); // Panggil fungsi utama untuk merender chart dari tabel
 });
 
 // Fungsi global untuk mengubah item per halaman
 function changePerPage(value) {
     const url = new URL(window.location.href);
-    url.searchParams.set('page', 1); // Selalu reset ke halaman pertama
+    url.searchParams.set('page', 1);
     url.searchParams.set('per_page', value);
     window.location.href = url.toString();
 }
@@ -505,7 +539,7 @@ async function exportToPDF() {
         if (cells.length < 3) return null;
         return {
             tanggal: cells[0]?.innerText.trim() || '',
-            laporanholding: cells[1]?.innerText.trim() || '',
+            perusahaan: cells[1]?.innerText.trim() || '',
             nilai: cells[2]?.innerText.trim() || '',
         };
     }).filter(item => item !== null);
@@ -519,18 +553,18 @@ async function exportToPDF() {
     const tableContent = items.map(item => `
         <tr>
             <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.tanggal}</td>
-            <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.laporanholding}</td>
+            <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.perusahaan}</td>
             <td style="border: 1px solid #000; padding: 8px; text-align: right;">${item.nilai}</td>
         </tr>
     `).join('');
 
-    const chartCanvas = document.querySelector('#chart');
-    if (!chartCanvas) {
-        alert('Elemen canvas grafik tidak ditemukan.');
+    const activeChartCanvas = document.querySelector('.chart-container:not(.hidden) .chart-canvas');
+    if (!activeChartCanvas) {
+        alert('Elemen canvas grafik yang aktif tidak ditemukan.');
         document.body.style.cursor = 'default';
         return;
     }
-    const chartBase64 = chartCanvas.toDataURL('image/png', 1.0);
+    const chartBase64 = activeChartCanvas.toDataURL('image/png', 1.0);
 
     try {
         const response = await fetch('/procurements/laporanholding/export-pdf', {

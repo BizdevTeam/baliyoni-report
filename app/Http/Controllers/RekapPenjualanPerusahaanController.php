@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\RekapPenjualanPerusahaan;
 use App\Models\Perusahaan;
 use App\Traits\DateValidationTrait;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
 use Illuminate\Support\Facades\DB;
@@ -17,60 +18,92 @@ class RekapPenjualanPerusahaanController extends Controller
 {
     use DateValidationTrait;
 
-    // Show the view
+    private function getRandomRGBA($opacity = 0.7)
+    {
+        return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
+    }
+
     public function index(Request $request)
     {
         $perusahaans = Perusahaan::all();
-
         $perPage = $request->input('per_page', 12);
         $search = $request->input('search');
 
-        // Query untuk mencari berdasarkan tahun dan date
-        $rekappenjualanperusahaans = RekapPenjualanPerusahaan::with('perusahaan')
+        // Query dasar untuk digunakan kembali
+        $baseQuery = RekapPenjualanPerusahaan::with('perusahaan')
             ->when($search, function ($query, $search) {
-                return $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"])
-                    ->orWhereHas('perusahaan', function ($q) use ($search) {
-                        $q->where('nama_perusahaan', 'LIKE', "%$search%");
-                    });
-            })
-            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
-            ->paginate($perPage);
+                return $query->where(function($q) use ($search) {
+                    $q->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%{$search}%"])
+                      ->orWhereHas('perusahaan', function ($subq) use ($search) {
+                          $subq->where('nama_perusahaan', 'LIKE', "%{$search}%");
+                      });
+                });
+            });
 
-        // Hitung total untuk masing-masing kategori
-        $totalPenjualan = $rekappenjualanperusahaans->sum('total_penjualan');
+        // [FIX] Ambil SEMUA data untuk analisis dan chart agar akurat
+        $allReports = (clone $baseQuery)->orderBy('tanggal', 'asc')->get();
 
-        // Siapkan data untuk chart
-        function getRandomRGBA($opacity = 0.7)
-        {
-            return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
-        }
+        // Ambil data yang DIPAGINASI hanya untuk tampilan tabel
+        $rekappenjualanperusahaans = (clone $baseQuery)->orderBy('tanggal', 'desc')->paginate($perPage);
 
-        $labels = $rekappenjualanperusahaans->map(function ($item) {
-            $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
-            return $item->perusahaan->nama_perusahaan . ' - ' . $formattedDate;
-        })->toArray();
-        $data = $rekappenjualanperusahaans->pluck('total_penjualan')->toArray();
-        // Generate random colors for each data item
-
-        $backgroundColors = array_map(fn() => getRandomRGBA(), $data);
-
+        // --- Chart 1: Chart Biasa (Individual entries from all data) ---
+        $labels1 = $allReports->map(function ($item) {
+            $formattedDate = Carbon::parse($item->tanggal)->translatedFormat('F Y');
+            // Pastikan relasi perusahaan ada untuk menghindari error
+            return ($item->perusahaan->nama_perusahaan ?? 'N/A') . ' - ' . $formattedDate;
+        })->all();
+        
+        $data1 = $allReports->pluck('total_penjualan')->all();
+        
         $chartData = [
-            'labels' => $labels, // Labels untuk chart
-            'datasets' => [
-                [
-                    'label' => 'Sales Recap by Company', // Nama dataset
-                    'text' => 'Sales Recap by Company', // Nama dataset
-                    'data' => $data, // Data untuk chart
-                    'backgroundColor' => $backgroundColors, // Warna batang random
-                ],
-            ],
+            'labels' => $labels1,
+            'datasets' => [[
+                'label' => 'Sales Recap by Company',
+                'text' => 'Total Penjualan',
+                'data' => $data1,
+                'backgroundColor' => array_map(fn() => $this->getRandomRGBA(), $data1),
+            ]],
         ];
+
+        // --- Chart 2: Chart Total (Aggregated data from all data) ---
+        $chartTotalData = $this->getChartTotalData($allReports);
+
         $aiInsight = null;
         if ($request->has('generate_ai')) {
-        $aiInsight = $this->generateSalesInsight($rekappenjualanperusahaans, $chartData);
+            $aiInsight = $this->generateSalesInsight($allReports, $chartData);
         }
-        return view('marketings.rekappenjualanperusahaan', compact('rekappenjualanperusahaans', 'chartData', 'perusahaans', 'aiInsight'));
+
+        return view('marketings.rekappenjualanperusahaan', compact('rekappenjualanperusahaans', 'chartData', 'chartTotalData', 'perusahaans', 'aiInsight'));
     }
+
+    private function getChartTotalData($reports)
+    {
+        if ($reports->isEmpty()) {
+            return [
+                'labels' => [],
+                'datasets' => [],
+            ];
+        }
+
+        // Group by company name and sum the 'total_penjualan'
+        $akumulasiData = $reports->groupBy('perusahaan.nama_perusahaan')
+                                 ->map(fn($items) => $items->sum('total_penjualan'));
+        
+        $labels = $akumulasiData->keys()->toArray();
+        $data = $akumulasiData->values()->toArray();
+        $backgroundColors = array_map(fn() => $this->getRandomRGBA(), $data);
+
+        return [
+            'labels' => $labels,
+            'datasets' => [[
+                'label' => 'Total Penjualan',
+                'text' => 'Total Penjualan',
+                'data' => $data,
+                'backgroundColor' => $backgroundColors,
+            ]],
+        ];
+    }
+
     private function generateSalesInsight($salesData, $chartData, $companyName = null)
     {
         // Ambil konfigurasi dari file config/services.php
