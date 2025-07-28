@@ -1,5 +1,5 @@
 @if (Auth::check())
-<aside id="sidebar" class="w-64 transition-all duration-300 bg-white border-r border-gray-200 shadow-lg overflow-y-scroll h-screen fixed top-0 left-0 z-20 flex flex-col">
+<aside id="sidebar" class="w-64 transition-all duration-300 bg-white border-r border-gray-200 shadow-lg overflow-y-scroll no-scrollbar h-screen fixed top-0 left-0 z-20 flex flex-col">
     <!-- Logo Section -->
     <div class="mt-8 mb-8 pb-3 flex justify-center">
         <div id="logo-full" class="logo w-40 h-auto">
