@@ -40,7 +40,7 @@
             @csrf
             <div>
                 <label for="username" class="block text-sm font-medium text-gray-700">User Name</label>
-                <input type="text" id="email" name="email" placeholder="example@gmail.com" value="{{ old('email')}}" 
+                <input type="text" id="name" name="name" placeholder="Username" value="{{ old('name')}}" 
                        class="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
             </div>
 

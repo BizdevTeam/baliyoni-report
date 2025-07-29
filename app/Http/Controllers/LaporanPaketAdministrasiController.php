@@ -111,6 +111,32 @@ class LaporanPaketAdministrasiController extends Controller
         
     return view('marketings.laporanpaketadministrasi', compact('laporanpaketadministrasis', 'chartData', 'aiInsight'));
     }
+    private function getChartTotalData($reports)
+    {
+        // Akumulasi total paket berdasarkan website
+        $akumulasiData = [];
+        foreach ($reports as $item) {
+            $namaWebsite = $item->website;
+            if (!isset($akumulasiData[$namaWebsite])) {
+                $akumulasiData[$namaWebsite] = 0;
+            }
+            $akumulasiData[$namaWebsite] += $item->total_paket;
+        }
+
+        // Siapkan data untuk chart
+        $labels = array_keys($akumulasiData);
+        $data = array_values($akumulasiData);
+        $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data);
+
+        return [
+            'labels' => $labels,
+            'datasets' => [[
+                'label' => 'Total Paket',
+                'data' => $data,
+                'backgroundColor' => $backgroundColors,
+            ]],
+        ];
+    }
 
     private function generateSalesInsight($reportData, $chartData): string // [FIX] Nama variabel diubah agar lebih jelas
     {

@@ -7,58 +7,76 @@ use Illuminate\Support\Facades\Auth;
 
 class SessionController extends Controller
 {
-    //
-    function index()
+    /**
+     * Tampilkan form login.
+     */
+    public function index()
     {
         return view('login');
     }
-    function login(Request $request){
-        $request->validate([
-            'email'=>'required',
-            'password'=>'required'
-        ],[
-            'email.required'=>'Email Wajib Diisi',
-            'password.required'=>'Password Wajib Diisi',
+
+    /**
+     * Tangani request login.
+     */
+    public function login(Request $request)
+    {
+        // 1. Validasi input: ganti 'email' → 'name'
+        $credentials = $request->validate([
+            'name'     => 'required|string',
+            'password' => 'required',
+        ], [
+            'name.required'     => 'Username Wajib Diisi',
+            'password.required' => 'Password Wajib Diisi',
         ]);
 
-        $infologin = [
-            'email'=> $request->email,
-            'password'=> $request->password,
-        ];
-
-        if(Auth::attempt($infologin)){
-            $role = Auth::user()->role;
-            switch ($role) {
-                case 'superadmin':
-                    return redirect('admin/app');
-                case 'marketing':
-                    return redirect('admin/app');
-                case 'it':
-                    return redirect('admin/app');
-                case 'procurement':
-                    return redirect('admin/app');
-                case 'accounting':
-                    return redirect('admin/app');
-                case 'support':
-                    return redirect('admin/app');
-                case 'hrga':
-                    return redirect('admin/app');
-                case 'spi':
-                    return redirect('admin/app');
-                default:
-                    Auth::logout();
-                    return redirect('/')->withErrors('Invalid role');
-            }
-        } else {
-            return redirect('/')->withErrors('Email & Password doesn\'t match our records')->withInput();
+        // 2. Coba autentikasi dengan field 'name'
+        if (! Auth::attempt($credentials)) {
+            return back()
+                ->withErrors('Username & Password tidak cocok')
+                ->withInput();
         }
+
+        // 3. Regenerate session (security best practice)
+        $request->session()->regenerate();
+
+        // 4. Cek role masih sama
+        $role = Auth::user()->role;
+        if (! in_array($role, $this->allowedRoles(), true)) {
+            Auth::logout();
+            return redirect()->route('login')
+                ->withErrors('Role tidak valid');
+        }
+
+        // 5. Redirect ke intended atau /admin/app
+        return redirect()->intended('/admin/app');
     }
 
-    function logout(Request $request)
+    /**
+     * Logout.
+     */
+    public function logout(Request $request)
     {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/');
+
+        return redirect()->route('login');
+    }
+
+    /**
+     * Daftar role yang valid.
+     */
+    private function allowedRoles(): array
+    {
+        return [
+            'superadmin',
+            'marketing',
+            'it',
+            'procurement',
+            'accounting',
+            'support',
+            'hrga',
+            'spi',
+        ];
     }
 }

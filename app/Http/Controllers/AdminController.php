@@ -2,39 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Auth\Events\Logout;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use BadMethodCallException;
 
 class AdminController extends Controller
 {
-    // 
-    function index()
+    /**
+     * All “dashboard” methods that should show the same view.
+     */
+    protected array $dashboardMethods = [
+        'index',
+        'marketing',
+        'it',
+        'procurement',
+        'accounting',
+        'support',
+        'hrga',
+        'spi',
+    ];
+
+    /**
+     * Catch any calls to index(), marketing(), it(), etc.
+     */
+    public function __call(string $method, array $parameters)
     {
-        return view('layouts.app');
-    }
-    function marketing()
-    {
-        return view('layouts.app');
-    }
-    function it()
-    {
-        return view('layouts.app');
-    }
-    function procurement()
-    {
-        return view('layouts.app');
-    }
-    function accounting(){
-        return view('layouts.app');
-    }
-    function support(){
-        return view('layouts.app');
-    }
-    function hrga(){
-        return view('layouts.app');
-    }
-    function spi(){
-        return view('layouts.app');
+        if (in_array($method, $this->dashboardMethods, true)) {
+            return view('layouts.app');
+        }
+
+        throw new BadMethodCallException("Method {$method} does not exist.");
     }
 }

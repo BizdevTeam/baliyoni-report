@@ -183,7 +183,7 @@
             <div id="formChart" class="visible">
                 <div class="flex flex-col mx-auto bg-white p-6 mt-4 rounded-lg shadow-xl border border-grey-500 chart-group">
                     <div class="mb-4 flex justify-between items-center">
-                        <h1 class="text-2xl font-bold text-red-600 font-montserrat">Purchase (Holding) Report Chart</h1>
+                        <h1 class="text-2xl font-bold text-red-600 font-montserrat mx-auto">Purchase (Holding) Report Chart</h1>
                         <select class="chart-select p-2 border border-gray-300 rounded">
                             <option value="chart1">Chart Biasa</option>
                             <option value="chart2">Chart Total</option>
