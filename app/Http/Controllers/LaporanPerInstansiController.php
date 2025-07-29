@@ -64,8 +64,37 @@ class LaporanPerInstansiController extends Controller
     if ($request->has('generate_ai')) {
         $aiInsight = $this->generateSalesInsight($laporanperinstansis, $chartData);
     }
+    
         
         return view('marketings.laporanperinstansi', compact('laporanperinstansis', 'chartData','aiInsight'));    }
+
+        private function getChartTotalData($reports)
+    {
+        // Akumulasi total paket berdasarkan website
+        $akumulasiData = [];
+        foreach ($reports as $item) {
+            $namaInstansi = $item->instansi;
+            if (!isset($akumulasiData[$namaInstansi])) {
+                $akumulasiData[$namaInstansi] = 0;
+            }
+            $akumulasiData[$namaInstansi] += $item->nilai;
+        }
+
+        // Siapkan data untuk chart
+        $labels = array_keys($akumulasiData);
+        $data = array_values($akumulasiData);
+        $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data);
+
+        return [
+            'labels' => $labels,
+            'datasets' => [[
+                'label' => 'Total Nilai',
+                'data' => $data,
+                'backgroundColor' => $backgroundColors,
+            ]],
+        ];
+    }
+
 private function generateSalesInsight($salesData, $chartData)
     {
         // Ambil konfigurasi dari file config/services.php

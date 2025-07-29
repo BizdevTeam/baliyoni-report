@@ -81,15 +81,6 @@ public function store(Request $request)
                 return redirect()->back()->with('error', $errorMessage);
             }
 
-            // Cek kombinasi unik date dan divisi
-            $exists = LaporanCutiDivisi::where('tanggal', $validatedData['tanggal'])
-                ->where('divisi', $validatedData['divisi'])
-                ->exists();
-
-            if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
-            }
-
             LaporanCutiDivisi::create($validatedData);
 
             return redirect()->route('laporancutidivisi.index')->with('success', 'Data Berhasil Ditambahkan');

@@ -140,14 +140,6 @@ public function update(Request $request, LaporanIzinDivisi $laporanizindivisi)
                 return redirect()->back()->with('error', $errorMessage);
             }
 
-            // Cek kombinasi unik date dan divisi
-            $exists = LaporanIzinDivisi::where('divisi', $validatedData['divisi'])
-                ->where('id_sakit', '!=', $laporanizindivisi->id_sakit)->exists();
-
-            if ($exists) {
-                return redirect()->back()->with('error', 'it cannot be changed, the data already exists.');
-            }
-
             // Update data
             $laporanizindivisi->update($validatedData);
 
