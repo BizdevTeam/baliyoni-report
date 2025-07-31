@@ -459,7 +459,7 @@ async function exportToPDF() {
     const chartBase64 = chartCanvas.toDataURL('image/png', 1.0);
 
     try {
-        const response = await fetch("procurements/laporanstok.exportpdf", {
+        const response = await fetch("/procurements/laporanstok/export-pdf", {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,

@@ -319,7 +319,7 @@ class RekapPenjualanController extends Controller
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
 
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}Marketing Report - Sales Recap|');
+            $mpdf->SetFooter('{DATE j-m-Y}|Marketing Report - Sales Recap|');
 
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "
@@ -354,7 +354,7 @@ class RekapPenjualanController extends Controller
                 ->header('Content-Disposition', 'attachment; filename=\"laporan_rekap_penjualan.pdf\"');
         } catch (\Exception $e) {
             // Log error jika terjadi masalah
-            Log::error('Error exporting PDF: ' . $e->getMessage());
+            Log::error('Error exporting PDF', ['exception' => $e]);            
             return response()->json(['success' => false, 'message' => 'Gagal mengekspor PDF.'], 500);
         }
     }
