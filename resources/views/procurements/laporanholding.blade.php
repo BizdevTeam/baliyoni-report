@@ -303,10 +303,15 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function getRandomRGBA(opacity = 0.7) {
-        const r = Math.floor(Math.random() * 256);
-        const g = Math.floor(Math.random() * 256);
-        const b = Math.floor(Math.random() * 256);
-        return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    let r, g, b, brightness;
+    do {
+        r = Math.floor(Math.random() * 256);
+        g = Math.floor(Math.random() * 256);
+        b = Math.floor(Math.random() * 256);
+        // rumus luminance standar (persepsi)
+        brightness = 0.299 * r + 0.587 * g + 0.114 * b;
+    } while (brightness > 130); // ulang jika terlalu terang
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
     }
 
     const dataLabelsPlugin = {
