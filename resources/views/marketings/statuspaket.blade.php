@@ -4,11 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- The CSRF token will be dynamically injected by Laravel -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Package Status Report</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <!-- Assuming these are Laravel Vite directives -->
     @vite('resources/css/app.css')
     <link rel="stylesheet" href="{{ asset('templates/plugins/fontawesome-free/css/all.min.css') }}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -62,7 +64,7 @@
 
         <!-- Main Content -->
         <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
-            <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan Status Paket</h1>
+            <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Package Status Report</h1>
             
             @if(empty($aiInsight))
             <div class="my-6 text-center">
@@ -127,7 +129,7 @@
                                         <form method="POST" action="{{ route('statuspaket.destroy', $statuspaket->id_statuspaket) }}">
                                             @csrf
                                             @method('DELETE')
-                                            <button class="text-red-600 bg-transparent px-3 py-2 rounded" onclick="return confirm('Apakah Anda yakin ingin menghapus?')">
+                                            <button type="button" class="text-red-600 bg-transparent px-3 py-2 rounded" onclick="confirmDelete(this)">
                                                 <i class="fa fa-trash"></i>
                                             </button>
                                         </form>
@@ -156,7 +158,7 @@
 
             <div id="formChart" class="visible">
                 <div class="flex flex-col mx-auto bg-white p-6 mt-4 rounded-lg shadow-xl border border-grey-500">
-                    <h1 class="text-2xl font-bold text-red-600 mb-2 mx-auto font-montserrat text-start">Grafik Laporan Status Paket</h1>
+                    <h1 class="text-2xl font-bold text-red-600 mb-2 mx-auto font-montserrat text-start">Package Status Report Chart</h1>
                     <div class="mt-6 self-center w-full flex justify-center" style="height: 450px;">
                         <canvas id="chart"></canvas>
                     </div>
@@ -239,371 +241,237 @@
             </div>
         </div>
     </div>
-</body>
 
 <script>
-    // document.addEventListener('DOMContentLoaded', function() {
-    //     // --- DEKLARASI VARIABEL ---
-    //     let myChart;
-    //     const formContainer = document.getElementById('formContainer');
-    //     const formChart = document.getElementById('formChart');
-    //     const toggleFormButton = document.getElementById('toggleFormButton');
-    //     const toggleChartButton = document.getElementById('toggleChartButton');
-    //     const perPageSelect = document.getElementById('perPage');
-    //     const exportPdfButton = document.getElementById('exportPdfButton');
+// --- Custom Delete Confirmation ---
+// Replaces the native confirm() which can be blocked or look inconsistent.
+function confirmDelete(button) {
+    const form = button.closest('form');
+    // You can replace this with a more sophisticated custom modal if desired
+    const userConfirmed = window.confirm('Apakah Anda yakin ingin menghapus?');
+    if (userConfirmed) {
+        form.submit();
+    }
+}
 
-    //     // --- DEFINISI FUNGSI ---
+// --- Main script execution after DOM is loaded ---
+document.addEventListener('DOMContentLoaded', function() {
 
-    //     /**
-    //      * Merender grafik batang horizontal yang merangkum jumlah paket berdasarkan status.
-    //      */
-    //     function renderChart() {
-    //         const tableRows = document.querySelectorAll('#data-table tbody tr');
-    //         const statusCounts = {}; // Objek untuk menyimpan hitungan untuk setiap status
-
-    //         // Mengumpulkan data: menghitung paket untuk setiap status
-    //         tableRows.forEach(row => {
-    //             const cells = row.querySelectorAll('td');
-    //             if (cells.length > 2) {
-    //                 const status = cells[1].innerText.trim();
-    //                 const packageValue = parseInt(cells[2].innerText.trim().replace(/[^0-9]/g, ''), 10);
-
-    //                 if (!isNaN(packageValue)) {
-    //                     if (statusCounts[status]) {
-    //                         statusCounts[status] += packageValue;
-    //                     } else {
-    //                         statusCounts[status] = packageValue;
-    //                     }
-    //                 }
-    //             }
-    //         });
-
-    //         const labels = Object.keys(statusCounts);
-    //         const dataValues = Object.values(statusCounts);
-            
-    //         const chartData = {
-    //             labels: labels,
-    //             datasets: [{
-    //                 label: 'Total Paket',
-    //                 data: dataValues,
-    //                 backgroundColor: [
-    //                     'rgba(255, 99, 132, 0.7)',
-    //                     'rgba(54, 162, 235, 0.7)',
-    //                     'rgba(255, 206, 86, 0.7)',
-    //                     'rgba(75, 192, 192, 0.7)',
-    //                     'rgba(153, 102, 255, 0.7)',
-    //                     'rgba(255, 159, 64, 0.7)'
-    //                 ],
-    //                 borderColor: [
-    //                     'rgba(255, 99, 132, 1)',
-    //                     'rgba(54, 162, 235, 1)',
-    //                     'rgba(255, 206, 86, 1)',
-    //                     'rgba(75, 192, 192, 1)',
-    //                     'rgba(153, 102, 255, 1)',
-    //                     'rgba(255, 159, 64, 1)'
-    //                 ],
-    //                 borderWidth: 1
-    //             }]
-    //         };
-
-    //         const ctx = document.getElementById('chart')?.getContext('2d');
-    //         if (!ctx) return;
-
-    //         if (myChart) {
-    //             myChart.destroy();
-    //         }
-
-    //         myChart = new Chart(ctx, {
-    //             type: 'bar', // Mengubah kembali ke grafik batang
-    //             data: chartData,
-    //             options: {
-    //                 indexAxis: 'y', // Mengatur orientasi menjadi horizontal
-    //                 responsive: true,
-    //                 maintainAspectRatio: false,
-    //                 plugins: {
-    //                     legend: {
-    //                         display: false // Legenda tidak terlalu berguna untuk satu set data
-    //                     },
-    //                     tooltip: {
-    //                         callbacks: {
-    //                             label: function(context) {
-    //                                 let label = context.dataset.label || '';
-    //                                 if (label) {
-    //                                     label += ': ';
-    //                                 }
-    //                                 if (context.parsed.x !== null) {
-    //                                     label += context.parsed.x.toLocaleString('id-ID') + ' paket';
-    //                                 }
-    //                                 return label;
-    //                             }
-    //                         }
-    //                     }
-    //                 },
-    //                 scales: {
-    //                     x: { // Sumbu x sekarang adalah sumbu nilai
-    //                         beginAtZero: true,
-    //                         title: {
-    //                             display: true,
-    //                             text: 'Total Paket'
-    //                         }
-    //                     },
-    //                     y: { // Sumbu y sekarang adalah sumbu kategori
-    //                         grid: {
-    //                             display: false
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         });
-    //     }
-
-    //     /**
-    //      * Mengekspor tampilan saat ini (tabel dan grafik) ke PDF.
-    //      */
- //toogle form
-        const toggleFormButton = document.getElementById('toggleFormButton');
-        const formContainer = document.getElementById('formContainer');
-
+    // --- Toggle Visibility for Table and Chart ---
+    const toggleFormButton = document.getElementById('toggleFormButton');
+    const formContainer = document.getElementById('formContainer');
+    if (toggleFormButton && formContainer) {
         toggleFormButton.addEventListener('click', () => {
             formContainer.classList.toggle('hidden');
         });
+    }
 
     const toggleChartButton = document.getElementById('toggleChartButton');
-        const formChart = document.getElementById('formChart');
-
+    const formChart = document.getElementById('formChart');
+    if (toggleChartButton && formChart) {
         toggleChartButton.addEventListener('click', () => {
             formChart.classList.toggle('hidden');
         });
+    }
 
-
-    const chartCanvas = document.getElementById('chart');
-    // Mengatur tombol untuk membuka modal add
-    document.querySelector('[data-modal-target="#addEventModal"]').addEventListener('click', function() {
-        const modal = document.querySelector('#addEventModal');
-        modal.classList.remove('hidden');
-    });
-        
-    // Mengatur tombol untuk membuka modal edit
+    // --- Modal Handling ---
+    // Open modal
     document.querySelectorAll('[data-modal-target]').forEach(button => {
         button.addEventListener('click', function() {
-            // Menemukan modal berdasarkan ID yang diberikan di data-modal-target
             const modalId = this.getAttribute('data-modal-target');
             const modal = document.querySelector(modalId);
             if (modal) {
-                modal.classList.remove('hidden'); // Menampilkan modal
+                modal.classList.remove('hidden');
             }
         });
     });
-    // Menutup modal ketika tombol Close ditekan
+
+    // Close modal
     document.querySelectorAll('[data-modal-close]').forEach(button => {
         button.addEventListener('click', function() {
-            const modal = this.closest('.fixed');
-            modal.classList.add('hidden'); // Menyembunyikan modal
+            const modal = this.closest('.fixed.z-50');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
         });
     });
-
-    var chartData = @json($chartData);
-
-    var ctx = document.getElementById('chart').getContext('2d');
-
-    var horizontalBarChart = new Chart(ctx, {
-        // Tipe chart tetap 'bar'
-        type: 'bar',
-        data: {
-            labels: chartData.labels,
-            datasets: chartData.datasets,
-        },
-        options: {
-            // --- PERUBAHAN UTAMA ---
-            // Mengubah sumbu utama menjadi sumbu Y
-            indexAxis: 'y',
-            // ---------------------
-
-            responsive: true,
-            maintainAspectRatio: false, // Memungkinkan chart menyesuaikan tinggi
-            plugins: {
-                legend: {
-                    display: false, // Sembunyikan legenda
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(tooltipItem) {
-                            let value = tooltipItem.raw;
-                            // Menggunakan tooltipItem.dataset.label yang lebih standar
-                            return tooltipItem.dataset.label + ': ' + value  + ' Packages'.toLocaleString('id-ID');
-                        },
-                    },
-                },
-            },
-            scales: {
-                // Konfigurasi sumbu X (sekarang menjadi sumbu NILAI)
-                x: {
-                    beginAtZero: true,
-                    title: {
-                        display: false,
-                    },
-                    ticks: {
-                        // Format angka pada sumbu nilai
-                        callback: function(value) {
-                            if (value >= 1000000) {
-                                return (value / 1000000) + ' Packages';
-                            }
-                            return value + ' Packages'.toLocaleString('id-ID');
-                        },
-                    },
-                },
-                // Konfigurasi sumbu Y (sekarang menjadi sumbu KATEGORI)
-                y: {
-                    title: {
-                        display: false,
-                    },
-                },
-            },
-            layout: {
-                padding: {
-                    // Beri ruang di kanan untuk label nilai
-                    right: 80,
-                    left: 20
-                },
-            },
-        },
-        plugins: [{
-            // Plugin custom untuk menampilkan nilai di ujung setiap bar
-            id: 'custom_data_labels_horizontal',
-            afterDatasetsDraw: function(chart) {
-                const { ctx, data, chartArea: { top, bottom, left, right }, scales: { x, y } } = chart;
-                
-                ctx.save();
-                ctx.font = 'bold 14px sans-serif';
-                ctx.fillStyle = 'black';
-                ctx.textBaseline = 'middle';
-
-                data.datasets.forEach((dataset, i) => {
-                    const meta = chart.getDatasetMeta(i);
-                    // Pastikan dataset adalah bar dan terlihat
-                    if (meta.type !== 'bar' || !meta.visible) {
-                        return;
-                    }
-
-                    meta.data.forEach((bar, index) => {
-                        const value = dataset.data[index];
-                        
-                        // Posisi teks di sebelah kanan bar
-                        const textPositionX = bar.x + 8;
-                        
-                        // Atur perataan teks
-                        ctx.textAlign = 'left';
-                        
-                        // Tampilkan teks
-                        ctx.fillText(value + " Packages".toLocaleString('id-ID'), textPositionX, bar.y);
-                    });
-                });
-                ctx.restore();
-            }
-        }]
-    });
     
+    // --- Pagination 'Per Page' Selector ---
+    const perPageSelect = document.getElementById('perPage');
+    if (perPageSelect) {
+        perPageSelect.addEventListener('change', function() {
+            const selectedValue = this.value;
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set('per_page', selectedValue);
+            // Go to the first page when changing item count
+            currentUrl.searchParams.set('page', '1'); 
+            window.location.href = currentUrl.toString();
+        });
+    }
 
-        async function exportToPDF() {
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-            if (!csrfToken) {
-                console.error('Token CSRF tidak ditemukan.');
-                return;
-            }
+    // --- Chart.js Initialization ---
+    const chartData = @json($chartData);
+    const ctx = document.getElementById('chart')?.getContext('2d');
 
-            const items = Array.from(document.querySelectorAll('#data-table tbody tr')).map(row => {
-                const cells = row.querySelectorAll('td');
-                return {
-                    tanggal: cells[0]?.innerText.trim() || '',
-                    status: cells[1]?.innerText.trim() || '',
-                    total_paket: cells[2]?.innerText.trim() || '',
-                };
-            });
-
-            const tableContent = items
-                .map(item => `
-                    <tr>
-                        <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.tanggal}</td>
-                        <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.status}</td>
-                        <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.total_paket}</td>
-                    </tr>
-                `).join('');
-
-            const chartCanvas = document.querySelector('#chart');
-            if (!chartCanvas) {
-                console.error('Elemen canvas grafik tidak ditemukan.');
-                return;
-            }
-            const chartBase64 = chartCanvas.toDataURL('image/png');
-
-            try {
-                const response = await fetch('/marketings/statuspaket/export-pdf', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Content-Type': 'application/json',
+    if (ctx && chartData) {
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: chartData.labels,
+                datasets: chartData.datasets,
+            },
+            options: {
+                indexAxis: 'y', // This makes the bar chart horizontal
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false,
                     },
-                    body: JSON.stringify({
-                        table: tableContent,
-                        chart: chartBase64,
-                    }),
-                });
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                let value = tooltipItem.raw;
+                                return `${tooltipItem.dataset.label}: ${value.toLocaleString('id-ID')} Packages`;
+                            },
+                        },
+                    },
+                    // Custom plugin to display values at the end of each bar
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'right',
+                        formatter: (value, context) => {
+                             return value.toLocaleString('id-ID') + ' Packages';
+                        },
+                        color: 'black',
+                        font: {
+                            weight: 'bold',
+                            size: 14,
+                        },
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        title: { display: false },
+                        ticks: {
+                            callback: function(value) {
+                                if (value >= 1000000) {
+                                    return (value / 1000000).toLocaleString('id-ID') + 'M';
+                                }
+                                if (value >= 1000) {
+                                    return (value / 1000).toLocaleString('id-ID') + 'K';
+                                }
+                                return value.toLocaleString('id-ID');
+                            },
+                        },
+                    },
+                    y: {
+                        title: { display: false },
+                    },
+                },
+            },
+             plugins: [{
+                id: 'custom_data_labels_horizontal',
+                afterDatasetsDraw: function(chart) {
+                    const { ctx, data } = chart;
+                    ctx.save();
+                    ctx.font = 'bold 14px sans-serif';
+                    ctx.fillStyle = 'black';
+                    ctx.textBaseline = 'middle';
 
-                if (response.ok) {
-                    const blob = await response.blob();
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'laporan_status_paket.pdf';
-                    document.body.appendChild(a);
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    a.remove();
-                } else {
-                    console.error('Gagal mengekspor PDF:', response.statusText);
+                    data.datasets.forEach((dataset, i) => {
+                        const meta = chart.getDatasetMeta(i);
+                        if (meta.type !== 'bar' || !meta.visible) return;
+
+                        meta.data.forEach((bar, index) => {
+                            const value = dataset.data[index];
+                            const textPositionX = bar.x + 8;
+                            ctx.textAlign = 'left';
+                            ctx.fillText(value.toLocaleString('id-ID') + " Packages", textPositionX, bar.y);
+                        });
+                    });
+                    ctx.restore();
                 }
-            } catch (error) {
-                console.error('Terjadi kesalahan saat mengekspor PDF:', error);
-            }
+            }]
+        });
+    }
+
+    // --- PDF Export Functionality ---
+    const exportButton = document.getElementById('exportPdfButton');
+    if (exportButton) {
+        exportButton.addEventListener('click', exportToPDF);
+    }
+
+    async function exportToPDF() {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+        if (!csrfToken) {
+            console.error('CSRF token not found.');
+            // You could show a user-friendly error message here
+            return;
         }
 
-    //     /**
-    //      * Mengubah jumlah item per halaman dan memuat ulang halaman.
-    //      */
-    //     function changePerPage(value) {
-    //         const url = new URL(window.location.href);
-    //         url.searchParams.set('per_page', value);
-    //         url.searchParams.set('page', 1);
-    //         window.location.href = url.toString();
-    //     }
+        // Extract table data
+        const items = Array.from(document.querySelectorAll('#data-table tbody tr')).map(row => {
+            const cells = row.querySelectorAll('td');
+            return {
+                tanggal: cells[0]?.innerText.trim() || '',
+                status: cells[1]?.innerText.trim() || '',
+                total_paket: cells[2]?.innerText.trim() || '',
+            };
+        });
 
-    //     /**
-    //      * Menginisialisasi semua fungsionalitas modal (buka/tutup).
-    //      */
-    //     function initializeModals() {
-    //         document.querySelectorAll('[data-modal-target]').forEach(button => {
-    //             button.addEventListener('click', function() {
-    //                 const modal = document.querySelector(this.getAttribute('data-modal-target'));
-    //                 if (modal) modal.classList.remove('hidden');
-    //             });
-    //         });
-    //         document.querySelectorAll('[data-modal-close]').forEach(button => {
-    //             button.addEventListener('click', function() {
-    //                 const modal = this.closest('.fixed.z-50');
-    //                 if (modal) modal.classList.add('hidden');
-    //             });
-    //         });
-    //     }
+        const tableContent = items.map(item => `
+            <tr>
+                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.tanggal}</td>
+                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.status}</td>
+                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.total_paket}</td>
+            </tr>
+        `).join('');
 
-    //     // --- EVENT LISTENERS ---
-    //     if (toggleFormButton) toggleFormButton.addEventListener('click', () => formContainer?.classList.toggle('hidden'));
-    //     if (toggleChartButton) toggleChartButton.addEventListener('click', () => formChart?.classList.toggle('hidden'));
-    //     if (perPageSelect) perPageSelect.addEventListener('change', (e) => changePerPage(e.target.value));
-    //     if (exportPdfButton) exportPdfButton.addEventListener('click', exportToPDF);
+        // Get chart as image
+        const chartCanvas = document.querySelector('#chart');
+        if (!chartCanvas) {
+            console.error('Chart canvas element not found.');
+            return;
+        }
+        const chartBase64 = chartCanvas.toDataURL('image/png');
 
-    //     // --- INISIALISASI ---
-    //     renderChart();
-    //     initializeModals();
-    // });
+        // Send data to the server to generate PDF
+        try {
+            const response = await fetch('/marketings/statuspaket/export-pdf', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/pdf',
+                },
+                body: JSON.stringify({
+                    table: tableContent,
+                    chart: chartBase64,
+                }),
+            });
+
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = 'laporan_status_paket.pdf';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                a.remove();
+            } else {
+                console.error('Failed to export PDF:', response.status, await response.text());
+                // You could show a user-friendly error message here
+            }
+        } catch (error) {
+            console.error('An error occurred while exporting PDF:', error);
+        }
+    }
+});
 </script>
+</body>
 </html>

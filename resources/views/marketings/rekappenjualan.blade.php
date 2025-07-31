@@ -452,39 +452,42 @@
         }
 
         async function exportToPDF() {
+            document.body.style.cursor = 'wait';
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
             if (!csrfToken) {
-                console.error('CSRF token not found.');
-                // In a real app, you might show a user-friendly message here.
+                alert('CSRF token tidak ditemukan.');
+                document.body.style.cursor = 'default';
                 return;
             }
 
             const items = Array.from(document.querySelectorAll('#data-table tbody tr')).map(row => {
                 const cells = row.querySelectorAll('td');
+                if (cells.length < 2) return null;
                 return {
                     tanggal: cells[0]?.innerText.trim() || '',
                     total_penjualan_formatted: cells[1]?.innerText.trim() || '',
                 };
             });
 
-            const tableContent = items
-                .map(item => `
-                    <tr>
-                        <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.tanggal}</td>
-                        <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.total_penjualan_formatted}</td>
-                    </tr>
-                `).join('');
+            const tableContent = items.map(item => `
+                <tr>
+                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.tanggal}</td>
+                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.total_penjualan_formatted}</td>
+                </tr>
+            `).join('');
 
-            const chartCanvas = document.querySelector('#chart');
+            // --- PERBAIKAN DI SINI ---
+            // Mengambil kanvas langsung dari objek chart yang sudah ada.
+            const chartCanvas = myChart.canvas; 
+            
             if (!chartCanvas) {
-                console.error('Chart canvas element not found.');
+                console.error('Chart canvas element not found from myChart object.');
+                document.body.style.cursor = 'default';
                 return;
             }
             const chartBase64 = chartCanvas.toDataURL('image/png');
 
             try {
-                // Note: The endpoint '/marketings/rekappenjualan/export-pdf' is from the original code.
-                // You might need to adjust this to your actual route.
                 const response = await fetch('/marketings/rekappenjualan/export-pdf', {
                     method: 'POST',
                     headers: {
@@ -509,18 +512,14 @@
                     a.remove();
                 } else {
                     console.error('Failed to export PDF:', response.statusText);
-                    // Show a user-friendly error message
                 }
             } catch (error) {
                 console.error('Error exporting to PDF:', error);
-                 // Show a user-friendly error message
+            } finally {
+                document.body.style.cursor = 'default';
             }
         }
 
-        /**
-         * Changes the number of items displayed per page and reloads the page.
-         * @param {string} value The number of items to display.
-         */
         function changePerPage(value) {
             const url = new URL(window.location.href);
             url.searchParams.set('per_page', value);

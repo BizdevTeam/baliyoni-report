@@ -330,7 +330,7 @@ private function generateSalesInsight($salesData, $chartData)
             ", 'O'); // 'O' berarti untuk halaman pertama dan seterusnya
     
             // Tambahkan footer ke PDF
-            $mpdf->SetFooter('{DATE j-m-Y}|Laporan Marketing - Institution Based Report|');
+            $mpdf->SetFooter('{DATE j-m-Y}|Marketing Report - Institution Based Report|');
 
             // Buat konten tabel dengan gaya CSS yang lebih ketat
             $htmlContent = "
@@ -370,7 +370,6 @@ private function generateSalesInsight($salesData, $chartData)
         }
     }
     
-
     public function destroy(LaporanPerInstansi $laporanperinstansi)
     {
         try {

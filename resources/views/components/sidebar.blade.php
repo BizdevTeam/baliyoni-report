@@ -138,12 +138,12 @@ $menuItems = [
         <div class="mt-8 mb-8 pb-3 flex justify-center flex-shrink-0">
             <div id="logo-full" class="logo w-40 h-auto">
                 <p class="flex items-center justify-center text-center text-3xl font-bold text-red-600">
-                    Ar<span class="text-black">Work</span>
+                    Art<span class="text-black">Work</span>
                 </p>
             </div>
             <div id="logo-mini" class="logo w-10 h-auto hidden">
                 <p class="flex items-center justify-center text-center text-[10px] font-bold text-red-600">
-                    ArWork
+                    ArtWork
                 </p>
             </div>
         </div>
