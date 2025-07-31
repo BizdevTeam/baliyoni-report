@@ -18,10 +18,19 @@ class RekapPenjualanPerusahaanController extends Controller
 {
     use DateValidationTrait;
 
-    private function getRandomRGBA($opacity = 0.7)
-    {
-        return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
-    }
+    private function getRandomRGBA(float $opacity = 0.7): string
+        {
+            do {
+                $r = mt_rand(0, 255);
+                $g = mt_rand(0, 255);
+                $b = mt_rand(0, 255);
+                // hitung brightness perseptual
+                $brightness = 0.299 * $r + 0.587 * $g + 0.114 * $b;
+            } while ($brightness > 130); // ulang jika terlalu terang
+
+            return sprintf('rgba(%d, %d, %d, %.1f)', $r, $g, $b, $opacity);
+        }
+        
 
     public function index(Request $request)
     {
@@ -247,15 +256,6 @@ class RekapPenjualanPerusahaanController extends Controller
             if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
-
-            // // Cek kombinasi unik date dan perusahaan_id
-            // $exists = RekapPenjualanPerusahaan::where('tanggal', $validatedData['tanggal'])
-            //     ->where('perusahaan_id', $validatedData['perusahaan_id'])
-            //     ->exists();
-
-            // if ($exists) {
-            //     return redirect()->back()->with('error', 'TIdak dapat diubah, data sudah ada.');
-            // }
 
             // Update data
             $rekappenjualanperusahaan->update($validatedData);

@@ -15,144 +15,6 @@ class StatusPaketController extends Controller
 {
     use DateValidationTrait;
 
-    // public function index(Request $request)
-    // { 
-    //     $perPage = $request->input('per_page', 12);
-    //     $search = $request->input('search');
-
-    //     #$query = KasHutangPiutang::query();
-
-    //     // Query untuk mencari berdasarkan tahun dan date
-    //     $statuspakets = StatusPaket::query()
-    //         ->when($search, function ($query, $search) {
-    //             return $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-    //         })
-    //         ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
-    //         ->paginate($perPage);
-
-    //     // Hitung total untuk masing-masing kategori
-    //     $totalPenjualan = $statuspakets->sum('total_paket');
-
-    //     // Siapkan data untuk chart
-    //     function getRandomRGBA($opacity = 0.7) {
-    //         return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
-    //     }
-        
-    //     $labels = $statuspakets->map(function($item) {
-    //         $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F - Y');
-    //         return $item->status . ' - ' . $formattedDate;
-    //     })->toArray();
-    //     $data = $statuspakets->pluck('total_paket')->toArray();
-        
-    //     // Generate random colors for each data item
-    //     $backgroundColors = array_map(fn() => getRandomRGBA(), $data);
-        
-    //     $chartData = [
-    //         'labels' => $labels, // Labels untuk chart
-    //         'datasets' => [
-    //             [
-    //                 'label' => 'Package Status Report', // Nama dataset
-    //                 'text' => 'Total Package', // Nama dataset
-    //                 'data' => $data, // Data untuk chart
-    //                 'backgroundColor' => $backgroundColors, // Warna batang random
-    //             ],
-    //         ],
-    //     ];
-    //     $aiInsight = null;
-    //         if ($request->has('generate_ai')) {
-    //     $aiInsight = $this->generateSalesInsight($statuspakets, $chartData);
-    // }
-    //    return view('marketings.statuspaket', compact('statuspakets', 'chartData'));    }
-    // private function generateSalesInsight($salesData, $chartData)
-    // {
-    //     // Ambil konfigurasi dari file config/services.php
-    //     $apiKey = config('services.gemini.api_key');
-    //     $apiUrl = config('services.gemini.api_url');
-
-    //     if (!$apiKey || !$apiUrl) {
-    //         Log::error('Gemini API Key or URL is not configured.');
-    //         return 'Layanan AI tidak terkonfigurasi dengan benar.';
-    //     }
-        
-    //     // Jangan panggil AI jika tidak ada data untuk dianalisis
-    //     if ($salesData->isEmpty()) {
-    //         return 'Tidak ada data penjualan yang cukup untuk dianalisis.';
-    //     }
-
-    //     try {
-    //         $analysisData = [
-    //             'periods' => $chartData['labels'],
-    //             'sales_values' => $chartData['datasets'][0]['data'],
-    //             'total_sales' => $salesData->sum('total_penjualan'),
-    //             'average_sales' => $salesData->avg('total_penjualan'),
-    //             'max_sales' => $salesData->max('total_penjualan'),
-    //             'min_sales' => $salesData->min('total_penjualan'),
-    //             'data_count' => $salesData->count(),
-    //         ];
-            
-    //         $prompt = $this->createAnalysisPrompt($analysisData);
-            
-    //         // Kirim request ke API Gemini dengan format yang BENAR
-    //         $response = Http::withHeaders([
-    //             'Content-Type' => 'application/json',
-    //         ])->post($apiUrl . '?key=' . $apiKey, [
-    //             'contents' => [
-    //                 [
-    //                     'parts' => [
-    //                         ['text' => $prompt]
-    //                     ]
-    //                 ]
-    //             ],
-    //             'generationConfig' => [
-    //                 'temperature' => 0.7,
-    //                 'maxOutputTokens' => 800, // Mungkin butuh token lebih banyak untuk analisis mendalam
-    //             ]
-    //         ]);
-
-    //         if ($response->successful()) {
-    //             // Parsing response dari Gemini
-    //             $result = $response->json();
-    //             return $result['candidates'][0]['content']['parts'][0]['text'] ?? 'Tidak dapat menghasilkan insight dari AI.';
-    //         } else {
-    //             Log::error('Gemini API error: ' . $response->body());
-    //             return 'Gagal menghubungi layanan analisis AI. Cek log untuk detail.';
-    //         }
-    //     } catch (\Exception $e) {
-    //         Log::error('Error generating AI insight: ' . $e->getMessage());
-    //         return 'Terjadi kesalahan dalam menghasilkan analisis.';
-    //     }
-    // }
-    
-    //  private function createAnalysisPrompt($data)
-    // {
-    //     $periods = implode(", ", $data['periods']);
-    //     $values = implode(", ", array_map(fn($v) => 'Rp'.number_format($v,0,',','.'), $data['sales_values']));
-        
-    //     return "Anda adalah seorang analis bisnis dan data senior di sebuah perusahaan di Indonesia.
-        
-    //     Berikut adalah data rekap penjualan bulanan dalam Rupiah:
-    //     - Periode Data: {$periods}
-    //     - Rincian Penjualan per Bulan: {$values}
-    //     - Total Penjualan Selama Periode: Rp " . number_format($data['total_sales'], 0, ',', '.') . "
-    //     - Rata-rata Penjualan per Bulan: Rp " . number_format($data['average_sales'], 0, ',', '.') . "
-    //     - Penjualan Tertinggi dalam Sebulan: Rp " . number_format($data['max_sales'], 0, ',', '.') . "
-    //     - Penjualan Terendah dalam Sebulan: Rp " . number_format($data['min_sales'], 0, ',', '.') . "
-    //     - Jumlah Data: {$data['data_count']} bulan
-        
-    //     Tugas Anda adalah membuat laporan analisis singkat (maksimal 5 paragraf) dalam Bahasa Indonesia yang formal dan profesional untuk manajer. Laporan harus mencakup:
-    //     1.  **Ringkasan Kinerja:** Jelaskan secara singkat tren penjualan (apakah naik, turun, atau fluktuatif).
-    //     2.  **Identifikasi Puncak & Penurunan:** Sebutkan bulan dengan performa terbaik dan terburuk, serta berikan kemungkinan penyebabnya jika ada pola yang terlihat (misalnya, musim liburan, awal tahun, dll.).
-    //     3.  **Rekomendasi Strategis:** Berikan 2-3 poin rekomendasi yang konkret dan bisa ditindaklanjuti untuk meningkatkan penjualan di bulan-bulan berikutnya. Contoh: 'Fokuskan promosi pada produk X di bulan Y' atau 'Evaluasi strategi pemasaran di bulan Z'.
-    //     4.  **Proyeksi Singkat:** Berikan prediksi kualitatif (bukan angka pasti) untuk bulan berikutnya berdasarkan tren yang ada.
-
-    //     Gunakan format markdown untuk penomoran atau poin-poin agar mudah dibaca.";
-    // }
-
-    // private function getRandomRGBA($opacity = 0.7)
-    // {
-    //     return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
-    // }
-
     public function index(Request $request)
 {
     $perPage = $request->input('per_page', 12);
@@ -195,7 +57,20 @@ class StatusPaketController extends Controller
         
     // Anda belum mengirim $aiInsight ke view, mari kita tambahkan
     return view('marketings.statuspaket', compact('statuspakets', 'chartData', 'aiInsight'));
-}
+    }
+    private function getRandomRGBA(float $opacity = 0.7): string
+        {
+            do {
+                $r = mt_rand(0, 255);
+                $g = mt_rand(0, 255);
+                $b = mt_rand(0, 255);
+                // hitung brightness perseptual
+                $brightness = 0.299 * $r + 0.587 * $g + 0.114 * $b;
+            } while ($brightness > 130); // ulang jika terlalu terang
+
+            return sprintf('rgba(%d, %d, %d, %.1f)', $r, $g, $b, $opacity);
+        }
+        
 
     private function generateSalesInsight($reportData, $chartData): string
     {
@@ -252,9 +127,6 @@ class StatusPaketController extends Controller
         }
     }
 
-    /**
-     * Buat prompt analisis yang dikirim ke AI.
-     */
     private function createAnalysisPrompt(array $data): string
     {
         // [FIX] Prompt diubah total agar sesuai konteks "Status Paket"
@@ -336,10 +208,7 @@ class StatusPaketController extends Controller
             return redirect()->route('statuspaket.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
         }
     }
-    private function getRandomRGBA($opacity = 0.7)
-    {
-        return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
-    }
+
     public function update(Request $request, StatusPaket $statuspaket)
     {
         try {

@@ -358,8 +358,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 labels.push(dateLabel);
                 dataValues.push(numericValue);
-                backgroundColors.push(`rgba(${Math.floor(Math.random() * 200)}, ${Math.floor(Math.random() * 200)}, ${Math.floor(Math.random() * 200)}, 0.6)`);
-            }
+                    function getRandomDarkRGBA(opacity = 0.6) {
+                    let r, g, b, brightness;
+                    do {
+                        r = Math.floor(Math.random() * 256);
+                        g = Math.floor(Math.random() * 256);
+                        b = Math.floor(Math.random() * 256);
+                        // rumus luminance standar (persepsi)
+                        brightness = 0.299 * r + 0.587 * g + 0.114 * b;
+                    } while (brightness > 130); // ulang jika terlalu terang
+                    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+                    }
+
+                // saat kamu butuh push ke array:
+                backgroundColors.push(getRandomDarkRGBA(0.6));             }
         });
 
         const chartDataFromTable = {
