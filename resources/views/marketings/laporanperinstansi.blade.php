@@ -99,7 +99,7 @@
                         </svg>
                     </button>
                 </form>
-                <button class="bg-gradient-to-r font-medium from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm mr-2" data-modal-target="#addEventModal">
+                <button class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm mr-2" data-modal-target="#addEventModal">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                         <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
                             <path stroke-dasharray="64" stroke-dashoffset="64" d="M13 3l6 6v12h-14v-18h8">
@@ -117,13 +117,44 @@
                         </g>
                     </svg>
                 </button>
-                <button id="toggleReportContainer" class="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-4 py-2 rounded shadow-md hover:shadow-lg transition duration-300 mr-2">
-                    <i class="fas fa-eye"></i> Toggle View
+                <button id="toggleFormButton" class="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-4 py-2 rounded shadow-md hover:shadow-lg transition duration-300 mr-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                            <path stroke-dasharray="64" stroke-dashoffset="64" d="M12 3c4.97 0 9 4.03 9 9c0 4.97 -4.03 9 -9 9c-4.97 0 -9 -4.03 -9 -9c0 -4.97 4.03 -9 9 -9Z">
+                                <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0" />
+                            </path>
+                            <path stroke-dasharray="6" stroke-dashoffset="6" d="M12 14l-3 -3M12 14l3 -3">
+                                <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.7s" dur="0.3s" values="6;0" />
+                            </path>
+                        </g>
+                    </svg>
+                </button>
+
+                <button id="toggleChartButton" class="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-4 py-2 rounded shadow-md hover:shadow-lg transition duration-300 mr-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                            <path stroke-dasharray="64" stroke-dashoffset="64" d="M13 3l6 6v12h-14v-18h8">
+                                <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0" />
+                            </path>
+                            <path stroke-dasharray="14" stroke-dashoffset="14" stroke-width="1" d="M12.5 3v5.5h6.5">
+                                <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.7s" dur="0.2s" values="14;0" />
+                            </path>
+                            <path stroke-dasharray="4" stroke-dashoffset="4" d="M9 17v-3">
+                                <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.9s" dur="0.2s" values="4;0" />
+                            </path>
+                            <path stroke-dasharray="6" stroke-dashoffset="6" d="M12 17v-4">
+                                <animate fill="freeze" attributeName="stroke-dashoffset" begin="1.1s" dur="0.2s" values="6;0" />
+                            </path>
+                            <path stroke-dasharray="6" stroke-dashoffset="6" d="M15 17v-5">
+                                <animate fill="freeze" attributeName="stroke-dashoffset" begin="1.3s" dur="0.2s" values="6;0" />
+                            </path>
+                        </g>
+                    </svg>
                 </button>
             </div>
 
             <!-- Data Table and Charts Container -->
-            <div id="reportContainer" class="">
+            <div id="formContainer" class="hidden">
                 <!-- Table Container -->
                 <div id="table-view" class="mx-auto bg-white p-6 rounded-lg shadow">
                     <div class="overflow-x-auto bg-white shadow-md rounded-lg">
@@ -182,7 +213,7 @@
                 </div>
 
                 <!-- Chart Container -->
-                <div id="chart-view" class="flex flex-col mx-auto bg-white p-6 mt-4 rounded-lg shadow-xl border chart-group">
+                <div id="formChart" class="visible flex flex-col mx-auto bg-white p-6 mt-4 rounded-lg shadow-xl border chart-group">
                     <div class="mb-4 flex justify-between items-center">
                         <h1 class="text-2xl font-bold text-red-600 font-montserrat mx-auto">Institution-Based Chart</h1>
                         <select class="chart-select p-2 border border-gray-300 rounded-md">
@@ -468,9 +499,11 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Toggle main report container
-    document.getElementById('toggleReportContainer')?.addEventListener('click', () => {
-        document.getElementById('table-view').classList.toggle('hidden');
-        document.getElementById('chart-view').classList.toggle('hidden');
+    document.getElementById('toggleFormButton')?.addEventListener('click', () => {
+        document.getElementById('formContainer').classList.toggle('visible');
+    });
+    document.getElementById('toggleChartButton')?.addEventListener('click', () => {
+        document.getElementById('formChart').classList.toggle('hidden');
     });
 
     // Modal controls

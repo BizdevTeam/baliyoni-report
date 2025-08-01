@@ -198,7 +198,7 @@
 
             <div id="formChart" class="visible">
                 <div class="flex flex-col mx-auto bg-white p-6 mt-4 rounded-lg shadow-xl border border-grey-500">
-                    <h1 class="text-4xl font-bold text-red-600 mb-4 font-montserrat text-start">Chart</h1>
+                    <h1 class="text-4xl font-bold text-red-600 mb-4 font-montserrat text-start">ASP Service Revenue Chart</h1>
                     <div class="mt-6 self-center w-full h-[500px] flex justify-center">
                         <canvas id="chart"></canvas>
                     </div>
