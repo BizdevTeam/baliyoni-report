@@ -154,7 +154,7 @@
             </div>
 
             <!-- Data Table and Charts Container -->
-            <div id="formContainer" class="hidden">
+            <div id="formContainer" class="">
                 <!-- Table Container -->
                 <div id="table-view" class="mx-auto bg-white p-6 rounded-lg shadow">
                     <div class="overflow-x-auto bg-white shadow-md rounded-lg">
@@ -196,8 +196,8 @@
                     </div>
 
                     <!-- Pagination Controls -->
-                    <div class="flex justify-between items-center mt-4 p-4 bg-white rounded-lg">
-                        <div class="flex items-center">
+                    <div class="mx-auto flex justify-between items-center mt-4 p-4 bg-white rounded-lg">
+                        <div class="flex items-center mx-auto">
                             <label for="perPage" class="mr-2 text-sm text-gray-600">Tampilkan</label>
                             <select id="perPage" class="p-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                 <option value="5" @if(request('per_page')==5) selected @endif>5</option>
@@ -500,7 +500,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Toggle main report container
     document.getElementById('toggleFormButton')?.addEventListener('click', () => {
-        document.getElementById('formContainer').classList.toggle('visible');
+        document.getElementById('formContainer').classList.toggle('hidden');
     });
     document.getElementById('toggleChartButton')?.addEventListener('click', () => {
         document.getElementById('formChart').classList.toggle('hidden');
