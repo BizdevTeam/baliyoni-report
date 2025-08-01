@@ -430,7 +430,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         meta.data.forEach((bar, index) => {
                             const value = dataset.data[index];
                             const yPos = bar.y - 5; 
-                            ctx.fillText(value + ' Package'.toLocaleString(), bar.x, yPos);
+                            ctx.fillText('Rp ' + value.toLocaleString('id-ID'), bar.x, yPos);
                         });
                     });
                     ctx.restore();
