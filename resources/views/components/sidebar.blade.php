@@ -32,8 +32,8 @@ $menuItems = [
         'id' => 'dropdown-procurement',
         'submenu' => [
             ['title' => 'Purchase Report (Holding)', 'route' => 'laporanholding.index', 'icon' => 'icon/RekapPenjualan.svg'],
-            ['title' => 'Stock Report', 'route' => 'laporanstok.index', 'icon' => 'icon/RekapPenjualanPerusahaan.svg'],
             ['title' => 'Outlet Purchase Report', 'route' => 'laporanoutlet.index', 'icon' => 'icon/LaporanPaketAdministrasi.svg'],
+            ['title' => 'Stock Report', 'route' => 'laporanstok.index', 'icon' => 'icon/RekapPenjualanPerusahaan.svg'],
             ['title' => 'Negotiation Report', 'route' => 'laporannegosiasi.index', 'icon' => 'icon/LaporanStatusPaket.svg'],
         ],
     ],
@@ -204,7 +204,7 @@ $menuItems = [
                     <span class="menu-label flex-1 ml-3 text-left">Logout</span>
                 </button>
             </a>
-            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+            <form id="logout-form" action="{{ route('logout') }}" method="get" class="hidden">
                 @csrf
             </form>
         </div>

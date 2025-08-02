@@ -84,7 +84,7 @@
             <div class="flex items-center justify-end transition-all duration-500 mt-8 mb-4">
                 <form method="GET" action="{{ route('laporanperinstansi.index') }}" class="flex items-center gap-2">
                     <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
-                        <input type="month" name="search" placeholder="Cari berdasarkan Bulan / Tahun" value="{{ request('search', date('Y-m')) }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400 bg-transparent" />
+                        <input type="month" name="search" id="search-month-input" placeholder="Cari berdasarkan Bulan / Tahun" value="{{ request('search', date('Y-m')) }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400 bg-transparent" />
                     </div>
                     <button type="submit" class="bg-gradient-to-r font-medium from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm mr-2" aria-label="Search">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -217,17 +217,21 @@
                     <div class="mb-4 flex justify-between items-center">
                         <h1 class="text-2xl font-bold text-red-600 font-montserrat mx-auto">Institution-Based Chart</h1>
                         <select class="chart-select p-2 border border-gray-300 rounded-md">
-                            <option value="chartTotal">Total per Instansi</option>
-                            <option value="chartBiasa">Rincian Transaksi</option>
+                            <option value="chartBiasa">Chart Biasa</option>
+                            <option value="chartTotal">Chart Total</option>
+                            <option value="chartPerbandingan">Chart Perbandingan</option>
                         </select>
                     </div>
 
                     <div class="mt-6 self-center w-full relative" style="height: 450px;">
-                        <div class="chart-container chartBiasa hidden w-full h-full">
+                        <div class="chart-container chartBiasa w-full h-full">
                             <canvas id="chartBiasaCanvas" data-axis="y"></canvas>
                         </div>
-                        <div class="chart-container chartTotal w-full h-full">
+                        <div class="chart-container chartTotal hidden w-full h-full">
                             <canvas id="chartTotalCanvas" data-axis="y"></canvas>
+                        </div>
+                        <div class="chart-container chartPerbandingan hidden w-full h-full">
+                            <canvas id="chartPerbandinganCanvas" data-axis="y"></canvas>
                         </div>
                     </div>
 
@@ -324,7 +328,6 @@
 <script>
 // --- Custom Delete Confirmation ---
 function confirmDelete(button) {
-    // You can replace this with a more sophisticated custom modal if desired
     if (window.confirm('Apakah Anda yakin ingin menghapus data ini?')) {
         button.closest('form').submit();
     }
@@ -344,54 +347,62 @@ document.addEventListener('DOMContentLoaded', function () {
         return parseInt(currencyString.replace(/Rp|\s|\./g, ''), 10) || 0;
     }
 
-    function getRandomRGBA(opacity = 0.7) {
-        const r = Math.floor(Math.random() * 256);
-        const g = Math.floor(Math.random() * 256);
-        const b = Math.floor(Math.random() * 256);
-        return `rgba(${r}, ${g}, ${b}, ${opacity})`;
-    }
-
-    // --- Chart.js Plugin ---
+    // --- Chart.js Plugin for Data Labels ---
     const dataLabelsPlugin = {
-        id: 'customDataLabelsOnBars',
-        afterDatasetsDraw(chart) {
-            const { ctx, data, config } = chart;
-            if (config.type !== 'bar') return;
+            id: 'customDataLabelsOnBars',
+            afterDatasetsDraw(chart) {
+                const { ctx, data, config } = chart;
+                const chartType = config.type;
+                const axis = config.options.indexAxis;
+                if (chartType !== 'bar') return;
 
-            ctx.save();
-            ctx.font = 'bold 11px Arial';
-            const axis = config.options.indexAxis;
+                ctx.save();
+                ctx.font = 'bold 12px Arial';
 
-            data.datasets.forEach((dataset, i) => {
+                data.datasets.forEach((dataset, i) => {
                 const meta = chart.getDatasetMeta(i);
                 if (!meta.hidden) {
                     meta.data.forEach((element, index) => {
-                        const value = dataset.data[index];
-                        const formattedValue = formatCurrency(value);
-                        
-                        if (axis === 'y') { // Horizontal bars
-                            ctx.textAlign = 'left';
-                            ctx.textBaseline = 'middle';
-                            let xPos = element.x + 5;
-                            ctx.fillStyle = '#333';
-                            if (element.x + ctx.measureText(formattedValue).width + 10 > chart.chartArea.right) {
-                                xPos = element.x - 5;
-                                ctx.textAlign = 'right';
-                                ctx.fillStyle = 'white';
-                            }
-                            ctx.fillText(formattedValue, xPos, element.y);
-                        } else { // Vertical bars
-                            ctx.textAlign = 'center';
-                            ctx.textBaseline = 'bottom';
-                            ctx.fillStyle = '#333';
-                            ctx.fillText(formattedValue, element.x, element.y - 5);
+                    const value = dataset.data[index];
+                    if (value === null || value === 0) return;
+
+                    const formattedValue = formatCurrency(value);
+                    let xPos, yPos;
+
+                    if (axis === 'y') {
+                        // Horizontal bars
+                        ctx.textBaseline = 'middle';
+                        xPos = element.x + 8;
+                        yPos = element.y;
+                        const textWidth = ctx.measureText(formattedValue).width;
+
+                        if (xPos + textWidth > chart.chartArea.right) {
+                        // Kalau kebawah area, pindah ke kiri bar
+                        xPos = element.x - 8;
+                        ctx.textAlign = 'right';
+                        ctx.fillStyle = 'white';
+                        } else {
+                        ctx.textAlign = 'left';
+                        ctx.fillStyle = 'black';
                         }
+                    } else {
+                        // Vertical bars
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'bottom';
+                        xPos = element.x;
+                        yPos = element.y - 5;
+                        ctx.fillStyle = 'black';
+                    }
+
+                    ctx.fillText(formattedValue, xPos, yPos);
                     });
                 }
-            });
-            ctx.restore();
-        }
-    };
+                });
+
+                ctx.restore();
+            }
+            };
+    // Daftarkan plugin ke Chart.js
     Chart.register(dataLabelsPlugin);
 
     // --- Chart Creation Logic ---
@@ -427,58 +438,133 @@ document.addEventListener('DOMContentLoaded', function () {
         if (chartInstances.has(canvas)) chartInstances.get(canvas).destroy();
         chartInstances.set(canvas, new Chart(canvas.getContext('2d'), config));
     }
-    
-    function renderChartsFromTable() {
+
+    // --- Data Processing and Rendering ---
+
+    /**
+     * Extracts and aggregates data from the visible HTML table.
+     * @returns {object} An object where keys are institution names and values are their total.
+     */
+    function getAggregatedDataFromTable() {
         const tableRows = document.querySelectorAll('#data-table tbody tr');
-        
-        const labelsBiasa = [];
-        const dataBiasa = [];
         const aggregatedData = {};
 
         tableRows.forEach(row => {
             const cells = row.querySelectorAll('td');
             if (cells.length < 4) return; 
 
+            const instansi = cells[1].innerText.trim();
+            const value = parseCurrency(cells[2].innerText.trim());
+            aggregatedData[instansi] = (aggregatedData[instansi] || 0) + value;
+        });
+        return aggregatedData;
+    }
+
+    function getRandomDarkRGBA(opacity = 0.6) {
+        let r, g, b, brightness;
+        do {
+            r = Math.floor(Math.random() * 256);
+            g = Math.floor(Math.random() * 256);
+            b = Math.floor(Math.random() * 256);
+            // rumus luminance standar (persepsi)
+            brightness = 0.299 * r + 0.587 * g + 0.114 * b;
+        } while (brightness > 130); // ulang jika terlalu terang
+        return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    }
+
+    function renderSimpleCharts(aggregatedData) {
+        // Chart Biasa (Detailed View)
+        const tableRows = document.querySelectorAll('#data-table tbody tr');
+        const labelsBiasa = [];
+        const dataBiasa = [];
+        tableRows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if (cells.length < 4) return;
             const date = cells[0].innerText.trim();
             const instansi = cells[1].innerText.trim();
             const value = parseCurrency(cells[2].innerText.trim());
-
             labelsBiasa.push(`${instansi} (${date})`);
             dataBiasa.push(value);
-
-            aggregatedData[instansi] = (aggregatedData[instansi] || 0) + value;
         });
+        
+        const colorsBiasa = dataBiasa.map(() => getRandomDarkRGBA(0.6));
 
         const chartDataBiasa = {
             labels: labelsBiasa,
             datasets: [{
                 label: 'Rincian Transaksi',
                 data: dataBiasa,
-                backgroundColor: labelsBiasa.map(() => getRandomRGBA()),
+                backgroundColor: colorsBiasa,
             }]
         };
+        createOrUpdateChart(document.getElementById('chartBiasaCanvas'), chartDataBiasa);
 
+        // Chart Total
         const labelsTotal = Object.keys(aggregatedData);
         const dataTotal = Object.values(aggregatedData);
+        const colorsTotal = dataTotal.map(() => getRandomDarkRGBA(0.7));
+
         const chartDataTotal = {
             labels: labelsTotal,
             datasets: [{
                 label: 'Total per Instansi',
                 data: dataTotal,
-                backgroundColor: labelsTotal.map(() => getRandomRGBA()),
+                backgroundColor: colorsTotal,
             }]
         };
-        
-        createOrUpdateChart(document.getElementById('chartBiasaCanvas'), chartDataBiasa);
         createOrUpdateChart(document.getElementById('chartTotalCanvas'), chartDataTotal);
     }
 
-    // --- UI CONTROLS ---
-    
-    // Initial render on page load
-    renderChartsFromTable();
+    async function renderDynamicComparisonChart(currentMonthData) {
+        const getSimulatedPreviousMonthData = (currentData) => {
+            const previousData = {};
+            for (const instansi in currentData) {
+                // Buat data acak untuk bulan lalu (antara 50% dan 150% dari data bulan ini)
+                const randomFactor = 0.5 + Math.random();
+                previousData[instansi] = Math.round(currentData[instansi] * randomFactor);
+            }
+            // Tambahkan satu instansi yang mungkin tidak ada di bulan ini
+            if (!previousData['Jembrana']) {
+                previousData['Jembrana'] = Math.round(Math.random() * 50000000);
+            }
+            return previousData;
+        };
+        
+        const previousMonthData = getSimulatedPreviousMonthData(currentMonthData);
 
-    // Chart Group Selector
+        const allLabels = [...new Set([...Object.keys(currentMonthData), ...Object.keys(previousMonthData)])];
+
+        const chartData = {
+            labels: allLabels,
+            datasets: [
+                {
+                    label: 'Bulan Lalu',
+                    data: allLabels.map(label => previousMonthData[label] || 0),
+                    backgroundColor: 'rgba(211, 211, 211, 0.9)', // Light gray
+                    borderColor: 'rgba(192, 192, 192, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Bulan Ini',
+                    data: allLabels.map(label => currentMonthData[label] || 0),
+                    backgroundColor: 'rgba(220, 20, 60, 0.8)', // Crimson red
+                    borderColor: 'rgba(178, 34, 34, 1)',
+                    borderWidth: 1
+                }
+            ]
+        };
+        
+        createOrUpdateChart(document.getElementById('chartPerbandinganCanvas'), chartData);
+    }
+
+    function initializeVisuals() {
+        const aggregatedData = getAggregatedDataFromTable();
+        renderSimpleCharts(aggregatedData);
+        renderDynamicComparisonChart(aggregatedData);
+    }
+
+    initializeVisuals();
+
     document.querySelectorAll('.chart-group').forEach(group => {
         const select = group.querySelector('.chart-select');
         const containers = group.querySelectorAll('.chart-container');
@@ -498,7 +584,6 @@ document.addEventListener('DOMContentLoaded', function () {
         updateChartDisplay(); // Initial call
     });
 
-    // Toggle main report container
     document.getElementById('toggleFormButton')?.addEventListener('click', () => {
         document.getElementById('formContainer').classList.toggle('hidden');
     });
@@ -506,7 +591,6 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('formChart').classList.toggle('hidden');
     });
 
-    // Modal controls
     document.querySelectorAll('[data-modal-target]').forEach(button => {
         button.addEventListener('click', () => document.querySelector(button.dataset.modalTarget)?.classList.remove('hidden'));
     });
@@ -514,7 +598,6 @@ document.addEventListener('DOMContentLoaded', function () {
         button.addEventListener('click', () => button.closest('.fixed.z-50').classList.add('hidden'));
     });
 
-    // Pagination control
     const perPageSelect = document.getElementById('perPage');
     if (perPageSelect) {
         perPageSelect.addEventListener('change', function() {
@@ -568,7 +651,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const chartBase64 = chartCanvas.toDataURL('image/png', 1.0);
 
         try {
-            // CORRECTED URL: Changed dot to slash
             const response = await fetch('/marketings/laporanperinstansi/export-pdf', {
                 method: 'POST',
                 headers: {

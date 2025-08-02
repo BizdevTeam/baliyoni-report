@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\LaporanHolding;
 use App\Models\Perusahaan;
 use App\Traits\DateValidationTrait;
+use Carbon\Carbon;
+use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
@@ -15,161 +17,93 @@ use Illuminate\Validation\Rule;
 class LaporanHoldingController extends Controller
 {
     use DateValidationTrait;
+    // public function index(Request $request)
+    // {
+    //     $perusahaans = Perusahaan::all();
+    //     $perPage = $request->input('per_page', 12);
+    //     $search = $request->input('search');
 
-    //     public function index(Request $request)
-    //     {
-    //         $perusahaans = Perusahaan::all();
+    //     // Query dasar untuk digunakan kembali
+    //     $baseQuery = LaporanHolding::with('perusahaan')
+    //         ->when($search, function ($query, $search) {
+    //             $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%{$search}%"])
+    //                 ->orWhereHas('perusahaan', fn($q) => $q->where('nama_perusahaan', 'LIKE', "%{$search}%"));
+    //         });
 
-    //         $perPage = $request->input('per_page', 12);
-    //         $search = $request->input('search');
+    //     // [FIX] Ambil SEMUA data untuk analisis dan chart agar akurat
+    //     $allHoldingReports = (clone $baseQuery)->orderBy('tanggal', 'asc')->get();
 
-    //         // Retrieve LaporanHolding records along with the related Perusahaan
-    //         $laporanholdings = LaporanHolding::with('perusahaan')
-    //             ->when($search, function ($query, $search) {
-    //                 return $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"])
-    //                 ->orWhereHas('perusahaan', function ($q) use ($search) {
-    //                                  $q->where('nama_perusahaan', 'LIKE', "%$search%");
-    //                              });
-    //             })
-    //             ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
-    //             ->paginate($perPage);
+    //     // Ambil data yang DIPAGINASI hanya untuk tampilan tabel
+    //     $laporanholdings = (clone $baseQuery)->orderBy('tanggal', 'desc')->paginate($perPage);
 
-    //         // Prepare chart data
-    //         $labels = $laporanholdings->map(function ($item) {
-    //             // Format the month using Carbon’s translatedFormat() as defined in your model accessor
-    //             $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
-    //             return $item->perusahaan->nama_perusahaan . ' - ' . $formattedDate;
-    //         })->toArray();
-    //         $data = $laporanholdings->pluck('nilai')->toArray();
+    //     // [FIX] Siapkan data chart dari SEMUA data
+    //     $labels = $allHoldingReports->map(function ($item) {
+    //         $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
+    //         return $item->perusahaan->nama_perusahaan . ' - ' . $formattedDate;
+    //     })->all();
 
-    //         // Generate random colors for each data point
-    //         $backgroundColors = array_map(function () {
-    //             return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), 0.7);
-    //         }, $data);
+    //     // [FIX] Gunakan kolom 'nilai'
+    //     $data = $allHoldingReports->pluck('nilai')->all();
 
-    //         $chartData = [
-    //             'labels'   => $labels,
-    //             'datasets' => [
-    //                 [
-    //                     'label'           => 'Purchase Report Chart',
-    //                     'data'            => $data,
-    //                     'backgroundColor' => $backgroundColors,
-    //                 ],
-    //             ],
-    //         ];
-    //         $aiInsight = null;
+    //     $chartData = [
+    //         'labels' => $labels,
+    //         'datasets' => [[
+    //             'label' => 'Holding Report Chart',
+    //             'data' => $data,
+    //             'backgroundColor' => array_map(fn() => $this->getRandomRGBA(), $data),
+    //         ]],
+    //     ];
+    //      $chartTotalData = $this->getChartTotalData($allHoldingReports);
 
-    //         if ($request->has('generate_ai')) {
-    //         $aiInsight = $this->generateSalesInsight($laporanholdings, $chartData);
-    //         }
-
-    //         return view('procurements.laporanholding', compact('laporanholdings', 'chartData', 'perusahaans', 'aiInsight'))
-    //             ->with('search', $search)
-    //             ->with('perPage', $perPage);
-    //     }
-    // private function generateSalesInsight($salesData, $chartData)
-    //     {
-    //         // Ambil konfigurasi dari file config/services.php
-    //         $apiKey = config('services.gemini.api_key');
-    //         $apiUrl = config('services.gemini.api_url');
-
-    //         if (!$apiKey || !$apiUrl) {
-    //             Log::error('Gemini API Key or URL is not configured.');
-    //             return 'Layanan AI tidak terkonfigurasi dengan benar.';
-    //         }
-
-    //         // Jangan panggil AI jika tidak ada data untuk dianalisis
-    //         if ($salesData->isEmpty()) {
-    //             return 'Tidak ada data penjualan yang cukup untuk dianalisis.';
-    //         }
-
-    //         try {
-    //             $analysisData = [
-    //                 'periods' => $chartData['labels'],
-    //                 'sales_values' => $chartData['datasets'][0]['data'],
-    //                 'total_sales' => $salesData->sum('total_penjualan'),
-    //                 'average_sales' => $salesData->avg('total_penjualan'),
-    //                 'max_sales' => $salesData->max('total_penjualan'),
-    //                 'min_sales' => $salesData->min('total_penjualan'),
-    //                 'data_count' => $salesData->count(),
-    //             ];
-
-    //             $prompt = $this->createAnalysisPrompt($analysisData);
-
-    //             // Kirim request ke API Gemini dengan format yang BENAR
-    //             $response = Http::withHeaders([
-    //                 'Content-Type' => 'application/json',
-    //             ])->post($apiUrl . '?key=' . $apiKey, [
-    //                 'contents' => [
-    //                     [
-    //                         'parts' => [
-    //                             ['text' => $prompt]
-    //                         ]
-    //                     ]
-    //                 ],
-    //                 'generationConfig' => [
-    //                     'temperature' => 0.7,
-    //                     'maxOutputTokens' => 800, // Mungkin butuh token lebih banyak untuk analisis mendalam
-    //                 ]
-    //             ]);
-
-    //             if ($response->successful()) {
-    //                 // Parsing response dari Gemini
-    //                 $result = $response->json();
-    //                 return $result['candidates'][0]['content']['parts'][0]['text'] ?? 'Tidak dapat menghasilkan insight dari AI.';
-    //             } else {
-    //                 Log::error('Gemini API error: ' . $response->body());
-    //                 return 'Gagal menghubungi layanan analisis AI. Cek log untuk detail.';
-    //             }
-    //         } catch (\Exception $e) {
-    //             Log::error('Error generating AI insight: ' . $e->getMessage());
-    //             return 'Terjadi kesalahan dalam menghasilkan analisis.';
-    //         }
+    //     $aiInsight = null;
+    //     if ($request->has('generate_ai')) {
+    //         // [FIX] Panggil AI dengan SEMUA data (`$allHoldingReports`)
+    //         // [FIX] Nama fungsi diubah agar lebih sesuai
+    //         $aiInsight = $this->generateHoldingInsight($allHoldingReports, $chartData);
     //     }
 
-    //      private function createAnalysisPrompt($data)
-    //     {
-    //         $periods = implode(", ", $data['periods']);
-    //         $values = implode(", ", array_map(fn($v) => 'Rp'.number_format($v,0,',','.'), $data['sales_values']));
-
-    //         return "Anda adalah seorang analis bisnis dan data senior di sebuah perusahaan di Indonesia.
-
-    //         Berikut adalah data rekap penjualan bulanan dalam Rupiah:
-    //         - Periode Data: {$periods}
-    //         - Rincian Penjualan per Bulan: {$values}
-    //         - Total Penjualan Selama Periode: Rp " . number_format($data['total_sales'], 0, ',', '.') . "
-    //         - Rata-rata Penjualan per Bulan: Rp " . number_format($data['average_sales'], 0, ',', '.') . "
-    //         - Penjualan Tertinggi dalam Sebulan: Rp " . number_format($data['max_sales'], 0, ',', '.') . "
-    //         - Penjualan Terendah dalam Sebulan: Rp " . number_format($data['min_sales'], 0, ',', '.') . "
-    //         - Jumlah Data: {$data['data_count']} bulan
-
-    //         Tugas Anda adalah membuat laporan analisis singkat (maksimal 5 paragraf) dalam Bahasa Indonesia yang formal dan profesional untuk manajer. Laporan harus mencakup:
-    //         1.  **Ringkasan Kinerja:** Jelaskan secara singkat tren penjualan (apakah naik, turun, atau fluktuatif).
-    //         2.  **Identifikasi Puncak & Penurunan:** Sebutkan bulan dengan performa terbaik dan terburuk, serta berikan kemungkinan penyebabnya jika ada pola yang terlihat (misalnya, musim liburan, awal tahun, dll.).
-    //         3.  **Rekomendasi Strategis:** Berikan 2-3 poin rekomendasi yang konkret dan bisa ditindaklanjuti untuk meningkatkan penjualan di bulan-bulan berikutnya. Contoh: 'Fokuskan promosi pada produk X di bulan Y' atau 'Evaluasi strategi pemasaran di bulan Z'.
-    //         4.  **Proyeksi Singkat:** Berikan prediksi kualitatif (bukan angka pasti) untuk bulan berikutnya berdasarkan tren yang ada.
-
-    //         Gunakan format markdown untuk penomoran atau poin-poin agar mudah dibaca.";
-    //     }
+    //     return view('procurements.laporanholding', compact('laporanholdings', 'chartData', 'perusahaans', 'aiInsight','chartTotalData'))
+    //         ->with('search', $search)
+    //         ->with('perPage', $perPage);
+    // }
 
     public function index(Request $request)
     {
         $perusahaans = Perusahaan::all();
         $perPage = $request->input('per_page', 12);
-        $search = $request->input('search');
+        $query = LaporanHolding::query();
 
-        // Query dasar untuk digunakan kembali
-        $baseQuery = LaporanHolding::with('perusahaan')
-            ->when($search, function ($query, $search) {
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%{$search}%"])
-                    ->orWhereHas('perusahaan', fn($q) => $q->where('nama_perusahaan', 'LIKE', "%{$search}%"));
-            });
+        if ($request->filled('start_date')) {
+            try {
+                // Directly use the date string from the request.
+                $startDate = $request->start_date;
+                $query->whereDate('tanggal', '>=', $startDate);
+            } catch (Exception $e) {
+                Log::error("Invalid start_date format provided: " . $request->start_date);
+            }
+        }
+
+        if ($request->filled('end_date')) {
+            try {
+                // Directly use the date string from the request.
+                $endDate = $request->end_date;
+                $query->whereDate('tanggal', '<=', $endDate);
+            } catch (Exception $e) {
+                Log::error("Invalid end_date format provided: " . $request->end_date);
+            }
+        }
+
+        // Order the results and paginate, ensuring the correct filter parameters are kept.
+        $laporanholdings = $query
+            ->orderBy('tanggal', 'asc')
+            ->paginate($perPage)
+            ->appends($request->only(['start_date', 'end_date', 'per_page']));
 
         // [FIX] Ambil SEMUA data untuk analisis dan chart agar akurat
-        $allHoldingReports = (clone $baseQuery)->orderBy('tanggal', 'asc')->get();
+        $allHoldingReports = (clone $query)->orderBy('tanggal', 'asc')->get();
 
         // Ambil data yang DIPAGINASI hanya untuk tampilan tabel
-        $laporanholdings = (clone $baseQuery)->orderBy('tanggal', 'desc')->paginate($perPage);
+        $laporanholdings = (clone $query)->orderBy('tanggal', 'desc')->paginate($perPage);
 
         // [FIX] Siapkan data chart dari SEMUA data
         $labels = $allHoldingReports->map(function ($item) {
@@ -192,14 +126,10 @@ class LaporanHoldingController extends Controller
 
         $aiInsight = null;
         if ($request->has('generate_ai')) {
-            // [FIX] Panggil AI dengan SEMUA data (`$allHoldingReports`)
-            // [FIX] Nama fungsi diubah agar lebih sesuai
             $aiInsight = $this->generateHoldingInsight($allHoldingReports, $chartData);
         }
 
-        return view('procurements.laporanholding', compact('laporanholdings', 'chartData', 'perusahaans', 'aiInsight','chartTotalData'))
-            ->with('search', $search)
-            ->with('perPage', $perPage);
+        return view('procurements.laporanholding', compact('laporanholdings', 'chartData', 'perusahaans', 'aiInsight','chartTotalData'));
     }
 
     private function getChartTotalData($reports)
