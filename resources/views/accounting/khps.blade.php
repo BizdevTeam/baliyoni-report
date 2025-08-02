@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -232,7 +233,7 @@
                                                     <input type="number" name="kas" class="w-full p-2 border rounded" value="{{ $kashutangpiutangstok->kas }}" required>
                                                 </div>
                                                 <div>
-                                                    <label for="hutang" class="block text-sm font-medium">Receivables</label>
+                                                    <label for="hutang" class="block text-sm font-medium">Debts</label>
                                                     <input type="number" name="hutang" class="w-full p-2 border rounded" value="{{ $kashutangpiutangstok->hutang }}" required>
                                                 </div>
                                                 <div>
@@ -355,7 +356,7 @@
                                 <input type="number" name="kas" class="w-full p-2 border rounded" required>
                             </div>
                             <div>
-                                <label for="hutang" class="block text-sm font-medium">Receivables</label>
+                                <label for="hutang" class="block text-sm font-medium">Debts</label>
                                 <input type="number" name="hutang" class="w-full p-2 border rounded" required>
                             </div>
                             <div>
