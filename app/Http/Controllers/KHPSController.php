@@ -13,156 +13,6 @@ class KHPSController extends Controller
 {
     use DateValidationTraitAccSPI;
 
-    // public function index(Request $request)
-    // { 
-    //     $perPage = $request->input('per_page', 12);
-    //     $search = $request->input('search');
-
-    //     // Query untuk mencari berdasarkan tahun dan date
-    //     $kashutangpiutangstoks = KasHutangPiutang::query()
-    //         ->when($search, function ($query, $search) {
-    //             return $query->where('tanggal', 'LIKE', "%$search%");
-    //         })
-    //         ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
-    //         ->paginate($perPage);
-
-    //     // Hitung total untuk masing-masing kategori
-    //     $totalKas = $kashutangpiutangstoks->sum('kas');
-    //     $totalHutang = $kashutangpiutangstoks->sum('hutang');
-    //     $totalPiutang = $kashutangpiutangstoks->sum('piutang');
-    //     $totalStok = $kashutangpiutangstoks->sum('stok');
-
-    //     // Format angka menjadi format rupiah atau format angka biasa
-    //     $formattedKas = number_format($totalKas, 0, ',', '.');
-    //     $formattedHutang = number_format($totalHutang, 0, ',', '.');
-    //     $formattedPiutang = number_format($totalPiutang, 0, ',', '.');
-    //     $formattedStok = number_format($totalStok, 0, ',', '.');
-
-    //     $chartData = [
-    //         'labels' => [
-    //             "Kas : Rp $formattedKas",
-    //             "Hutang : Rp $formattedHutang",
-    //             "Piutang : Rp $formattedPiutang",
-    //             "Stok : Rp $formattedStok",
-    //         ],
-    //         'datasets' => [
-    //             [
-    //                 'data' => [$totalKas, $totalHutang, $totalPiutang, $totalStok],
-    //                 'backgroundColor' => ['#FF6384', '#36A2EB', '#FFCE56', '#2ab952'], // Warna untuk pie chart
-    //                 'hoverBackgroundColor' => ['#FF4757', '#3B8BEB', '#FFD700', '#00a623'],
-    //             ],
-    //         ],
-    //     ];
-    //     return view('accounting.khps', compact('kashutangpiutangstoks', 'chartData'));
-    // }
-    // Kontroller asli 
-
-    //Controller untuk AI
-//     public function index(Request $request)
-//     {
-//         $perPage = $request->input('per_page', 12);
-//         $search = $request->input('search');
-
-//         $kashutangpiutangstoks = KasHutangPiutang::query()
-//             ->when($search, function ($query, $search) {
-//                 return $query->where('tanggal', 'LIKE', "%$search%");
-//             })
-//             ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
-//             ->paginate($perPage);
-
-//         $totalKas = $kashutangpiutangstoks->sum('kas');
-//         $totalHutang = $kashutangpiutangstoks->sum('hutang');
-//         $totalPiutang = $kashutangpiutangstoks->sum('piutang');
-//         $totalStok = $kashutangpiutangstoks->sum('stok');
-
-//         $formattedKas = number_format($totalKas, 0, ',', '.');
-//         $formattedHutang = number_format($totalHutang, 0, ',', '.');
-//         $formattedPiutang = number_format($totalPiutang, 0, ',', '.');
-//         $formattedStok = number_format($totalStok, 0, ',', '.');
-
-//         $chartData = [
-//             'labels' => [
-//                 "Kas : Rp $formattedKas",
-//                 "Hutang : Rp $formattedHutang",
-//                 "Piutang : Rp $formattedPiutang",
-//                 "Stok : Rp $formattedStok",
-//             ],
-//             'datasets' => [
-//                 [
-//                     'data' => [$totalKas, $totalHutang, $totalPiutang, $totalStok],
-//                     'backgroundColor' => ['#FF6384', '#36A2EB', '#FFCE56', '#2ab952'],
-//                     'hoverBackgroundColor' => ['#FF4757', '#3B8BEB', '#FFD700', '#00a623'],
-//                 ],
-//             ],
-//         ];
-
-//         $aiInsight = $this->generateSalesInsight($kashutangpiutangstoks, $chartData);
-
-//         return view('accounting.khps', compact('kashutangpiutangstoks', 'chartData', 'aiInsight'));
-//     }
-
-//     private function generateSalesInsight($kashutangpiutangstoks, $chartData): string
-// {
-//     $apiKey = config('services.gemini.api_key');
-//     $apiUrl = config('services.gemini.api_url');
-
-//     if (!$apiKey || !$apiUrl) {
-//         Log::error('Gemini API Key or URL is not configured.');
-//         return 'Layanan AI tidak terkonfigurasi dengan benar.';
-//     }
-
-//     // Check if the core data points are all zero, indicating no meaningful data to analyze
-//     if (
-//         empty($data['kas']) &&
-//         empty($data['hutang']) &&
-//         empty($data['piutang']) &&
-//         empty($data['stok'])
-//     ) {
-//         return 'Tidak ada data keuangan atau stok yang cukup untuk dianalisis.';
-//     }
-
-//     $prompt = "Berikut adalah data keuangan dan stok: \n\n";
-//     $prompt .= "- **Total Kas:** " . number_format($data['kas'], 0, ',', '.') . " IDR\n";
-//     $prompt .= "- **Total Hutang:** " . number_format($data['hutang'], 0, ',', '.') . " IDR\n";
-//     $prompt .= "- **Total Piutang:** " . number_format($data['piutang'], 0, ',', '.') . " IDR\n";
-//     $prompt .= "- **Total Stok:** " . number_format($data['stok'], 0, ',', '.') . " unit/nilai\n\n";
-//     $prompt .= "Periode analisis: " . $data['periode_analisis'] . ".\n\n";
-//     $prompt .= "Mohon berikan analisis singkat dan relevan tentang kondisi keuangan dan stok berdasarkan data di atas. Identifikasi potensi masalah atau kekuatan, serta berikan saran singkat jika memungkinkan. Fokus pada poin-poin penting yang dapat membantu pengambilan keputusan. Jelaskan juga bagaimana perbandingan antar metrik ini bisa diinterpretasikan.";
-
-//     return $prompt;
-// }
-
-//     public function store(Request $request)
-//     {
-//         try {
-//             $validatedData = $request->validate([
-//                 'tanggal' => 'required|date',
-//                 'kas' => 'required|integer|min:0',
-//                 'hutang' => 'required|integer|min:0',
-//                 'piutang' => 'required|integer|min:0',
-//                 'stok' => 'required|integer|min:0'
-//             ]);
-//             $errorMessage = '';
-//             if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
-//                 return redirect()->back()->with('error', $errorMessage);
-//             }
-
-//             // Cek kombinasi unik date dan perusahaan
-//             $exists = KasHutangPiutang::where('tanggal', $validatedData['tanggal'])->exists();
-    
-//             if ($exists) {
-//                 return redirect()->back()->with('error', 'Data sudah ada.');
-//             }
-    
-//             KasHutangPiutang::create($validatedData);
-    
-//             return redirect()->route('khps.index')->with('success', 'Data Berhasil Ditambahkan');
-//         } catch (\Exception $e) {
-//             Log::error('Error storing KHPS data: ' . $e->getMessage());
-//             return redirect()->route('khps.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
-//         }
-//     }
-
  public function index(Request $request)
     {
         $perPage = $request->input('per_page', 12);
@@ -187,10 +37,10 @@ class KHPSController extends Controller
 
         $chartData = [
             'labels' => [
-                "Kas : Rp $formattedKas",
-                "Hutang : Rp $formattedHutang",
-                "Piutang : Rp $formattedPiutang",
-                "Stok : Rp $formattedStok",
+                "Cash : Rp $formattedKas",
+                "Debts : Rp $formattedHutang",
+                "Receivables : Rp $formattedPiutang",
+                "Stock : Rp $formattedStok",
             ],
             'datasets' => [
                 [
