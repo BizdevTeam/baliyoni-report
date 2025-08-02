@@ -38,12 +38,22 @@
     <div class="flex justify-between items-center">
       <form id="monthFilterForm" method="GET" action="#" class="flex items-center gap-2">
         <div class="flex items-center border border-gray-700 rounded-lg p-2">
-          <input type="month" id="startMonth" name="start_month" placeholder="Start Month" value="{{ request('start_month') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
-        </div>
+          <input 
+                type="date" 
+                name="start_date" 
+                value="{{ request('start_date') }}" 
+                class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" 
+              />        
+          </div>
         <span class="text-gray-700">to</span>
         <div class="flex items-center border border-gray-700 rounded-lg p-2">
-          <input type="month" id="endMonth" name="end_month" placeholder="End Month" value="{{ request('end_month') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
-        </div>
+          <input 
+                type="date" 
+                name="end_date" 
+                value="{{ request('end_date') }}" 
+                class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" 
+              />        
+          </div>
         <button type="submit" class="flex-1 bg-gradient-to-r h from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm" aria-label="Search Month Range">
           Search
         </button>

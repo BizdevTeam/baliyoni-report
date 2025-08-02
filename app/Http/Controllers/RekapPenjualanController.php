@@ -18,59 +18,36 @@ class RekapPenjualanController extends Controller
 {
     use DateValidationTrait;
 
-    //  public function index(Request $request)
-    // {
-    //     $perPage = $request->input('per_page', 12);
-    //     $search = $request->input('search');
-        
-    //     $rekappenjualans = RekapPenjualan::query()
-    //         ->when($search, function ($query, $search) {
-    //             return $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-    //         })
-    //         ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
-    //         ->paginate($perPage);
-
-    //     // Bagian ini sudah benar
-    //     $rekappenjualans->map(function ($item) {
-    //         $item->total_penjualan_formatted = 'Rp ' . number_format($item->total_penjualan, 0, ',', '.');
-    //         return $item;
-    //     });
-
-    //     $labels = $rekappenjualans->map(function ($item) {
-    //         return Carbon::parse($item->tanggal)->translatedFormat('F Y');
-    //     })->toArray();
-        
-    //     $data = $rekappenjualans->pluck('total_penjualan')->toArray();
-    //     $backgroundColors = array_map(fn() => $this->getRandomRGBA(), $data);
-
-    //     $chartData = [
-    //         'labels' => $labels,
-    //         'datasets' => [
-    //             [
-    //                 'text' => 'Total Sales',
-    //                 'data' => $data,
-    //                 'backgroundColor' => $backgroundColors,
-    //             ],
-    //         ],
-    //     ];
-        
-    //     // Panggil fungsi generateSalesInsight yang SUDAH DIPERBAIKI
-    //     $aiInsight = $this->generateSalesInsight($rekappenjualans, $chartData);
-
-    //     return view('marketings.rekappenjualan', compact('rekappenjualans', 'chartData','aiInsight'));
-    // }
-
      public function index(Request $request)
     {
         $perPage = $request->input('per_page', 12);
-        $search = $request->input('search');
-        
-        $rekappenjualans = RekapPenjualan::query()
-            ->when($search, function ($query, $search) {
-                return $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            })
-            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
-            ->paginate($perPage);
+        $query = RekapPenjualan::query();
+
+        if ($request->filled('start_date')) {
+            try {
+                // Directly use the date string from the request.
+                $startDate = $request->start_date;
+                $query->whereDate('tanggal', '>=', $startDate);
+            } catch (Exception $e) {
+                Log::error("Invalid start_date format provided: " . $request->start_date);
+            }
+        }
+
+        if ($request->filled('end_date')) {
+            try {
+                // Directly use the date string from the request.
+                $endDate = $request->end_date;
+                $query->whereDate('tanggal', '<=', $endDate);
+            } catch (Exception $e) {
+                Log::error("Invalid end_date format provided: " . $request->end_date);
+            }
+        }
+
+        // Order the results and paginate, ensuring the correct filter parameters are kept.
+        $rekappenjualans = $query
+            ->orderBy('tanggal', 'asc')
+            ->paginate($perPage)
+            ->appends($request->only(['start_date', 'end_date', 'per_page']));
 
         // Bagian ini sudah benar
         $rekappenjualans->map(function ($item) {

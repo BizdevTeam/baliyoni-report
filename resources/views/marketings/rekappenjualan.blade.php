@@ -103,7 +103,23 @@
                 <!-- Search -->
                 <form method="GET" action="{{ route('rekappenjualan.index') }}" class="flex items-center gap-2">
                     <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
-                        <input type="month" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
+                        <input 
+                        type="date" 
+                        name="start_date" 
+                        value="{{ request('start_date') }}" 
+                        class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" 
+                        />
+                    </div>
+
+                    <span>To</span>
+
+                    <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
+                        <input 
+                        type="date" 
+                        name="end_date" 
+                        value="{{ request('end_date') }}" 
+                        class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" 
+                        />
                     </div>
 
                     <button type="submit" class="bg-gradient-to-r font-medium from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm mr-2" aria-label="Search">
@@ -358,22 +374,12 @@
         const perPageSelect = document.getElementById('perPage');
         const exportPdfButton = document.getElementById('exportPdfButton');
 
-        // --- FUNCTION DEFINITIONS ---
-
-        /**
-         * Formats a number into a currency string (e.g., Rp 1,5 Jt).
-         * @param {number} value The number to format.
-         * @returns {string} The formatted currency string.
-         */
         function formatCurrency(value) {
             if (value >= 1e9) return 'Rp ' + (value / 1e9).toFixed(1).replace('.', ',') + ' M';
             if (value >= 1e6) return 'Rp ' + (value / 1e6).toFixed(1).replace('.', ',') + ' Jt';
             return 'Rp ' + value.toLocaleString('id-ID');
         }
 
-        /**
-         * Renders the bar chart using data from the HTML table.
-         */
         function renderChart() {
             const tableRows = document.querySelectorAll('#data-table tbody tr');
             const labels = [];

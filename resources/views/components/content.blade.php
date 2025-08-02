@@ -13,7 +13,7 @@
             <!-- MARKETING -->
 
             <!-- rekap penjualan -->
-            @if(in_array(Auth::user()->role, ['superadmin', 'marketing']))
+            @if(in_array(Auth::user()->role, ['superadmin', 'marketing','spi']))
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
                 Sales Recap Chart
@@ -170,7 +170,7 @@
             <!-- END MARKETING -->
 
             <!-- PROCUREMENT -->
-            @if(in_array(Auth::user()->role, ['superadmin', 'procurement']))
+            @if(in_array(Auth::user()->role, ['superadmin', 'procurement','spi']))
             <!-- PROCUREMENT -->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300 chart-group" data-group="penjualan-perusahaan">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
@@ -261,7 +261,7 @@
             <!-- END PROCUREMENT -->
 
             <!-- SUPPORT -->
-            @if(in_array(Auth::user()->role, ['superadmin', 'support']))
+            @if(in_array(Auth::user()->role, ['superadmin', 'support','spi']))
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300 chart-group" data-group="penjualan-perusahaan">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
                     ASP Service Revenue Recap
@@ -346,7 +346,7 @@
             @endif
 
             <!-- ACCOUNTING: Tampil untuk Superadmin & Accounting -->
-            @if(in_array(Auth::user()->role, ['superadmin', 'accounting']))
+            @if(in_array(Auth::user()->role, ['superadmin', 'accounting','spi']))
             <!-- LAPORAN LABA RUGI -->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
@@ -631,7 +631,7 @@
             <!-- END ACCOUNTING -->
 
             <!-- IT -->
-            @if(in_array(Auth::user()->role, ['superadmin', 'it']))
+            @if(in_array(Auth::user()->role, ['superadmin', 'it','spi']))
             <!-- LAPORAN Instagram -->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
                 <h1 class="text-2xl font-bold text-center text-red-600 mb-6">
@@ -770,7 +770,7 @@
             <!-- END IT -->
 
             <!-- LAPORAN HRGA -->
-            @if(in_array(Auth::user()->role, ['superadmin', 'hrga']))
+            @if(in_array(Auth::user()->role, ['superadmin', 'hrga','spi']))
 
             <!-- LAPORAN PT BOS -->
             <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6 hover:border-red-600 transition duration-300">
