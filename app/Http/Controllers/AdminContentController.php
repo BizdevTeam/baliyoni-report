@@ -42,63 +42,37 @@ use Illuminate\Support\Facades\DB;
 
 class AdminContentController extends Controller
 {
+    // --- CENTRALIZED FILTER PROPERTIES ---
+    private $startDate;
+    private $endDate;
+    private $useFilter = false;
+
     /**
-     * Applies a date filter to a query based on the request parameters.
+     * Applies a date filter to a query based on the controller's date properties.
      * It handles date conversion for VARCHAR columns.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param Request $request
      * @param string $tanggalColumn
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    private function applyDateFilter($query, Request $request, string $tanggalColumn = 'tanggal')
+    private function applyDateFilter($query, string $tanggalColumn = 'tanggal')
     {
-        // --- FIXED LOGIC: Convert VARCHAR to DATE for proper filtering ---
-        // This assumes your VARCHAR date format is 'YYYY-MM-DD'. 
-        // If it's different (e.g., 'DD-MM-YYYY'), change '%Y-%m-%d' to '%d-%m-%Y'.
-        $dbDriver = DB::connection()->getDriverName();
-        $dateConversionSql = '';
+        if ($this->useFilter) {
+            // This assumes your VARCHAR date format is 'YYYY-MM-DD'.
+            $dbDriver = DB::connection()->getDriverName();
+            $dateConversionSql = ($dbDriver === 'mysql')
+                ? "STR_TO_DATE({$tanggalColumn}, '%Y-%m-%d')"
+                : "CAST({$tanggalColumn} AS DATE)";
 
-        // Use appropriate conversion function based on the database driver
-        if ($dbDriver === 'mysql') {
-            $dateConversionSql = "STR_TO_DATE({$tanggalColumn}, '%Y-%m-%d')";
-        } else {
-            // Fallback for other databases like PostgreSQL, SQLite, SQL Server
-            $dateConversionSql = "CAST({$tanggalColumn} AS DATE)";
-        }
-
-        if ($request->filled('start_date') || $request->filled('end_date')) {
-            if ($request->filled('start_date')) {
-                try {
-                    $query->where(DB::raw($dateConversionSql), '>=', $request->input('start_date'));
-                } catch (\Exception $e) {
-                    Log::error("Invalid start_date format: " . $request->input('start_date') . ". Error: " . $e->getMessage());
-                }
+            if ($this->startDate) {
+                $query->where(DB::raw($dateConversionSql), '>=', $this->startDate->toDateString());
             }
-
-            if ($request->filled('end_date')) {
-                try {
-                    $query->where(DB::raw($dateConversionSql), '<=', $request->input('end_date'));
-                } catch (\Exception $e) {
-                    Log::error("Invalid end_date format: " . $request->input('end_date') . ". Error: " . $e->getMessage());
-                }
+            if ($this->endDate) {
+                $query->where(DB::raw($dateConversionSql), '<=', $this->endDate->toDateString());
             }
         }
-        // Fallback to 'search' input for month-based filtering (YYYY-MM)
-        elseif ($request->filled('search') && preg_match('/^\d{4}-\d{2}$/', $request->input('search'))) {
-            try {
-                $date = Carbon::createFromFormat('Y-m', $request->input('search'));
-                // Use database-native functions for YEAR and MONTH on the converted date
-                $query->where(DB::raw("YEAR({$dateConversionSql})"), '=', $date->year)
-                      ->where(DB::raw("MONTH({$dateConversionSql})"), '=', $date->month);
-            } catch (\Exception $e) {
-                Log::error("Invalid search date format: " . $request->input('search') . ". Error: " . $e->getMessage());
-            }
-        }
-
         return $query;
     }
-
 
     /**
      * Utility to generate a random RGBA color string.
@@ -151,110 +125,101 @@ class AdminContentController extends Controller
     public function adminContent(Request $request)
     {
         try {
+            // --- REVISED CENTRALIZED FILTER LOGIC ---
+            $startDateInput = $request->input('start_date'); // Expects 'YYYY-MM-DD'
+            $endDateInput = $request->input('end_date');     // Expects 'YYYY-MM-DD'
+            $startMonthInput = $request->input('start_month'); // Expects 'YYYY-MM'
+            $endMonthInput = $request->input('end_month');   // Expects 'YYYY-MM'
+
+            if ($startDateInput && $endDateInput) {
+                // Priority 1: Handle specific date range from 'start_date' and 'end_date'
+                $this->startDate = Carbon::parse($startDateInput)->startOfDay();
+                $this->endDate = Carbon::parse($endDateInput)->endOfDay();
+                $this->useFilter = true;
+            } elseif ($startMonthInput && $endMonthInput) {
+                // Priority 2: Handle month range from 'start_month' and 'end_month'
+                $this->startDate = Carbon::createFromFormat('Y-m', $startMonthInput)->startOfMonth();
+                $this->endDate = Carbon::createFromFormat('Y-m', $endMonthInput)->endOfMonth();
+                $this->useFilter = true;
+            } else {
+                // Default: Last 2 months if no specific filter is provided
+                $now = Carbon::now();
+                $this->endDate = $now->copy()->endOfMonth();
+                $this->startDate = $now->copy()->subMonth()->startOfMonth();
+                $this->useFilter = true;
+            }
+            // --- END FILTER LOGIC ---
+
             // Marketing
-            $dataExportLaporanPenjualan             = $this->safeView(fn() => $this->exportRekapPenjualan($request));
-            $dataExportLaporanPenjualanPerusahaan   = $this->safeView(fn() => $this->exportRekapPenjualanPerusahaan($request));
-            $dataTotalLaporanPenjualanPerusahaan    = $this->safeView(fn() => $this->viewTotalRekapPenjualanPerusahaan($request));
-            $dataExportLaporanPaketAdministrasi     = $this->safeView(fn() => $this->exportLaporanPaketAdministrasi($request));
-            $dataTotalLaporanPaketAdministrasi      = $this->safeView(fn() => $this->ChartTotalLaporanPaketAdministrasi($request));
-            $dataExportStatusPaket                  = $this->safeView(fn() => $this->exportStatusPaket($request));
-            $dataTotalStatusPaket                   = $this->safeView(fn() => $this->ChartTotalStatusPaket($request));
-            $dataExportLaporanPerInstansi           = $this->safeView(fn() => $this->exportLaporanPerInstansi($request));
-            $dataTotalInstansi                      = $this->safeView(fn() => $this->ChartTotalInstansi($request));
+            $dataExportLaporanPenjualan             = $this->safeView(fn() => $this->exportRekapPenjualan());
+            $dataExportLaporanPenjualanPerusahaan   = $this->safeView(fn() => $this->exportRekapPenjualanPerusahaan());
+            $dataTotalLaporanPenjualanPerusahaan    = $this->safeView(fn() => $this->viewTotalRekapPenjualanPerusahaan());
+            $dataExportLaporanPaketAdministrasi     = $this->safeView(fn() => $this->exportLaporanPaketAdministrasi());
+            $dataTotalLaporanPaketAdministrasi      = $this->safeView(fn() => $this->ChartTotalLaporanPaketAdministrasi());
+            $dataExportStatusPaket                  = $this->safeView(fn() => $this->exportStatusPaket());
+            $dataTotalStatusPaket                   = $this->safeView(fn() => $this->ChartTotalStatusPaket());
+            $dataExportLaporanPerInstansi           = $this->safeView(fn() => $this->exportLaporanPerInstansi());
+            $dataTotalInstansi                      = $this->safeView(fn() => $this->ChartTotalInstansi());
 
             // Procurement
-            $dataExportLaporanHolding               = $this->safeView(fn() => $this->exportLaporanHolding($request));
-            $dataTotalLaporanHolding                = $this->safeView(fn() => $this->ChartTotalHolding($request));
-            $dataComparisonHolding                  = $this->safeView(fn() => $this->ChartComparisonHolding($request));
-            $dataExportLaporanStok                  = $this->safeView(fn() => $this->exportLaporanStok($request));
-            $dataExportLaporanPembelianOutlet       = $this->safeView(fn() => $this->exportLaporanPembelianOutlet($request));
-            $dataExportLaporanNegosiasi             = $this->safeView(fn() => $this->exportLaporanNegosiasi($request));
+            $dataExportLaporanHolding               = $this->safeView(fn() => $this->exportLaporanHolding());
+            $dataTotalLaporanHolding                = $this->safeView(fn() => $this->ChartTotalHolding());
+            $dataComparisonHolding                  = $this->safeView(fn() => $this->ChartComparisonHolding());
+            $dataExportLaporanStok                  = $this->safeView(fn() => $this->exportLaporanStok());
+            $dataExportLaporanPembelianOutlet       = $this->safeView(fn() => $this->exportLaporanPembelianOutlet());
+            $dataExportLaporanNegosiasi             = $this->safeView(fn() => $this->exportLaporanNegosiasi());
             
             // Support
-            $dataExportRekapPendapatanASP   = $this->safeView(fn() => $this->exportRekapPendapatanASP($request));
-            $dataTotalRekapPendapatanASP    = $this->safeView(fn() => $this->ChartTotalPendapatanASP($request));
-            $dataExportRekapPiutangASP      = $this->safeView(fn() => $this->exportRekapPiutangASP($request));
-            $dataTotalRekapPiutangASP       = $this->safeView(fn() => $this->ChartTotalPiutangASP($request));
-            $dataLaporanPengiriman          = $this->safeView(fn() => $this->exportLaporanPengiriman($request));
+            $dataExportRekapPendapatanASP   = $this->safeView(fn() => $this->exportRekapPendapatanASP());
+            $dataTotalRekapPendapatanASP    = $this->safeView(fn() => $this->ChartTotalPendapatanASP());
+            $dataExportRekapPiutangASP      = $this->safeView(fn() => $this->exportRekapPiutangASP());
+            $dataTotalRekapPiutangASP       = $this->safeView(fn() => $this->ChartTotalPiutangASP());
+            $dataLaporanPengiriman          = $this->safeView(fn() => $this->exportLaporanPengiriman());
             
             // HRGA
-            $dataPTBOS                      = $this->safeView(fn() => $this->exportPTBOS($request));
-            $dataIJASA                      = $this->safeView(fn() => $this->exportIJASA($request));
-            $dataIJASAGambar                = $this->safeView(fn() => $this->exportIJASAGambar($request));
-            $dataLaporanSakit               = $this->safeView(fn() => $this->exportSakit($request));
-            $dataTotalSakit                 = $this->safeView(fn() => $this->ChartTotalSakit($request));
-            $dataLaporanCuti                = $this->safeView(fn() => $this->exportCuti($request));
-            $dataTotalCuti                  = $this->safeView(fn() => $this->ChartTotalCuti($request));
-            $dataLaporanIzin                = $this->safeView(fn() => $this->exportIzin($request));
-            $dataTotalIzin                  = $this->safeView(fn() => $this->ChartTotalIzin($request));
-            $dataLaporanTerlambat           = $this->safeView(fn() => $this->exportTerlambat($request));
-            $dataTotalTerlambat             = $this->safeView(fn() => $this->ChartTotalTerlambat($request));
+            $dataPTBOS                      = $this->safeView(fn() => $this->exportPTBOS());
+            $dataIJASA                      = $this->safeView(fn() => $this->exportIJASA());
+            $dataIJASAGambar                = $this->safeView(fn() => $this->exportIJASAGambar());
+            $dataLaporanSakit               = $this->safeView(fn() => $this->exportSakit());
+            $dataTotalSakit                 = $this->safeView(fn() => $this->ChartTotalSakit());
+            $dataLaporanCuti                = $this->safeView(fn() => $this->exportCuti());
+            $dataTotalCuti                  = $this->safeView(fn() => $this->ChartTotalCuti());
+            $dataLaporanIzin                = $this->safeView(fn() => $this->exportIzin());
+            $dataTotalIzin                  = $this->safeView(fn() => $this->ChartTotalIzin());
+            $dataLaporanTerlambat           = $this->safeView(fn() => $this->exportTerlambat());
+            $dataTotalTerlambat             = $this->safeView(fn() => $this->ChartTotalTerlambat());
             
             // Accounting
-            $dataKHPS                       = $this->safeView(fn() => $this->exportKHPS($request));
-            $dataLabaRugi                   = $this->safeView(fn() => $this->exportLabaRugi($request));
-            $dataNeraca                     = $this->safeView(fn() => $this->exportNeraca($request));
-            $dataRasio                      = $this->safeView(fn() => $this->exportRasio($request));
-            $dataPPn                        = $this->safeView(fn() => $this->exportPPn($request));
-            $dataArusKas                    = $this->safeView(fn() => $this->exportArusKas($request));
-            $dataTaxPlanningReport          = $this->safeView(fn() => $this->exportTaxPlanning($request));
+            $dataKHPS                       = $this->safeView(fn() => $this->exportKHPS());
+            $dataLabaRugi                   = $this->safeView(fn() => $this->exportLabaRugi());
+            $dataNeraca                     = $this->safeView(fn() => $this->exportNeraca());
+            $dataRasio                      = $this->safeView(fn() => $this->exportRasio());
+            $dataPPn                        = $this->safeView(fn() => $this->exportPPn());
+            $dataArusKas                    = $this->safeView(fn() => $this->exportArusKas());
+            $dataTaxPlanningReport          = $this->safeView(fn() => $this->exportTaxPlanning());
             
             // SPI
-            $dataLaporanSPI                 = $this->safeView(fn() => $this->exportLaporanSPI($request));
-            $dataLaporanSPIIT               = $this->safeView(fn() => $this->exportLaporanSPIIT($request));
+            $dataLaporanSPI                 = $this->safeView(fn() => $this->exportLaporanSPI());
+            $dataLaporanSPIIT               = $this->safeView(fn() => $this->exportLaporanSPIIT());
             
             // IT
-            $dataTiktok                     = $this->safeView(fn() => $this->exportTiktok($request));
-            $dataInstagram                  = $this->safeView(fn() => $this->exportInstagram($request));
-            $dataBizdev                     = $this->safeView(fn() => $this->exportBizdev($request));
+            $dataTiktok                     = $this->safeView(fn() => $this->exportTiktok());
+            $dataInstagram                  = $this->safeView(fn() => $this->exportInstagram());
+            $dataBizdev                     = $this->safeView(fn() => $this->exportBizdev());
 
-
-            // Pass all data to the view
             return view('components.content', compact(
-                'dataExportLaporanPenjualan',
-                'dataExportLaporanPenjualanPerusahaan',
-                'dataTotalLaporanPenjualanPerusahaan',
-                'dataExportLaporanPaketAdministrasi',
-                'dataTotalLaporanPaketAdministrasi',
-                'dataExportStatusPaket',
-                'dataTotalStatusPaket',
-                'dataExportLaporanPerInstansi',
-                'dataTotalInstansi',
-                'dataExportLaporanHolding',
-                'dataTotalLaporanHolding',
-                'dataComparisonHolding',
-                'dataExportLaporanStok',
-                'dataExportLaporanPembelianOutlet',
-                'dataExportLaporanNegosiasi',
-                'dataExportRekapPendapatanASP',
-                'dataTotalRekapPendapatanASP',
-                'dataExportRekapPiutangASP',
-                'dataTotalRekapPiutangASP',
-                'dataLaporanPengiriman',
-                'dataPTBOS',
-                'dataIJASA',
-                'dataIJASAGambar',
-                'dataLaporanSakit',
-                'dataTotalSakit',
-                'dataLaporanCuti',
-                'dataTotalCuti',
-                'dataLaporanIzin',
-                'dataTotalIzin',
-                'dataLaporanTerlambat',
-                'dataTotalTerlambat',
-                'dataKHPS',
-                'dataLabaRugi',
-                'dataNeraca',
-                'dataRasio',
-                'dataPPn',
-                'dataArusKas',
-                'dataTaxPlanningReport',
-                'dataLaporanSPI',
-                'dataLaporanSPIIT',
-                'dataTiktok',
-                'dataInstagram',
-                'dataBizdev'
-            ))->with('filtered', $request->filled('start_date') || $request->filled('end_date') || $request->filled('search'));
+                'dataExportLaporanPenjualan', 'dataExportLaporanPenjualanPerusahaan', 'dataTotalLaporanPenjualanPerusahaan',
+                'dataExportLaporanPaketAdministrasi', 'dataTotalLaporanPaketAdministrasi', 'dataExportStatusPaket',
+                'dataTotalStatusPaket', 'dataExportLaporanPerInstansi', 'dataTotalInstansi', 'dataExportLaporanHolding',
+                'dataTotalLaporanHolding', 'dataComparisonHolding', 'dataExportLaporanStok', 'dataExportLaporanPembelianOutlet', 'dataExportLaporanNegosiasi',
+                'dataExportRekapPendapatanASP', 'dataTotalRekapPendapatanASP', 'dataExportRekapPiutangASP', 'dataTotalRekapPiutangASP',
+                'dataLaporanPengiriman', 'dataLaporanSakit', 'dataTotalSakit', 'dataLaporanCuti', 'dataTotalCuti',
+                'dataLaporanIzin', 'dataTotalIzin', 'dataLaporanTerlambat', 'dataTotalTerlambat', 'dataKHPS',
+                'dataArusKas', 'dataLaporanSPI', 'dataLaporanSPIIT', 'dataLabaRugi', 'dataNeraca', 'dataRasio',
+                'dataPPn', 'dataTaxPlanningReport', 'dataTiktok', 'dataInstagram', 'dataBizdev', 'dataPTBOS',
+                'dataIJASA', 'dataIJASAGambar'
+            ))->with('filtered', $this->useFilter);
+
         } catch (\Throwable $th) {
             Log::error('Error in adminContent: ' . $th->getMessage());
             return back()->withErrors('An error occurred while loading the dashboard data.');
@@ -267,13 +232,13 @@ class AdminContentController extends Controller
     }
     
     // ===================================================================
-    // DATA FETCHING FUNCTIONS
+    // DATA FETCHING FUNCTIONS (Now using centralized filter properties)
     // ===================================================================
 
-    public function exportRekapPenjualan(Request $request)
+    public function exportRekapPenjualan()
     {
         $query = RekapPenjualan::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
 
         $results = $query->orderBy('tanggal', 'asc')
                          ->select('tanggal', 'total_penjualan')
@@ -303,11 +268,11 @@ class AdminContentController extends Controller
         ];
     }
 
-    public function exportRekapPenjualanPerusahaan(Request $request)
+    public function exportRekapPenjualanPerusahaan()
     {
         $query = RekapPenjualanPerusahaan::query()
             ->join('perusahaans', 'rekap_penjualan_perusahaans.perusahaan_id', '=', 'perusahaans.id');
-        $this->applyDateFilter($query, $request, 'rekap_penjualan_perusahaans.tanggal');
+        $this->applyDateFilter($query, 'rekap_penjualan_perusahaans.tanggal');
         
         $rekap = $query->orderBy('rekap_penjualan_perusahaans.tanggal', 'asc')
                         ->select('rekap_penjualan_perusahaans.tanggal', 'perusahaans.nama_perusahaan', 'rekap_penjualan_perusahaans.total_penjualan')
@@ -338,11 +303,11 @@ class AdminContentController extends Controller
         ];
     }
 
-    public function viewTotalRekapPenjualanPerusahaan(Request $request)
+    public function viewTotalRekapPenjualanPerusahaan()
     {
         $query = RekapPenjualanPerusahaan::query()
             ->join('perusahaans', 'rekap_penjualan_perusahaans.perusahaan_id', '=', 'perusahaans.id');
-        $this->applyDateFilter($query, $request, 'rekap_penjualan_perusahaans.tanggal');
+        $this->applyDateFilter($query, 'rekap_penjualan_perusahaans.tanggal');
 
         $akumulasiData = $query->select('perusahaans.nama_perusahaan', DB::raw('SUM(total_penjualan) as total'))
                                 ->groupBy('perusahaans.nama_perusahaan')
@@ -359,10 +324,10 @@ class AdminContentController extends Controller
         ];
     }
 
-    public function exportLaporanPaketAdministrasi(Request $request)
+    public function exportLaporanPaketAdministrasi()
     {
         $query = LaporanPaketAdministrasi::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         
         $rekap = $query->orderBy('tanggal', 'asc')
                         ->select('tanggal', 'website', 'total_paket')
@@ -386,10 +351,10 @@ class AdminContentController extends Controller
         ];
     }
 
-    public function ChartTotalLaporanPaketAdministrasi(Request $request)
+    public function ChartTotalLaporanPaketAdministrasi()
     {
         $query = LaporanPaketAdministrasi::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         
         $akumulasiData = $query->groupBy('website')
                                 ->select('website', DB::raw('SUM(total_paket) as total'))
@@ -406,10 +371,10 @@ class AdminContentController extends Controller
         ];
     }
 
-    public function exportStatusPaket(Request $request)
+    public function exportStatusPaket()
     {
         $query = StatusPaket::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         $rekap = $query->orderBy('tanggal', 'asc')
                         ->select('tanggal', 'status', 'total_paket')
                         ->get();
@@ -432,10 +397,10 @@ class AdminContentController extends Controller
         ];
     }
 
-    public function ChartTotalStatusPaket(Request $request)
+    public function ChartTotalStatusPaket()
     {
         $query = StatusPaket::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         
         $akumulasiData = $query->groupBy('status')
                                 ->select('status', DB::raw('SUM(total_paket) as total'))
@@ -452,10 +417,10 @@ class AdminContentController extends Controller
         ];
     }
 
-    public function exportLaporanPerInstansi(Request $request)
+    public function exportLaporanPerInstansi()
     {
         $query = LaporanPerInstansi::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         $rekap = $query->orderBy('tanggal', 'asc')
                         ->select('tanggal', 'instansi', 'nilai')
                         ->get();
@@ -478,10 +443,10 @@ class AdminContentController extends Controller
         ];
     }
 
-    public function ChartTotalInstansi(Request $request)
+    public function ChartTotalInstansi()
     {
         $query = LaporanPerInstansi::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         
         $akumulasiData = $query->groupBy('instansi')
                                 ->select('instansi', DB::raw('SUM(nilai) as total'))
@@ -498,11 +463,11 @@ class AdminContentController extends Controller
         ];
     }
 
-    public function exportLaporanHolding(Request $request)
+    public function exportLaporanHolding()
     {
         $query = LaporanHolding::query()
             ->join('perusahaans', 'laporan_holdings.perusahaan_id', '=', 'perusahaans.id');
-        $this->applyDateFilter($query, $request, 'laporan_holdings.tanggal');
+        $this->applyDateFilter($query, 'laporan_holdings.tanggal');
 
         $rekap = $query->orderBy('laporan_holdings.tanggal', 'asc')
                         ->select('laporan_holdings.tanggal', 'perusahaans.nama_perusahaan', 'laporan_holdings.nilai')
@@ -526,11 +491,11 @@ class AdminContentController extends Controller
         ];
     }
 
-    public function ChartTotalHolding(Request $request)
+    public function ChartTotalHolding()
     {
         $query = LaporanHolding::query()
             ->join('perusahaans', 'laporan_holdings.perusahaan_id', '=', 'perusahaans.id');
-        $this->applyDateFilter($query, $request, 'laporan_holdings.tanggal');
+        $this->applyDateFilter($query, 'laporan_holdings.tanggal');
 
         $akumulasiData = $query->groupBy('perusahaans.nama_perusahaan')
                                 ->select('perusahaans.nama_perusahaan', DB::raw('SUM(nilai) as total'))
@@ -547,26 +512,28 @@ class AdminContentController extends Controller
         ];
     }
 
-    public function ChartComparisonHolding(Request $request)
+    public function ChartComparisonHolding()
     {
-        $currentMonth = Carbon::now();
-        if ($request->filled('search') && preg_match('/^\d{4}-\d{2}$/', $request->input('search'))) {
-            $currentMonth = Carbon::createFromFormat('Y-m', $request->input('search'));
-        }
+        $currentMonth = $this->endDate ? Carbon::parse($this->endDate) : Carbon::now();
         $previousMonth = $currentMonth->copy()->subMonthNoOverflow();
+        
+        $dbDriver = DB::connection()->getDriverName();
+        $dateConversionSql = ($dbDriver === 'mysql')
+            ? "STR_TO_DATE(laporan_holdings.tanggal, '%Y-%m-%d')"
+            : "CAST(laporan_holdings.tanggal AS DATE)";
 
         $currentMonthData = LaporanHolding::query()
             ->join('perusahaans', 'laporan_holdings.perusahaan_id', '=', 'perusahaans.id')
-            ->whereYear('tanggal', $currentMonth->year)
-            ->whereMonth('tanggal', $currentMonth->month)
+            ->where(DB::raw("YEAR({$dateConversionSql})"), '=', $currentMonth->year)
+            ->where(DB::raw("MONTH({$dateConversionSql})"), '=', $currentMonth->month)
             ->groupBy('perusahaans.nama_perusahaan')
             ->select('perusahaans.nama_perusahaan', DB::raw('SUM(nilai) as total'))
             ->pluck('total', 'perusahaans.nama_perusahaan');
 
         $previousMonthData = LaporanHolding::query()
             ->join('perusahaans', 'laporan_holdings.perusahaan_id', '=', 'perusahaans.id')
-            ->whereYear('tanggal', $previousMonth->year)
-            ->whereMonth('tanggal', $previousMonth->month)
+            ->where(DB::raw("YEAR({$dateConversionSql})"), '=', $previousMonth->year)
+            ->where(DB::raw("MONTH({$dateConversionSql})"), '=', $previousMonth->month)
             ->groupBy('perusahaans.nama_perusahaan')
             ->select('perusahaans.nama_perusahaan', DB::raw('SUM(nilai) as total'))
             ->pluck('total', 'perusahaans.nama_perusahaan');
@@ -596,10 +563,10 @@ class AdminContentController extends Controller
         ];
     }
     
-    public function exportLaporanStok(Request $request)
+    public function exportLaporanStok()
     {
         $query = LaporanStok::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         $rekap = $query->orderBy('tanggal', 'asc')
                         ->select('tanggal', 'stok')
                         ->get();
@@ -621,10 +588,10 @@ class AdminContentController extends Controller
         ];
     }
 
-    public function exportLaporanPembelianOutlet(Request $request)
+    public function exportLaporanPembelianOutlet()
     {
         $query = LaporanOutlet::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         $rekap = $query->orderBy('tanggal', 'asc')
                         ->select('tanggal', 'total_pembelian')
                         ->get();
@@ -646,10 +613,10 @@ class AdminContentController extends Controller
         ];
     }
 
-    public function exportLaporanNegosiasi(Request $request)
+    public function exportLaporanNegosiasi()
     {
         $query = LaporanNegosiasi::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         $rekap = $query->orderBy('tanggal', 'asc')
                         ->select('tanggal', 'total_negosiasi')
                         ->get();
@@ -671,10 +638,10 @@ class AdminContentController extends Controller
         ];
     }
 
-    public function exportRekapPendapatanASP(Request $request)
+    public function exportRekapPendapatanASP()
     {
         $query = RekapPendapatanServisAsp::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         $rekap = $query->orderBy('tanggal', 'asc')
                         ->select('tanggal', 'pelaksana', 'nilai_pendapatan')
                         ->get();
@@ -705,10 +672,10 @@ class AdminContentController extends Controller
         ];
     }
 
-    public function ChartTotalPendapatanASP(Request $request)
+    public function ChartTotalPendapatanASP()
     {
         $query = RekapPendapatanServisAsp::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         
         $akumulasiData = $query->groupBy('pelaksana')
                                 ->select('pelaksana', DB::raw('SUM(nilai_pendapatan) as total'))
@@ -732,10 +699,10 @@ class AdminContentController extends Controller
         ];
     }
 
-    public function exportRekapPiutangASP(Request $request)
+    public function exportRekapPiutangASP()
     {
         $query = RekapPiutangServisAsp::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         $rekap = $query->orderBy('tanggal', 'asc')
                         ->select('tanggal', 'pelaksana', 'nilai_piutang')
                         ->get();
@@ -766,10 +733,10 @@ class AdminContentController extends Controller
         ];
     }
 
-    public function ChartTotalPiutangASP(Request $request)
+    public function ChartTotalPiutangASP()
     {
         $query = RekapPiutangServisAsp::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         
         $akumulasiData = $query->groupBy('pelaksana')
                                 ->select('pelaksana', DB::raw('SUM(nilai_piutang) as total'))
@@ -793,10 +760,10 @@ class AdminContentController extends Controller
         ];
     }
 
-    public function exportLaporanPengiriman(Request $request)
+    public function exportLaporanPengiriman()
     {
         $query = LaporanDetrans::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         $rekap = $query->orderBy('tanggal', 'asc')
                         ->select('tanggal', 'pelaksana', 'total_pengiriman')
                         ->get();
@@ -832,10 +799,10 @@ class AdminContentController extends Controller
         ];
     }
     
-    public function exportPTBOS(Request $request)
+    public function exportPTBOS()
     {
         $query = LaporanPtBos::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         $rekap = $query->orderBy('tanggal', 'asc')
                         ->select('tanggal', 'pekerjaan', 'kondisi_bulanlalu', 'kondisi_bulanini', 'update', 'rencana_implementasi', 'keterangan')
                         ->get();
@@ -851,10 +818,10 @@ class AdminContentController extends Controller
         ])];
     }
 
-    public function exportIJASA(Request $request)
+    public function exportIJASA()
     {
         $query = LaporanIjasa::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         $rekap = $query->orderBy('tanggal', 'asc')
                         ->select('tanggal', 'jam', 'permasalahan', 'impact', 'troubleshooting', 'resolve_tanggal', 'resolve_jam')
                         ->get();
@@ -870,10 +837,10 @@ class AdminContentController extends Controller
         ])];
     }
     
-    public function exportIJASAGambar(Request $request)
+    public function exportIJASAGambar()
     {
         $query = IjasaGambar::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         $rekap = $query->orderBy('tanggal', 'asc')
                         ->select('tanggal', 'gambar', 'keterangan')
                         ->get();
@@ -888,10 +855,10 @@ class AdminContentController extends Controller
         })];
     }
 
-    public function exportSakit(Request $request)
+    public function exportSakit()
     {
         $query = LaporanSakitDivisi::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         $rekap = $query->orderBy('tanggal', 'asc')
                         ->select('tanggal', 'divisi', 'total_sakit')
                         ->get();
@@ -914,10 +881,10 @@ class AdminContentController extends Controller
         ];
     }
 
-    public function ChartTotalSakit(Request $request)
+    public function ChartTotalSakit()
     {
         $query = LaporanSakitDivisi::query()->select('divisi', DB::raw('SUM(total_sakit) as total_sakit_divisi'))->groupBy('divisi');
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         $rekap = $query->orderBy('divisi', 'asc')->get();
 
         if ($rekap->isEmpty()) return [];
@@ -931,10 +898,10 @@ class AdminContentController extends Controller
         ];
     }
 
-    public function exportCuti(Request $request)
+    public function exportCuti()
     {
         $query = LaporanCutiDivisi::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         $rekap = $query->orderBy('tanggal', 'asc')
                         ->select('tanggal', 'divisi', 'total_cuti')
                         ->get();
@@ -957,10 +924,10 @@ class AdminContentController extends Controller
         ];
     }
 
-    public function ChartTotalCuti(Request $request)
+    public function ChartTotalCuti()
     {
         $query = LaporanCutiDivisi::query()->select('divisi', DB::raw('SUM(total_cuti) as total_cuti_divisi'))->groupBy('divisi');
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         $rekap = $query->orderBy('divisi', 'asc')->get();
 
         if ($rekap->isEmpty()) return [];
@@ -974,10 +941,10 @@ class AdminContentController extends Controller
         ];
     }
 
-    public function exportIzin(Request $request)
+    public function exportIzin()
     {
         $query = LaporanIzinDivisi::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         $rekap = $query->orderBy('tanggal', 'asc')
                         ->select('tanggal', 'divisi', 'total_izin')
                         ->get();
@@ -1000,10 +967,10 @@ class AdminContentController extends Controller
         ];
     }
 
-    public function ChartTotalIzin(Request $request)
+    public function ChartTotalIzin()
     {
         $query = LaporanIzinDivisi::query()->select('divisi', DB::raw('SUM(total_izin) as total_izin_divisi'))->groupBy('divisi');
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         $rekap = $query->orderBy('divisi', 'asc')->get();
 
         if ($rekap->isEmpty()) return [];
@@ -1017,10 +984,10 @@ class AdminContentController extends Controller
         ];
     }
 
-    public function exportTerlambat(Request $request)
+    public function exportTerlambat()
     {
         $query = LaporanTerlambatDivisi::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         $rekap = $query->orderBy('tanggal', 'asc')
                         ->select('tanggal', 'divisi', 'total_terlambat')
                         ->get();
@@ -1043,10 +1010,10 @@ class AdminContentController extends Controller
         ];
     }
 
-    public function ChartTotalTerlambat(Request $request)
+    public function ChartTotalTerlambat()
     {
         $query = LaporanTerlambatDivisi::query()->select('divisi', DB::raw('SUM(total_terlambat) as total_terlambat_divisi'))->groupBy('divisi');
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         $rekap = $query->orderBy('divisi', 'asc')->get();
 
         if ($rekap->isEmpty()) return [];
@@ -1060,10 +1027,10 @@ class AdminContentController extends Controller
         ];
     }
 
-    public function exportLabaRugi(Request $request)
+    public function exportLabaRugi()
     {
         $query = LaporanLabaRugi::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         $rekap = $query->orderBy('tanggal', 'asc')
                         ->select('tanggal', 'gambar', 'keterangan')
                         ->get();
@@ -1078,10 +1045,10 @@ class AdminContentController extends Controller
         })];
     }
 
-    public function exportNeraca(Request $request)
+    public function exportNeraca()
     {
         $query = LaporanNeraca::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         $rekap = $query->orderBy('tanggal', 'asc')
                         ->select('tanggal', 'gambar', 'keterangan')
                         ->get();
@@ -1096,10 +1063,10 @@ class AdminContentController extends Controller
         })];
     }
 
-    public function exportRasio(Request $request)
+    public function exportRasio()
     {
         $query = LaporanRasio::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         $rekap = $query->orderBy('tanggal', 'asc')
                         ->select('tanggal', 'gambar', 'keterangan')
                         ->get();
@@ -1114,10 +1081,10 @@ class AdminContentController extends Controller
         })];
     }
 
-    public function exportPPn(Request $request)
+    public function exportPPn()
     {
         $query = LaporanPpn::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         $rekap = $query->orderBy('tanggal', 'asc')
                         ->select('tanggal', 'thumbnail', 'keterangan')
                         ->get();
@@ -1132,10 +1099,10 @@ class AdminContentController extends Controller
         })];
     }
     
-    public function exportTaxPlanning(Request $request)
+    public function exportTaxPlanning()
     {
         $query = LaporanTaxPlaning::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         $rekap = $query->orderBy('tanggal', 'asc')
                         ->select('tanggal', 'gambar', 'keterangan')
                         ->get();
@@ -1150,10 +1117,10 @@ class AdminContentController extends Controller
         })];
     }
 
-    public function exportTiktok(Request $request)
+    public function exportTiktok()
     {
         $query = ItMultimediaTiktok::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         $rekap = $query->orderBy('tanggal', 'asc')
                         ->select('tanggal', 'gambar', 'keterangan')
                         ->get();
@@ -1168,10 +1135,10 @@ class AdminContentController extends Controller
         })];
     }
 
-    public function exportInstagram(Request $request)
+    public function exportInstagram()
     {
         $query = ItMultimediaInstagram::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         $rekap = $query->orderBy('tanggal', 'asc')
                         ->select('tanggal', 'gambar', 'keterangan')
                         ->get();
@@ -1186,10 +1153,10 @@ class AdminContentController extends Controller
         })];
     }
 
-    public function exportBizdev(Request $request)
+    public function exportBizdev()
     {
         $query = LaporanBizdevGambar::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         $rekap = $query->orderBy('tanggal', 'asc')
                         ->select('tanggal', 'gambar', 'kendala')
                         ->get();
@@ -1204,10 +1171,10 @@ class AdminContentController extends Controller
         })];
     }
 
-    public function exportKHPS(Request $request)
+    public function exportKHPS()
     {
         $query = KasHutangPiutang::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         
         $rekap = $query->orderBy('tanggal', 'asc')
                         ->select('tanggal', 'kas', 'hutang', 'piutang', 'stok')
@@ -1216,7 +1183,7 @@ class AdminContentController extends Controller
         if ($rekap->isEmpty()) return [];
 
         $totalsQuery = KasHutangPiutang::query();
-        $this->applyDateFilter($totalsQuery, $request);
+        $this->applyDateFilter($totalsQuery);
         $totals = $totalsQuery->select(
             DB::raw('SUM(kas) as total_kas'),
             DB::raw('SUM(hutang) as total_hutang'),
@@ -1253,10 +1220,10 @@ class AdminContentController extends Controller
         ];
     }
 
-    public function exportArusKas(Request $request)
+    public function exportArusKas()
     {
         $query = ArusKas::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         $rekap = $query->orderBy('tanggal', 'asc')
                         ->select('tanggal', 'kas_masuk', 'kas_keluar')
                         ->get();
@@ -1264,7 +1231,7 @@ class AdminContentController extends Controller
         if ($rekap->isEmpty()) return [];
 
         $totalsQuery = ArusKas::query();
-        $this->applyDateFilter($totalsQuery, $request);
+        $this->applyDateFilter($totalsQuery);
         $totals = $totalsQuery->select(
             DB::raw('SUM(kas_masuk) as total_masuk'),
             DB::raw('SUM(kas_keluar) as total_keluar')
@@ -1295,10 +1262,10 @@ class AdminContentController extends Controller
         ];
     }
 
-    public function exportLaporanSPI(Request $request)
+    public function exportLaporanSPI()
     {
         $query = LaporanSPI::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         $rekap = $query->orderBy('tanggal', 'asc')
                         ->select('tanggal', 'aspek', 'masalah', 'solusi', 'implementasi')
                         ->get();
@@ -1312,10 +1279,10 @@ class AdminContentController extends Controller
         ])];
     }
 
-    public function exportLaporanSPIIT(Request $request)
+    public function exportLaporanSPIIT()
     {
         $query = LaporanSPITI::query();
-        $this->applyDateFilter($query, $request);
+        $this->applyDateFilter($query);
         $rekap = $query->orderBy('tanggal', 'asc')
                         ->select('tanggal', 'aspek', 'masalah', 'solusi', 'implementasi')
                         ->get();
