@@ -154,7 +154,7 @@
             </div>
 
             <!-- Data Table and Charts Container -->
-            <div id="formContainer" class="">
+            <div id="formContainer" class="hidden">
                 <!-- Table Container -->
                 <div id="table-view" class="mx-auto bg-white p-6 rounded-lg shadow">
                     <div class="overflow-x-auto bg-white shadow-md rounded-lg">
@@ -211,9 +211,11 @@
                         </div>
                     </div>
                 </div>
+                </div>
 
                 <!-- Chart Container -->
-                <div id="formChart" class="visible flex flex-col mx-auto bg-white p-6 mt-4 rounded-lg shadow-xl border chart-group">
+                <div id="formChart" class="visible">
+                <div class="flex flex-col mx-auto bg-white p-6 mt-4 rounded-lg shadow-xl border chart-group">
                     <div class="mb-4 flex justify-between items-center">
                         <h1 class="text-2xl font-bold text-red-600 font-montserrat mx-auto">Institution-Based Chart</h1>
                         <select class="chart-select p-2 border border-gray-300 rounded-md">
