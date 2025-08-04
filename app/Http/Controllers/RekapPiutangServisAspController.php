@@ -18,20 +18,24 @@ class RekapPiutangServisAspController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 12);
-        $search = $request->input('search');
+        $query = RekapPiutangServisAsp::query();
 
-        // Query dasar untuk digunakan kembali
-        $baseQuery = RekapPiutangServisAsp::query()
-            ->when($search, function ($query, $search) {
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%{$search}%"])
-                    ->orWhere('pelaksana', 'like', "%$search%");
-            });
-
+        // Filter tanggal
+        if ($request->filled('start_date')) {
+            $query->whereDate('tanggal', '>=', $request->start_date);
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('tanggal', '<=', $request->end_date);
+        }
         // [FIX] Ambil SEMUA data untuk analisis dan chart agar akurat
-        $allReceivables = (clone $baseQuery)->orderBy('nilai_piutang', 'desc')->get();
+        $allReceivables = (clone $query)->orderBy('nilai_piutang', 'desc')->get();
 
         // Ambil data yang DIPAGINASI hanya untuk tampilan tabel
-        $rekappiutangservisasps = (clone $baseQuery)->orderBy('nilai_piutang', 'desc')->paginate($perPage);
+        $rekappiutangservisasps = (clone $query)
+        ->orderBy('nilai_piutang', 'desc')
+        ->paginate($perPage)
+        ->appends($request->only(['start_date', 'end_date', 'per_page']));
+
 
         // Warna tetap untuk setiap pelaksana
         $pelaksanaColors = [
