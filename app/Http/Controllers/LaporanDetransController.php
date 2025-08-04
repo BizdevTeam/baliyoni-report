@@ -17,64 +17,7 @@ class LaporanDetransController extends Controller
 {
     use DateValidationTrait;
 
-    // public function index(Request $request)
-    // { 
-    //     $perPage = $request->input('per_page', 12);
-    //     $search = $request->input('search');
 
-    //     $laporandetrans = LaporanDetrans::query()
-    //         ->when($search, function ($query, $search) {
-    //             return $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-
-    //         })
-    //         ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
-    //         ->paginate($perPage);
-
-    //     // Ambil semua bulan yang ada dalam data
-    //     $months = $laporandetrans->sortBy('tanggal')->map(function ($item) {
-    //         return \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F - Y');
-    //     })->unique()->values()->toArray();
-
-    //     // Kelompokkan data berdasarkan pelaksana dan bulan tanpa akumulasi
-    //     $groupedData = [];
-    //     foreach ($laporandetrans as $item) {
-    //         $month = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F - Y');
-    //         $groupedData[$item->pelaksana][$month][] = $item->total_pengiriman; // Simpan sebagai array
-    //     }
-
-    //     // Siapkan warna untuk setiap pelaksana
-    //     $colorMap = [
-    //         'Pengiriman Daerah Bali (SAMITRA)' => 'rgba(255, 0, 0, 0.7)',
-    //         'Pengiriman Luar Daerah (DETRANS)' => 'rgba(0, 0, 0, 0.7)',
-    //     ];
-    //     $defaultColor = 'rgba(128, 128, 128, 0.7)';
-
-    //     // Bangun datasets tanpa akumulasi
-    //     $datasets = [];
-    //     foreach ($groupedData as $pelaksana => $monthData) {
-    //         $data = [];
-    //         foreach ($months as $month) {
-    //             $data[] = isset($monthData[$month]) ? array_sum($monthData[$month]) : 0; // Tidak akumulasi, hanya total per bulan
-    //         }
-
-    //         $datasets[] = [
-    //             'label' => $pelaksana,
-    //             'data' => $data,
-    //             'backgroundColor' => $colorMap[$pelaksana] ?? $defaultColor,
-    //         ];
-    //     }
-
-    //     $chartData = [
-    //         'labels' => $months,
-    //         'datasets' => $datasets,
-    //     ];
-    //             $aiInsight = null;
-    //         if ($request->has('generate_ai')) {
-    //             // [FIX] Panggil AI dengan SEMUA data dan nama fungsi yang sesuai
-    //             $aiInsight = $this->generateServiceRevenueInsight($allServiceReports, $chartData);
-    //         }
-    //     return view('supports.laporandetrans', compact('laporandetrans', 'chartData'));
-    // }
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 12);

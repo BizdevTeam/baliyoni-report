@@ -323,23 +323,24 @@
                     labels: labels,
                     datasets: [
                         {
-                            label: 'Pengiriman Daerah Bali (SAMITRA)',
-                            data: dataSamitra,
-                            // [PERUBAIKAN] Warna diubah menjadi merah
-                            backgroundColor: 'rgba(255, 99, 132, 0.7)',
-                            borderColor: 'rgba(255, 99, 132, 1)',
-                            borderWidth: 1
+                        label: 'Pengiriman Daerah Bali (SAMITRA)',
+                        data: dataSamitra,
+                        // Merah terang penuh
+                        backgroundColor: '#FF0000',      // 100% red
+                        borderColor:   '#FF0000',
+                        borderWidth: 1
                         },
                         {
-                            label: 'Pengiriman Luar Daerah (DETRANS)',
-                            data: dataDetrans,
-                            // [PERUBAIKAN] Warna diubah menjadi hitam
-                            backgroundColor: 'rgba(50, 50, 50, 0.7)',
-                            borderColor: 'rgba(50, 50, 50, 1)',
-                            borderWidth: 1
+                        label: 'Pengiriman Luar Daerah (DETRANS)',
+                        data: dataDetrans,
+                        // Hitam pekat penuh
+                        backgroundColor: '#000000',      // 100% black
+                        borderColor:   '#000000',
+                        borderWidth: 1
                         }
                     ]
                 };
+
 
                 if (myChart) {
                     myChart.destroy();
