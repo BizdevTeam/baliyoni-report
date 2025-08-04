@@ -108,7 +108,23 @@
                 <!-- Search -->
                 <form method="GET" action="{{ route('rekappiutangservisasp.index') }}" class="flex items-center gap-2">
                     <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
-                        <input type="month" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
+                        <input 
+                        type="date" 
+                        name="start_date" 
+                        value="{{ request('start_date') }}" 
+                        class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" 
+                        />
+                    </div>
+
+                    <span>To</span>
+
+                    <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
+                        <input 
+                        type="date" 
+                        name="end_date" 
+                        value="{{ request('end_date') }}" 
+                        class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" 
+                        />
                     </div>
 
                     <button type="submit" class="bg-gradient-to-r font-medium  from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm mr-2" aria-label="Search">
@@ -272,7 +288,7 @@
             </div>
             <div id="formChart" class="visible">
                 <div class="flex flex-col mx-auto bg-white p-6 mt-4 rounded-lg shadow-xl border border-grey-500">
-                    <h1 class="text-4xl font-bold text-red-600 mb-4 font-montserrat text-start">ASP Service Receivables Chart</h1>
+                    <h1 class="mx-auto text-4xl font-bold text-red-600 mb-4 font-montserrat text-start">ASP Service Receivables Chart</h1>
                     <div class="mt-6 self-center w-full h-[500px] flex justify-center">
                         <canvas id="chart"></canvas>
                     </div>

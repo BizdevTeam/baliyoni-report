@@ -91,7 +91,23 @@
                 <!-- Search -->
                 <form method="GET" action="{{ route('laporandetrans.index') }}" class="flex items-center gap-2">
                     <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
-                        <input type="month" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
+                        <input 
+                        type="date" 
+                        name="start_date" 
+                        value="{{ request('start_date') }}" 
+                        class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" 
+                        />
+                    </div>
+
+                    <span>To</span>
+
+                    <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
+                        <input 
+                        type="date" 
+                        name="end_date" 
+                        value="{{ request('end_date') }}" 
+                        class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" 
+                        />
                     </div>
                     <button type="submit" class="bg-gradient-to-r font-medium from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm mr-2" aria-label="Search">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="40" stroke-dashoffset="40" d="M10.76 13.24c-2.34 -2.34 -2.34 -6.14 0 -8.49c2.34 -2.34 6.14 -2.34 8.49 0c2.34 2.34 2.34 6.14 0 8.49c-2.34 2.34 -6.14 2.34 -8.49 0Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.5s" values="40;0" /></path><path stroke-dasharray="12" stroke-dashoffset="12" d="M10.5 13.5l-7.5 7.5"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.5s" dur="0.2s" values="12;0" /></path></g></svg>
@@ -197,7 +213,7 @@
 
             <div id="formChart" class="visible">
                 <div class="flex flex-col mx-auto bg-white p-6 mt-4 rounded-lg shadow-xl border border-grey-500">
-                    <h1 class="text-4xl font-bold text-red-600 mb-4 font-montserrat text-start">Diagram</h1>
+                    <h1 class="text-4xl font-bold text-red-600 mb-4 font-montserrat text-start">Shipping Report Chart</h1>
                     <div class="mt-6 self-center w-full h-[500px] flex justify-center">
                         <canvas id="chart"></canvas>
                     </div>
