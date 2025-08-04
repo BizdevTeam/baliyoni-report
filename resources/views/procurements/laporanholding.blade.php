@@ -139,9 +139,9 @@
             </div>
     
             <!-- Data Table and Charts Container -->
-            <div id="dataContainer" class="hidden">
+            <div id="table-view" class="hidden">
                 <!-- Table Container -->
-                <div id="table-view" class="mx-auto bg-white p-6 rounded-lg shadow">
+                <div class="mx-auto bg-white p-6 rounded-lg shadow">
                     <div class="overflow-x-auto bg-white shadow-md rounded-lg">
                         <table class="table-auto w-full border-collapse" id="data-table">
                             <thead class="bg-gray-200">
