@@ -213,11 +213,24 @@
             </div>
 
             <div id="formChart" class="visible">
-                <div class="flex flex-col mx-auto bg-white p-6 mt-4 rounded-lg shadow-xl border border-grey-500">
-                    <h1 class="mx-auto text-4xl font-bold text-red-600 mb-4 font-montserrat text-start">ASP Service Revenue Chart</h1>
-                    <div class="mt-6 self-center w-full h-[500px] flex justify-center">
-                        <canvas id="chart"></canvas>
+                <div class="flex flex-col mx-auto bg-white p-6 mt-4 rounded-lg shadow-xl border border-grey-500 chart-group">
+                    <div class="mb-4 flex justify-between items-center">
+                        <h1 class="text-2xl font-bold text-red-600 font-montserrat mx-auto">ASP Service Revenue Chart</h1>
+                        <select id="chartSelect" class="p-2 border border-gray-300 rounded">
+                            <option value="chartBiasa">Chart Biasa</option>
+                            <option value="chartTotal">Chart Total</option>
+                        </select>
                     </div>
+                    
+                    <div class="mt-6 self-center w-full relative" style="height: 450px;">
+                        <div id="chartBiasaContainer" class="chart-container w-full h-full">
+                            <canvas id="chartBiasa"></canvas>
+                        </div>
+                        <div id="chartTotalContainer" class="chart-container hidden w-full h-full">
+                            <canvas id="chartTotal"></canvas>
+                        </div>
+                    </div>
+                    
                     <div class="mt-6 flex justify-end">
                         <button id="exportPdfButton" class="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition duration-300 ease-in-out">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><mask id="lineMdCloudAltPrintFilledLoop0"><g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="64" stroke-dashoffset="64" d="M7 19h11c2.21 0 4 -1.79 4 -4c0 -2.21 -1.79 -4 -4 -4h-1v-1c0 -2.76 -2.24 -5 -5 -5c-2.42 0 -4.44 1.72 -4.9 4h-0.1c-2.76 0 -5 2.24 -5 5c0 2.76 2.24 5 5 5Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0" /><set fill="freeze" attributeName="opacity" begin="0.7s" to="0" /></path><g fill="#fff" stroke="none" opacity="0"><circle cx="12" cy="10" r="6"><animate attributeName="cx" begin="0.7s" dur="30s" repeatCount="indefinite" values="12;11;12;13;12" /></circle><rect width="9" height="8" x="8" y="12" /><rect width="15" height="12" x="1" y="8" rx="6"><animate attributeName="x" begin="0.7s" dur="21s" repeatCount="indefinite" values="1;0;1;2;1" /></rect><rect width="13" height="10" x="10" y="10" rx="5"><animate attributeName="x" begin="0.7s" dur="17s" repeatCount="indefinite" values="10;9;10;11;10" /></rect><set fill="freeze" attributeName="opacity" begin="0.7s" to="1" /></g><g fill="#000" fill-opacity="0" stroke="none"><circle cx="12" cy="10" r="4"><animate attributeName="cx" begin="0.7s" dur="30s" repeatCount="indefinite" values="12;11;12;13;12" /></circle><rect width="9" height="6" x="8" y="12" /><rect width="11" height="8" x="3" y="10" rx="4"><animate attributeName="x" begin="0.7s" dur="21s" repeatCount="indefinite" values="3;2;3;4;3" /></rect><rect width="9" height="6" x="12" y="12" rx="3"><animate attributeName="x" begin="0.7s" dur="17s" repeatCount="indefinite" values="12;11;12;13;12" /></rect><set fill="freeze" attributeName="fill-opacity" begin="0.7s" to="1" /><animate fill="freeze" attributeName="opacity" begin="0.7s" dur="0.5s" values="1;0" /></g><g stroke="none"><path fill="#fff" d="M6 11h12v0h-12z"><animate fill="freeze" attributeName="d" begin="1.3s" dur="0.22s" values="M6 11h12v0h-12z;M6 11h12v11h-12z" /></path><path fill="#000" d="M8 13h8v0h-8z"><animate fill="freeze" attributeName="d" begin="1.34s" dur="0.14s" values="M8 13h8v0h-8z;M8 13h8v7h-8z" /></path><path fill="#fff" fill-opacity="0" d="M9 12h6v1H9zM9 14h6v1H9zM9 16h6v1H9zM9 18h6v1H9z"><animate fill="freeze" attributeName="fill-opacity" begin="1.4s" dur="0.1s" values="0;1" /><animateMotion begin="1.5s" calcMode="linear" dur="1.5s" path="M0 0v2" repeatCount="indefinite" /></path></g></g></mask><rect width="24" height="24" fill="currentColor" mask="url(#lineMdCloudAltPrintFilledLoop0)" /></svg>
@@ -225,6 +238,7 @@
                     </div>
                 </div>
             </div>
+
 
             <!-- Modal untuk Add Event -->
             <div class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="addEventModal">
@@ -263,18 +277,27 @@
     </div>
 
     <script>
-        // [PERBAIKAN] Hapus injeksi data global, karena chart akan dibuat dari tabel.
-        // const chartConfig = @json($chartData);
-
         document.addEventListener('DOMContentLoaded', function() {
             // --- VARIABLE DECLARATIONS ---
-            let myChart; // Will hold the chart instance
+            let chartBiasa, chartTotal; // Chart instances
             const formContainer = document.getElementById('formContainer');
             const formChart = document.getElementById('formChart');
             const toggleFormButton = document.getElementById('toggleFormButton');
             const toggleChartButton = document.getElementById('toggleChartButton');
             const perPageSelect = document.getElementById('perPage');
             const exportPdfButton = document.getElementById('exportPdfButton');
+            const chartSelect = document.getElementById('chartSelect');
+            const chartBiasaContainer = document.getElementById('chartBiasaContainer');
+            const chartTotalContainer = document.getElementById('chartTotalContainer');
+
+            // --- COLOR MAPPING ---
+            const pelaksanaColors = {
+                'CV. ARI DISTRIBUTION CENTER': 'rgba(255, 99, 132, 0.7)',
+                'CV. BALIYONI COMPUTER': 'rgba(54, 162, 235, 0.7)',
+                'PT. NABA TECHNOLOGY SOLUTIONS': 'rgba(255, 206, 86, 0.7)',
+                'CV. ELKA MANDIRI (50%)-SAMITRA': 'rgba(75, 192, 192, 0.7)',
+                'CV. ELKA MANDIRI (50%)-DETRAN': 'rgba(153, 102, 255, 0.7)'
+            };
 
             // --- UTILITY FUNCTION ---
             function formatCurrency(value) {
@@ -282,30 +305,80 @@
                 if (value >= 1e6) return 'Rp ' + (value / 1e6).toFixed(1).replace('.', ',') + ' Jt';
                 return 'Rp ' + value.toLocaleString('id-ID');
             }
-
-            // --- RENDER CHART ---
-            /**
-             * [PERBAIKAN] Fungsi ini sekarang membaca data langsung dari tabel HTML yang terlihat,
-             * memastikan chart selalu sinkron dengan data yang dipaginasi.
-             */
-            function renderChartFromTable() {
-                const ctx = document.getElementById('chart')?.getContext('2d');
-                if (!ctx) {
-                    console.error('Error: Canvas element with id="chart" not found.');
-                    return;
+            
+            // --- COMMON CHART OPTIONS ---
+            const commonChartOptions = {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                layout: { padding: { top: 10, left: 10, right: 120, bottom: 10 } },
+                scales: {
+                    x: { 
+                        beginAtZero: true,
+                        ticks: { callback: v => formatCurrency(v) },
+                        grid: { drawBorder: false }
+                    },
+                    y: {
+                        grid: { display: false }, 
+                        ticks: { 
+                            autoSkip: false,
+                            font: { size: 10 }
+                        } 
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: (tooltipItem) => {
+                                const value = tooltipItem.raw;
+                                return `Revenue: ${formatCurrency(value)}`;
+                            }
+                        }
+                    }
                 }
+            };
+            
+            const dataLabelPlugin = {
+                id: 'custom_data_labels_horizontal',
+                afterDatasetsDraw(chart) {
+                    const { ctx, data } = chart;
+                    ctx.save();
+                    ctx.font = 'bold 11px sans-serif';
+                    ctx.fillStyle = 'black';
+                    ctx.textBaseline = 'middle';
+                    ctx.textAlign = 'left';
+
+                    data.datasets.forEach((dataset, i) => {
+                        const meta = chart.getDatasetMeta(i);
+                        if (!meta.visible) return;
+
+                        meta.data.forEach((bar, index) => {
+                            const value = dataset.data[index];
+                            if (value === 0) return;
+                            
+                            const label = `Rp ${value.toLocaleString('id-ID')}`;
+                            const textPositionX = bar.x + 5;
+                            
+                            if (textPositionX < chart.chartArea.right - 50) { // Add padding
+                               ctx.fillText(label, textPositionX, bar.y);
+                            }
+                        });
+                    });
+                    ctx.restore();
+                }
+            };
+
+
+            // --- RENDER DETAILED CHART ---
+            function renderDetailedChart() {
+                const ctx = document.getElementById('chartBiasa')?.getContext('2d');
+                if (!ctx) return;
 
                 const rows = document.querySelectorAll('#data-table tbody tr');
                 const labels = [];
                 const data = [];
                 const bgColors = [];
-                const pelaksanaColors = {
-                    'CV. ARI DISTRIBUTION CENTER': 'rgba(255, 99, 132, 0.7)',
-                    'CV. BALIYONI COMPUTER': 'rgba(54, 162, 235, 0.7)',
-                    'PT. NABA TECHNOLOGY SOLUTIONS': 'rgba(255, 206, 86, 0.7)',
-                    'CV. ELKA MANDIRI (50%)-SAMITRA': 'rgba(75, 192, 192, 0.7)',
-                    'CV. ELKA MANDIRI (50%)-DETRAN': 'rgba(153, 102, 255, 0.7)'
-                };
 
                 rows.forEach(row => {
                     const cells = row.querySelectorAll('td');
@@ -314,8 +387,6 @@
                     const pelaksana = cells[1].innerText.trim();
                     const nilaiFormatted = cells[2].innerText.trim();
                     const nilai = parseInt(nilaiFormatted.replace(/[^0-9]/g, ''), 10) || 0;
-
-                    // Membuat label untuk sumbu Y chart
                     const label = `${pelaksana} (${nilaiFormatted})`;
 
                     labels.push(label);
@@ -334,71 +405,55 @@
                     }]
                 };
 
-                if (myChart) {
-                    myChart.destroy();
-                }
-
-                myChart = new Chart(ctx, {
+                if (chartBiasa) chartBiasa.destroy();
+                chartBiasa = new Chart(ctx, {
                     type: 'bar',
                     data: chartData,
-                    options: {
-                        indexAxis: 'y',
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        layout: { padding: { top: 10, left: 10, right: 120, bottom: 10 } },
-                        scales: {
-                            x: { 
-                                beginAtZero: true,
-                                ticks: { callback: v => formatCurrency(v) },
-                                grid: { drawBorder: false }
-                            },
-                            y: {
-                                grid: { display: false }, 
-                                ticks: { 
-                                    autoSkip: false,
-                                    font: { size: 10 }
-                                } 
-                            }
-                        },
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: {
-                                callbacks: {
-                                    label: (tooltipItem) => {
-                                        const value = tooltipItem.raw;
-                                        return `Revenue: ${formatCurrency(value)}`;
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    plugins: [{
-                        id: 'custom_data_labels_horizontal',
-                        afterDatasetsDraw(chart) {
-                            const { ctx, data } = chart;
-                            ctx.save();
-                            ctx.font = 'bold 11px sans-serif';
-                            ctx.fillStyle = 'black';
-                            ctx.textBaseline = 'middle';
-                            ctx.textAlign = 'left';
+                    options: commonChartOptions,
+                    plugins: [dataLabelPlugin]
+                });
+            }
 
-                            data.datasets.forEach((dataset, i) => {
-                                const meta = chart.getDatasetMeta(i);
-                                if (!meta.visible) return;
+            // --- RENDER TOTAL CHART ---
+            function renderTotalChart() {
+                const ctx = document.getElementById('chartTotal')?.getContext('2d');
+                if (!ctx) return;
 
-                                meta.data.forEach((bar, index) => {
-                                    const value = dataset.data[index];
-                                    if (value === 0) return;
-                                    
-                                    const label = `Rp ${value.toLocaleString('id-ID')}`;
-                                    const textPositionX = bar.x + 5;
-                                    
-                                    ctx.fillText(label, textPositionX, bar.y);
-                                });
-                            });
-                            ctx.restore();
-                        }
+                const rows = document.querySelectorAll('#data-table tbody tr');
+                const totalsByPelaksana = {};
+
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    if (cells.length < 3) return;
+
+                    const pelaksana = cells[1].innerText.trim();
+                    const nilaiFormatted = cells[2].innerText.trim();
+                    const nilai = parseInt(nilaiFormatted.replace(/[^0-9]/g, ''), 10) || 0;
+
+                    totalsByPelaksana[pelaksana] = (totalsByPelaksana[pelaksana] || 0) + nilai;
+                });
+
+                const labels = Object.keys(totalsByPelaksana);
+                const data = Object.values(totalsByPelaksana);
+                const bgColors = labels.map(label => pelaksanaColors[label] || 'rgba(201, 203, 207, 0.7)');
+
+                const chartData = {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Total ASP Service Revenue',
+                        data: data,
+                        backgroundColor: bgColors,
+                        borderWidth: 1,
+                        borderRadius: 5
                     }]
+                };
+
+                if (chartTotal) chartTotal.destroy();
+                chartTotal = new Chart(ctx, {
+                    type: 'bar',
+                    data: chartData,
+                    options: commonChartOptions,
+                    plugins: [dataLabelPlugin]
                 });
             }
 
@@ -406,9 +461,18 @@
             async function exportToPDF() {
                 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
                 if (!csrfToken) {
-                    alert('CSRF token not found. Please ensure the CSRF meta tag is included.');
+                    alert('CSRF token not found.');
                     return;
                 }
+
+                // Determine which chart is currently visible
+                const activeChartId = chartSelect.value;
+                const chartCanvas = document.getElementById(activeChartId);
+                if (!chartCanvas) {
+                    alert('Active chart canvas not found.');
+                    return;
+                }
+                const chartBase64 = chartCanvas.toDataURL('image/png');
 
                 const items = Array.from(document.querySelectorAll('#data-table tbody tr')).map(row => {
                     const cells = row.querySelectorAll('td');
@@ -426,13 +490,6 @@
                         <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.pelaksana}</td>
                         <td style="border: 1px solid #000; padding: 8px; text-align: center;">${item.nilai_pendapatan}</td>
                     </tr>`).join('');
-                
-                const chartCanvas = document.querySelector('#chart');
-                if (!chartCanvas) {
-                    alert('Chart canvas element not found.');
-                    return;
-                }
-                const chartBase64 = chartCanvas.toDataURL('image/png');
 
                 try {
                     const response = await fetch('/supports/rekappendapatanservisasp/export-pdf', {
@@ -509,10 +566,21 @@
             if (exportPdfButton) {
                 exportPdfButton.addEventListener('click', exportToPDF);
             }
+            if(chartSelect) {
+                chartSelect.addEventListener('change', (e) => {
+                    if (e.target.value === 'chartBiasa') {
+                        chartBiasaContainer.classList.remove('hidden');
+                        chartTotalContainer.classList.add('hidden');
+                    } else {
+                        chartBiasaContainer.classList.add('hidden');
+                        chartTotalContainer.classList.remove('hidden');
+                    }
+                });
+            }
 
             // --- INITIALIZATION ---
-            // [PERBAIKAN] Panggil fungsi baru untuk merender chart dari tabel.
-            renderChartFromTable();
+            renderDetailedChart();
+            renderTotalChart();
             initializeModals();
         });
     </script>

@@ -15,54 +15,6 @@ use Illuminate\Support\Facades\Http;
 class RekapPiutangServisAspController extends Controller
 {
     use DateValidationTrait;
-    // Show the view
-    // public function index(Request $request)
-    // { 
-    //     $perPage = $request->input('per_page', 12);
-    //     $search = $request->input('search');
-
-    //     $rekappiutangservisasps = RekapPiutangServisAsp::query()
-    //         ->when($search, function ($query, $search) {
-    //             return $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"])
-    //                         ->orWhere('pelaksana', 'like', "%$search%");
-    //         })
-    //         ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
-    //         ->paginate($perPage);
-
-    //     // Hitung total untuk masing-masing kategori
-    //     $totalPenjualan = $rekappiutangservisasps->sum('nilai_piutang');
-
-    //     // Warna tetap untuk setiap pelaksana
-    //     $pelaksanaColors = [
-    //         'CV. ARI DISTRIBUTION CENTER' => 'rgba(255, 99, 132, 0.7)',
-    //         'CV. BALIYONI COMPUTER' => 'rgba(54, 162, 235, 0.7)',
-    //         'PT. NABA TECHNOLOGY SOLUTIONS' => 'rgba(255, 206, 86, 0.7)',
-    //         'CV. ELKA MANDIRI (50%)-SAMITRA' => 'rgba(75, 192, 192, 0.7)',
-    //         'CV. ELKA MANDIRI (50%)-DETRAN' => 'rgba(153, 102, 255, 0.7)'
-    //     ];
-
-    //     // Gabungkan pelaksana dan nilai_pendapatan untuk label
-    //     $labels = $rekappiutangservisasps->map(function ($item) {
-    //         return $item->pelaksana . ' ('. 'Rp'. ' ' . number_format($item->nilai_piutang) . ')';
-    //     })->toArray();
-    //     $data = $rekappiutangservisasps->pluck('nilai_piutang')->toArray();
-
-    //     // Generate random colors for each data item
-    //     $backgroundColors = $rekappiutangservisasps->map(fn($item) => $pelaksanaColors[$item->pelaksana] ?? 'rgba(0, 0, 0, 0.7)')->toArray();
-
-    //     $chartData = [
-    //         'labels' => $labels, // Labels untuk chart
-    //         'datasets' => [
-    //             [
-    //                 'label' => 'Grafik Rekap Pendapatan Servis ASP', // Nama dataset
-    //                 'text' => 'Nilai Pendapatan Servis ASP', // Nama dataset
-    //                 'data' => $data, // Data untuk chart
-    //                 'backgroundColor' => $backgroundColors, // Warna batang random
-    //             ],
-    //         ],
-    //     ];
-
-    //     return view('supports.rekappiutangservisasp', compact('rekappiutangservisasps', 'chartData'));    }
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 12);
