@@ -93,7 +93,7 @@
 
            <!-- Main Content -->
         <div id="admincontent" class="mt-14 content-wrapper ml-64 p-4 bg-white duration-300">
-            <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Laporan Instagram Multimedia Report</h1>
+            <h1 class="flex text-4xl font-bold text-red-600 justify-center mt-4">Instagram Multimedia Report</h1>
 
             {{-- <div class="ai-aiInsight mt-6 p-4 sm:p-6 bg-white rounded-xl shadow-md border border-gray-200">
             <h3 class="text-lg font-semibold text-gray-800 flex items-center mb-4">
