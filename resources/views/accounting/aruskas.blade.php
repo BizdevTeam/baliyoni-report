@@ -152,7 +152,7 @@
             
             <div id="formChart" class="visible">
                 <div class="flex flex-col mx-auto bg-white p-6 mt-4 rounded-lg shadow-xl border border-grey-500">
-                    <h1 class="text-2xl font-bold text-red-600 mb-4 font-montserrat text-center">Cash Flow Chart (Based on Table Data)</h1>
+                    <h1 class="text-2xl font-bold text-red-600 mb-4 font-montserrat text-center">Cash Flow Chart</h1>
                     <div class="mt-6 self-center w-full flex justify-center" style="height: 750px;">
                         <canvas id="chart"></canvas>
                     </div>
