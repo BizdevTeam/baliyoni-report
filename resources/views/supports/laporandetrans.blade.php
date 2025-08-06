@@ -172,7 +172,7 @@
                                                     <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $laporandetran->tanggal }}" required>
                                                 </div>
                                                 <div>
-                                                    <label for="pelaksana" class="block text-sm font-medium">Status</label>
+                                                    <label for="pelaksana" class="block text-sm font-medium">Executive</label>
                                                     <select name="pelaksana" class="w-full p-2 border rounded" required>
                                                         <option value="Pengiriman Daerah Bali (SAMITRA)" {{ $laporandetran->pelaksana == 'Pengiriman Daerah Bali (SAMITRA)' ? 'selected' : '' }}>Pengiriman Daerah Bali (SAMITRA)</option>
                                                         <option value="Pengiriman Luar Daerah (DETRANS)" {{ $laporandetran->pelaksana == 'Pengiriman Luar Daerah (DETRANS)' ? 'selected' : '' }}>Pengiriman Luar Daerah (DETRANS)</option>
@@ -237,7 +237,7 @@
                                 <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
                             </div>
                             <div>
-                                <label for="pelaksana" class="block text-sm font-medium">Status</label>
+                                <label for="pelaksana" class="block text-sm font-medium">Executive</label>
                                 <select name="pelaksana" class="w-full p-2 border rounded" required>
                                     <option value="Pengiriman Daerah Bali (SAMITRA)">Pengiriman Daerah Bali (SAMITRA)</option>
                                     <option value="Pengiriman Luar Daerah (DETRANS)">Pengiriman Luar Daerah (DETRANS)</option>
