@@ -121,11 +121,11 @@
                                     <td class="border border-gray-300 px-4 py-2 text-center">{{ $aruskas->kas_masuk_formatted }}</td>
                                     <td class="border border-gray-300 px-4 py-2 text-center">{{ $aruskas->kas_keluar_formatted }}</td>
                                     <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
-                                        <button class="bg-blue-500 text-white px-3 py-2 rounded" data-modal-target="#editEventModal{{ $aruskas->id_aruskas }}"><i class="fa fa-pen"></i> Edit</button>
+                                        <button class=" text-blue-500 px-3 py-2 rounded" data-modal-target="#editEventModal{{ $aruskas->id_aruskas }}"><i class="fa fa-pen"></i> </button>
                                         <form method="POST" action="{{ route('aruskas.destroy', $aruskas->id_aruskas) }}">
                                             @csrf
                                             @method('DELETE')
-                                            <button class="bg-red-600 text-white px-3 py-2 rounded" onclick="return confirm('Are you sure you want to delete?')"><i class="fa fa-trash"></i> Delete</button>
+                                            <button class="text-red-500 px-3 py-2 rounded" onclick="return confirm('Are you sure you want to delete?')"><i class="fa fa-trash"></i> </button>
                                         </form>
                                     </td>
                                 </tr>
