@@ -21,6 +21,8 @@
     <style>
         .content-wrapper { margin-left: 16rem; }
         .hidden { display: none; }
+        .chart-container.hidden { display: none; }
+        .chart-container { display: block; }
     </style>
 </head>
 <body class="bg-gray-100 hold-transition sidebar-mini layout-fixed">
@@ -71,7 +73,23 @@
                 <!-- Search -->
                 <form method="GET" action="{{ route('laporancutidivisi.index') }}" class="flex items-center gap-2">
                     <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
-                        <input type="month" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
+                        <input 
+                        type="date" 
+                        name="start_date" 
+                        value="{{ request('start_date') }}" 
+                        class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" 
+                        />
+                    </div>
+
+                    <span>To</span>
+
+                    <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
+                        <input 
+                        type="date" 
+                        name="end_date" 
+                        value="{{ request('end_date') }}" 
+                        class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" 
+                        />
                     </div>
                     <button type="submit" class="bg-gradient-to-r font-medium from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm mr-2" aria-label="Search">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -139,7 +157,6 @@
                 </button>
             </div>
 
-
             <div id="formContainer" class="hidden">
                 <div class="mx-auto bg-white p-6 rounded-lg shadow">
                     <div class="overflow-x-auto bg-white shadow-md">
@@ -147,6 +164,7 @@
                             <thead class="bg-gray-200">
                                 <tr>
                                     <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-center">Nama Karyawan</th>
                                     <th class="border border-gray-300 px-4 py-2 text-center">Divisi</th>
                                     <th class="border border-gray-300 px-4 py-2 text-center">Total Cuti</th>
                                     <th class="border border-gray-300 px-4 py-2 text-center">Aksi</th>
@@ -156,6 +174,7 @@
                                 @forelse ($laporancutidivisis as $laporancutidivisi)
                                 <tr class="hover:bg-gray-100">
                                     <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporancutidivisi->tanggal_formatted }}</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporancutidivisi->nama }}</td>
                                     <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporancutidivisi->divisi }}</td>
                                     <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporancutidivisi->total_cuti }}</td>
                                     <td class="border border-gray-300 py-2 text-center flex justify-center gap-2">
@@ -169,7 +188,7 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="4" class="text-center py-4">Tidak ada data tersedia.</td>
+                                    <td colspan="5" class="text-center py-4">Tidak ada data tersedia.</td>
                                 </tr>
                                 @endforelse
                             </tbody>
@@ -198,21 +217,19 @@
                     <div class="mb-4 flex justify-between items-center">
                         <h1 class="text-2xl font-bold text-red-600 font-montserrat mx-auto">Annual Leave Report Chart</h1>
                         <select class="chart-select p-2 border border-gray-300 rounded">
-                            <option value="chartBiasa">Chart Biasa</option>
-                            <option value="chartTotal">Chart Total</option>
-
+                            <option value="chartPerDivisi">Chart Per Divisi</option>
+                            <option value="chartPerKaryawan">Chart Per Karyawan</option>
                         </select>
                     </div>
 
                     <div class="mt-6 self-center w-full relative" style="height: 450px;">
-                        <div class="chart-container chartBiasa hidden w-full h-full">
-                            <canvas id="chartBiasa" class="chart-canvas" data-axis="y" data-unit="hari"></canvas>
+                        <div class="chart-container chartPerDivisi w-full h-full">
+                            <canvas id="chartPerDivisi" class="chart-canvas" data-axis="x" data-unit="hari"></canvas>
                         </div>
-                        <div class="chart-container chartTotal w-full h-full">
-                            <canvas id="chartTotal" class="chart-canvas" data-axis="y" data-unit="hari"></canvas>
+                        <div class="chart-container chartPerKaryawan hidden w-full h-full">
+                            <canvas id="chartPerKaryawan" class="chart-canvas" data-axis="y" data-unit="hari"></canvas>
                         </div>
                     </div>
-
                     <div class="mt-6 flex justify-end">
                         <button id="exportPdfButton" class="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition duration-300 ease-in-out">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><mask id="lineMdCloudAltPrintFilledLoop0"><g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="64" stroke-dashoffset="64" d="M7 19h11c2.21 0 4 -1.79 4 -4c0 -2.21 -1.79 -4 -4 -4h-1v-1c0 -2.76 -2.24 -5 -5 -5c-2.42 0 -4.44 1.72 -4.9 4h-0.1c-2.76 0 -5 2.24 -5 5c0 2.76 2.24 5 5 5Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0" /><set fill="freeze" attributeName="opacity" begin="0.7s" to="0" /></path><g fill="#fff" stroke="none" opacity="0"><circle cx="12" cy="10" r="6"><animate attributeName="cx" begin="0.7s" dur="30s" repeatCount="indefinite" values="12;11;12;13;12" /></circle><rect width="9" height="8" x="8" y="12" /><rect width="15" height="12" x="1" y="8" rx="6"><animate attributeName="x" begin="0.7s" dur="21s" repeatCount="indefinite" values="1;0;1;2;1" /></rect><rect width="13" height="10" x="10" y="10" rx="5"><animate attributeName="x" begin="0.7s" dur="17s" repeatCount="indefinite" values="10;9;10;11;10" /></rect><set fill="freeze" attributeName="opacity" begin="0.7s" to="1" /></g><g fill="#000" fill-opacity="0" stroke="none"><circle cx="12" cy="10" r="4"><animate attributeName="cx" begin="0.7s" dur="30s" repeatCount="indefinite" values="12;11;12;13;12" /></circle><rect width="9" height="6" x="8" y="12" /><rect width="11" height="8" x="3" y="10" rx="4"><animate attributeName="x" begin="0.7s" dur="21s" repeatCount="indefinite" values="3;2;3;4;3" /></rect><rect width="9" height="6" x="12" y="12" rx="3"><animate attributeName="x" begin="0.7s" dur="17s" repeatCount="indefinite" values="12;11;12;13;12" /></rect><set fill="freeze" attributeName="fill-opacity" begin="0.7s" to="1" /><animate fill="freeze" attributeName="opacity" begin="0.7s" dur="0.5s" values="1;0" /></g><g stroke="none"><path fill="#fff" d="M6 11h12v0h-12z"><animate fill="freeze" attributeName="d" begin="1.3s" dur="0.22s" values="M6 11h12v0h-12z;M6 11h12v11h-12z" /></path><path fill="#000" d="M8 13h8v0h-8z"><animate fill="freeze" attributeName="d" begin="1.34s" dur="0.14s" values="M8 13h8v0h-8z;M8 13h8v7h-8z" /></path><path fill="#fff" fill-opacity="0" d="M9 12h6v1H9zM9 14h6v1H9zM9 16h6v1H9zM9 18h6v1H9z"><animate fill="freeze" attributeName="fill-opacity" begin="1.4s" dur="0.1s" values="0;1" /><animateMotion begin="1.5s" calcMode="linear" dur="1.5s" path="M0 0v2" repeatCount="indefinite" /></path></g></g></mask><rect width="24" height="24" fill="currentColor" mask="url(#lineMdCloudAltPrintFilledLoop0)" /></svg>
@@ -234,6 +251,10 @@
                                 <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $laporancutidivisi->tanggal }}" required>
                             </div>
                             <div>
+                                <label for="nama" class="block text-sm font-medium">Nama Karyawan</label>
+                                <input type="text" name="nama" class="w-full p-2 border rounded" value="{{ $laporancutidivisi->nama }}" required>
+                            </div>
+                            <div>
                                 <label for="divisi" class="block text-sm font-medium">Division</label>
                                 <select name="divisi" class="w-full p-2 border rounded" required>
                                     <option value="Marketing" {{ $laporancutidivisi->divisi == 'Marketing' ? 'selected' : '' }}>Marketing</option>
@@ -246,7 +267,7 @@
                                 </select>
                             </div>
                             <div>
-                                <label for="total_cuti" class="block text-sm font-medium">Annual Leave Report Total</label>
+                                <label for="total_cuti" class="block text-sm font-medium">Sick Leave Total</label>
                                 <input type="number" name="total_cuti" class="w-full p-2 border rounded" value="{{ $laporancutidivisi->total_cuti }}" required>
                             </div>
                         </div>
@@ -270,6 +291,10 @@
                                 <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
                             </div>
                             <div>
+                                <label for="nama" class="block text-sm font-medium">Nama Karyawan</label>
+                                <input type="text" name="nama" class="w-full p-2 border rounded" required>
+                            </div>
+                            <div>
                                 <label for="divisi" class="block text-sm font-medium">Division</label>
                                 <select name="divisi" class="w-full p-2 border rounded" required>
                                     <option value="Marketing">Marketing</option>
@@ -282,7 +307,7 @@
                                 </select>
                             </div>
                             <div>
-                                <label for="total_cuti" class="block text-sm font-medium">Annual Leave Report Total</label>
+                                <label for="total_cuti" class="block text-sm font-medium">Sick Leave Total</label>
                                 <input type="number" name="total_cuti" class="w-full p-2 border rounded" required>
                             </div>
                         </div>
@@ -304,18 +329,25 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- VARIABLE DECLARATIONS ---
     const chartInstances = new Map();
     
+    // --- FUNCTION DEFINITIONS ---
 
+    /**
+     * Generates a random RGBA color string.
+     * @param {number} opacity The opacity of the color (0 to 1).
+     * @returns {string} An RGBA color string.
+     */
     function getRandomRGBA(opacity = 0.7) {
-    let r, g, b, brightness;
-    do {
-        r = Math.floor(Math.random() * 256);
-        g = Math.floor(Math.random() * 256);
-        b = Math.floor(Math.random() * 256);
-        // rumus luminance standar (persepsi)
-        brightness = 0.299 * r + 0.587 * g + 0.114 * b;
-    } while (brightness > 130); // ulang jika terlalu terang
-    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+        let r, g, b, brightness;
+        do {
+            r = Math.floor(Math.random() * 256);
+            g = Math.floor(Math.random() * 256);
+            b = Math.floor(Math.random() * 256);
+            // rumus luminance standar (persepsi)
+            brightness = 0.299 * r + 0.587 * g + 0.114 * b;
+        } while (brightness > 130); // ulang jika terlalu terang
+        return `rgba(${r}, ${g}, ${b}, ${opacity})`;
     }
+
     /**
      * Chart.js plugin to display data labels on top of the bars.
      */
@@ -404,52 +436,52 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderChartsFromTable() {
         const tableRows = document.querySelectorAll('#data-table tbody tr');
         
-        const labelsBiasa = [];
-        const dataBiasa = [];
-        const aggregatedData = {};
+        const aggregatedByDivision = {};
+        const aggregatedByEmployee = {};
 
         tableRows.forEach(row => {
             const cells = row.querySelectorAll('td');
-            if (cells.length < 3) return; 
+            if (cells.length < 4 || row.innerText.includes('Tidak ada data')) return; 
 
-            const date = cells[0].innerText.trim();
-            const division = cells[1].innerText.trim();
-            const sickDays = parseInt(cells[2].innerText.trim(), 10);
+            const employeeName = cells[1].innerText.trim();
+            const division = cells[2].innerText.trim();
+            const sickDays = parseInt(cells[3].innerText.trim(), 10);
 
             if (!isNaN(sickDays)) {
-                // Data for detailed chart
-                labelsBiasa.push(`${division} (${date})`);
-                dataBiasa.push(sickDays);
+                // 1. Aggregate data by division
+                aggregatedByDivision[division] = (aggregatedByDivision[division] || 0) + sickDays;
 
-                // Aggregate data for total chart
-                aggregatedData[division] = (aggregatedData[division] || 0) + sickDays;
+                // 2. Aggregate data by employee
+                aggregatedByEmployee[employeeName] = (aggregatedByEmployee[employeeName] || 0) + sickDays;
             }
         });
 
-        // Prepare data for "Chart Biasa"
-        const chartDataBiasa = {
-            labels: labelsBiasa,
+        // Prepare data for "Chart Per Divisi"
+        const labelsDivisi = Object.keys(aggregatedByDivision);
+        const dataDivisi = Object.values(aggregatedByDivision);
+        const chartDataDivisi = {
+            labels: labelsDivisi,
             datasets: [{
-                label: 'Total Cuti',
-                data: dataBiasa,
-                backgroundColor: labelsBiasa.map(() => getRandomRGBA()),
+                label: 'Total Cuti per Divisi',
+                data: dataDivisi,
+                backgroundColor: labelsDivisi.map(() => getRandomRGBA()),
             }]
         };
 
-        // Prepare data for "Chart Total"
-        const labelsTotal = Object.keys(aggregatedData);
-        const dataTotal = Object.values(aggregatedData);
-        const chartDataTotal = {
-            labels: labelsTotal,
+        // Prepare data for "Chart Per Karyawan"
+        const labelsKaryawan = Object.keys(aggregatedByEmployee);
+        const dataKaryawan = Object.values(aggregatedByEmployee);
+        const chartDataKaryawan = {
+            labels: labelsKaryawan,
             datasets: [{
-                label: 'Total Cuti',
-                data: dataTotal,
-                backgroundColor: labelsTotal.map(() => getRandomRGBA()),
+                label: 'Total Cuti per Karyawan',
+                data: dataKaryawan,
+                backgroundColor: labelsKaryawan.map(() => getRandomRGBA()),
             }]
         };
         
-        createOrUpdateChart(document.getElementById('chartBiasa'), chartDataBiasa);
-        createOrUpdateChart(document.getElementById('chartTotal'), chartDataTotal);
+        createOrUpdateChart(document.getElementById('chartPerDivisi'), chartDataDivisi);
+        createOrUpdateChart(document.getElementById('chartPerKaryawan'), chartDataKaryawan);
     }
 
     // --- EVENT LISTENERS & INITIALIZATION ---
@@ -460,7 +492,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Setup chart switcher
     document.querySelector('.chart-select')?.addEventListener('change', function() {
         document.querySelectorAll('.chart-container').forEach(container => {
-            container.classList.toggle('hidden', !container.classList.contains(this.value));
+            const isVisible = container.classList.contains(this.value);
+            container.classList.toggle('hidden', !isVisible);
         });
         // Resize the newly visible chart to ensure it renders correctly
         const visibleCanvas = document.querySelector(`.chart-container.${this.value} .chart-canvas`);
@@ -486,7 +519,6 @@ document.addEventListener('DOMContentLoaded', function() {
             this.closest('.fixed.z-50').classList.add('hidden');
         });
     });
-    
     // Setup pagination changer
     document.getElementById('perPage')?.addEventListener('change', function() {
         const url = new URL(window.location.href);
@@ -507,11 +539,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const tableContent = Array.from(document.querySelectorAll('#data-table tbody tr')).map(row => {
             const cells = row.querySelectorAll('td');
-            if (cells.length < 3) return '';
+            if (cells.length < 4) return '';
             return `<tr>
                         <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${cells[0].innerText}</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">${cells[1].innerText}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${cells[1].innerText}</td>
                         <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${cells[2].innerText}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${cells[3].innerText}</td>
                     </tr>`;
         }).join('');
 
@@ -539,7 +572,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = 'annual-leave-report.pdf';
+                a.download = 'sick-leave-report.pdf';
                 document.body.appendChild(a);
                 a.click();
                 a.remove();

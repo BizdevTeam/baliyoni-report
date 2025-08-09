@@ -84,7 +84,7 @@ $menuItems = [
         'roles' => ['superadmin', 'hrga'],
         'id' => 'dropdown-hrga',
         'submenu' => [
-            ['title' => 'PT.BOS', 'route' => 'laporanptbos.index', 'icon' => 'icon/ptbos.svg'],
+            // ['title' => 'PT.BOS', 'route' => 'laporanptbos.index', 'icon' => 'icon/ptbos.svg'],
             ['title' => 'iJASA', 'route' => 'laporanijasa.index', 'icon' => 'icon/ijasa.svg'],
             ['title' => 'iJASA Gambar', 'route' => 'ijasagambar.index', 'icon' => 'icon/ijasa.svg'],
             ['title' => 'Sick Leave Report', 'route' => 'laporansakitdivisi.index', 'icon' => 'icon/laporansakit.svg'],

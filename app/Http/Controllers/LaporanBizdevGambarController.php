@@ -17,105 +17,36 @@ class LaporanBizdevGambarController extends Controller
 {
     use DateValidationTrait;
 
-    // public function index(Request $request)
-    // {
-    //     $perPage = $request->input('per_page', 12);
-    //     $search = $request->input('search');
-    //     $startMonth = $request->input('start_month');
-    //     $endMonth = $request->input('end_month');
-    
-    //     $query = LaporanBizdevGambar::query();
-    
-    //     // Filter berdasarkan tanggal jika ada
-    //     if ($search) {
-    //         $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-    //     }
-    
-    //     // Filter berdasarkan range bulan-tahun jika keduanya diisi
-    //     if (!empty($startMonth) && !empty($endMonth)) {
-    //         try {
-    //             $startDate = Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
-    //             $endDate = Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
-    //             $query->whereBetween('tanggal', [$startDate, $endDate]);
-    //         } catch (Exception $e) {
-    //             return response()->json(['error' => 'Format tanggal tidak valid. Gunakan format Y-m.'], 400);
-    //         }
-    //     }
-    //     // Ambil data dengan pagination
-    //     $laporanbizdevgambars = $query->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
-    //                               ->paginate($perPage);
-
-    //     // Ubah path gambar agar dapat diakses dari frontend
-    //     $laporanbizdevgambars->getCollection()->transform(function ($item) {
-    //     $item->gambar_url = !empty($item->gambar) && file_exists(public_path("images/it/laporanbizdevgambar/{$item->gambar}"))
-    //         ? asset("images/it/laporanbizdevgambar/{$item->gambar}")
-    //         : asset("images/no-image.png"); // Placeholder jika tidak ada gambar
-
-    //         return $item;
-    //         });
-        
-    //         if ($request->ajax()) {
-    //             return response()->json(['laporanbizdevgambars' => $laporanbizdevgambars]);
-    //         }
-
-    //     return view('it.laporanbizdevgambar', compact('laporanbizdevgambars'));
-    // }
-
-    // public function store(Request $request)
-    // {
-    //     try {
-    //         $validatedData = $request->validate([
-    //             'tanggal' => 'required|date',
-    //             'kendala' => 'required|string',
-    //             'gambar' => 'image|mimes:jpeg,png,jpg,gif|max:2550'
-    //         ]);
-
-    //         $errorMessage = '';
-    //         if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
-    //             return redirect()->back()->with('error', $errorMessage);
-    //         }
-
-    //         if ($request->hasFile('gambar')) {
-    //             $filename = time() . $request->file('gambar')->getClientOriginalName();
-    //             $request->file('gambar')->move(public_path('images/it/laporanbizdevgambar'), $filename);
-    //             $validatedData['gambar'] = $filename;
-    //         }
-
-    //         LaporanBizdevGambar::create($validatedData);
-
-    //         return redirect()->route('laporanbizdevgambar.index')->with('success', 'Data Berhasil Ditambahkan');
-    //     } catch (\Exception $e) {
-    //         Log::error('Error storing Instagram data: ' . $e->getMessage());
-    //         return redirect()->route('laporanbizdevgambar.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
-    //     }
-    // }
-
      public function index(Request $request)
     {
-        $perPage     = $request->input('per_page', 12);
-        $search      = $request->input('search');
-        $startMonth  = $request->input('start_month');
-        $endMonth    = $request->input('end_month');
-
+        $perPage = $request->input('per_page', 12);
         $query = LaporanBizdevGambar::query();
 
-        // Filter berdasarkan bulan-tahun
-        if ($search) {
-            $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%{$search}%"]);
-        }
-        if (!empty($startMonth) && !empty($endMonth)) {
+        if ($request->filled('start_date')) {
             try {
-                $startDate = Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
-                $endDate   = Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
-                $query->whereBetween('tanggal', [$startDate, $endDate]);
+                // Directly use the date string from the request.
+                $startDate = $request->start_date;
+                $query->whereDate('tanggal', '>=', $startDate);
             } catch (Exception $e) {
-                return back()->withErrors(['msg' => 'Format tanggal tidak valid. Gunakan format Y-m.']);
+                Log::error("Invalid start_date format provided: " . $request->start_date);
             }
         }
-        // Pagination
+
+        if ($request->filled('end_date')) {
+            try {
+                // Directly use the date string from the request.
+                $endDate = $request->end_date;
+                $query->whereDate('tanggal', '<=', $endDate);
+            } catch (Exception $e) {
+                Log::error("Invalid end_date format provided: " . $request->end_date);
+            }
+        }
+
+        // Order the results and paginate, ensuring the correct filter parameters are kept.
         $laporanbizdevgambars = $query
-            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
-            ->paginate($perPage);
+            ->orderBy('tanggal', 'asc')
+            ->paginate($perPage)
+            ->appends($request->only(['start_date', 'end_date', 'per_page']));
 
         // Ubah path gambar
         $laporanbizdevgambars->getCollection()->transform(function ($item) {

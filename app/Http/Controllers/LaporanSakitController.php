@@ -16,59 +16,7 @@ use Illuminate\Validation\Rule;
 class LaporanSakitController extends Controller
 {
     use DateValidationTrait;
-    // Show the view
-    // public function index(Request $request)
-    // { 
-    //     $perPage = $request->input('per_page', 12);
-    //     $search = $request->input('search');
-
-    //     #$query = KasHutangPiutang::query();
-
-    //     // Query untuk mencari berdasarkan tahun dan date
-    //     $laporansakits = LaporanSakit::query()
-    //         ->when($search, function ($query, $search) {
-    //             return $query->where('tanggal', 'LIKE', "%$search%")
-    //                          ->orWhere('nama', 'like', "%$search%");
-    //         })
-    //         ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
-    //         ->paginate($perPage);
-
-    //     // Hitung total untuk masing-masing kategori
-    //     $totalPenjualan = $laporansakits->sum('total_sakit');
-
-    //     // Siapkan data untuk chart
-    //     function getRandomRGBA($opacity = 0.7) {
-    //         return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
-    //     }
-
-    //     $labels = $laporansakits->map(function($item) {
-    //         $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
-    //         return $item->nama. ' - ' .$formattedDate;
-    //     })->toArray();
-    //     $data = $laporansakits->pluck('total_sakit')->toArray();
-
-    //     // Generate random colors for each data item
-    //     $backgroundColors = array_map(fn() => getRandomRGBA(), $data);
-
-    //     $chartData = [
-    //         'labels' => $labels, // Labels untuk chart
-    //         'datasets' => [
-    //             [
-    //                 'label' => 'Grafik Laporan Sakit', // Employee dataset
-    //                 'text' => 'Sick Leave Total', // Employee dataset
-    //                 'data' => $data, // Data untuk chart
-    //                 'backgroundColor' => $backgroundColors, // Warna batang random
-    //             ],
-    //         ],
-    //     ];
-    //           $aiInsight = null;
-    //         if ($request->has('generate_ai')) {
-    //             // [FIX] Panggil AI dengan SEMUA data dan nama fungsi yang sesuai
-    //             $aiInsight = $this->generateServiceRevenueInsight($allServiceReports, $chartData);
-    //         }
-
-    //     return view('hrga.laporansakit', compact('laporansakits', 'chartData'));  
-    //   }
+   
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 12);

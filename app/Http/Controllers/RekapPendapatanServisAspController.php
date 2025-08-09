@@ -24,10 +24,23 @@ class RekapPendapatanServisAspController extends Controller
 
         // Filter tanggal
         if ($request->filled('start_date')) {
-            $query->whereDate('tanggal', '>=', $request->start_date);
+            try {
+                // Directly use the date string from the request.
+                $startDate = $request->start_date;
+                $query->whereDate('tanggal', '>=', $startDate);
+            } catch (Exception $e) {
+                Log::error("Invalid start_date format provided: " . $request->start_date);
+            }
         }
+
         if ($request->filled('end_date')) {
-            $query->whereDate('tanggal', '<=', $request->end_date);
+            try {
+                // Directly use the date string from the request.
+                $endDate = $request->end_date;
+                $query->whereDate('tanggal', '<=', $endDate);
+            } catch (Exception $e) {
+                Log::error("Invalid end_date format provided: " . $request->end_date);
+            }
         }
 
         // 1) Ambil SEMUA data untuk chart dan AI insight

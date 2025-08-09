@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\LaporanPerInstansi;
 use App\Traits\DateValidationTrait;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -19,17 +20,33 @@ class LaporanPerInstansiController extends Controller
     public function index(Request $request)
     { 
         $perPage = $request->input('per_page', 12);
-        $search = $request->input('search');
+        $query = LaporanPerInstansi::query();
 
-        #$query = KasHutangPiutang::query();
+        if ($request->filled('start_date')) {
+            try {
+                // Directly use the date string from the request.
+                $startDate = $request->start_date;
+                $query->whereDate('tanggal', '>=', $startDate);
+            } catch (Exception $e) {
+                Log::error("Invalid start_date format provided: " . $request->start_date);
+            }
+        }
 
-        // Query untuk mencari berdasarkan tahun dan date
-        $laporanperinstansis = LaporanPerInstansi::query()
-            ->when($search, function ($query, $search) {
-                return $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-            })
-            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
-            ->paginate($perPage);
+        if ($request->filled('end_date')) {
+            try {
+                // Directly use the date string from the request.
+                $endDate = $request->end_date;
+                $query->whereDate('tanggal', '<=', $endDate);
+            } catch (Exception $e) {
+                Log::error("Invalid end_date format provided: " . $request->end_date);
+            }
+        }
+
+        // Order the results and paginate, ensuring the correct filter parameters are kept.
+        $laporanperinstansis = $query
+            ->orderBy('tanggal', 'asc')
+            ->paginate($perPage)
+            ->appends($request->only(['start_date', 'end_date', 'per_page']));
 
         // Hitung total untuk masing-masing kategori
         $totalPenjualan = $laporanperinstansis->sum('nilai');

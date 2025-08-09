@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\RekapPenjualanPerusahaan;
 use App\Models\Perusahaan;
 use App\Traits\DateValidationTrait;
+use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
@@ -35,34 +36,44 @@ class RekapPenjualanPerusahaanController extends Controller
     public function index(Request $request)
     {
         $perusahaans = Perusahaan::all();
+        $query = RekapPenjualanPerusahaan::query();
         $perPage = $request->input('per_page', 12);
-        $search = $request->input('search');
 
-        // Query dasar untuk digunakan kembali
-        $baseQuery = RekapPenjualanPerusahaan::with('perusahaan')
-            ->when($search, function ($query, $search) {
-                return $query->where(function($q) use ($search) {
-                    $q->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%{$search}%"])
-                      ->orWhereHas('perusahaan', function ($subq) use ($search) {
-                          $subq->where('nama_perusahaan', 'LIKE', "%{$search}%");
-                      });
-                });
-            });
 
-        // [FIX] Ambil SEMUA data untuk analisis dan chart agar akurat
-        $allReports = (clone $baseQuery)->orderBy('tanggal', 'asc')->get();
+        if ($request->filled('start_date')) {
+            try {
+                // Directly use the date string from the request.
+                $startDate = $request->start_date;
+                $query->whereDate('tanggal', '>=', $startDate);
+            } catch (Exception $e) {
+                Log::error("Invalid start_date format provided: " . $request->start_date);
+            }
+        }
 
-        // Ambil data yang DIPAGINASI hanya untuk tampilan tabel
-        $rekappenjualanperusahaans = (clone $baseQuery)->orderBy('tanggal', 'desc')->paginate($perPage);
+        if ($request->filled('end_date')) {
+            try {
+                // Directly use the date string from the request.
+                $endDate = $request->end_date;
+                $query->whereDate('tanggal', '<=', $endDate);
+            } catch (Exception $e) {
+                Log::error("Invalid end_date format provided: " . $request->end_date);
+            }
+        }
+
+        // Order the results and paginate, ensuring the correct filter parameters are kept.
+        $rekappenjualanperusahaans = $query
+            ->orderBy('tanggal', 'asc')
+            ->paginate($perPage)
+            ->appends($request->only(['start_date', 'end_date', 'per_page']));
 
         // --- Chart 1: Chart Biasa (Individual entries from all data) ---
-        $labels1 = $allReports->map(function ($item) {
+        $labels1 = $rekappenjualanperusahaans->map(function ($item) {
             $formattedDate = Carbon::parse($item->tanggal)->translatedFormat('F Y');
             // Pastikan relasi perusahaan ada untuk menghindari error
             return ($item->perusahaan->nama_perusahaan ?? 'N/A') . ' - ' . $formattedDate;
         })->all();
         
-        $data1 = $allReports->pluck('total_penjualan')->all();
+        $data1 = $rekappenjualanperusahaans->pluck('total_penjualan')->all();
         
         $chartData = [
             'labels' => $labels1,
@@ -75,11 +86,11 @@ class RekapPenjualanPerusahaanController extends Controller
         ];
 
         // --- Chart 2: Chart Total (Aggregated data from all data) ---
-        $chartTotalData = $this->getChartTotalData($allReports);
+        $chartTotalData = $this->getChartTotalData($rekappenjualanperusahaans);
 
         $aiInsight = null;
         if ($request->has('generate_ai')) {
-            $aiInsight = $this->generateSalesInsight($allReports, $chartData);
+            $aiInsight = $this->generateSalesInsight($rekappenjualanperusahaans, $chartData);
         }
 
         return view('marketings.rekappenjualanperusahaan', compact('rekappenjualanperusahaans', 'chartData', 'chartTotalData', 'perusahaans', 'aiInsight'));

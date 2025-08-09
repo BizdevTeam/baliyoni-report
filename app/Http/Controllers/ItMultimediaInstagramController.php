@@ -15,77 +15,36 @@ class ItMultimediaInstagramController extends Controller
 {
     use DateValidationTrait;
     
-    // public function index(Request $request)
-    // {
-    //     $perPage = $request->input('per_page', 12);
-    //     $search = $request->input('search');
-    //     $startMonth = $request->input('start_month');
-    //     $endMonth = $request->input('end_month');
-    
-    //     $query = ItMultimediaInstagram::query();
-    
-    //     // Filter berdasarkan tanggal jika ada
-    //     if ($search) {
-    //         $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-    //     }
-    
-    //     // Filter berdasarkan range bulan-tahun jika keduanya diisi
-    //     if (!empty($startMonth) && !empty($endMonth)) {
-    //         try {
-    //             $startDate = Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
-    //             $endDate = Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
-    //             $query->whereBetween('tanggal', [$startDate, $endDate]);
-    //         } catch (Exception $e) {
-    //             return response()->json(['error' => 'Format tanggal tidak valid. Gunakan format Y-m.'], 400);
-    //         }
-    //     }
-    //     // Ambil data dengan pagination
-    //     $itmultimediainstagrams = $query->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
-    //                               ->paginate($perPage);
-            
-    //           // Ubah path gambar agar dapat diakses dari frontend
-    //           $itmultimediainstagrams->getCollection()->transform(function ($item) {
-    //             $item->gambar_url = !empty($item->gambar) && file_exists(public_path("images/it/multimediainstagram/{$item->gambar}"))
-    //                 ? asset("images/it/multimediainstagram/{$item->gambar}")
-    //                 : asset("images/no-image.png"); // Placeholder jika tidak ada gambar
-        
-    //             return $item;
-    //         });
-        
-    //         if ($request->ajax()) {
-    //             return response()->json(['itmultimediainstagrams' => $itmultimediainstagrams]);
-    //         }
-
-    //     return view('it.multimediainstagram', compact('itmultimediainstagrams'));
-    // }
     public function index(Request $request)
 {
-    $perPage     = $request->input('per_page', 12);
-    $search      = $request->input('search');
-    $startMonth  = $request->input('start_month');
-    $endMonth    = $request->input('end_month');
-
+    $perPage = $request->input('per_page', 12);
     $query = ItMultimediaInstagram::query();
 
-    // Filter berdasarkan format Y-m
-    if ($search) {
-        $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-    }
-
-    if (!empty($startMonth) && !empty($endMonth)) {
-        try {
-            $startDate = Carbon::createFromFormat('Y-m', $startMonth)->startOfMonth();
-            $endDate   = Carbon::createFromFormat('Y-m', $endMonth)->endOfMonth();
-            $query->whereBetween('tanggal', [$startDate, $endDate]);
-        } catch (\Exception $e) {
-            return back()->withErrors(['msg' => 'Format tanggal tidak valid. Gunakan format Y-m.']);
+        if ($request->filled('start_date')) {
+            try {
+                // Directly use the date string from the request.
+                $startDate = $request->start_date;
+                $query->whereDate('tanggal', '>=', $startDate);
+            } catch (Exception $e) {
+                Log::error("Invalid start_date format provided: " . $request->start_date);
+            }
         }
-    }
 
-    // Ambil dengan pagination
-    $itmultimediainstagrams = $query
-        ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
-        ->paginate($perPage);
+        if ($request->filled('end_date')) {
+            try {
+                // Directly use the date string from the request.
+                $endDate = $request->end_date;
+                $query->whereDate('tanggal', '<=', $endDate);
+            } catch (Exception $e) {
+                Log::error("Invalid end_date format provided: " . $request->end_date);
+            }
+        }
+
+        // Order the results and paginate, ensuring the correct filter parameters are kept.
+        $itmultimediainstagrams = $query
+            ->orderBy('tanggal', 'asc')
+            ->paginate($perPage)
+            ->appends($request->only(['start_date', 'end_date', 'per_page']));
 
     // Ubah path gambar
     $itmultimediainstagrams->getCollection()->transform(function ($item) {

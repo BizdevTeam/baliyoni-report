@@ -21,6 +21,8 @@
     <style>
         .content-wrapper { margin-left: 16rem; }
         .hidden { display: none; }
+        .chart-container.hidden { display: none; }
+        .chart-container { display: block; }
     </style>
 </head>
 <body class="bg-gray-100 hold-transition sidebar-mini layout-fixed">
@@ -71,7 +73,23 @@
                 <!-- Search -->
                 <form method="GET" action="{{ route('laporansakitdivisi.index') }}" class="flex items-center gap-2">
                     <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
-                        <input type="month" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
+                        <input 
+                        type="date" 
+                        name="start_date" 
+                        value="{{ request('start_date') }}" 
+                        class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" 
+                        />
+                    </div>
+
+                    <span>To</span>
+
+                    <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
+                        <input 
+                        type="date" 
+                        name="end_date" 
+                        value="{{ request('end_date') }}" 
+                        class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" 
+                        />
                     </div>
                     <button type="submit" class="bg-gradient-to-r font-medium from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm mr-2" aria-label="Search">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -139,7 +157,6 @@
                 </button>
             </div>
 
-
             <div id="formContainer" class="hidden">
                 <div class="mx-auto bg-white p-6 rounded-lg shadow">
                     <div class="overflow-x-auto bg-white shadow-md">
@@ -147,6 +164,7 @@
                             <thead class="bg-gray-200">
                                 <tr>
                                     <th class="border border-gray-300 px-4 py-2 text-center">Tanggal</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-center">Nama Karyawan</th>
                                     <th class="border border-gray-300 px-4 py-2 text-center">Divisi</th>
                                     <th class="border border-gray-300 px-4 py-2 text-center">Total Sakit</th>
                                     <th class="border border-gray-300 px-4 py-2 text-center">Aksi</th>
@@ -156,6 +174,7 @@
                                 @forelse ($laporansakitdivisis as $laporansakitdivisi)
                                 <tr class="hover:bg-gray-100">
                                     <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporansakitdivisi->tanggal_formatted }}</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporansakitdivisi->nama }}</td>
                                     <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporansakitdivisi->divisi }}</td>
                                     <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporansakitdivisi->total_sakit }}</td>
                                     <td class="border border-gray-300 py-2 text-center flex justify-center gap-2">
@@ -169,7 +188,7 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="4" class="text-center py-4">Tidak ada data tersedia.</td>
+                                    <td colspan="5" class="text-center py-4">Tidak ada data tersedia.</td>
                                 </tr>
                                 @endforelse
                             </tbody>
@@ -198,18 +217,17 @@
                     <div class="mb-4 flex justify-between items-center">
                         <h1 class="text-2xl font-bold text-red-600 font-montserrat mx-auto">Sick Leave Report Chart</h1>
                         <select class="chart-select p-2 border border-gray-300 rounded">
-                            <option value="chartBiasa">Chart Biasa</option>
-                            <option value="chartTotal">Chart Total</option>
-
+                            <option value="chartPerDivisi">Chart Per Divisi</option>
+                            <option value="chartPerKaryawan">Chart Per Karyawan</option>
                         </select>
                     </div>
 
                     <div class="mt-6 self-center w-full relative" style="height: 450px;">
-                        <div class="chart-container chartBiasa hidden w-full h-full">
-                            <canvas id="chartBiasa" class="chart-canvas" data-axis="y" data-unit="hari"></canvas>
+                        <div class="chart-container chartPerDivisi w-full h-full">
+                            <canvas id="chartPerDivisi" class="chart-canvas" data-axis="x" data-unit="hari"></canvas>
                         </div>
-                        <div class="chart-container chartTotal w-full h-full">
-                            <canvas id="chartTotal" class="chart-canvas" data-axis="y" data-unit="hari"></canvas>
+                        <div class="chart-container chartPerKaryawan hidden w-full h-full">
+                            <canvas id="chartPerKaryawan" class="chart-canvas" data-axis="y" data-unit="hari"></canvas>
                         </div>
                     </div>
                     <div class="mt-6 flex justify-end">
@@ -231,6 +249,10 @@
                             <div>
                                 <label for="tanggal" class="block text-sm font-medium">Date</label>
                                 <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $laporansakitdivisi->tanggal }}" required>
+                            </div>
+                            <div>
+                                <label for="nama" class="block text-sm font-medium">Nama Karyawan</label>
+                                <input type="text" name="nama" class="w-full p-2 border rounded" value="{{ $laporansakitdivisi->nama }}" required>
                             </div>
                             <div>
                                 <label for="divisi" class="block text-sm font-medium">Division</label>
@@ -267,6 +289,10 @@
                             <div>
                                 <label for="tanggal" class="block text-sm font-medium">Date</label>
                                 <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
+                            </div>
+                            <div>
+                                <label for="nama" class="block text-sm font-medium">Nama Karyawan</label>
+                                <input type="text" name="nama" class="w-full p-2 border rounded" required>
                             </div>
                             <div>
                                 <label for="divisi" class="block text-sm font-medium">Division</label>
@@ -311,7 +337,7 @@ document.addEventListener('DOMContentLoaded', function() {
      * @returns {string} An RGBA color string.
      */
     function getRandomRGBA(opacity = 0.7) {
-    let r, g, b, brightness;
+        let r, g, b, brightness;
     do {
         r = Math.floor(Math.random() * 256);
         g = Math.floor(Math.random() * 256);
@@ -356,9 +382,21 @@ document.addEventListener('DOMContentLoaded', function() {
                             ctx.fillText(labelText, xPos, element.y);
                         } else { // Vertical bars
                             ctx.textAlign = 'center';
+                            const barHeight = element.base - element.y;
+                            
+                            // Default: place label above the bar
+                            let yPos = element.y - 5;
                             ctx.textBaseline = 'bottom';
                             ctx.fillStyle = '#333';
-                            ctx.fillText(labelText, element.x, element.y - 5);
+            
+                            // If bar is tall enough, place label inside the bar
+                            if (barHeight > 15) { // 15px is a reasonable threshold for font size 11px
+                                yPos = element.y + 5;
+                                ctx.textBaseline = 'top';
+                                ctx.fillStyle = 'white';
+                            }
+                            
+                            ctx.fillText(labelText, element.x, yPos);
                         }
                     });
                 }
@@ -410,52 +448,52 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderChartsFromTable() {
         const tableRows = document.querySelectorAll('#data-table tbody tr');
         
-        const labelsBiasa = [];
-        const dataBiasa = [];
-        const aggregatedData = {};
+        const aggregatedByDivision = {};
+        const aggregatedByEmployee = {};
 
         tableRows.forEach(row => {
             const cells = row.querySelectorAll('td');
-            if (cells.length < 3) return; 
+            if (cells.length < 4 || row.innerText.includes('Tidak ada data')) return; 
 
-            const date = cells[0].innerText.trim();
-            const division = cells[1].innerText.trim();
-            const sickDays = parseInt(cells[2].innerText.trim(), 10);
+            const employeeName = cells[1].innerText.trim();
+            const division = cells[2].innerText.trim();
+            const sickDays = parseInt(cells[3].innerText.trim(), 10);
 
             if (!isNaN(sickDays)) {
-                // Data for detailed chart
-                labelsBiasa.push(`${division} (${date})`);
-                dataBiasa.push(sickDays);
+                // 1. Aggregate data by division
+                aggregatedByDivision[division] = (aggregatedByDivision[division] || 0) + sickDays;
 
-                // Aggregate data for total chart
-                aggregatedData[division] = (aggregatedData[division] || 0) + sickDays;
+                // 2. Aggregate data by employee
+                aggregatedByEmployee[employeeName] = (aggregatedByEmployee[employeeName] || 0) + sickDays;
             }
         });
 
-        // Prepare data for "Chart Biasa"
-        const chartDataBiasa = {
-            labels: labelsBiasa,
+        // Prepare data for "Chart Per Divisi"
+        const labelsDivisi = Object.keys(aggregatedByDivision);
+        const dataDivisi = Object.values(aggregatedByDivision);
+        const chartDataDivisi = {
+            labels: labelsDivisi,
             datasets: [{
-                label: 'Total Sakit',
-                data: dataBiasa,
-                backgroundColor: labelsBiasa.map(() => getRandomRGBA()),
+                label: 'Total Sakit per Divisi',
+                data: dataDivisi,
+                backgroundColor: labelsDivisi.map(() => getRandomRGBA()),
             }]
         };
 
-        // Prepare data for "Chart Total"
-        const labelsTotal = Object.keys(aggregatedData);
-        const dataTotal = Object.values(aggregatedData);
-        const chartDataTotal = {
-            labels: labelsTotal,
+        // Prepare data for "Chart Per Karyawan"
+        const labelsKaryawan = Object.keys(aggregatedByEmployee);
+        const dataKaryawan = Object.values(aggregatedByEmployee);
+        const chartDataKaryawan = {
+            labels: labelsKaryawan,
             datasets: [{
-                label: 'Total Sakit',
-                data: dataTotal,
-                backgroundColor: labelsTotal.map(() => getRandomRGBA()),
+                label: 'Total Sakit per Karyawan',
+                data: dataKaryawan,
+                backgroundColor: labelsKaryawan.map(() => getRandomRGBA()),
             }]
         };
         
-        createOrUpdateChart(document.getElementById('chartBiasa'), chartDataBiasa);
-        createOrUpdateChart(document.getElementById('chartTotal'), chartDataTotal);
+        createOrUpdateChart(document.getElementById('chartPerDivisi'), chartDataDivisi);
+        createOrUpdateChart(document.getElementById('chartPerKaryawan'), chartDataKaryawan);
     }
 
     // --- EVENT LISTENERS & INITIALIZATION ---
@@ -466,7 +504,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Setup chart switcher
     document.querySelector('.chart-select')?.addEventListener('change', function() {
         document.querySelectorAll('.chart-container').forEach(container => {
-            container.classList.toggle('hidden', !container.classList.contains(this.value));
+            const isVisible = container.classList.contains(this.value);
+            container.classList.toggle('hidden', !isVisible);
         });
         // Resize the newly visible chart to ensure it renders correctly
         const visibleCanvas = document.querySelector(`.chart-container.${this.value} .chart-canvas`);
@@ -512,11 +551,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const tableContent = Array.from(document.querySelectorAll('#data-table tbody tr')).map(row => {
             const cells = row.querySelectorAll('td');
-            if (cells.length < 3) return '';
+            if (cells.length < 4) return '';
             return `<tr>
                         <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${cells[0].innerText}</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">${cells[1].innerText}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${cells[1].innerText}</td>
                         <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${cells[2].innerText}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${cells[3].innerText}</td>
                     </tr>`;
         }).join('');
 

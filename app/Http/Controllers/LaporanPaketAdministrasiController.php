@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\LaporanPaketAdministrasi;
 use App\Traits\DateValidationTrait;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -16,82 +17,46 @@ class LaporanPaketAdministrasiController extends Controller
 {
     use DateValidationTrait;
 
-    // Menampilkan halaman utama
-    // public function index(Request $request)
-    // { 
-    //     $perPage = $request->input('per_page', 12);
-    //     $search = $request->input('search');
-
-    //     #$query = KasHutangPiutang::query();
-
-    //     // Query untuk mencari berdasarkan tahun dan date
-    //     $laporanpaketadministrasis = LaporanPaketAdministrasi::query()
-    //         ->when($search, function ($query, $search) {
-    //             return $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
-
-    //         })
-    //         ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
-    //         ->paginate($perPage);
-
-    //     // Hitung total untuk masing-masing kategori
-    //     $totalPenjualan = $laporanpaketadministrasis->sum('total_paket');
-
-    //     // Siapkan data untuk chart
-    //     function getRandomRGBA($opacity = 0.7) {
-    //         return sprintf('rgba(%d, %d, %d, %.1f)', mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255), $opacity);
-    //     }
-        
-    //     $labels = $laporanpaketadministrasis->map(function($item) {
-    //         $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
-    //         return $item->website . ' - ' . $formattedDate;
-    //     })->toArray();
-    //     $data = $laporanpaketadministrasis->pluck('total_paket')->toArray();
-        
-    //     // Generate random colors for each data item
-    //     $backgroundColors = array_map(fn() => getRandomRGBA(), $data);
-        
-    //     $chartData = [
-    //         'labels' => $labels, // Labels untuk chart
-    //         'datasets' => [
-    //             [
-    //                 'label' => 'Administrative Package Chart', // Nama dataset
-    //                 'text' => 'Total Package', // Nama dataset
-    //                 'data' => $data, // Data untuk chart
-    //                 'backgroundColor' => $backgroundColors, // Warna batang random
-    //             ],
-    //         ],
-    //     ];
-    // $aiInsight = null;
-
-    // // 2. Hanya jalankan fungsi AI jika request memiliki parameter 'generate_ai'.
-    // if ($request->has('generate_ai')) {
-    //     $aiInsight = $this->generateSalesInsight($laporanpaketadministrasis, $chartData);
-    // }
-        
-    //     return view('marketings.laporanpaketadministrasi',  compact('laporanpaketadministrasis', 'chartData','aiInsight'));    
-    // }
     public function index(Request $request)
 {
     $perPage = $request->input('per_page', 12);
     $search = $request->input('search');
 
-    // Query dasar untuk digunakan kembali
-    $baseQuery = LaporanPaketAdministrasi::query()
-        ->when($search, fn($q) => $q->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%{$search}%"]));
+    $query = LaporanPaketAdministrasi::query();
 
-    // [FIX] Ambil SEMUA data untuk analisis dan chart
-    $allReports = (clone $baseQuery)->orderBy('tanggal', 'asc')->get();
+        if ($request->filled('start_date')) {
+            try {
+                // Directly use the date string from the request.
+                $startDate = $request->start_date;
+                $query->whereDate('tanggal', '>=', $startDate);
+            } catch (Exception $e) {
+                Log::error("Invalid start_date format provided: " . $request->start_date);
+            }
+        }
 
-    // Ambil data yang DIPAGINASI hanya untuk tampilan tabel
-    $laporanpaketadministrasis = (clone $baseQuery)->orderBy('tanggal', 'desc')->paginate($perPage);
+        if ($request->filled('end_date')) {
+            try {
+                // Directly use the date string from the request.
+                $endDate = $request->end_date;
+                $query->whereDate('tanggal', '<=', $endDate);
+            } catch (Exception $e) {
+                Log::error("Invalid end_date format provided: " . $request->end_date);
+            }
+        }
+
+        // Order the results and paginate, ensuring the correct filter parameters are kept.
+        $laporanpaketadministrasis = $query
+            ->orderBy('tanggal', 'asc')
+            ->paginate($perPage)
+            ->appends($request->only(['start_date', 'end_date', 'per_page']));
 
     // Siapkan data chart dari SEMUA data
-    $labels = $allReports->map(function($item) {
+    $labels = $laporanpaketadministrasis->map(function($item) {
         $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
         return $item->website . ' - ' . $formattedDate;
     })->all();
     
-    $data = $allReports->pluck('total_paket')->all();
+    $data = $laporanpaketadministrasis->pluck('total_paket')->all();
     
     $chartData = [
         'labels' => $labels,
@@ -106,7 +71,7 @@ class LaporanPaketAdministrasiController extends Controller
     $aiInsight = null;
     if ($request->has('generate_ai')) {
         // [FIX] Panggil AI dengan SEMUA data, bukan data terpaginasi
-        $aiInsight = $this->generateSalesInsight($allReports, $chartData);
+        $aiInsight = $this->generateSalesInsight($laporanpaketadministrasis, $chartData);
     }
         
     return view('marketings.laporanpaketadministrasi', compact('laporanpaketadministrasis', 'chartData', 'aiInsight'));

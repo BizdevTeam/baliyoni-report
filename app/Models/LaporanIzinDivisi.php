@@ -8,9 +8,9 @@ class LaporanIzinDivisi extends Model
 {
     protected $table = 'laporan_izin_divisis'; // Nama tabel
 
-    protected $primaryKey = 'id_laporan_sakit_divisi'; // Primary key default
+    protected $primaryKey = 'id_laporan_izin_divisi'; // Primary key default
 
-    protected $fillable = ['tanggal', 'divisi', 'total_izin'];
+    protected $fillable = ['tanggal', 'nama', 'divisi', 'total_izin'];
 
     // Menambahkan accessor untuk date dengan format 'mm/yyyy'
     public function getTanggalFormattedAttribute()

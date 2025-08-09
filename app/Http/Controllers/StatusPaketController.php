@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\StatusPaket;
 use App\Traits\DateValidationTrait;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -18,26 +19,43 @@ class StatusPaketController extends Controller
     public function index(Request $request)
 {
     $perPage = $request->input('per_page', 12);
-    $search = $request->input('search');
+    $query = StatusPaket::query();
 
-    // Query dasar untuk digunakan kembali
-    $baseQuery = StatusPaket::query()
-        ->when($search, fn($q) => $q->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%{$search}%"]));
+        if ($request->filled('start_date')) {
+            try {
+                // Directly use the date string from the request.
+                $startDate = $request->start_date;
+                $query->whereDate('tanggal', '>=', $startDate);
+            } catch (Exception $e) {
+                Log::error("Invalid start_date format provided: " . $request->start_date);
+            }
+        }
 
-    // [FIX] Ambil SEMUA data untuk analisis dan chart agar akurat
-    $allStatusPakets = (clone $baseQuery)->orderBy('tanggal', 'asc')->get();
+        if ($request->filled('end_date')) {
+            try {
+                // Directly use the date string from the request.
+                $endDate = $request->end_date;
+                $query->whereDate('tanggal', '<=', $endDate);
+            } catch (Exception $e) {
+                Log::error("Invalid end_date format provided: " . $request->end_date);
+            }
+        }
 
-    // Ambil data yang DIPAGINASI hanya untuk tampilan tabel
-    $statuspakets = (clone $baseQuery)->orderBy('tanggal', 'desc')->paginate($perPage);
+        // Order the results and paginate, ensuring the correct filter parameters are kept.
+        $statuspakets = $query
+            ->orderBy('tanggal', 'asc')
+            ->paginate($perPage)
+            ->appends($request->only(['start_date', 'end_date', 'per_page']));
+        
+        $allStatusPaketData = $query->get();
+        // [FIX] Siapkan data chart dari SEMUA data
 
-    // [FIX] Siapkan data chart dari SEMUA data
-    $labels = $allStatusPakets->map(function($item) {
+        $labels = $allStatusPaketData->map(function($item) {
         $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
-        // Label yang lebih informatif
         return $item->status . ' (' . $formattedDate . ')';
     })->all();
-    
-    $data = $allStatusPakets->pluck('total_paket')->all();
+        $data = $allStatusPaketData = $query
+->pluck('total_paket')->all();
     
     $chartData = [
         'labels' => $labels,
@@ -52,7 +70,8 @@ class StatusPaketController extends Controller
     $aiInsight = null;
     if ($request->has('generate_ai')) {
         // [FIX] Panggil AI dengan SEMUA data, bukan data terpaginasi
-        $aiInsight = $this->generateSalesInsight($allStatusPakets, $chartData);
+        $aiInsight = $this->generateSalesInsight($statuspakets = $query
+, $chartData);
     }
         
     // Anda belum mengirim $aiInsight ke view, mari kita tambahkan

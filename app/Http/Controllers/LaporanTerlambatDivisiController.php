@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\LaporanTerlambatDivisi;
 use Illuminate\Http\Request;
 use App\Traits\DateValidationTrait;
+use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
@@ -24,29 +25,42 @@ class LaporanTerlambatDivisiController extends Controller
 public function index(Request $request)
     {
         $perPage = $request->input('per_page', 12);
-        $search = $request->input('search');
+        $query = LaporanTerlambatDivisi::query();
 
-        // Query dasar untuk digunakan kembali
-        $baseQuery = LaporanTerlambatDivisi::query()
-            ->when($search, function ($query, $search) {
-                $query->where('tanggal', 'LIKE', "%{$search}%")
-                    ->orWhere('divisi', 'like', "%{$search}%");
-            });
+        if ($request->filled('start_date')) {
+            try {
+                // Directly use the date string from the request.
+                $startDate = $request->start_date;
+                $query->whereDate('tanggal', '>=', $startDate);
+            } catch (Exception $e) {
+                Log::error("Invalid start_date format provided: " . $request->start_date);
+            }
+        }
 
-        // [FIX] Ambil SEMUA data untuk analisis dan chart agar akurat
-        $allSickReports = (clone $baseQuery)->orderBy('tanggal', 'asc')->get();
+        if ($request->filled('end_date')) {
+            try {
+                // Directly use the date string from the request.
+                $endDate = $request->end_date;
+                $query->whereDate('tanggal', '<=', $endDate);
+            } catch (Exception $e) {
+                Log::error("Invalid end_date format provided: " . $request->end_date);
+            }
+        }
 
-        // Ambil data yang DIPAGINASI hanya untuk tampilan tabel
-        $laporanterlambatdivisis = (clone $baseQuery)->orderBy('tanggal', 'desc')->paginate($perPage);
+        // Order the results and paginate, ensuring the correct filter parameters are kept.
+        $laporanterlambatdivisis = $query
+            ->orderBy('tanggal', 'asc')
+            ->paginate($perPage)
+            ->appends($request->only(['start_date', 'end_date', 'per_page']));
 
         // [FIX] Siapkan data chart dari SEMUA data
-        $labels = $allSickReports->map(function ($item) {
+        $labels = $laporanterlambatdivisis->map(function ($item) {
             $formattedDate = Carbon::parse($item->tanggal)->translatedFormat('F Y');
             return $item->divisi . ' - ' . $formattedDate;
         })->all();
 
         // [FIX] Gunakan kolom 'total_terlambat'
-        $data = $allSickReports->pluck('total_terlambat')->all();
+        $data = $laporanterlambatdivisis->pluck('total_terlambat')->all();
 
         $chartData = [
             'labels' => $labels,
@@ -72,6 +86,7 @@ public function store(Request $request)
         try {
             $validatedData = $request->validate([
                 'tanggal' => 'required|date',
+                'nama' => 'required|string',
                 'divisi' => ['required', 'string', Rule::in(['Marketing', 'Procurement', 'Accounting', 'IT', 'HRGA', 'Support', 'SPI'])],
                 'total_terlambat' => 'required|integer|min:0',
             ]);
@@ -105,16 +120,10 @@ public function store(Request $request)
         try {
             $validatedData = $request->validate([
                 'tanggal' => 'required|date',
+                'nama' => 'required|string',
                 'total_terlambat' => 'required|integer',
                 'divisi' => 'required|string',
             ]);
-
-            // Cek kombinasi unik date dan perusahaan
-            $exists = LaporanTerlambatDivisi::where('divisi', $validatedData['divisi'])->exists();
-
-            if ($exists) {
-                return redirect()->back()->with('error', 'Data Already Exists.');
-            }
 
             LaporanTerlambatDivisi::create($validatedData);
 
@@ -131,6 +140,7 @@ public function update(Request $request, LaporanTerlambatDivisi $laporanterlamba
             // Validasi input
             $validatedData = $request->validate([
                 'tanggal' => 'required|date',
+                'nama' => 'required|string',
                 'divisi' => ['required', 'string', Rule::in(['Marketing', 'Procurement', 'Accounting', 'IT', 'HRGA', 'Support', 'SPI'])],
                 'total_terlambat' => 'required|integer|min:0',
             ]);
