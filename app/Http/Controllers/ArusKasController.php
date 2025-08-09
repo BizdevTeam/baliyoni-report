@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ArusKas;
 use App\Traits\DateValidationTraitAccSPI;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -13,62 +14,40 @@ class ArusKasController extends Controller
 {
     use DateValidationTraitAccSPI;
 
-    // public function index(Request $request)
-    // { 
-    //     $perPage = $request->input('per_page', 12);
-    //     $search = $request->input('search');
-
-    //     // Query untuk mencari berdasarkan tahun dan date
-    //     $aruskass = ArusKas::query()
-    //         ->when($search, function ($query, $search) {
-    //             return $query->where('tanggal', 'LIKE', "%$search%");
-    //         })
-    //         ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC') // Urutkan berdasarkan tahun (descending) dan date (ascending)
-    //         ->paginate($perPage);
-
-    //     // Hitung total untuk masing-masing kategori
-    //     $kasMasuk = $aruskass->sum('kas_masuk');   
-    //     $kasKeluar = $aruskass->sum('kas_keluar');
-
-    //     // Format angka menjadi format rupiah atau format angka biasa
-    //     $formattedKasMasuk = number_format($kasMasuk, 0, ',', '.');
-    //     $formattedKasKeluar = number_format($kasKeluar, 0, ',', '.');
-
-    //     // Siapkan data untuk chart dengan menampilkan nilai
-    //     $chartData = [
-    //         'labels' => [
-    //             "Kas Masuk: Rp $formattedKasMasuk",
-    //             "Kas Keluar: Rp $formattedKasKeluar"
-    //         ],
-    //         'datasets' => [
-    //             [
-    //                 'data' => [$kasMasuk, $kasKeluar],
-    //                 'backgroundColor' => ['#1c64f2', '#ff2323'], // Warna untuk pie chart
-    //                 'hoverBackgroundColor' => ['#2b6cb0', '#dc2626'],
-    //             ],
-    //         ],
-    //     ];
-
-    //     return view('accounting.aruskas', compact('aruskass', 'chartData'));
-    // }
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 12);
-        $search = $request->input('search');
+        $query = ArusKas::query();
 
-        // Query dasar untuk digunakan kembali
-        $baseQuery = ArusKas::query()
-            ->when($search, fn($q) => $q->where('tanggal', 'LIKE', "%{$search}%"));
+        if ($request->filled('start_date')) {
+            try {
+                // Directly use the date string from the request.
+                $startDate = $request->start_date;
+                $query->whereDate('tanggal', '>=', $startDate);
+            } catch (Exception $e) {
+                Log::error("Invalid start_date format provided: " . $request->start_date);
+            }
+        }
 
-        // [FIX] Ambil SEMUA data untuk analisis dan kalkulasi total yang akurat
-        $allCashFlows = (clone $baseQuery)->get();
+        if ($request->filled('end_date')) {
+            try {
+                // Directly use the date string from the request.
+                $endDate = $request->end_date;
+                $query->whereDate('tanggal', '<=', $endDate);
+            } catch (Exception $e) {
+                Log::error("Invalid end_date format provided: " . $request->end_date);
+            }
+        }
 
-        // Ambil data yang DIPAGINASI hanya untuk tampilan tabel
-        $aruskass = (clone $baseQuery)->orderBy('tanggal', 'desc')->paginate($perPage);
+        // Order the results and paginate, ensuring the correct filter parameters are kept.
+        $aruskass = $query
+            ->orderBy('tanggal', 'asc')
+            ->paginate($perPage)
+            ->appends($request->only(['start_date', 'end_date', 'per_page']));
 
         // [FIX] Hitung total dari SEMUA data, bukan dari data terpaginasi
-        $kasMasuk = $allCashFlows->sum('kas_masuk');
-        $kasKeluar = $allCashFlows->sum('kas_keluar');
+        $kasMasuk = $aruskass->sum('kas_masuk');
+        $kasKeluar = $aruskass->sum('kas_keluar');
 
         $formattedKasMasuk = number_format($kasMasuk, 0, ',', '.');
         $formattedKasKeluar = number_format($kasKeluar, 0, ',', '.');
@@ -89,7 +68,7 @@ class ArusKasController extends Controller
         $aiInsight = null;
         if ($request->has('generate_ai')) {
             // [FIX] Panggil AI dengan SEMUA data dan nama fungsi yang sesuai
-            $aiInsight = $this->generateCashFlowInsight($allCashFlows);
+            $aiInsight = $this->generateCashFlowInsight($aruskass);
         }
 
         return view('accounting.aruskas', compact('aruskass', 'chartData', 'aiInsight'));

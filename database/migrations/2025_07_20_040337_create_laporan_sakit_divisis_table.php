@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('laporan_sakit_divisis', function (Blueprint $table) {
             $table->id('id_laporan_sakit_divisi');
             $table->string('tanggal');
+            $table->string('nama');
             $table->string('divisi');
             $table->integer('total_sakit')->default(0);
             $table->timestamps();

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\LaporanDetrans;
 use App\Traits\DateValidationTrait;
+use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -23,22 +24,40 @@ class LaporanDetransController extends Controller
         $perPage = $request->input('per_page', 12);
         $search = $request->input('search');
 
-        // Query dasar untuk digunakan kembali
-        $baseQuery = LaporanDetrans::query()
-            ->when($search, fn($q) => $q->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%{$search}%"]));
+        $query = LaporanDetrans::query();
 
-        // [FIX] Ambil SEMUA data untuk analisis dan chart agar akurat
-        $allDeliveryReports = (clone $baseQuery)->orderBy('tanggal', 'asc')->get();
+        if ($request->filled('start_date')) {
+            try {
+                // Directly use the date string from the request.
+                $startDate = $request->start_date;
+                $query->whereDate('tanggal', '>=', $startDate);
+            } catch (Exception $e) {
+                Log::error("Invalid start_date format provided: " . $request->start_date);
+            }
+        }
 
-        // Ambil data yang DIPAGINASI hanya untuk tampilan tabel
-        $laporandetrans = (clone $baseQuery)->orderBy('tanggal', 'desc')->paginate($perPage);
+        if ($request->filled('end_date')) {
+            try {
+                // Directly use the date string from the request.
+                $endDate = $request->end_date;
+                $query->whereDate('tanggal', '<=', $endDate);
+            } catch (Exception $e) {
+                Log::error("Invalid end_date format provided: " . $request->end_date);
+            }
+        }
+
+        // Order the results and paginate, ensuring the correct filter parameters are kept.
+        $laporandetrans = $query
+            ->orderBy('tanggal', 'asc')
+            ->paginate($perPage)
+            ->appends($request->only(['start_date', 'end_date', 'per_page']));
 
         // [FIX] Logika Chart diperbaiki untuk menangani time-series per pelaksana
-        $months = $allDeliveryReports->map(function ($item) {
+        $months = $laporandetrans->map(function ($item) {
             return Carbon::parse($item->tanggal)->translatedFormat('F Y');
         })->unique()->values();
 
-        $groupedData = $allDeliveryReports->groupBy('pelaksana');
+        $groupedData = $laporandetrans->groupBy('pelaksana');
 
         $colorMap = [
             'Pengiriman Daerah Bali (SAMITRA)' => 'rgba(255, 99, 132, 0.7)',
@@ -71,7 +90,7 @@ class LaporanDetransController extends Controller
         $aiInsight = null;
         if ($request->has('generate_ai')) {
             // [FIX] Panggil AI dengan SEMUA data dan nama fungsi yang sesuai
-            $aiInsight = $this->generateDeliveryInsight($allDeliveryReports, $chartData);
+            $aiInsight = $this->generateDeliveryInsight($laporandetrans, $chartData);
         }
 
         return view('supports.laporandetrans', compact('laporandetrans', 'chartData', 'aiInsight'));

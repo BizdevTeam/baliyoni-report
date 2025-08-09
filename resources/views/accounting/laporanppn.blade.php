@@ -114,8 +114,23 @@
                 <!-- Search -->
                 <form method="GET" action="{{ route('laporanppn.index') }}" class="flex items-center gap-2">
                     <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
-                        <input type="month" name="search" placeholder="Search by MM / YYYY" value="{{ request('search') }}"
-                            class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
+                        <input 
+                        type="date" 
+                        name="start_date" 
+                        value="{{ request('start_date') }}" 
+                        class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" 
+                        />
+                    </div>
+
+                    <span>To</span>
+
+                    <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
+                        <input 
+                        type="date" 
+                        name="end_date" 
+                        value="{{ request('end_date') }}" 
+                        class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" 
+                        />
                     </div>
 
                     <button type="submit"

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('laporan_cuti_divisis', function (Blueprint $table) {
             $table->id('id_laporan_cuti_divisi');
             $table->string('tanggal');
+            $table->string('nama');
             $table->string('divisi');
             $table->integer('total_cuti')->default(0);
             $table->timestamps();

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rule;
 use App\Traits\DateValidationTrait;
+use Exception;
 use Illuminate\Support\Facades\Http;
 
 class RekapPiutangServisAspController extends Controller
@@ -22,10 +23,23 @@ class RekapPiutangServisAspController extends Controller
 
         // Filter tanggal
         if ($request->filled('start_date')) {
-            $query->whereDate('tanggal', '>=', $request->start_date);
+            try {
+                // Directly use the date string from the request.
+                $startDate = $request->start_date;
+                $query->whereDate('tanggal', '>=', $startDate);
+            } catch (Exception $e) {
+                Log::error("Invalid start_date format provided: " . $request->start_date);
+            }
         }
+
         if ($request->filled('end_date')) {
-            $query->whereDate('tanggal', '<=', $request->end_date);
+            try {
+                // Directly use the date string from the request.
+                $endDate = $request->end_date;
+                $query->whereDate('tanggal', '<=', $endDate);
+            } catch (Exception $e) {
+                Log::error("Invalid end_date format provided: " . $request->end_date);
+            }
         }
         // [FIX] Ambil SEMUA data untuk analisis dan chart agar akurat
         $allReceivables = (clone $query)->orderBy('nilai_piutang', 'desc')->get();

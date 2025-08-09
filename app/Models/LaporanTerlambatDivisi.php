@@ -10,7 +10,7 @@ class LaporanTerlambatDivisi extends Model
 
     protected $primaryKey = 'id_laporan_terlambat_divisi'; // Primary key custom
 
-    protected $fillable = ['tanggal', 'divisi', 'total_terlambat'];
+    protected $fillable = ['tanggal', 'nama', 'divisi', 'total_terlambat'];
 
     // Menambahkan accessor untuk date dengan format 'mm/yyyy'
     public function getTanggalFormattedAttribute()

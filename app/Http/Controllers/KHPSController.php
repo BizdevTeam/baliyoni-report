@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\KasHutangPiutang;
 use App\Traits\DateValidationTraitAccSPI;
+use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
@@ -16,15 +17,34 @@ class KHPSController extends Controller
  public function index(Request $request)
     {
         $perPage = $request->input('per_page', 12);
-        $search = $request->input('search');
+        $query = KasHutangPiutang::query();
 
-        $kashutangpiutangstoks = KasHutangPiutang::query()
-            ->when($search, function ($query, $search) {
-                return $query->where('tanggal', 'LIKE', "%$search%");
-            })
-            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
-            ->paginate($perPage);
+        if ($request->filled('start_date')) {
+            try {
+                // Directly use the date string from the request.
+                $startDate = $request->start_date;
+                $query->whereDate('tanggal', '>=', $startDate);
+            } catch (Exception $e) {
+                Log::error("Invalid start_date format provided: " . $request->start_date);
+            }
+        }
 
+        if ($request->filled('end_date')) {
+            try {
+                // Directly use the date string from the request.
+                $endDate = $request->end_date;
+                $query->whereDate('tanggal', '<=', $endDate);
+            } catch (Exception $e) {
+                Log::error("Invalid end_date format provided: " . $request->end_date);
+            }
+        }
+
+        // Order the results and paginate, ensuring the correct filter parameters are kept.
+        $kashutangpiutangstoks = $query
+            ->orderBy('tanggal', 'asc')
+            ->paginate($perPage)
+            ->appends($request->only(['start_date', 'end_date', 'per_page']));
+            
         $totalKas = $kashutangpiutangstoks->sum('kas');
         $totalHutang = $kashutangpiutangstoks->sum('hutang');
         $totalPiutang = $kashutangpiutangstoks->sum('piutang');
@@ -57,7 +77,7 @@ class KHPSController extends Controller
             'hutang' => $totalHutang,
             'piutang' => $totalPiutang,
             'stok' => $totalStok,
-            'periode_analisis' => $search ? "untuk tanggal yang mengandung '$search'" : "dari semua data yang ditampilkan",
+            'periode_analisis' => $kashutangpiutangstoks ? "untuk tanggal yang mengandung '$kashutangpiutangstoks'" : "dari semua data yang ditampilkan",
         ];
         $aiInsight = null;
 
@@ -310,14 +330,14 @@ private function generateFinancialAndStockInsight(array $data): string
     }
     public function showChart(Request $request)
     { 
-        $search = $request->input('search');
+        $kashutangpiutangstoks = $request->input('kashutangpiutangstoks');
         $startMonth = $request->input('start_month');
         $endMonth = $request->input('end_month');
         
         $query = KasHutangPiutang::query();
             // Filter berdasarkan tanggal jika ada
-            if ($search) {
-                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$search%"]);
+            if ($kashutangpiutangstoks) {
+                $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%$kashutangpiutangstoks%"]);
             }
         
         // Filter berdasarkan range bulan-tahun jika keduanya diisi

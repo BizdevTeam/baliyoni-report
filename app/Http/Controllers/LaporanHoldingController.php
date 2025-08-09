@@ -17,55 +17,6 @@ use Illuminate\Validation\Rule;
 class LaporanHoldingController extends Controller
 {
     use DateValidationTrait;
-    // public function index(Request $request)
-    // {
-    //     $perusahaans = Perusahaan::all();
-    //     $perPage = $request->input('per_page', 12);
-    //     $search = $request->input('search');
-
-    //     // Query dasar untuk digunakan kembali
-    //     $baseQuery = LaporanHolding::with('perusahaan')
-    //         ->when($search, function ($query, $search) {
-    //             $query->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') LIKE ?", ["%{$search}%"])
-    //                 ->orWhereHas('perusahaan', fn($q) => $q->where('nama_perusahaan', 'LIKE', "%{$search}%"));
-    //         });
-
-    //     // [FIX] Ambil SEMUA data untuk analisis dan chart agar akurat
-    //     $allHoldingReports = (clone $baseQuery)->orderBy('tanggal', 'asc')->get();
-
-    //     // Ambil data yang DIPAGINASI hanya untuk tampilan tabel
-    //     $laporanholdings = (clone $baseQuery)->orderBy('tanggal', 'desc')->paginate($perPage);
-
-    //     // [FIX] Siapkan data chart dari SEMUA data
-    //     $labels = $allHoldingReports->map(function ($item) {
-    //         $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
-    //         return $item->perusahaan->nama_perusahaan . ' - ' . $formattedDate;
-    //     })->all();
-
-    //     // [FIX] Gunakan kolom 'nilai'
-    //     $data = $allHoldingReports->pluck('nilai')->all();
-
-    //     $chartData = [
-    //         'labels' => $labels,
-    //         'datasets' => [[
-    //             'label' => 'Holding Report Chart',
-    //             'data' => $data,
-    //             'backgroundColor' => array_map(fn() => $this->getRandomRGBA(), $data),
-    //         ]],
-    //     ];
-    //      $chartTotalData = $this->getChartTotalData($allHoldingReports);
-
-    //     $aiInsight = null;
-    //     if ($request->has('generate_ai')) {
-    //         // [FIX] Panggil AI dengan SEMUA data (`$allHoldingReports`)
-    //         // [FIX] Nama fungsi diubah agar lebih sesuai
-    //         $aiInsight = $this->generateHoldingInsight($allHoldingReports, $chartData);
-    //     }
-
-    //     return view('procurements.laporanholding', compact('laporanholdings', 'chartData', 'perusahaans', 'aiInsight','chartTotalData'))
-    //         ->with('search', $search)
-    //         ->with('perPage', $perPage);
-    // }
 
     public function index(Request $request)
     {
