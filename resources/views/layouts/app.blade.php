@@ -40,35 +40,16 @@
                     0% { transform: rotate(0deg); }
                     100% { transform: rotate(360deg); }
                 }
-                body > *:not(#page-loader) {
+                body {
                     opacity: 0;
-                }
-                body.loaded > *:not(#page-loader) {
-                    opacity: 1;
                     transition: opacity 0.3s ease-in-out;
                 }
-                body.loaded #page-loader {
-                    display: none !important;
+                body.loaded {
+                    opacity: 1;
                 }
             </style>
         `);
     </script>
-    <style>
-        /* Styling agar numbered list & bullet list tetap tampil di tabel */
-        .content-html ol {
-        list-style-type: decimal;
-        margin-left: 20px;
-        }
-    
-        .content-html ul {
-        list-style-type: disc;
-        margin-left: 20px;
-        }
-    
-        .content-html li {
-        margin-bottom: 4px;
-        }
-    </style>
 
     <!-- Google Font -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -78,14 +59,10 @@
     <link rel="stylesheet" href="{{ asset('templates/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('templates/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
 
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
-
-    <!-- Tailwind & Vite CSS -->
+    <!-- Vite CSS (Handles Tailwind and custom CSS) -->
     @vite(['resources/css/tailwind.css', 'resources/css/custom.css'])
 
     <!-- JS Libraries -->
-    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
@@ -98,10 +75,14 @@
 
     <div class="wrapper">
         <!-- Sidebar -->
-        <x-sidebar />
+        <div class="z-20">
+            <x-sidebar />
+        </div>
 
         <!-- Navbar -->
-        <x-navbar />
+        <div class="z-30">
+            <x-navbar />
+        </div>
 
         <!-- Main Content -->
         <main>
@@ -132,44 +113,29 @@
     <!-- Loader Dismiss Logic -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            function checkTailwindLoaded() {
-                const test = document.createElement('div');
-                test.className = 'hidden md:block';
-                test.style.cssText = 'position: absolute; visibility: hidden;';
-                document.body.appendChild(test);
-                const isTailwind = window.getComputedStyle(test).display === 'none';
-                document.body.removeChild(test);
-                return isTailwind;
+            const loadingModal = document.getElementById('loadingModal');
+            if (loadingModal) {
+                loadingModal.classList.add('hidden');
             }
 
-            function removeLoader() {
-                document.body.classList.add('loaded');
-                const loader = document.getElementById('page-loader');
-                if (loader && loader.parentNode) {
-                    loader.parentNode.removeChild(loader);
-                }
-            }
-
-            if (checkTailwindLoaded()) {
-                removeLoader();
-            } else {
-                let attempts = 0;
-                const interval = setInterval(() => {
-                    if (checkTailwindLoaded() || attempts >= 5) {
-                        clearInterval(interval);
-                        removeLoader();
-                    }
-                    attempts++;
-                }, 200);
-
-                // Fallback
-                setTimeout(removeLoader, 20000);
-            }
-        });
-
-        window.addEventListener('load', function () {
             document.body.classList.add('loaded');
         });
+
+        window.onload = function () {
+            setTimeout(finalizePageLoad, 100); 
+        };
+
+        setTimeout(finalizePageLoad, 10000); 
+
+        function finalizePageLoad() {
+            const loader = document.getElementById('page-loader');
+            if (loader) {
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 300); 
+            }
+        }
     </script>
 </body>
 

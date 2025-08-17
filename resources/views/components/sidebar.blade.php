@@ -19,6 +19,7 @@ $menuItems = [
             ['title' => 'Sales Recap', 'route' => 'rekappenjualan.index', 'icon' => 'icon/RekapPenjualan.svg'],
             ['title' => 'Sales Recap by Company', 'route' => 'rekappenjualanperusahaan.index', 'icon' => 'icon/RekapPenjualanPerusahaan.svg'],
             ['title' => 'Administrative Package Report', 'route' => 'laporanpaketadministrasi.index', 'icon' => 'icon/LaporanPaketAdministrasi.svg'],
+            // ['title' => 'Administrative Package Report API', 'route' => 'paketadministrasiapi.index', 'icon' => 'icon/LaporanPaketAdministrasi.svg'],
             ['title' => 'Package Status Report', 'route' => 'statuspaket.index', 'icon' => 'icon/LaporanStatusPaket.svg'],
             ['title' => 'Institution-Based Report', 'route' => 'laporanperinstansi.index', 'icon' => 'icon/LaporanPerinstansi.svg'],
             ['title' => 'Add Company Data', 'route' => 'perusahaan.index', 'icon' => 'icon/LaporanPerinstansi.svg', 'roles' => ['superadmin']],
@@ -63,6 +64,7 @@ $menuItems = [
             ['title' => 'Arus Kas', 'route' => 'aruskas.index', 'icon' => 'icon/aruskas.svg'],
             ['title' => 'Laporan PPn', 'route' => 'laporanppn.index', 'icon' => 'icon/ppnlebihbayar.svg'],
             ['title' => 'Tax Planning', 'route' => 'taxplaning.index', 'icon' => 'icon/taxplanning.svg'],
+            // ['title' => 'Tax Planning API', 'route' => 'taxplanning.index', 'icon' => 'icon/taxplanning.svg'],
         ],
     ],
     // Dropdown 'IT'
