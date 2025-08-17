@@ -1,5 +1,10 @@
-<!-- Floating Button untuk Grid -->
-<div class="fixed bottom-32 right-6 z-50">
+<div class="group fixed bottom-32 right-6 z-50 flex items-center">
+    
+    <!-- Tooltip -->
+    <div role="tooltip" class="absolute right-full top-1/2 z-10 mr-4 inline-block -translate-y-1/2 whitespace-nowrap rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white opacity-0 shadow-sm transition-opacity duration-300 group-hover:opacity-100 dark:bg-gray-700 invisible group-hover:visible">
+        Grid View
+        <div class="absolute top-1/2 -right-1 h-2 w-2 -translate-y-1/2 rotate-45 bg-gray-900 dark:bg-gray-700"></div>
+    </div>
   <button id="floatingGridButton" class="justify-center rounded-full w-20 h-20 bg-red-600 font-medium text-white px-4 py-3 hover:shadow-xl transition duration-300 ease-in-out transform hover:scale-105 flex items-center gap-2">
     <svg class="justify-center items-center animated transition-colors duration-300" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
       <path class="fill-current text-white" d="M3 21h8v-8H3m2 2h4v4H5m-2-8h8V3H3m2 2h4v4H5m8-6v8h8V3m-2 6h-4V5h4m-1 11h3v2h-3v3h-2v-3h-3v-2h3v-3h2Z" />
@@ -50,6 +55,7 @@
       </div>
     </div>
   </div>
+</div>
 </div>
 
 
