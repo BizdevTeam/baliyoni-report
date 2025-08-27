@@ -361,6 +361,8 @@
                                 <option value="Balimall" {{ $laporanpaketadministrasi->website == 'Balimall' ? 'selected' : '' }}>Balimall</option>
                                 <option value="Siplah" {{ $laporanpaketadministrasi->website == 'Siplah' ? 'selected' : '' }}>Siplah</option>
                                 <option value="PL" {{ $laporanpaketadministrasi->website == 'PL' ? 'selected' : '' }}>Pengadaan Langsung</option>
+                                <option value="Digi Pay" {{ $laporanpaketadministrasi->website == 'Digi Pay' ? 'selected' : '' }}>Digi Pay</option>
+                                <option value="Umall" {{ $laporanpaketadministrasi->website == 'Umall' ? 'selected' : '' }}>Umall</option>
                             </select>
                         </div>
                         <div>
@@ -396,6 +398,8 @@
                                 <option value="Balimall">Balimall</option>
                                 <option value="Siplah">Siplah</option>
                                 <option value="PL">Pengadaan Langsung</option>
+                                <option value="Digi Pay">Digi Pay</option>
+                                <option value="Umall">Umall</option>
                             </select>
                         </div>
                         <div>

@@ -34,8 +34,9 @@ $menuItems = [
         'submenu' => [
             ['title' => 'Purchase Report (Holding)', 'route' => 'laporanholding.index', 'icon' => 'icon/RekapPenjualan.svg'],
             ['title' => 'Outlet Purchase Report', 'route' => 'laporanoutlet.index', 'icon' => 'icon/LaporanPaketAdministrasi.svg'],
-            ['title' => 'Stock Report', 'route' => 'laporanstok.index', 'icon' => 'icon/RekapPenjualanPerusahaan.svg'],
             ['title' => 'Negotiation Report', 'route' => 'laporannegosiasi.index', 'icon' => 'icon/LaporanStatusPaket.svg'],
+            ['title' => 'Stock Report', 'route' => 'laporanstok.index', 'icon' => 'icon/RekapPenjualanPerusahaan.svg'],
+
         ],
     ],
     // Dropdown 'Support'
