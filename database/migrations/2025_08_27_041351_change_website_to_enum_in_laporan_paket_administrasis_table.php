@@ -14,8 +14,8 @@ return new class extends Migration
         // Mengubah kolom 'website' dari VARCHAR menjadi ENUM
         Schema::table('laporan_paket_administrasis', function (Blueprint $table) {
             $table->enum('website', [
-                'E - Katalog',
-                'E - Katalog Luar Bali',
+                'E-Katalog',
+                'E-Katalog Luar Bali',
                 'Balimall',
                 'Siplah',
                 'Pengadaan Langsung', // Tambahkan semua nilai yang mungkin ada
