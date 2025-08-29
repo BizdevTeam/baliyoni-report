@@ -8,21 +8,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class LaporanPaketAdministrasi extends Model
 {
-    //
     use HasFactory;
 
-    // Tabel yang akan digunakan (opsional jika nama tabel sesuai konvensi Laravel, yaitu "laporan_paket_administrasis")
     protected $table = 'laporan_paket_administrasis';
-    protected $primaryKey = 'id_laporanpaket'; // Primary key custom
+    protected $primaryKey = 'id_laporanpaket';
 
+    // PERUBAHAN DI SINI
     protected $fillable = [
         'tanggal', 
-        'website',     
-        'total_paket',        
+        'unit_bisnis_id',  // <-- 'website' diganti dengan ini
+        'total_paket',      
     ];
 
-
-    // Kolom yang dapat diisi menggunakan metode mass assignment
     public function getTanggalFormattedAttribute()
     {
         return Carbon::parse($this->tanggal)->translatedFormat('d F Y');
@@ -32,9 +29,9 @@ class LaporanPaketAdministrasi extends Model
     {
         return number_format($this->total_paket, 0, ',', '.');
     }
-        public function unitBisnis()
+    
+    public function unitBisnis()
     {
-        // Hapus argumen ketiga karena Laravel sudah tahu primary key di tabel unit_bisnis adalah 'id'
         return $this->belongsTo(UnitBisnis::class, 'unit_bisnis_id');
     }
 }
