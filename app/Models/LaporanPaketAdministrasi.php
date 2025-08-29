@@ -32,4 +32,9 @@ class LaporanPaketAdministrasi extends Model
     {
         return number_format($this->total_paket, 0, ',', '.');
     }
+        public function unitBisnis()
+    {
+        // Hapus argumen ketiga karena Laravel sudah tahu primary key di tabel unit_bisnis adalah 'id'
+        return $this->belongsTo(UnitBisnis::class, 'unit_bisnis_id');
+    }
 }
