@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\LaporanPaketAdministrasi;
+use App\Models\UnitBisnis;
 use App\Traits\DateValidationTrait;
 use Exception;
 use Illuminate\Http\Request;
@@ -17,43 +18,111 @@ class LaporanPaketAdministrasiController extends Controller
 {
     use DateValidationTrait;
 
-    public function index(Request $request)
+//     public function index(Request $request)
+// {
+//     $perPage = $request->input('per_page', 12);
+//     $search = $request->input('search');
+//     $unitBisnisList = UnitBisnis::orderBy('nama_unit', 'asc')->get();
+
+//     $query = LaporanPaketAdministrasi::query();
+    
+//         if ($request->filled('start_date')) {
+//             try {
+//                 // Directly use the date string from the request.
+//                 $startDate = $request->start_date;
+//                 $query->whereDate('tanggal', '>=', $startDate);
+//             } catch (Exception $e) {
+//                 Log::error("Invalid start_date format provided: " . $request->start_date);
+//             }
+//         }
+
+//         if ($request->filled('end_date')) {
+//             try {
+//                 // Directly use the date string from the request.
+//                 $endDate = $request->end_date;
+//                 $query->whereDate('tanggal', '<=', $endDate);
+//             } catch (Exception $e) {
+//                 Log::error("Invalid end_date format provided: " . $request->end_date);
+//             }
+//         }
+
+//         // Order the results and paginate, ensuring the correct filter parameters are kept.
+//         $laporanpaketadministrasis = $query
+//             ->orderBy('tanggal', 'asc')
+//             ->paginate($perPage)
+//             ->appends($request->only(['start_date', 'end_date', 'per_page']));
+
+//     // Siapkan data chart dari SEMUA data
+//     $labels = $laporanpaketadministrasis->map(function($item) {
+//             $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
+//             // PERUBAHAN: Ambil nama dari relasi ->unitBisnis->nama_unit, bukan ->website
+//             return $item->unitBisnis->nama_unit . ' - ' . $formattedDate;
+//     })->all();
+    
+//     $data = $laporanpaketadministrasis->pluck('total_paket')->all();
+    
+//     $chartData = [
+//         'labels' => $labels,
+//         'datasets' => [[
+//             'label' => 'Administrative Package Chart',
+//             'text' => 'Total Package',
+//             'data' => $data,
+//             'backgroundColor' => array_map(fn() => $this->getRandomRGBA(), $data),
+//         ]],
+//     ];
+    
+//     $aiInsight = null;
+//     if ($request->has('generate_ai')) {
+//         // [FIX] Panggil AI dengan SEMUA data, bukan data terpaginasi
+//         $aiInsight = $this->generateSalesInsight($laporanpaketadministrasis, $chartData);
+//     }
+        
+//     return view('marketings.laporanpaketadministrasi', compact('laporanpaketadministrasis', 'chartData', 'aiInsight','unitBisnisList'));
+//     }
+public function index(Request $request)
 {
     $perPage = $request->input('per_page', 12);
-    $search = $request->input('search');
+    // [1] PERUBAHAN: Nama variabel filter diubah agar lebih jelas
+    $unitBisnisFilterId = $request->input('unit_bisnis_filter_id'); 
+    $unitBisnisList = UnitBisnis::orderBy('nama_unit', 'asc')->get();
 
-    $query = LaporanPaketAdministrasi::query();
+    $query = LaporanPaketAdministrasi::with('unitBisnis');
+        
+    // [2] PERUBAHAN: Logika filter diubah dari whereHas menjadi where
+    // Ini lebih efisien karena kita sekarang memfilter berdasarkan ID.
+    if ($request->filled('unit_bisnis_filter_id')) {
+        $query->where('unit_bisnis_id', $unitBisnisFilterId);
+    }
 
-        if ($request->filled('start_date')) {
-            try {
-                // Directly use the date string from the request.
-                $startDate = $request->start_date;
-                $query->whereDate('tanggal', '>=', $startDate);
-            } catch (Exception $e) {
-                Log::error("Invalid start_date format provided: " . $request->start_date);
-            }
+    if ($request->filled('start_date')) {
+        try {
+            $startDate = $request->start_date;
+            $query->whereDate('tanggal', '>=', $startDate);
+        } catch (Exception $e) {
+            Log::error("Invalid start_date format provided: " . $request->start_date);
         }
+    }
 
-        if ($request->filled('end_date')) {
-            try {
-                // Directly use the date string from the request.
-                $endDate = $request->end_date;
-                $query->whereDate('tanggal', '<=', $endDate);
-            } catch (Exception $e) {
-                Log::error("Invalid end_date format provided: " . $request->end_date);
-            }
+    if ($request->filled('end_date')) {
+        try {
+            $endDate = $request->end_date;
+            $query->whereDate('tanggal', '<=', $endDate);
+        } catch (Exception $e) {
+            Log::error("Invalid end_date format provided: " . $request->end_date);
         }
+    }
 
-        // Order the results and paginate, ensuring the correct filter parameters are kept.
-        $laporanpaketadministrasis = $query
-            ->orderBy('tanggal', 'asc')
-            ->paginate($perPage)
-            ->appends($request->only(['start_date', 'end_date', 'per_page']));
+    $laporanpaketadministrasis = $query
+        ->orderBy('tanggal', 'asc')
+        ->paginate($perPage)
+        // [3] PERUBAHAN: 'search' diganti dengan 'unit_bisnis_filter_id'
+        ->appends($request->only(['start_date', 'end_date', 'per_page', 'unit_bisnis_filter_id']));
 
-    // Siapkan data chart dari SEMUA data
+    // ... sisa kode tidak berubah ...
+    
     $labels = $laporanpaketadministrasis->map(function($item) {
-        $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
-        return $item->website . ' - ' . $formattedDate;
+            $formattedDate = \Carbon\Carbon::parse($item->tanggal)->translatedFormat('F Y');
+            return $item->unitBisnis->nama_unit . ' - ' . $formattedDate;
     })->all();
     
     $data = $laporanpaketadministrasis->pluck('total_paket')->all();
@@ -70,22 +139,22 @@ class LaporanPaketAdministrasiController extends Controller
     
     $aiInsight = null;
     if ($request->has('generate_ai')) {
-        // [FIX] Panggil AI dengan SEMUA data, bukan data terpaginasi
         $aiInsight = $this->generateSalesInsight($laporanpaketadministrasis, $chartData);
     }
         
-    return view('marketings.laporanpaketadministrasi', compact('laporanpaketadministrasis', 'chartData', 'aiInsight'));
-    }
+    return view('marketings.laporanpaketadministrasi', compact('laporanpaketadministrasis', 'chartData', 'aiInsight','unitBisnisList'));
+}
     private function getChartTotalData($reports)
     {
         // Akumulasi total paket berdasarkan website
         $akumulasiData = [];
         foreach ($reports as $item) {
-            $namaWebsite = $item->website;
-            if (!isset($akumulasiData[$namaWebsite])) {
-                $akumulasiData[$namaWebsite] = 0;
+            // PERUBAHAN: Akses nama unit bisnis melalui relasi
+            $namaUnitBisnis = $item->unitBisnis->nama_unit;
+            if (!isset($akumulasiData[$namaUnitBisnis])) {
+                $akumulasiData[$namaUnitBisnis] = 0;
             }
-            $akumulasiData[$namaWebsite] += $item->total_paket;
+            $akumulasiData[$namaUnitBisnis] += $item->total_paket;
         }
 
         // Siapkan data untuk chart
@@ -135,7 +204,7 @@ class LaporanPaketAdministrasiController extends Controller
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
             ])->post("{$apiUrl}?key={$apiKey}", [
-                'contents' => [['parts' => [['text' => $prompt]]]],
+                    'contents' => [['parts' => [['text' => $prompt]]]],
                 'generationConfig' => [
                     'temperature'     => 0.7,
                     'maxOutputTokens' => 800,
@@ -201,18 +270,7 @@ class LaporanPaketAdministrasiController extends Controller
             // Validasi input
             $validatedData = $request->validate([
                 'tanggal' => 'required|date',
-                'website' => [
-                    'required',
-                    Rule::in([
-                        'E - Katalog',
-                        'E - Katalog Luar Bali',
-                        'Balimall',
-                        'Siplah',
-                        'PL',
-                        'Digi Pay',
-                        'Umall',
-                    ]),
-                ],
+                'unit_bisnis_id' => 'required|integer|exists:unit_bisnis,id',
                 'total_paket' => 'required|integer|min:0',
             ]);
             
@@ -245,18 +303,7 @@ class LaporanPaketAdministrasiController extends Controller
             // Validasi input
             $validatedData = $request->validate([
                 'tanggal' => 'required|date',
-                'website' => [
-                'required',
-                Rule::in([
-                    'E - Katalog',
-                    'E - Katalog Luar Bali',
-                    'Balimall',
-                    'Siplah',
-                    'PL',
-                    'Digi Pay',
-                    'Umall',
-                ]),
-            ],
+                'unit_bisnis_id' => 'required|integer|exists:unit_bisnis,id',
                 'total_paket' => 'required|integer|min:0',
             ]);
 
@@ -417,11 +464,12 @@ class LaporanPaketAdministrasiController extends Controller
     }
     
     $laporanpaketadministrasis = $query
-        ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
-        ->get();
+            ->with('unitBisnis')
+            ->orderByRaw('YEAR(tanggal) DESC, MONTH(tanggal) ASC')
+            ->get();
 
-    // Siapkan data untuk chart
-    $labels = $laporanpaketadministrasis->pluck('website')->toArray();
+        // PERUBAHAN: Gunakan 'pluck' pada relasi untuk mengambil nama_unit
+    $labels = $laporanpaketadministrasis->pluck('unitBisnis.nama_unit')->toArray();
     $data = $laporanpaketadministrasis->pluck('total_paket')->toArray();
     $backgroundColors = array_map(fn() => $this->getRandomRGBAA(), $data);
 
@@ -470,13 +518,14 @@ public function chartTotal(Request $request)
 
     // Akumulasi total penjualan berdasarkan nama website
     $akumulasiData = [];
-    foreach ($laporanpaketadministrasis as $item) {
-        $namaWebsite = $item->website;
-        if (!isset($akumulasiData[$namaWebsite])) {
-            $akumulasiData[$namaWebsite] = 0;
+        foreach ($laporanpaketadministrasis as $item) {
+            // PERUBAHAN: Ambil nama dari relasi
+            $namaWebsite = $item->unitBisnis->nama_unit;
+            if (!isset($akumulasiData[$namaWebsite])) {
+                $akumulasiData[$namaWebsite] = 0;
+            }
+            $akumulasiData[$namaWebsite] += $item->total_paket;
         }
-        $akumulasiData[$namaWebsite] += $item->total_paket;
-    }
 
     // Siapkan data untuk chart
     $labels = array_keys($akumulasiData);

@@ -84,7 +84,24 @@
             <div class="flex items-center justify-end transition-all duration-500 mt-8 mb-4">
                 <!-- Search -->
                 <form method="GET" action="{{ route('laporanpaketadministrasi.index') }}" class="flex items-center gap-2">
-                    <!-- Start Date with Tooltip -->
+    
+                    <div class="relative group">
+                        <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
+                            <select name="unit_bisnis_filter_id" class="flex-1 border-none focus:outline-none p-2 text-gray-700 bg-white">
+                                <option value="">Semua Unit Bisnis</option>
+                                @foreach ($unitBisnisList as $unit)
+                                    <option value="{{ $unit->id }}" {{ request('unit_bisnis_filter_id') == $unit->id ? 'selected' : '' }}>
+                                        {{ $unit->nama_unit }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 hidden group-hover:block w-max">
+                            <span class="relative z-10 p-2 text-xs leading-none text-white whitespace-no-wrap bg-black shadow-lg rounded-md">Filter by Unit Bisnis</span>
+                            <div class="w-3 h-3 -mt-2 rotate-45 bg-black mx-auto"></div>
+                        </div>
+                    </div>
+
                     <div class="relative group">
                         <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
                             <input type="date" name="start_date" value="{{ request('start_date') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
@@ -97,7 +114,6 @@
 
                     <span>To</span>
 
-                    <!-- End Date with Tooltip -->
                     <div class="relative group">
                         <div class="flex items-center border border-gray-700 rounded-lg p-2 max-w-md">
                             <input type="date" name="end_date" value="{{ request('end_date') }}" class="flex-1 border-none focus:outline-none text-gray-700 placeholder-gray-400" />
@@ -108,7 +124,6 @@
                         </div>
                     </div>
 
-                    <!-- Search Button with Tooltip -->
                     <div class="relative group">
                         <button type="submit" class="bg-gradient-to-r font-medium from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-3 py-2.5 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-102 flex items-center gap-2 text-sm mr-2" aria-label="Search">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -221,7 +236,7 @@
                                 @foreach ($laporanpaketadministrasis as $laporanpaketadministrasi)
                                 <tr class="hover:bg-gray-100">
                                     <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanpaketadministrasi->tanggal_formatted }}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanpaketadministrasi->website }}</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanpaketadministrasi->unitBisnis->nama_unit }}</td>
                                     <td class="border border-gray-300 px-4 py-2 text-center">{{ $laporanpaketadministrasi->total_paket }}</td>
                                     <td class="border border-gray-300 py-6 text-center flex justify-center gap-2">
                                         <button class="text-red-600 bg-transparent px-3 py-2 rounded" data-modal-target="#editEventModal{{ $laporanpaketadministrasi->id_laporanpaket }}">
@@ -354,15 +369,14 @@
                             <input type="date" name="tanggal" class="w-full p-2 border rounded" value="{{ $laporanpaketadministrasi->tanggal }}" required>
                         </div>
                         <div>
-                            <label for="website" class="block text-sm font-medium">Choose website</label>
-                            <select name="website" class="w-full p-2 border rounded" required>
-                                <option value="E - Katalog" {{ $laporanpaketadministrasi->website == 'E - Katalog' ? 'selected' : '' }}>E - Katalog</option>
-                                <option value="E - Katalog Luar Bali" {{ $laporanpaketadministrasi->website == 'E - Katalog Luar Bali' ? 'selected' : '' }}>E - Katalog Luar Bali</option>
-                                <option value="Balimall" {{ $laporanpaketadministrasi->website == 'Balimall' ? 'selected' : '' }}>Balimall</option>
-                                <option value="Siplah" {{ $laporanpaketadministrasi->website == 'Siplah' ? 'selected' : '' }}>Siplah</option>
-                                <option value="PL" {{ $laporanpaketadministrasi->website == 'PL' ? 'selected' : '' }}>Pengadaan Langsung</option>
-                                <option value="Digi Pay" {{ $laporanpaketadministrasi->website == 'Digi Pay' ? 'selected' : '' }}>Digi Pay</option>
-                                <option value="Umall" {{ $laporanpaketadministrasi->website == 'Umall' ? 'selected' : '' }}>Umall</option>
+                            <label for="unit_bisnis_id" class="block text-sm font-medium">Unit Bisnis</label>
+                            <select name="unit_bisnis_id" class="w-full p-2 border rounded" required>
+                                <option value="">-- Pilih Unit Bisnis --</option>
+                                @foreach ($unitBisnisList as $unit)
+                                    <option value="{{ $unit->id }}">
+                                        {{ $unit->nama_unit }}
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
                         <div>
@@ -391,15 +405,12 @@
                             <input type="date" name="tanggal" class="w-full p-2 border rounded" required>
                         </div>
                         <div>
-                            <label for="website" class="block text-sm font-medium">Choose website</label>
-                            <select name="website" class="w-full p-2 border rounded" required>
-                                <option value="E - Katalog">E - Katalog</option>
-                                <option value="E - Katalog Luar Bali">E - Katalog Luar Bali</option>
-                                <option value="Balimall">Balimall</option>
-                                <option value="Siplah">Siplah</option>
-                                <option value="PL">Pengadaan Langsung</option>
-                                <option value="Digi Pay">Digi Pay</option>
-                                <option value="Umall">Umall</option>
+                            <label for="unit_bisnis_id" class="block text-sm font-medium">Unit Bisnis</label>
+                            <select name="unit_bisnis_id" class="w-full p-2 border rounded" required>
+                                <option value="">-- Pilih Unit Bisnis --</option>
+                                @foreach ($unitBisnisList as $unit)
+                                    <option value="{{ $unit->id }}">{{ $unit->nama_unit }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div>
@@ -703,7 +714,7 @@ async function exportToPDF() {
         const cells = row.querySelectorAll('td');
         return {
             tanggal_formatted: cells[0]?.innerText.trim() || '',
-            website: cells[1]?.innerText.trim() || '',
+            unit_bisnis_id: cells[1]?.innerText.trim() || '',
             total_paket: cells[2]?.innerText.trim() || '',
         };
     });
@@ -712,7 +723,7 @@ async function exportToPDF() {
         .map(item => `
             <tr>
                 <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.tanggal_formatted}</td>
-                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.website}</td>
+                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.unit_bisnis_id}</td>
                 <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.total_paket}</td>
             </tr>
         `).join('');
