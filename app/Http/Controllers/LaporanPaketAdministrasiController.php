@@ -267,7 +267,6 @@ public function index(Request $request)
     public function store(Request $request)
     {
         try {
-            // Validasi input
             $validatedData = $request->validate([
                 'tanggal' => 'required|date',
                 'unit_bisnis_id' => 'required|integer|exists:unit_bisnis,id',
@@ -277,30 +276,20 @@ public function index(Request $request)
             $errorMessage = '';
             if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
-            }
-
-            // Cek kombinasi unik date dan website
-            $exists = LaporanPaketAdministrasi::where('tanggal', $validatedData['tanggal'])
-            ->where('website', $validatedData['website'])->exists();
-            
-            if ($exists) {
-                return redirect()->back()->with('error', 'Data sudah ada.');
             }
     
             LaporanPaketAdministrasi::create($validatedData);
             return redirect()->route('laporanpaketadministrasi.index')->with('success', 'Data Berhasil Ditambahkan');
 
         } catch (\Exception $e) {
-            Log::error('Error Storing Rekap Penjualan Data: ' . $e->getMessage());
-            Log::info('website input:', [$request->input('website')]);
-            return redirect()->route('laporanpaketadministrasi.index')->with('error', 'Terjadi Kesalahan:' . $e->getMessage());
+            Log::error('Error Storing Laporan Paket Administrasi Data: ' . $e->getMessage());
+            return redirect()->route('laporanpaketadministrasi.index')->with('error', 'Terjadi Kesalahan: ' . $e->getMessage());
         }
     }
 
     public function update(Request $request, LaporanPaketAdministrasi $laporanpaketadministrasi)
     {
         try {
-            // Validasi input
             $validatedData = $request->validate([
                 'tanggal' => 'required|date',
                 'unit_bisnis_id' => 'required|integer|exists:unit_bisnis,id',
@@ -311,31 +300,20 @@ public function index(Request $request)
             if (!$this->isInputAllowed($validatedData['tanggal'], $errorMessage)) {
                 return redirect()->back()->with('error', $errorMessage);
             }
-            // Cek kombinasi unik date dan website
-            $exists = LaporanPaketAdministrasi::where('tanggal', $validatedData['tanggal'])
-            ->where('website', $validatedData['website'])
-            ->where('id_laporanpaket', '!=', $laporanpaketadministrasi->id_laporanpaket)->exists();
 
-            if ($exists) {
-                return redirect()->back()->with('error', 'Tidak dapat diubah, data sudah ada.');
-            }
     
-            // Update data
             $laporanpaketadministrasi->update($validatedData);
     
-            // Redirect dengan pesan sukses
             return redirect()
                 ->route('laporanpaketadministrasi.index')
                 ->with('success', 'Data berhasil diperbarui.');
         } catch (ValidationException $e) {
-            // Tangani error validasi
             return redirect()
                 ->back()
                 ->withErrors($e->errors())
                 ->withInput();
         } catch (\Exception $e) {
-            // Tangani error umum dan log untuk debugging
-            Log::error('Error updating Rekap Penjualan: ' . $e->getMessage());
+            Log::error('Error updating Laporan Paket Administrasi: ' . $e->getMessage());
             return redirect()
                 ->route('laporanpaketadministrasi.index')
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
