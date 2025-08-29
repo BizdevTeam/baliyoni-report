@@ -13,17 +13,16 @@ return new class extends Migration
     {
         Schema::create('laporan_paket_administrasis', function (Blueprint $table) {
             $table->id('id_laporanpaket');
-            $table->string('tanggal');
-            $table->enum('website',[
-                'E - Katalog',
-                'E - Katalog Luar Bali',
-                'Balimall',
-                'Siplah',
-            ]);
+            $table->date('tanggal'); // Tipe data diubah menjadi date untuk konsistensi
+
+            // Langsung membuat foreign key, tanpa kolom 'website'
+            $table->foreignId('unit_bisnis_id')->constrained('unit_bisnis');
+            
             $table->bigInteger('total_paket');
             $table->timestamps();
 
-            $table->unique(['tanggal', 'website']);
+            // Aturan unique yang baru, menggunakan unit_bisnis_id
+            $table->unique(['tanggal', 'unit_bisnis_id']);
         });
     }
 
